@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.ewininfo.com" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="CraftPramService" targetNamespace="http://www.ewininfo.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://www.ewininfo.com" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="addCraftPram" type="tns:addCraftPram" />
+      <xs:element name="addCraftPramResponse" type="tns:addCraftPramResponse" />
+      <xs:element name="queryByDispatchNo" type="tns:queryByDispatchNo" />
+      <xs:element name="queryByDispatchNoResponse" type="tns:queryByDispatchNoResponse" />
+      <xs:complexType name="addCraftPram">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="data" type="tns:returnCraftPram" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="returnCraftPram">
+        <xs:sequence />
+        <xs:attribute name="Id" type="xs:long" />
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="dispatchNo" type="xs:string" />
+        <xs:attribute name="btmLmt" type="xs:double" use="required" />
+        <xs:attribute name="topLmt" type="xs:double" use="required" />
+        <xs:attribute name="defVal" type="xs:double" use="required" />
+        <xs:attribute name="unit" type="xs:string" />
+        <xs:attribute name="actualVal" type="xs:string" />
+      </xs:complexType>
+      <xs:complexType name="addCraftPramResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="queryByDispatchNo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="dispatchNo" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="queryByDispatchNoResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="return" type="tns:returnCraftPram" />
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="addCraftPram">
+    <wsdl:part name="parameters" element="tns:addCraftPram" />
+  </wsdl:message>
+  <wsdl:message name="queryByDispatchNo">
+    <wsdl:part name="parameters" element="tns:queryByDispatchNo" />
+  </wsdl:message>
+  <wsdl:message name="queryByDispatchNoResponse">
+    <wsdl:part name="parameters" element="tns:queryByDispatchNoResponse" />
+  </wsdl:message>
+  <wsdl:message name="addCraftPramResponse">
+    <wsdl:part name="parameters" element="tns:addCraftPramResponse" />
+  </wsdl:message>
+  <wsdl:portType name="CraftPramService">
+    <wsdl:operation name="addCraftPram">
+      <wsdl:input name="addCraftPram" message="tns:addCraftPram" />
+      <wsdl:output name="addCraftPramResponse" message="tns:addCraftPramResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="queryByDispatchNo">
+      <wsdl:input name="queryByDispatchNo" message="tns:queryByDispatchNo" />
+      <wsdl:output name="queryByDispatchNoResponse" message="tns:queryByDispatchNoResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CraftPramServiceSoapBinding" type="tns:CraftPramService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="addCraftPram">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="addCraftPram">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="addCraftPramResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="queryByDispatchNo">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="queryByDispatchNo">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="queryByDispatchNoResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CraftPramService">
+    <wsdl:port name="CraftPramServicePort" binding="tns:CraftPramServiceSoapBinding">
+      <soap:address location="http://172.16.211.228:8090/extras-web-cxf/service/CraftPramService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

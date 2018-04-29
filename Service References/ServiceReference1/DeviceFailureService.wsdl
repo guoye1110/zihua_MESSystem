@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.ewininfo.com" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="DeviceFailureService" targetNamespace="http://www.ewininfo.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://www.ewininfo.com" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="addDeviceAndonInfo" type="tns:addDeviceAndonInfo" />
+      <xs:element name="addDeviceAndonInfoResponse" type="tns:addDeviceAndonInfoResponse" />
+      <xs:element name="queryDeviceFailureList" type="tns:queryDeviceFailureList" />
+      <xs:element name="queryDeviceFailureListResponse" type="tns:queryDeviceFailureListResponse" />
+      <xs:complexType name="addDeviceAndonInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="deviceNo" type="xs:string" />
+          <xs:element minOccurs="0" name="failureNo" type="xs:string" />
+          <xs:element minOccurs="0" name="userNo" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="addDeviceAndonInfoResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="queryDeviceFailureList">
+        <xs:sequence />
+      </xs:complexType>
+      <xs:complexType name="queryDeviceFailureListResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="return" type="tns:deviceFailureInfo" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="deviceFailureInfo">
+        <xs:sequence />
+        <xs:attribute name="failureNo" type="xs:string" />
+        <xs:attribute name="failureName" type="xs:string" />
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="queryDeviceFailureList">
+    <wsdl:part name="parameters" element="tns:queryDeviceFailureList" />
+  </wsdl:message>
+  <wsdl:message name="addDeviceAndonInfoResponse">
+    <wsdl:part name="parameters" element="tns:addDeviceAndonInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="addDeviceAndonInfo">
+    <wsdl:part name="parameters" element="tns:addDeviceAndonInfo" />
+  </wsdl:message>
+  <wsdl:message name="queryDeviceFailureListResponse">
+    <wsdl:part name="parameters" element="tns:queryDeviceFailureListResponse" />
+  </wsdl:message>
+  <wsdl:portType name="DeviceFailureService">
+    <wsdl:operation name="addDeviceAndonInfo">
+      <wsdl:input name="addDeviceAndonInfo" message="tns:addDeviceAndonInfo" />
+      <wsdl:output name="addDeviceAndonInfoResponse" message="tns:addDeviceAndonInfoResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="queryDeviceFailureList">
+      <wsdl:input name="queryDeviceFailureList" message="tns:queryDeviceFailureList" />
+      <wsdl:output name="queryDeviceFailureListResponse" message="tns:queryDeviceFailureListResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DeviceFailureServiceSoapBinding" type="tns:DeviceFailureService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="addDeviceAndonInfo">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="addDeviceAndonInfo">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="addDeviceAndonInfoResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="queryDeviceFailureList">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="queryDeviceFailureList">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="queryDeviceFailureListResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DeviceFailureService">
+    <wsdl:port name="DeviceFailureServicePort" binding="tns:DeviceFailureServiceSoapBinding">
+      <soap:address location="http://localhost:8080/extras-web-cxf/service/DeviceFailureService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
