@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -42,17 +42,17 @@ namespace MESSystem.communication
         public partial class ClientThread
         {
             int machineIDForPrint;
-            //material code for stacks(Âë¶â¶ÔÓ¦µÄÔ­ÁÏ±àºÅ)
+            //material code for stacks(ç å›å¯¹åº”çš„åŸæ–™ç¼–å·)
             string[,] materialCodeForStack = new string[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE]; 
-            //total sack num for this dispatch, got from dispatch info£¨¹¤µ¥ÖĞÔ­ÁÏĞèÇóµÄ´üÊı£©
+            //total sack num for this dispatch, got from dispatch infoï¼ˆå·¥å•ä¸­åŸæ–™éœ€æ±‚çš„è¢‹æ•°ï¼‰
             int[,] sackNumTotalForDispatch = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
-            //sack num received from warehouse(°áÔË¹¤ÒÑ¾­°áÀ´ÁË¼¸´üÔ­ÁÏ, ÊıÁ¿Ó¦Ğ¡ÓÚµÈÓÚ sackNumNeededForStack[])
+            //sack num received from warehouse(æ¬è¿å·¥å·²ç»æ¬æ¥äº†å‡ è¢‹åŸæ–™, æ•°é‡åº”å°äºç­‰äº sackNumNeededForStack[])
             int[,] sackNumReceivedFromWarehouse = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
-            //total sack num needed for this stack(or feed bin) for multiple dispatches in a period of time(¶ÔÓÚ°áÔË¹¤¶øÑÔ£¬Ä³¸öÂë¶âÖĞĞèÒª¼¸´üÔ­ÁÏ£¬¿ÉÄÜ°üÀ¨¶à¸ö¹¤µ¥£¬¿ÉÄÜ³¬¹ıÂë¶âÈİÁ¿£¬Ğè¶à´ÎËÍÁÏ)
+            //total sack num needed for this stack(or feed bin) for multiple dispatches in a period of time(å¯¹äºæ¬è¿å·¥è€Œè¨€ï¼ŒæŸä¸ªç å›ä¸­éœ€è¦å‡ è¢‹åŸæ–™ï¼Œå¯èƒ½åŒ…æ‹¬å¤šä¸ªå·¥å•ï¼Œå¯èƒ½è¶…è¿‡ç å›å®¹é‡ï¼Œéœ€å¤šæ¬¡é€æ–™)
             int[,] sackNumNeededForStack = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
-            //sack num left in the stack for the current time£¨Âë¶âÖĞµÄÊ£Óà´üÊı£©
+            //sack num left in the stack for the current timeï¼ˆç å›ä¸­çš„å‰©ä½™è¢‹æ•°ï¼‰
             int[,] sackNumLeftInStack = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
-            //material left in feed bin(ÁÏÏäÖĞµÄÓàÁÏ¹«½ïÊı)
+            //material left in feed bin(æ–™ç®±ä¸­çš„ä½™æ–™å…¬æ–¤æ•°)
             int[,] kiloNumLeftInFeedBin = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
 
             int inoutMaterialQuantity;
@@ -105,48 +105,48 @@ namespace MESSystem.communication
                             len = MIN_PACKET_LEN;
                             sendDataToClient(onePacket, len, communicationType);
                             break;
-                        case COMMUNICATION_TYPE_WAREHOUE_OUT_START:  //Ô­ÁÏ³ö¿âÇøµÄ°áÔË¹¤ÉÏ°àÁË
+                        case COMMUNICATION_TYPE_WAREHOUE_OUT_START:  //åŸæ–™å‡ºåº“åŒºçš„æ¬è¿å·¥ä¸Šç­äº†
                             getMaterialInfoForAllMachines();
                             sendMaterialInfoToPrintSW();
                             break;
-                        case COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE:  //Ò»²ù³µµÄÔ­ÁÏ³ö¿âÁË, ÊÕµ½³ö¿â²ù³µ±êÇ©
+                        case COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE:  //ä¸€é“²è½¦çš„åŸæ–™å‡ºåº“äº†, æ”¶åˆ°å‡ºåº“é“²è½¦æ ‡ç­¾
                             dealWithMaterialOut();
                             onePacket[PROTOCOL_DATA_POS] = RESULT_OK;
                             len = MIN_PACKET_LEN;
                             sendDataToClient(onePacket, len, communicationType);
                             break;
-                        case COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE:  //Ò»²ù³µµÄÓàÁÏ»ØÊÕÈë¿âÁË, ÊÕµ½Èë¿â²ù³µ±êÇ©
+                        case COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE:  //ä¸€é“²è½¦çš„ä½™æ–™å›æ”¶å…¥åº“äº†, æ”¶åˆ°å…¥åº“é“²è½¦æ ‡ç­¾
                             dealWithMaterialIn();
                             onePacket[PROTOCOL_DATA_POS] = RESULT_OK;
                             len = MIN_PACKET_LEN;
                             sendDataToClient(onePacket, len, communicationType);
                             break;
-                        case COMMUNICATION_TYPE_CAST_PROCESS_START:  //Á÷ÑÓÉè±¸¹¤ÈËÉÏ°àÁË
+                        case COMMUNICATION_TYPE_CAST_PROCESS_START:  //æµå»¶è®¾å¤‡å·¥äººä¸Šç­äº†
                             printingSWPCID = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100 - CAST_PROCESS_PC1 + gVariable.castingProcess[0];
                             dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
 
                             sendDispatchToClient(dName, communicationType);
                             break;
-                        case COMMUNICATION_TYPE_CAST_BARCODE_UPLOAD: //Íê³ÉÒ»¸ö´ó¾í£¬ÊÕµ½´ó¾íÁ÷ÑÓ±êÇ©
+                        case COMMUNICATION_TYPE_CAST_BARCODE_UPLOAD: //å®Œæˆä¸€ä¸ªå¤§å·ï¼Œæ”¶åˆ°å¤§å·æµå»¶æ ‡ç­¾
                             len = onePacket[PROTOCOL_LEN_POS] + onePacket[PROTOCOL_LEN_POS + 1] * 0x100 - MIN_PACKET_LEN_PURE_FRAME;
 
                             onePacket[PROTOCOL_DATA_POS] = RESULT_OK;
                             len = MIN_PACKET_LEN;
                             sendDataToClient(onePacket, len, communicationType);
                             break;
-                        case COMMUNICATION_TYPE_PRINT_PROCESS_START:  //Ó¡Ë¢Éè±¸¹¤ÈËÉÏ°àÁË
+                        case COMMUNICATION_TYPE_PRINT_PROCESS_START:  //å°åˆ·è®¾å¤‡å·¥äººä¸Šç­äº†
                             printingSWPCID = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100 - PRINT_PROCESS_PC1 + gVariable.printingProcess[0];
                             dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
                             sendDispatchToClient(dName, communicationType);
                             break;
-                        case COMMUNICATION_TYPE_PRINT_BARCODE_UPLOAD:  //Íê³ÉÒ»¸ö´ó¾í£¬ÊÕµ½´ó¾íÓ¡Ë¢±êÇ©
+                        case COMMUNICATION_TYPE_PRINT_BARCODE_UPLOAD:  //å®Œæˆä¸€ä¸ªå¤§å·ï¼Œæ”¶åˆ°å¤§å·å°åˆ·æ ‡ç­¾
                             len = onePacket[PROTOCOL_LEN_POS] + onePacket[PROTOCOL_LEN_POS + 1] * 0x100 - MIN_PACKET_LEN_PURE_FRAME;
 
                             onePacket[PROTOCOL_DATA_POS] = RESULT_OK;
                             len = MIN_PACKET_LEN;
                             sendDataToClient(onePacket, len, communicationType);
                             break;
-                        case COMMUNICATION_TYPE_SLIT_PROCESS_START:  //·ÖÇĞ¹¤ÉÏ°àÁË
+                        case COMMUNICATION_TYPE_SLIT_PROCESS_START:  //åˆ†åˆ‡å·¥ä¸Šç­äº†
                             //get string sent from client
                             len = onePacket[PROTOCOL_LEN_POS] + onePacket[PROTOCOL_LEN_POS + 1] * 0x100;
                             //there are 4 extra bytes indicating which slit machine we are using, so we need to minus 4
@@ -157,43 +157,43 @@ namespace MESSystem.communication
 
                             getDispatchByCodeAndSendToClient(dName, communicationType, str);
                             break;
-                        case COMMUNICATION_TYPE_SLIT_BARCODE_UPLOAD:  //·ÖÇĞÒ»¸öĞ¡¾íÍê¹¤£¬ÊÕµ½Ğ¡¾í·ÖÇĞ±êÇ©
+                        case COMMUNICATION_TYPE_SLIT_BARCODE_UPLOAD:  //åˆ†åˆ‡ä¸€ä¸ªå°å·å®Œå·¥ï¼Œæ”¶åˆ°å°å·åˆ†åˆ‡æ ‡ç­¾
                             onePacket[PROTOCOL_DATA_POS] = RESULT_OK;
                             len = MIN_PACKET_LEN;
                             sendDataToClient(onePacket, len, communicationType);
                             break;
-                        case COMMUNICATION_TYPE_INSPECTION_PROCESS_START:  //ÖÊ¼ì¿ªÊ¼
+                        case COMMUNICATION_TYPE_INSPECTION_PROCESS_START:  //è´¨æ£€å¼€å§‹
                             //get slit machine id from onepacket
                             printingSWPCID = onePacket[PROTOCOL_DATA_POS + DISPATCHCODE_LENGTH + 1] - 0x31 + gVariable.slittingProcess[0];
                             dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
                             sendDispatchToClient(dName, communicationType);
                             break;
-                        case COMMUNICATION_TYPE_INSPECTION_BARCODE_UPLOAD:  //ÖÊ¼ì½á¹ûÉÏ´«£¬ÊÕµ½ÖÊ¼ì±êÇ©
+                        case COMMUNICATION_TYPE_INSPECTION_BARCODE_UPLOAD:  //è´¨æ£€ç»“æœä¸Šä¼ ï¼Œæ”¶åˆ°è´¨æ£€æ ‡ç­¾
                             onePacket[PROTOCOL_DATA_POS] = RESULT_OK;
                             len = MIN_PACKET_LEN;
                             sendDataToClient(onePacket, len, communicationType);
                             break;
-                        case COMMUNICATION_TYPE_REUSE_PROCESS_START:  //ÔÙÔìÁÏ¿ª¹¤
+                        case COMMUNICATION_TYPE_REUSE_PROCESS_START:  //å†é€ æ–™å¼€å·¥
                             printingSWPCID = onePacket[PROTOCOL_DATA_POS + DISPATCHCODE_LENGTH + 1] - 0x31 + gVariable.slittingProcess[0];
                             dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
                             sendDispatchToClient(dName, communicationType);
                             break;
-                        case COMMUNICATION_TYPE_REUSE_BARCODE_UPLOAD:  //ÊÕµ½ÔÙÔìÁÏÊ¹ÓÃµÄĞ¡¾í±êÇ©
+                        case COMMUNICATION_TYPE_REUSE_BARCODE_UPLOAD:  //æ”¶åˆ°å†é€ æ–™ä½¿ç”¨çš„å°å·æ ‡ç­¾
                             onePacket[PROTOCOL_DATA_POS] = RESULT_OK;
                             len = MIN_PACKET_LEN;
                             sendDataToClient(onePacket, len, communicationType);
                             break;
-                        case COMMUNICATION_TYPE_PACKING_PROCESS_START: //´ò°ü¹¤¿ª¹¤
+                        case COMMUNICATION_TYPE_PACKING_PROCESS_START: //æ‰“åŒ…å·¥å¼€å·¥
                             printingSWPCID = onePacket[PROTOCOL_DATA_POS + DISPATCHCODE_LENGTH + 1] - 0x31 + gVariable.slittingProcess[0];
                             dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
                             sendDispatchToClient(dName, communicationType);
                             break;
-                        case COMMUNICATION_TYPE_PACKING_BARCODE_UPLOAD:  //´ò°ü¹¤ĞòÍê³ÉÒ»¸ö´ó°ü£¬ÊÕµ½´ó°ü±êÇ©
+                        case COMMUNICATION_TYPE_PACKING_BARCODE_UPLOAD:  //æ‰“åŒ…å·¥åºå®Œæˆä¸€ä¸ªå¤§åŒ…ï¼Œæ”¶åˆ°å¤§åŒ…æ ‡ç­¾
                             onePacket[PROTOCOL_DATA_POS] = RESULT_OK;
                             len = MIN_PACKET_LEN;
                             sendDataToClient(onePacket, len, communicationType);
                             break;
-                        case COMMUNICATION_TYPE_PRINTING_HEART_BEAT:  //ÊÕµ½´òÓ¡É¨ÃèÈí¼ş·¢ËÍµÄĞÄÌø°ü
+                        case COMMUNICATION_TYPE_PRINTING_HEART_BEAT:  //æ”¶åˆ°æ‰“å°æ‰«æè½¯ä»¶å‘é€çš„å¿ƒè·³åŒ…
                             str = getBasicInfoRecordToString();
                             sendStringToClient(str, communicationType);
                             break;
@@ -327,7 +327,7 @@ namespace MESSystem.communication
                 }
                 else
                 {
-                    MessageBox.Show("´òÓ¡É¨ÃèÈí¼şµÄ³öÈë¿âĞÅÏ¢ÖĞ£¬Í¶ÁÏÉè±¸ĞòºÅ¸ñÊ½ÓĞÎó£¡", "ÌáÊ¾ĞÅÏ¢", MessageBoxButtons.OK);
+                    MessageBox.Show("æ‰“å°æ‰«æè½¯ä»¶çš„å‡ºå…¥åº“ä¿¡æ¯ä¸­ï¼ŒæŠ•æ–™è®¾å¤‡åºå·æ ¼å¼æœ‰è¯¯ï¼", "æç¤ºä¿¡æ¯", MessageBoxButtons.OK);
                     return -1;
                 }
 
@@ -337,7 +337,7 @@ namespace MESSystem.communication
                 }
                 else
                 {
-                    MessageBox.Show("´òÓ¡É¨ÃèÈí¼şµÄ³öÈë¿âĞÅÏ¢ÖĞ£¬ÁÏ²ÖĞòºÅ¸ñÊ½ÓĞÎó£¡", "ÌáÊ¾ĞÅÏ¢", MessageBoxButtons.OK);
+                    MessageBox.Show("æ‰“å°æ‰«æè½¯ä»¶çš„å‡ºå…¥åº“ä¿¡æ¯ä¸­ï¼Œæ–™ä»“åºå·æ ¼å¼æœ‰è¯¯ï¼", "æç¤ºä¿¡æ¯", MessageBoxButtons.OK);
                     return -1;
                 }
 
@@ -347,7 +347,7 @@ namespace MESSystem.communication
                 }
                 else
                 {
-                    MessageBox.Show("´òÓ¡É¨ÃèÈí¼şµÄ³öÈë¿âĞÅÏ¢ÖĞ£¬Ô­ÁÏÊıÁ¿¸ñÊ½ÓĞÎó£¡", "ÌáÊ¾ĞÅÏ¢", MessageBoxButtons.OK);
+                    MessageBox.Show("æ‰“å°æ‰«æè½¯ä»¶çš„å‡ºå…¥åº“ä¿¡æ¯ä¸­ï¼ŒåŸæ–™æ•°é‡æ ¼å¼æœ‰è¯¯ï¼", "æç¤ºä¿¡æ¯", MessageBoxButtons.OK);
                     return -1;
                 }
 

@@ -124,13 +124,16 @@ namespace MESSystem.communication
         const int COMMUNICATION_TYPE_BARCODE_TO_SERVER = 0xB8;
 
         //communication between PC host and label printing SW
+        //guoye???
         const int COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID = 0xC0;  //set machine ID for label printing function
-        const int COMMUNICATION_TYPE_WAREHOUE_OUT_START = 0xC1;  //printing SW started and ask for material info, server send material info for all feeding machine to printing SW 
-        const int COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE = 0xC2;  //printing machine send barcode info to server whever a stack of material is moved out of the warehouse
-        const int COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE = 0xC3;  //printing machine send barcode info to server whever a stack of material is moved into the warehouse
-        const int COMMUNICATION_TYPE_CAST_PROCESS_START = 0xC4;  //printing SW started cast process, server need to send dispatch info to printing SW
-        const int COMMUNICATION_TYPE_CAST_BARCODE_UPLOAD = 0xC5;  //printing SW send large roll info to server
-        const int COMMUNICATION_TYPE_PRINT_PROCESS_START = 0xC6;
+        //guoye: 根据新的打印软件通讯协议
+        const int COMMUNICATION_TYPE_WAREHOUE_OUT_START = 0xB5;  //printing SW started and ask for material info, server send material info for all feeding machine to printing SW 
+        const int COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE = 0xB6;  //printing machine send barcode info to server whever a stack of material is moved out of the warehouse
+        const int COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE = 0xB7;  //printing machine send barcode info to server whever a stack of material is moved into the warehouse
+        const int COMMUNICATION_TYPE_CAST_PROCESS_START = 0xB8;  //printing SW started cast process, server need to send dispatch info to printing SW
+        const int COMMUNICATION_TYPE_CAST_BARCODE_UPLOAD = 0xB9;  //printing SW send large roll info to server
+        const int COMMUNICATION_TYPE_CASE_SHIFT = 0xBA;
+        const int COMMUNICATION_TYPE_PRINT_PROCESS_START = 0xBB;
         const int COMMUNICATION_TYPE_PRINT_BARCODE_UPLOAD = 0xC7;
         const int COMMUNICATION_TYPE_SLIT_PROCESS_START = 0xC8;
         const int COMMUNICATION_TYPE_SLIT_BARCODE_UPLOAD = 0xC9;

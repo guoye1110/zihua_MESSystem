@@ -11,6 +11,7 @@ using System.Threading;
 using System.Net.Sockets;
 using MESSystem.quality;
 using MESSystem.common;
+using MESSystem.zhihua_printerClient;
 
 namespace MESSystem.communication
 {
@@ -283,6 +284,9 @@ namespace MESSystem.communication
                                         {
                                             try
                                             {
+												printerClient print_client = new printerClient(this);
+												printerClient.processLabelPrintingFunc(communicationType, packetLen);
+                                            	
                                                 if (communicationType >= COMMUNICATION_TYPE_EMAIL_HEART_BEAT)
                                                 {
                                                     //communication with email forwarder

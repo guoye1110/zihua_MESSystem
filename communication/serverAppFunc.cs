@@ -22,9 +22,9 @@ namespace MESSystem.communication
             private int fileDataOffset;
             private FileStream fs;
 
-            private void sendResponseOKBack()
+            private void sendResponseOKBack(int result)
             {
-                onePacket[PROTOCOL_DATA_POS] = RESULT_OK;
+                onePacket[PROTOCOL_DATA_POS] = result;
                 onePacket[PROTOCOL_LEN_POS] = (byte)MIN_PACKET_LEN;
                 onePacket[PROTOCOL_LEN_POS + 1] = 0;
                 toolClass.addCrc32Code(onePacket, MIN_PACKET_LEN);

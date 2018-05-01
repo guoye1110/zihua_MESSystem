@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -71,11 +71,11 @@ namespace MESSystem.common
         public static int MACHINE_NAME_ALL_FOR_SELECTION;
         public static int[] allMachineIDForZihua = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
         //we will get this value from database
-        public static string[] machineNameArray; // = { "1ºÅÁ÷ÑÓ»ú", "2ºÅÁ÷ÑÓ»ú", "3ºÅÁ÷ÑÓ»ú", "4ºÅÁ÷ÑÓ»ú", "5ºÅÁ÷ÑÓ»ú", "6ºÅÖĞÊÔ»ú", "7ºÅ´µÄ¤»ú", "1ºÅÓ¡Ë¢»ú", "2ºÅÓ¡Ë¢»ú", "3ºÅÓ¡Ë¢»ú", "4ºÅÓ¡Ë¢»ú", "5ºÅÈáÓ¡»ú", "1ºÅ·ÖÇĞ»ú", "3ºÅ·ÖÇĞ»ú", "5ºÅ·ÖÇĞ»ú", "6ºÅ·ÖÇĞ»ú", "7ºÅ·ÖÇĞ»ú" };
-        //public static string[] packingMachineNameArray = { "1ºÅ´ò°ü»ú", "2ºÅ´ò°ü»ú", "3ºÅ´ò°ü»ú", "4ºÅ´ò°ü»ú", "5ºÅ´ò°ü»ú" };
+        public static string[] machineNameArray; // = { "1å·æµå»¶æœº", "2å·æµå»¶æœº", "3å·æµå»¶æœº", "4å·æµå»¶æœº", "5å·æµå»¶æœº", "6å·ä¸­è¯•æœº", "7å·å¹è†œæœº", "1å·å°åˆ·æœº", "2å·å°åˆ·æœº", "3å·å°åˆ·æœº", "4å·å°åˆ·æœº", "5å·æŸ”å°æœº", "1å·åˆ†åˆ‡æœº", "3å·åˆ†åˆ‡æœº", "5å·åˆ†åˆ‡æœº", "6å·åˆ†åˆ‡æœº", "7å·åˆ†åˆ‡æœº" };
+        //public static string[] packingMachineNameArray = { "1å·æ‰“åŒ…æœº", "2å·æ‰“åŒ…æœº", "3å·æ‰“åŒ…æœº", "4å·æ‰“åŒ…æœº", "5å·æ‰“åŒ…æœº" };
         //public static string[] machineNameArrayPackingIncluded; // = new string[machineNameArray.Length + packingMachineNameArray.Length];  
         public static string[] machineNameArrayForSelection; // = new string[machineNameArray.Length + packingMachineNameArray.Length + 1];
-        public static string[] allMachineWorkshopForZihua; // = { "Ò»³µ¼ä", "¶ş³µ¼ä", "¶ş³µ¼ä", "¶ş³µ¼ä", "¶ş³µ¼ä", "Ò»³µ¼ä", "Ò»³µ¼ä", "Ò»³µ¼ä", "Ò»³µ¼ä", "Ò»³µ¼ä", "Ò»³µ¼ä", "Ò»³µ¼ä", "¶ş³µ¼ä", "¶ş³µ¼ä", "¶ş³µ¼ä", "Ò»³µ¼ä", "Ò»³µ¼ä", "Ò»³µ¼ä" };
+        public static string[] allMachineWorkshopForZihua; // = { "ä¸€è½¦é—´", "äºŒè½¦é—´", "äºŒè½¦é—´", "äºŒè½¦é—´", "äºŒè½¦é—´", "ä¸€è½¦é—´", "ä¸€è½¦é—´", "ä¸€è½¦é—´", "ä¸€è½¦é—´", "ä¸€è½¦é—´", "ä¸€è½¦é—´", "ä¸€è½¦é—´", "äºŒè½¦é—´", "äºŒè½¦é—´", "äºŒè½¦é—´", "ä¸€è½¦é—´", "ä¸€è½¦é—´", "ä¸€è½¦é—´" };
 
         //not used any more
         public static string[] machineCodeArray;
@@ -131,8 +131,8 @@ namespace MESSystem.common
         public static int contemporarydispatchUI;
         public static string dispatchUnderReview; 
 
-        public static string programTitle = "×Ï»ªÆóÒµÖÇÄÜÉú²úĞÅÏ¢¹ÜÀíÏµÍ³";
-        public static string enterpriseTitle = "×Ï»ªÆóÒµ";
+        public static string programTitle = "ç´«åä¼ä¸šæ™ºèƒ½ç”Ÿäº§ä¿¡æ¯ç®¡ç†ç³»ç»Ÿ";
+        public static string enterpriseTitle = "ç´«åä¼ä¸š";
 
         //misellaneous defintion for screen, data type, device type, etc *******************************************
         public static float screenRatioX;  //current screen size X / SMALLEST_SCREEN_X(1280), for a 1920*1080 smaller font screen this is 1.5 
@@ -247,7 +247,7 @@ namespace MESSystem.common
         //s1711165012  --> 2017-11, 16->sales order index, 5 -> production line 5, 01 -> dispatch index(an order could be divided into multiple dispatches), 2 -> process index(casting machine)  
         public const int LENGTH_DISPATCH_CODE = 10;
 
-//        public int status; //0£ºERP published; 1£ºAPS OK; 2£ºproduction started(the first dispatch started); 3£ºsales order completed; 4£ºsales order cancelled  
+//        public int status; //0ï¼šERP published; 1ï¼šAPS OK; 2ï¼šproduction started(the first dispatch started); 3ï¼šsales order completed; 4ï¼šsales order cancelled  
 
         //production  management
         public const int SALES_ORDER_STATUS_ERP_PUBLISHED = 0;
@@ -289,9 +289,9 @@ namespace MESSystem.common
             {repairListTableName, null, null} 
         };
 
-        public static string[] taskListCheckDispatch = { "µãÑ²¼ì±í", "¼ÓÓÍ±í", "Éè±¸Çå½à±í" };
-        public static string[] taskListMaintainDispatch = { "Éè±¸Î¬»¤±£Ñø±í" };
-        public static string[] taskListRepairDispatch = { "Éè±¸Î¬ĞŞ±í" };
+        public static string[] taskListCheckDispatch = { "ç‚¹å·¡æ£€è¡¨", "åŠ æ²¹è¡¨", "è®¾å¤‡æ¸…æ´è¡¨" };
+        public static string[] taskListMaintainDispatch = { "è®¾å¤‡ç»´æŠ¤ä¿å…»è¡¨" };
+        public static string[] taskListRepairDispatch = { "è®¾å¤‡ç»´ä¿®è¡¨" };
 
         public static int machineListFresh;
         //public static int SPCDataNotEnough;
@@ -521,10 +521,10 @@ namespace MESSystem.common
         public const int ALARM_STATUS_COMPLETED = 2;
         public const int ALARM_STATUS_CANCELLED = 3;
         public const int ALARM_STATUS_ALL = 4;
-        public static string[] strAlarmStatus = { "ÒÑÉêÇë", "ÒÑÇ©µ½", "ÒÑ´¦Àí", "ÒÑÈ¡Ïû" };
+        public static string[] strAlarmStatus = { "å·²ç”³è¯·", "å·²ç­¾åˆ°", "å·²å¤„ç†", "å·²å–æ¶ˆ" };
 
         public static int ALARM_STATUS_ALL_FOR_SELECTION;
-        public static string[] strAlarmStatusForSelection = { "ÒÑÉêÇë", "ÒÑÇ©µ½", "ÒÑ´¦Àí", "ÒÑÈ¡Ïû", "ËùÓĞ×´Ì¬" };
+        public static string[] strAlarmStatusForSelection = { "å·²ç”³è¯·", "å·²ç­¾åˆ°", "å·²å¤„ç†", "å·²å–æ¶ˆ", "æ‰€æœ‰çŠ¶æ€" };
 
         public const int ALARM_TYPE_UNDEFINED = -1;  //undefined alarm type means all kinds of alarm need to be considered
         public const int ALARM_TYPE_DEVICE = 0;  //no chart
@@ -535,13 +535,13 @@ namespace MESSystem.common
         public const int ALARM_TYPE_CURRENT_VALUE = 4;  //dispatch should be completed as planned, but fails to complete 
         public const int ALARM_TYPE_ALL_IN_DETAIL = 5;  // all kinds in 
         public const int ALARM_TYPE_TOTAL_NUM = 5;  //total number of alatm types  
-        public static string[] strAlarmTypeInDetail = { "Éè±¸°²µÆ±¨¾¯", "ÎïÁÏ°²µÆ±¨¾¯", "ÖÊÁ¿Êı¾İ±¨¾¯", "¹¤ÒÕ²ÎÊı±¨¾¯", "¹¤µ¥Î´Íê³É±¨¾¯"};
+        public static string[] strAlarmTypeInDetail = { "è®¾å¤‡å®‰ç¯æŠ¥è­¦", "ç‰©æ–™å®‰ç¯æŠ¥è­¦", "è´¨é‡æ•°æ®æŠ¥è­¦", "å·¥è‰ºå‚æ•°æŠ¥è­¦", "å·¥å•æœªå®ŒæˆæŠ¥è­¦"};
 
         public const int ALARM_TYPE_DATA = 2;  //including quality/craft data alarm
         public static int ALARM_TYPE_ALL_FOR_SELECTION;
-        public static string[] strAlarmTypeForSelection = { "Éè±¸°²µÆ±¨¾¯", "ÎïÁÏ°²µÆ±¨¾¯", "¸÷ÀàÊı¾İ±¨¾¯", "ËùÓĞÀàĞÍ°²µÆ±¨¾¯" };
+        public static string[] strAlarmTypeForSelection = { "è®¾å¤‡å®‰ç¯æŠ¥è­¦", "ç‰©æ–™å®‰ç¯æŠ¥è­¦", "å„ç±»æ•°æ®æŠ¥è­¦", "æ‰€æœ‰ç±»å‹å®‰ç¯æŠ¥è­¦" };
 
-        public const string SPCMonitoringSystem = "SPC¼à²âÏµÍ³";
+        public const string SPCMonitoringSystem = "SPCç›‘æµ‹ç³»ç»Ÿ";
 
         //whether there is a device alarm alive for this board/machine, 
         //if there is already an alarm of this kind displayed on server screen, we can not trigger another one for the same kind, unless we dismiss it from the current screen
@@ -905,7 +905,7 @@ namespace MESSystem.common
 
         public static System.DateTime worldStartTime;
 
-        //private int[] startLineNum = new int[12]; //ÇúÏßÖĞÆğÊ¼¼ÇÂ¼µÄË÷Òı 
+        //private int[] startLineNum = new int[12]; //æ›²çº¿ä¸­èµ·å§‹è®°å½•çš„ç´¢å¼• 
 
         //Now we get these values from product info excel file, not prefixed any more
         //public static float[] curveSTDValue = { 3.5F, 3.5F, 0.3F, 0.7F, 15.0F, 100.0F, 1, 1, 222, 0.038F, 3.8F, 50, 222, 0.038F, 3.8F, 50 };    //input value
@@ -956,59 +956,59 @@ namespace MESSystem.common
         //list between button index and board index
         public static int[,] buttonBoardIndexTable = new int[numOfWorkshop, totalButtonNum];
 
-        public static errorCodeListStruct errorCodeList;	//´íÎó±àÂë±í
+        public static errorCodeListStruct errorCodeList;	//é”™è¯¯ç¼–ç è¡¨
         //public static salesOrderStruct salesOrderImpl = new salesOrderStruct();
-        public static BOMListStruct[] BOMList = new BOMListStruct[maxMachineNum];       //Ô­ÁÏÅä±È±í
+        public static BOMListStruct[] BOMList = new BOMListStruct[maxMachineNum];       //åŸæ–™é…æ¯”è¡¨
 
-        public static dispatchSheetStruct[] dispatchSheet = new dispatchSheetStruct[maxMachineNum];  //¹¤µ¥±í
-        public static machineStatusStruct [] machineStatus = new machineStatusStruct[maxMachineNum];  //Éè±¸×´Ì¬±í
-        public static craftListStruct [] craftList = new craftListStruct[maxMachineNum];	      //¹¤ÒÕ²ÎÊı±í
-        public static qualityListStruct[] qualityList = new qualityListStruct[maxMachineNum];	    //ÖÊÁ¿¼ì²â±í
-        public static materialListStruct[] materialList = new materialListStruct[maxMachineNum];       //ÎïÁÏÅäËÍµ¥ÁĞ±í
+        public static dispatchSheetStruct[] dispatchSheet = new dispatchSheetStruct[maxMachineNum];  //å·¥å•è¡¨
+        public static machineStatusStruct [] machineStatus = new machineStatusStruct[maxMachineNum];  //è®¾å¤‡çŠ¶æ€è¡¨
+        public static craftListStruct [] craftList = new craftListStruct[maxMachineNum];	      //å·¥è‰ºå‚æ•°è¡¨
+        public static qualityListStruct[] qualityList = new qualityListStruct[maxMachineNum];	    //è´¨é‡æ£€æµ‹è¡¨
+        public static materialListStruct[] materialList = new materialListStruct[maxMachineNum];       //ç‰©æ–™é…é€å•åˆ—è¡¨
 
         public static beatPeriodStruct [] beatPeriodInfo = new beatPeriodStruct[maxMachineNum]; //beat setting value for currents
         public static ADCChannelStruct [] ADCChannelInfo = new ADCChannelStruct[maxMachineNum]; // ADC settings
         public static uartSettingStruct [] uartSettingInfo = new uartSettingStruct[maxMachineNum];
         public static GPIOSettingStruct [] GPIOSettingInfo = new GPIOSettingStruct[maxMachineNum];
 
-        //¹ÊÕÏ±àÂë±í½á¹¹
+        //æ•…éšœç¼–ç è¡¨ç»“æ„
         public struct errorCodeListStruct
         {
-            public int errorCodeListSize;  //´íÎó±àÂëÊıÁ¿
+            public int errorCodeListSize;  //é”™è¯¯ç¼–ç æ•°é‡
             public string[] errorCode;
             public string[] errorCodeDesc;
         }
 
-        //¶©µ¥±í½á¹¹
+        //è®¢å•è¡¨ç»“æ„
         public struct salesOrderStruct
         {
             public string ID;  //ID in sales order table
             public string salesOrderCode;
-            public string deliveryTime;  //½»»õÆÚ
-            public string productCode;	 //²úÆ·±àÂë
-            public string productName;  //²úÆ·Ãû³Æ
-            public string requiredNum;	//¼Æ»®Éú²úÊıÁ¿
-            public string unit;  //ÊıÁ¿µÄµ¥Î»
-            public string customer; //¿Í»§Ãû
-            public string publisher; //ÏÂ·¢Õß
-            public string ERPTime; //ERP ÏÂ·¢Ê±¼ä
-            public string APSTime; //APS ÅÅ³ÌÈ·ÈÏÊ±¼ä(°üÀ¨ÊÖ¹¤µ÷Õû)
-            public string planTime1;	//Ô¤¼Æ¿ª¹¤Ê±¼ä
-            public string planTime2;  //Ô¤¼ÆÍê¹¤Ê±¼ä
-            public string realStartTime;	//Ô¤¼Æ¿ª¹¤Ê±¼ä
-            public string realFinishTime;  //Ô¤¼ÆÍê¹¤Ê±¼ä
-            public string source; //0: ÊÖ¹¤ÊäÈë; 1: ERP µ¼Èë
-            public string status; //0£ºERP published; 1£ºAPS OK; 2£ºproduction started(the first dispatch started); 3£ºsales order completed; 4£ºsales order   
+            public string deliveryTime;  //äº¤è´§æœŸ
+            public string productCode;	 //äº§å“ç¼–ç 
+            public string productName;  //äº§å“åç§°
+            public string requiredNum;	//è®¡åˆ’ç”Ÿäº§æ•°é‡
+            public string unit;  //æ•°é‡çš„å•ä½
+            public string customer; //å®¢æˆ·å
+            public string publisher; //ä¸‹å‘è€…
+            public string ERPTime; //ERP ä¸‹å‘æ—¶é—´
+            public string APSTime; //APS æ’ç¨‹ç¡®è®¤æ—¶é—´(åŒ…æ‹¬æ‰‹å·¥è°ƒæ•´)
+            public string planTime1;	//é¢„è®¡å¼€å·¥æ—¶é—´
+            public string planTime2;  //é¢„è®¡å®Œå·¥æ—¶é—´
+            public string realStartTime;	//é¢„è®¡å¼€å·¥æ—¶é—´
+            public string realFinishTime;  //é¢„è®¡å®Œå·¥æ—¶é—´
+            public string source; //0: æ‰‹å·¥è¾“å…¥; 1: ERP å¯¼å…¥
+            public string status; //0ï¼šERP published; 1ï¼šAPS OK; 2ï¼šproduction started(the first dispatch started); 3ï¼šsales order completed; 4ï¼šsales order   
         }
 
-        //²úÆ·±í½á¹¹
+        //äº§å“è¡¨ç»“æ„
         public struct productStruct
         {
             public string customer;
-            public string productCode;	 //²úÆ·±àÂë
-            public string productName;  //²úÆ·Ãû³Æ
+            public string productCode;	 //äº§å“ç¼–ç 
+            public string productName;  //äº§å“åç§°
             public string BOMCode;
-            public string routeCode; //¹¤ÒÕÂ·Ïß
+            public string routeCode; //å·¥è‰ºè·¯çº¿
             public string productWeight;
             public string productThickness;
             public string baseColor;
@@ -1026,7 +1026,7 @@ namespace MESSystem.common
             public string slitQuality;
         }
 
-        //Éè±¸¿ÕÏĞÊ±¼ä±í -- for APS
+        //è®¾å¤‡ç©ºé—²æ—¶é—´è¡¨ -- for APS
         public struct machinePlanStruct
         {
             public string maintenanceID;
@@ -1043,7 +1043,7 @@ namespace MESSystem.common
             public string customer;
         }
 
-        //Éè±¸×´Ì¬³ÖĞøÊ±¼ä±í±í -- ÓÃÓÚ¼ÇÂ¼Éè±¸ÔËĞĞ/´ı»ú/Í£Ö¹µÄ³ÖĞøÊ±¼ä£¬ÓÃÓÚÉú²ú×´Ì¬µÄÍ¼ĞÎÏÔÊ¾½éÃæ
+        //è®¾å¤‡çŠ¶æ€æŒç»­æ—¶é—´è¡¨è¡¨ -- ç”¨äºè®°å½•è®¾å¤‡è¿è¡Œ/å¾…æœº/åœæ­¢çš„æŒç»­æ—¶é—´ï¼Œç”¨äºç”Ÿäº§çŠ¶æ€çš„å›¾å½¢æ˜¾ç¤ºä»‹é¢
         public struct machineStatusRecordStruct
         {
             public string recordTime;
@@ -1052,33 +1052,33 @@ namespace MESSystem.common
             public string keepMinutes;
         }
 
-        //¹¤µ¥±í½á¹¹
+        //å·¥å•è¡¨ç»“æ„
         public struct dispatchSheetStruct
         {
-            public string machineID;   //Éè±¸ĞòºÅ 
+            public string machineID;   //è®¾å¤‡åºå· 
             public string dispatchCode;  //dispatch code
-            public string planTime1;	//Ô¤¼Æ¿ªÊ¼Ê±¼ä
-            public string planTime2;  //Ô¤¼Æ½áÊøÊ±¼ä
-            public string productCode;	 //²úÆ·±àÂë
-            public string productName;  //²úÆ·Ãû³Æ
-            public string operatorName; //²Ù×÷Ô±
-            public int plannedNumber;	//¼Æ»®Éú²úÊıÁ¿
-            public int outputNumber;  //½ÓÊÕÊıÁ¿
-            public int qualifiedNumber;  //ºÏ¸ñÊıÁ¿
-            public int unqualifiedNumber;  //²»ºÏ¸ñÊıÁ¿
-            public string processName; //¹¤Ğò£¨¹¤ÒÕÂ·ÏßÖĞ°üº¬¶à¸ö¹¤Ğò£©
-            public string realStartTime;	  //Êµ¼Ê¿ªÊ¼Ê±¼ä
-            public string realFinishTime;	  //Êµ¼ÊÍê¹¤Ê±¼ä
-            public string prepareTimePoint;   //µ÷ÕûÊ±¼ä£¨ÊÔ²úÊ±¼ä£©£¬¿ª¹¤ºóÏÈ¾­¹ıµ÷ÕûÊ±¼ä£¬È»ºóÔÙÕıÊ½Éú²ú
-            public int status;	  //0£ºdummy/prepared ¹¤µ¥×¼±¸Íê³Éµ«Î´·¢²¼£¬1:¹¤µ¥Íê¹¤£¬ĞÂ¹¤µ¥Î´·¢²¼£¬2£º¹¤µ¥·¢²¼ÖÁÉè±¸ 3£º¹¤µ¥ÒÑÆô¶¯ 4£ºÊÔ²ú£¨µ÷ÕûÊ±¼ä£© OK
-            public int toolLifeTimes;  //µ¶¾ßÊÙÃü´ÎÊı
-            public int toolUsedTimes;  //µ¶¾ßÊ¹ÓÃ´ÎÊı
-            public int outputRatio;  //µ¥¼şÏµÊı
-            public string serialNumber; //Á÷Ë®ºÅ
-            public string reportor; //±¨¹¤Ô±¹¤ºÅ, ±¨¹¤Ô±ºÍ²Ù×÷Ô±¿ÉÄÜ²»ÊÇÍ¬Ò»¸öÈË
-            public string workshop;	 //³µ¼äÃû³Æ£¬»òÕßÊÇÁ÷Ë®ÏßµÄÃû×Ö
-            public string workshift;	 //°à´Î£¨ÔçÖĞÍí°à£©
-            public string salesOrderCode; //¶©µ¥ºÅ
+            public string planTime1;	//é¢„è®¡å¼€å§‹æ—¶é—´
+            public string planTime2;  //é¢„è®¡ç»“æŸæ—¶é—´
+            public string productCode;	 //äº§å“ç¼–ç 
+            public string productName;  //äº§å“åç§°
+            public string operatorName; //æ“ä½œå‘˜
+            public int plannedNumber;	//è®¡åˆ’ç”Ÿäº§æ•°é‡
+            public int outputNumber;  //æ¥æ”¶æ•°é‡
+            public int qualifiedNumber;  //åˆæ ¼æ•°é‡
+            public int unqualifiedNumber;  //ä¸åˆæ ¼æ•°é‡
+            public string processName; //å·¥åºï¼ˆå·¥è‰ºè·¯çº¿ä¸­åŒ…å«å¤šä¸ªå·¥åºï¼‰
+            public string realStartTime;	  //å®é™…å¼€å§‹æ—¶é—´
+            public string realFinishTime;	  //å®é™…å®Œå·¥æ—¶é—´
+            public string prepareTimePoint;   //è°ƒæ•´æ—¶é—´ï¼ˆè¯•äº§æ—¶é—´ï¼‰ï¼Œå¼€å·¥åå…ˆç»è¿‡è°ƒæ•´æ—¶é—´ï¼Œç„¶åå†æ­£å¼ç”Ÿäº§
+            public int status;	  //0ï¼šdummy/prepared å·¥å•å‡†å¤‡å®Œæˆä½†æœªå‘å¸ƒï¼Œ1:å·¥å•å®Œå·¥ï¼Œæ–°å·¥å•æœªå‘å¸ƒï¼Œ2ï¼šå·¥å•å‘å¸ƒè‡³è®¾å¤‡ 3ï¼šå·¥å•å·²å¯åŠ¨ 4ï¼šè¯•äº§ï¼ˆè°ƒæ•´æ—¶é—´ï¼‰ OK
+            public int toolLifeTimes;  //åˆ€å…·å¯¿å‘½æ¬¡æ•°
+            public int toolUsedTimes;  //åˆ€å…·ä½¿ç”¨æ¬¡æ•°
+            public int outputRatio;  //å•ä»¶ç³»æ•°
+            public string serialNumber; //æµæ°´å·
+            public string reportor; //æŠ¥å·¥å‘˜å·¥å·, æŠ¥å·¥å‘˜å’Œæ“ä½œå‘˜å¯èƒ½ä¸æ˜¯åŒä¸€ä¸ªäºº
+            public string workshop;	 //è½¦é—´åç§°ï¼Œæˆ–è€…æ˜¯æµæ°´çº¿çš„åå­—
+            public string workshift;	 //ç­æ¬¡ï¼ˆæ—©ä¸­æ™šç­ï¼‰
+            public string salesOrderCode; //è®¢å•å·
             public string BOMCode; // 
             public string customer;
             public string barCode;
@@ -1087,42 +1087,42 @@ namespace MESSystem.common
             public string multiProduct;
             public string productCode2;
             public string productCode3;
-            public string operatorName2; //²Ù×÷Ô±
-            public string operatorName3; //²Ù×÷Ô±
-            public string batchNum; //Åú´ÎºÅ£¬previously used inside Zihua, now we don't need this in new system, but need it to be compatible with the old system
+            public string operatorName2; //æ“ä½œå‘˜
+            public string operatorName3; //æ“ä½œå‘˜
+            public string batchNum; //æ‰¹æ¬¡å·ï¼Œpreviously used inside Zihua, now we don't need this in new system, but need it to be compatible with the old system
         }
 
-        //Éè±¸×´Ì¬±í½á¹¹
+        //è®¾å¤‡çŠ¶æ€è¡¨ç»“æ„
         public struct machineStatusStruct
         {
-            public string recordTime;  //¼ÇÂ¼Ê±¼ä
-            public string machineID;  //Éè±¸ĞòºÅ
-            public string machineCode;  //Éè±¸±àÂë
-            public string machineName;  //Éè±¸Ãû
-            public string dispatchCode;  //µ±Ç°¹¤µ¥ºÅ
-            public string startTime;	  //¿ª»úÊ±¼ä
-            public string offTime;	  //¹Ø»úÊ±¼ä
-            public int totalWorkingTime;  //×÷Òµ×ÜÊ±¼ä
-            public int collectedNumber;  //Éè±¸²É¼¯¼şÊı
-            public int productBeat;  //Éú²ú½ÚÅÄ
-            public int workingTime;  //Éú²úÊ±¼ä
-            public int prepareTime;  //µ÷ÕûÊ±¼ä´ı»úÊ±¼ä
-            public int standbyTime;  //´ı»úÊ±¼ä
-            public int power; //¹¦ÂÊ
-            public int powerConsumed;  //ÄÜºÄ
-            public int pressure;  //Ñ¹Á¦
-            public int revolution;  //×ªÊı
-            public int maintenancePeriod;   //±£ÑøÖÜÆÚ
-            public int lastMaintenance;   //×î½üÒ»´Î±£Ñø
-            public int toolLifeTimes;  //µ¶¾ßÊÙÃü´ÎÊı
-            public int toolUsedTimes;  //µ¶¾ßÊ¹ÓÃ´ÎÊı
+            public string recordTime;  //è®°å½•æ—¶é—´
+            public string machineID;  //è®¾å¤‡åºå·
+            public string machineCode;  //è®¾å¤‡ç¼–ç 
+            public string machineName;  //è®¾å¤‡å
+            public string dispatchCode;  //å½“å‰å·¥å•å·
+            public string startTime;	  //å¼€æœºæ—¶é—´
+            public string offTime;	  //å…³æœºæ—¶é—´
+            public int totalWorkingTime;  //ä½œä¸šæ€»æ—¶é—´
+            public int collectedNumber;  //è®¾å¤‡é‡‡é›†ä»¶æ•°
+            public int productBeat;  //ç”Ÿäº§èŠ‚æ‹
+            public int workingTime;  //ç”Ÿäº§æ—¶é—´
+            public int prepareTime;  //è°ƒæ•´æ—¶é—´å¾…æœºæ—¶é—´
+            public int standbyTime;  //å¾…æœºæ—¶é—´
+            public int power; //åŠŸç‡
+            public int powerConsumed;  //èƒ½è€—
+            public int pressure;  //å‹åŠ›
+            public int revolution;  //è½¬æ•°
+            public int maintenancePeriod;   //ä¿å…»å‘¨æœŸ
+            public int lastMaintenance;   //æœ€è¿‘ä¸€æ¬¡ä¿å…»
+            public int toolLifeTimes;  //åˆ€å…·å¯¿å‘½æ¬¡æ•°
+            public int toolUsedTimes;  //åˆ€å…·ä½¿ç”¨æ¬¡æ•°
         }
 
 
-        //¹¤ÒÕ²ÎÊı±í½á¹¹
+        //å·¥è‰ºå‚æ•°è¡¨ç»“æ„
         public struct craftListStruct
         {
-            public int paramNumber;  //¹¤ÒÕ²ÎÊı¸öÊı
+            public int paramNumber;  //å·¥è‰ºå‚æ•°ä¸ªæ•°
             public int workingVoltage;
             public int[] id;
             public string[] paramName;
@@ -1135,10 +1135,10 @@ namespace MESSystem.common
             public float[] rangeUpperLimit;
         }
 
-        //ÖÊÁ¿¼ì²â±í½á¹¹
+        //è´¨é‡æ£€æµ‹è¡¨ç»“æ„
         public struct qualityListStruct
         {
-            public int checkItemNumber;  //ÖÊÁ¿¼ì²â²ÎÊı¸öÊı
+            public int checkItemNumber;  //è´¨é‡æ£€æµ‹å‚æ•°ä¸ªæ•°
             public int[] id;
             public string[] checkItem;
             public float[] controlCenterValue1;
@@ -1157,7 +1157,7 @@ namespace MESSystem.common
             public int[] chartType;
         }
 
-        //Éè±¸°²µÆ±¨¾¯±í
+        //è®¾å¤‡å®‰ç¯æŠ¥è­¦è¡¨
         public struct alarmTableStruct
         {
             public string errorDesc;  //error description
@@ -1184,7 +1184,7 @@ namespace MESSystem.common
             public int deviceFailureIndex;  //index in error description table
         }
 
-        //Ô­ÁÏ±í -- ³¡ÄÚÔ­ÁÏÁĞ±í
+        //åŸæ–™è¡¨ -- åœºå†…åŸæ–™åˆ—è¡¨
         public struct materialTableStruct
         {
             public string materialCode;
@@ -1199,7 +1199,7 @@ namespace MESSystem.common
             public string price;
         }
 
-        //Éú²úÎïÁÏ±í -- ¸½ÊôÓÚÄ³Ò»¸ö¹¤µ¥
+        //ç”Ÿäº§ç‰©æ–™è¡¨ -- é™„å±äºæŸä¸€ä¸ªå·¥å•
         public struct materialListStruct
         {
             public string salesOrderCode;
@@ -1209,23 +1209,23 @@ namespace MESSystem.common
             public string machineName;
             public string status;
             public int numberOfTypes;  //number of kinds of material
-            public string[] materialName;  //ÎïÁÏÃû³Æ£¨°üÀ¨¼ÆÁ¿µ¥Î»£©
-            public string[] materialCode;  //ÎïÁÏ±àÂë
-            public int[] materialRequired;  //ÎïÁÏĞèÇóÊıÁ¿
-            public int[] fullPackNum;  //Ò»¸öÂë¶â¿É´æ·ÅµÄ´üÊı
+            public string[] materialName;  //ç‰©æ–™åç§°ï¼ˆåŒ…æ‹¬è®¡é‡å•ä½ï¼‰
+            public string[] materialCode;  //ç‰©æ–™ç¼–ç 
+            public int[] materialRequired;  //ç‰©æ–™éœ€æ±‚æ•°é‡
+            public int[] fullPackNum;  //ä¸€ä¸ªç å›å¯å­˜æ”¾çš„è¢‹æ•°
         }
 
-        //Ô­ÁÏÅä±È±í -- »ù´¡Êı¾İµÄÒ»²¿·Ö£¬Óë¹¤µ¥¼°Éè±¸ÎŞ¹Ø
+        //åŸæ–™é…æ¯”è¡¨ -- åŸºç¡€æ•°æ®çš„ä¸€éƒ¨åˆ†ï¼Œä¸å·¥å•åŠè®¾å¤‡æ— å…³
         public struct BOMListStruct
         {
             public string BOMCode;
             public int numberOfTypes;  //number of kinds of material
-            public string[] materialCode;  //ÎïÁÏ±àÂë
-            public string[] materialName;  //ÎïÁÏÃû³Æ£¨°üÀ¨¼ÆÁ¿µ¥Î»£©
-            public int[] materialQuantity;  //ÎïÁÏÊıÁ¿
+            public string[] materialCode;  //ç‰©æ–™ç¼–ç 
+            public string[] materialName;  //ç‰©æ–™åç§°ï¼ˆåŒ…æ‹¬è®¡é‡å•ä½ï¼‰
+            public int[] materialQuantity;  //ç‰©æ–™æ•°é‡
         }
 
-        //Ô±¹¤ÁĞ±í  -- »ù´¡Êı¾İµÄÒ»²¿·Ö
+        //å‘˜å·¥åˆ—è¡¨  -- åŸºç¡€æ•°æ®çš„ä¸€éƒ¨åˆ†
         public struct employeeListStruct
         {
             public string workerID;
@@ -1381,90 +1381,90 @@ namespace MESSystem.common
 
     public class gConstText
     {
-        public const string exitStr = "ÍË³ö";
-        public const string dispatchUIListTitle0 = "ĞòºÅ";
-        public const string dispatchUIListTitle1 = "½ÇÉ«";
-        public const string dispatchUIListTitle2 = "¼ìÑéÏîÄ¿";
-        public const string dispatchUIListTitle3 = "¼ìÑéÒªÇó";
-        public const string dispatchUIListTitle4 = "¹«²îÏÂÏŞ";
-        public const string dispatchUIListTitle5 = "¿ØÖÆÏÂÏŞ";
-        public const string dispatchUIListTitle6 = "¹«²îÉÏÏŞ";
-        public const string dispatchUIListTitle7 = "¿ØÖÆÉÏÏŞ";
-        public const string dispatchUIListTitle8 = "³éÑù¼şÊı";
-        public const string dispatchUIListTitle9 = "¼ìÑé½á¹û";
-        public const string dispatchUIListTitle10 = "½á¹ûÅĞ¶Ï";
+        public const string exitStr = "é€€å‡º";
+        public const string dispatchUIListTitle0 = "åºå·";
+        public const string dispatchUIListTitle1 = "è§’è‰²";
+        public const string dispatchUIListTitle2 = "æ£€éªŒé¡¹ç›®";
+        public const string dispatchUIListTitle3 = "æ£€éªŒè¦æ±‚";
+        public const string dispatchUIListTitle4 = "å…¬å·®ä¸‹é™";
+        public const string dispatchUIListTitle5 = "æ§åˆ¶ä¸‹é™";
+        public const string dispatchUIListTitle6 = "å…¬å·®ä¸Šé™";
+        public const string dispatchUIListTitle7 = "æ§åˆ¶ä¸Šé™";
+        public const string dispatchUIListTitle8 = "æŠ½æ ·ä»¶æ•°";
+        public const string dispatchUIListTitle9 = "æ£€éªŒç»“æœ";
+        public const string dispatchUIListTitle10 = "ç»“æœåˆ¤æ–­";
 
-        public const string deviceAlarmScreenTitle = "Éè±¸°²µÆÁĞ±í";
-        public const string deviceAlarmListTitle0 = "ĞòºÅ";
-        public const string deviceAlarmListTitle1 = "°²µÆ±àºÅ";
-        public const string deviceAlarmListTitle2 = "Éè±¸±àÂë";
-        public const string deviceAlarmListTitle3 = "Éè±¸Ãû³Æ";
-        public const string deviceAlarmListTitle4 = "°²µÆÀàĞÍ";
-        public const string deviceAlarmListTitle5 = "°²µÆÃèÊö";
-        public const string deviceAlarmListTitle6 = "ºô½ĞÈË";
-        public const string deviceAlarmListTitle7 = "ºô½ĞÊ±¼ä";
-        public const string deviceAlarmListTitle8 = "°²µÆ×´Ì¬";
-        public const string deviceAlarmListTitle9 = "Ç©µ½Õß";
-        public const string deviceAlarmListTitle10 = "²Ù×÷Õß";
-        public const string deviceAlarmListTitle11 = "Ç©µ½Ê±¼ä";
-        public const string deviceAlarmListTitle12 = "´íÎó·ÖÎö";
-        public const string deviceAlarmListTitle13 = "´¦Àí´ëÊ©";
-        public const string deviceAlarmListTitle14 = "´¦Àí/È¡ÏûÊ±¼ä";
+        public const string deviceAlarmScreenTitle = "è®¾å¤‡å®‰ç¯åˆ—è¡¨";
+        public const string deviceAlarmListTitle0 = "åºå·";
+        public const string deviceAlarmListTitle1 = "å®‰ç¯ç¼–å·";
+        public const string deviceAlarmListTitle2 = "è®¾å¤‡ç¼–ç ";
+        public const string deviceAlarmListTitle3 = "è®¾å¤‡åç§°";
+        public const string deviceAlarmListTitle4 = "å®‰ç¯ç±»å‹";
+        public const string deviceAlarmListTitle5 = "å®‰ç¯æè¿°";
+        public const string deviceAlarmListTitle6 = "å‘¼å«äºº";
+        public const string deviceAlarmListTitle7 = "å‘¼å«æ—¶é—´";
+        public const string deviceAlarmListTitle8 = "å®‰ç¯çŠ¶æ€";
+        public const string deviceAlarmListTitle9 = "ç­¾åˆ°è€…";
+        public const string deviceAlarmListTitle10 = "æ“ä½œè€…";
+        public const string deviceAlarmListTitle11 = "ç­¾åˆ°æ—¶é—´";
+        public const string deviceAlarmListTitle12 = "é”™è¯¯åˆ†æ";
+        public const string deviceAlarmListTitle13 = "å¤„ç†æªæ–½";
+        public const string deviceAlarmListTitle14 = "å¤„ç†/å–æ¶ˆæ—¶é—´";
 
-        public const string materialAlarmScreenTitle = "ÎïÁÏ°²µÆÁĞ±í";
-        public const string materialAlarmListTitle0 = "¹´Ñ¡";
-        public const string materialAlarmListTitle1 = "ĞòºÅ";
-        public const string materialAlarmListTitle2 = "ÅÉ¹¤µ¥ºÅ";
-        public const string materialAlarmListTitle3 = "ÎïÁÏÅú´ÎºÅ";
-        public const string materialAlarmListTitle4 = "Éè±¸Ãû³Æ(½ÓÊÕµã)";
+        public const string materialAlarmScreenTitle = "ç‰©æ–™å®‰ç¯åˆ—è¡¨";
+        public const string materialAlarmListTitle0 = "å‹¾é€‰";
+        public const string materialAlarmListTitle1 = "åºå·";
+        public const string materialAlarmListTitle2 = "æ´¾å·¥å•å·";
+        public const string materialAlarmListTitle3 = "ç‰©æ–™æ‰¹æ¬¡å·";
+        public const string materialAlarmListTitle4 = "è®¾å¤‡åç§°(æ¥æ”¶ç‚¹)";
 
-        public const string deviceAlarmListItem1 = "Ç©µ½";
-        public const string deviceAlarmListItem2 = "½á¹ûÈ·ÈÏ";
-        public const string deviceAlarmListItem3 = "È¡Ïû°²µÆ";
+        public const string deviceAlarmListItem1 = "ç­¾åˆ°";
+        public const string deviceAlarmListItem2 = "ç»“æœç¡®è®¤";
+        public const string deviceAlarmListItem3 = "å–æ¶ˆå®‰ç¯";
 
-        public static string[] SPCAnalyzeDataTitle = { "»ù±¾Êı¾İ", "CPKÊı¾İ", "¿ØÖÆÍ¼Êı¾İ" };
+        public static string[] SPCAnalyzeDataTitle = { "åŸºæœ¬æ•°æ®", "CPKæ•°æ®", "æ§åˆ¶å›¾æ•°æ®" };
 
         public static string[,] SPCAnalyzeDataStr = new string[3, 8]
         {
-            {"Ñù±¾×ÜÊı", "¹æ¸ñÉÏÏŞ", "¹æ¸ñÖĞĞÄ", "¹æ¸ñÏÂÏŞ", "×î´óÖµ", "×îĞ¡Öµ", "Æ½¾ùÖµ", ""},
+            {"æ ·æœ¬æ€»æ•°", "è§„æ ¼ä¸Šé™", "è§„æ ¼ä¸­å¿ƒ", "è§„æ ¼ä¸‹é™", "æœ€å¤§å€¼", "æœ€å°å€¼", "å¹³å‡å€¼", ""},
             {"Cp", "Cpk", "Cpl", "Cpu", "Pp", "Ppk", "Ppl", "Ppu"},
-            {"XBar¿ØÖÆÉÏÏŞ", "XBarÖĞĞÄÏß", "XBar¿ØÖÆÏÂÏŞ", "SÍ¼¿ØÖÆÉÏÏŞ", "SÍ¼ÖĞĞÄÏß", "SÍ¼¿ØÖÆÏÂÏŞ", "", ""},
+            {"XBaræ§åˆ¶ä¸Šé™", "XBarä¸­å¿ƒçº¿", "XBaræ§åˆ¶ä¸‹é™", "Så›¾æ§åˆ¶ä¸Šé™", "Så›¾ä¸­å¿ƒçº¿", "Så›¾æ§åˆ¶ä¸‹é™", "", ""},
         };
 
-        public static string[] alarmListTitle = { "Éè±¸°²µÆ±¨¾¯¼ÇÂ¼ÁĞ±í", "ÎïÁÏ°²µÆ±¨¾¯¼ÇÂ¼ÁĞ±í", "ÖÊÁ¿Êı¾İ±¨¾¯¼ÇÂ¼ÁĞ±í", "ÖÊÁ¿Êı¾İ±¨¾¯¼ÇÂ¼ÁĞ±í", "¹¤ÒÕ²ÎÊı±¨¾¯¼ÇÂ¼ÁĞ±í", "¹¤µ¥Î´Íê³É±¨¾¯¼ÇÂ¼ÁĞ±í", "ËùÓĞ°²µÆ±¨¾¯¼ÇÂ¼ÁĞ±í" };
-        public static string[] alarmListHistoryTitle = { "Éè±¸°²µÆ±¨¾¯¾­ÑéÁĞ±í", "ÎïÁÏ°²µÆ±¨¾¯¾­ÑéÁĞ±í", "ÖÊÁ¿Êı¾İ±¨¾¯¾­ÑéÁĞ±í", "¹¤ÒÕ²ÎÊı±¨¾¯¾­ÑéÁĞ±í", "¹¤µ¥Î´Íê³É±¨¾¯¾­ÑéÁĞ±í", "ËùÓĞ°²µÆ±¨¾¯¾­ÑéÁĞ±í" };
+        public static string[] alarmListTitle = { "è®¾å¤‡å®‰ç¯æŠ¥è­¦è®°å½•åˆ—è¡¨", "ç‰©æ–™å®‰ç¯æŠ¥è­¦è®°å½•åˆ—è¡¨", "è´¨é‡æ•°æ®æŠ¥è­¦è®°å½•åˆ—è¡¨", "è´¨é‡æ•°æ®æŠ¥è­¦è®°å½•åˆ—è¡¨", "å·¥è‰ºå‚æ•°æŠ¥è­¦è®°å½•åˆ—è¡¨", "å·¥å•æœªå®ŒæˆæŠ¥è­¦è®°å½•åˆ—è¡¨", "æ‰€æœ‰å®‰ç¯æŠ¥è­¦è®°å½•åˆ—è¡¨" };
+        public static string[] alarmListHistoryTitle = { "è®¾å¤‡å®‰ç¯æŠ¥è­¦ç»éªŒåˆ—è¡¨", "ç‰©æ–™å®‰ç¯æŠ¥è­¦ç»éªŒåˆ—è¡¨", "è´¨é‡æ•°æ®æŠ¥è­¦ç»éªŒåˆ—è¡¨", "å·¥è‰ºå‚æ•°æŠ¥è­¦ç»éªŒåˆ—è¡¨", "å·¥å•æœªå®ŒæˆæŠ¥è­¦ç»éªŒåˆ—è¡¨", "æ‰€æœ‰å®‰ç¯æŠ¥è­¦ç»éªŒåˆ—è¡¨" };
 
-        public const string strOfUnkown = "Î´Öª";
-        public const string serverPCUserName = "·şÎñÆ÷Ê¹ÓÃÕß";
+        public const string strOfUnkown = "æœªçŸ¥";
+        public const string serverPCUserName = "æœåŠ¡å™¨ä½¿ç”¨è€…";
 
-        public const string strExitOrNot = "È·¶¨ÒªÍË³öÖÇÄÜÊı¾İ²É¼¯ÏµÍ³Âğ?";
-        public const string strConfirm = "È·ÈÏ";
+        public const string strExitOrNot = "ç¡®å®šè¦é€€å‡ºæ™ºèƒ½æ•°æ®é‡‡é›†ç³»ç»Ÿå—?";
+        public const string strConfirm = "ç¡®è®¤";
 
         public static string[] deviceErrNoList = { "502010", "502020", "502030", "502040", "502050", "502060", "502070", "502080", "502090", "502100", "502110", "502120", "502130", "502140", "502150", "502160", "502170", "502180" };
-        public static string[] deviceErrDescList = { "µçÆø¹ÊÕÏ-Êı¿ØÏµÍ³", "µçÆø¹ÊÕÏ-PLC¿ØÖÆ", "µçÆø¹ÊÕÏ-µç¹ñÔª¼ş", "µçÆø¹ÊÕÏ-´«¸ĞÆ÷", "µçÆø¹ÊÕÏ-µç»ú", "»úĞµ¹ÊÕÏ-ÉÏÏÂÁÏ×°ÖÃ", "»úĞµ¹ÊÕÏ-¹¤×°¼Ğ¾ß", "»úĞµ¹ÊÕÏ-µ¶¸¨¾ß", "»úĞµ¹ÊÕÏ-Ö÷Öá", "»úĞµ¹ÊÕÏ-½ø¸øÖá", "»úĞµ¹ÊÕÏ-Éè±¸±¾Ìå", "Á÷Ìå¹ÊÕÏ-ÒºÑ¹", "Á÷Ìå¹ÊÕÏ-Èó»¬", "Á÷Ìå¹ÊÕÏ-ÀäÈ´", "Á÷Ìå¹ÊÕÏ-Æø¶¯", "²Ù×÷¹ÊÕÏ-±à³Ì", "²Ù×÷¹ÊÕÏ-²Ù×÷", "²Ù×÷¹ÊÕÏ-Áã¼ş¶¨Î»¼Ğ½ô" };
+        public static string[] deviceErrDescList = { "ç”µæ°”æ•…éšœ-æ•°æ§ç³»ç»Ÿ", "ç”µæ°”æ•…éšœ-PLCæ§åˆ¶", "ç”µæ°”æ•…éšœ-ç”µæŸœå…ƒä»¶", "ç”µæ°”æ•…éšœ-ä¼ æ„Ÿå™¨", "ç”µæ°”æ•…éšœ-ç”µæœº", "æœºæ¢°æ•…éšœ-ä¸Šä¸‹æ–™è£…ç½®", "æœºæ¢°æ•…éšœ-å·¥è£…å¤¹å…·", "æœºæ¢°æ•…éšœ-åˆ€è¾…å…·", "æœºæ¢°æ•…éšœ-ä¸»è½´", "æœºæ¢°æ•…éšœ-è¿›ç»™è½´", "æœºæ¢°æ•…éšœ-è®¾å¤‡æœ¬ä½“", "æµä½“æ•…éšœ-æ¶²å‹", "æµä½“æ•…éšœ-æ¶¦æ»‘", "æµä½“æ•…éšœ-å†·å´", "æµä½“æ•…éšœ-æ°”åŠ¨", "æ“ä½œæ•…éšœ-ç¼–ç¨‹", "æ“ä½œæ•…éšœ-æ“ä½œ", "æ“ä½œæ•…éšœ-é›¶ä»¶å®šä½å¤¹ç´§" };
 
-        public static string[] errSPCDescList = { "Êı¾İ³¬³ö¿ØÖÆÏŞ", "ÖÁÉÙÁ¬Ğø9¸öµãÎ»ÓÚÖĞĞÄÏßÍ¬Ò»²à", "7¸öµãÁ¬ĞøÉÏÉı»òÕßÏÂ½µ", "15¸öµãÂäÔÚÖĞĞÄÏß¸½½ü", "5¸öÁ¬ĞøµãÖĞÖÁÉÙ4¸ö¾àÀëÖĞĞÄÏß½ÏÔ¶" };
-        public const string errCraftDesc = "Êı¾İ³¬³ö¹æ¸ñÏŞ";
+        public static string[] errSPCDescList = { "æ•°æ®è¶…å‡ºæ§åˆ¶é™", "è‡³å°‘è¿ç»­9ä¸ªç‚¹ä½äºä¸­å¿ƒçº¿åŒä¸€ä¾§", "7ä¸ªç‚¹è¿ç»­ä¸Šå‡æˆ–è€…ä¸‹é™", "15ä¸ªç‚¹è½åœ¨ä¸­å¿ƒçº¿é™„è¿‘", "5ä¸ªè¿ç»­ç‚¹ä¸­è‡³å°‘4ä¸ªè·ç¦»ä¸­å¿ƒçº¿è¾ƒè¿œ" };
+        public const string errCraftDesc = "æ•°æ®è¶…å‡ºè§„æ ¼é™";
 
-        public static string dispatchPartBase = "ĞÍ³İÂÖ";
+        public static string dispatchPartBase = "å‹é½¿è½®";
 
         public static string[] dispatchOperatorNameBase = 
         {
-            "²ÌÎÄÁÁ", 
-            "²ÌÎÄÁÁ", "ÕÂÆä",  "ÁõÇå",   "ÍõÓñ",   "ºé·å",   "ĞíÇç",   "ÁèÔÆ",  "ÁõÒàÃú", "¹ÜÁê",   "ÕÅÇÚ", 
-            "Àîºé",   "ÀîÈº",  "³ÂÒİ·É", "ÕÔç÷¾ı", "ÍõĞÀĞÀ", "ÁõÀö",   "ÇñÃ÷»Û", "ÎâÇÙ",  "Ôø×ÓÃú", "Íõºé½­", 
-            "Áø¼Ñ»Û", "ÇØÉº",  "·½·½",   "ÀîÔÆ",   "»Æºê",   "Òü½¨Áá", "ÕÅöÎÁé", "Ã··Ò",  "Íò½ğ»·", "ÓÚÒş", 
-            "ÀîÔÂ",   "ÍõÇàÇà", "²©ĞÁ", "³Ì×Ó½à", "ÌÙÇà", "Áõº×", "ÖìÁ¼ÔÆ", "¶¡Ïş", "ÕÅĞ¡·¼", "ÁéÁé", "ÓÚÒş",
-            "²ÌÎÄÁÁ", "ÕÂÆä",  "ÁõÇå",   "ÍõÓñ",   "ºé·å",   "ĞíÇç",   "ÁèÔÆ",  "ÁõÒàÃú", "¹ÜÁê",   "ÕÅÇÚ", 
-            "Àîºé",   "ÀîÈº",  "³ÂÒİ·É", "ÕÔç÷¾ı", "ÍõĞÀĞÀ", "ÁõÀö",   "ÇñÃ÷»Û", "ÎâÇÙ",  "Ôø×ÓÃú", "Íõºé½­", 
-            "Áø¼Ñ»Û", "ÇØÉº",  "·½·½",   "ÀîÔÆ",   "»Æºê",   "Òü½¨Áá", "ÕÅöÎÁé", "Ã··Ò",  "Íò½ğ»·", "ÓÚÒş", 
-            "²ÌÎÄÁÁ", "ÕÂÆä",  "ÁõÇå",   "ÍõÓñ",   "ºé·å",   "ĞíÇç",   "ÁèÔÆ",  "ÁõÒàÃú", "¹ÜÁê",   "ÕÅÇÚ", 
-            "Àîºé",   "ÀîÈº",  "³ÂÒİ·É", "ÕÔç÷¾ı", "ÍõĞÀĞÀ", "ÁõÀö",   "ÇñÃ÷»Û", "ÎâÇÙ",  "Ôø×ÓÃú", "Íõºé½­", 
-            "Áø¼Ñ»Û", "ÇØÉº",  "·½·½",   "ÀîÔÆ",   "»Æºê",   "Òü½¨Áá", "ÕÅöÎÁé", "Ã··Ò",  "Íò½ğ»·", "ÓÚÒş", 
-            "ÀîÔÂ",   "ÍõÇàÇà", "²©ĞÁ", "³Ì×Ó½à", "ÌÙÇà", "Áõº×", "ÖìÁ¼ÔÆ", "¶¡Ïş", "ÕÅĞ¡·¼", "ÁéÁé", "ÓÚÒş",
-            "²ÌÎÄÁÁ", "ÕÂÆä",  "ÁõÇå",   "ÍõÓñ",   "ºé·å",   "ĞíÇç",   "ÁèÔÆ",  "ÁõÒàÃú", "¹ÜÁê",   "ÕÅÇÚ", 
-            "Àîºé",   "ÀîÈº",  "³ÂÒİ·É", "ÕÔç÷¾ı", "ÍõĞÀĞÀ", "ÁõÀö",   "ÇñÃ÷»Û", "ÎâÇÙ",  "Ôø×ÓÃú", "Íõºé½­", 
-            "Áø¼Ñ»Û", "ÇØÉº",  "·½·½",   "ÀîÔÆ",   "»Æºê",   "Òü½¨Áá", "ÕÅöÎÁé", "Ã··Ò",  "Íò½ğ»·", "ÓÚÒş" 
+            "è”¡æ–‡äº®", 
+            "è”¡æ–‡äº®", "ç« å…¶",  "åˆ˜æ¸…",   "ç‹ç‰",   "æ´ªå³°",   "è®¸æ™´",   "å‡Œäº‘",  "åˆ˜äº¦é“­", "ç®¡é™µ",   "å¼ å‹¤", 
+            "ææ´ª",   "æç¾¤",  "é™ˆé€¸é£", "èµµçªå›", "ç‹æ¬£æ¬£", "åˆ˜ä¸½",   "é‚±æ˜æ…§", "å´ç´",  "æ›¾å­é“­", "ç‹æ´ªæ±Ÿ", 
+            "æŸ³ä½³æ…§", "ç§¦çŠ",  "æ–¹æ–¹",   "æäº‘",   "é»„å®",   "å°¹å»ºç²", "å¼ é‘«çµ", "æ¢…èŠ¬",  "ä¸‡é‡‘ç¯", "äºéš", 
+            "ææœˆ",   "ç‹é’é’", "åšè¾›", "ç¨‹å­æ´", "è—¤é’", "åˆ˜é¹¤", "æœ±è‰¯äº‘", "ä¸æ™“", "å¼ å°èŠ³", "çµçµ", "äºéš",
+            "è”¡æ–‡äº®", "ç« å…¶",  "åˆ˜æ¸…",   "ç‹ç‰",   "æ´ªå³°",   "è®¸æ™´",   "å‡Œäº‘",  "åˆ˜äº¦é“­", "ç®¡é™µ",   "å¼ å‹¤", 
+            "ææ´ª",   "æç¾¤",  "é™ˆé€¸é£", "èµµçªå›", "ç‹æ¬£æ¬£", "åˆ˜ä¸½",   "é‚±æ˜æ…§", "å´ç´",  "æ›¾å­é“­", "ç‹æ´ªæ±Ÿ", 
+            "æŸ³ä½³æ…§", "ç§¦çŠ",  "æ–¹æ–¹",   "æäº‘",   "é»„å®",   "å°¹å»ºç²", "å¼ é‘«çµ", "æ¢…èŠ¬",  "ä¸‡é‡‘ç¯", "äºéš", 
+            "è”¡æ–‡äº®", "ç« å…¶",  "åˆ˜æ¸…",   "ç‹ç‰",   "æ´ªå³°",   "è®¸æ™´",   "å‡Œäº‘",  "åˆ˜äº¦é“­", "ç®¡é™µ",   "å¼ å‹¤", 
+            "ææ´ª",   "æç¾¤",  "é™ˆé€¸é£", "èµµçªå›", "ç‹æ¬£æ¬£", "åˆ˜ä¸½",   "é‚±æ˜æ…§", "å´ç´",  "æ›¾å­é“­", "ç‹æ´ªæ±Ÿ", 
+            "æŸ³ä½³æ…§", "ç§¦çŠ",  "æ–¹æ–¹",   "æäº‘",   "é»„å®",   "å°¹å»ºç²", "å¼ é‘«çµ", "æ¢…èŠ¬",  "ä¸‡é‡‘ç¯", "äºéš", 
+            "ææœˆ",   "ç‹é’é’", "åšè¾›", "ç¨‹å­æ´", "è—¤é’", "åˆ˜é¹¤", "æœ±è‰¯äº‘", "ä¸æ™“", "å¼ å°èŠ³", "çµçµ", "äºéš",
+            "è”¡æ–‡äº®", "ç« å…¶",  "åˆ˜æ¸…",   "ç‹ç‰",   "æ´ªå³°",   "è®¸æ™´",   "å‡Œäº‘",  "åˆ˜äº¦é“­", "ç®¡é™µ",   "å¼ å‹¤", 
+            "ææ´ª",   "æç¾¤",  "é™ˆé€¸é£", "èµµçªå›", "ç‹æ¬£æ¬£", "åˆ˜ä¸½",   "é‚±æ˜æ…§", "å´ç´",  "æ›¾å­é“­", "ç‹æ´ªæ±Ÿ", 
+            "æŸ³ä½³æ…§", "ç§¦çŠ",  "æ–¹æ–¹",   "æäº‘",   "é»„å®",   "å°¹å»ºç²", "å¼ é‘«çµ", "æ¢…èŠ¬",  "ä¸‡é‡‘ç¯", "äºéš" 
         };
     }
 }

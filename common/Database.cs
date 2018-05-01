@@ -358,6 +358,14 @@ namespace MESSystem.common
         public const int END_TIME_INDEX = 7;
         public const int END_TIME_STAMP_INDEX = 8;
 
+		//0_feedbininventory
+		public const int FEEDBININVENTORY_ID_INDEX = 1;
+		public const int FEEDBININVENTORY_DISPATCH_CODE_INDEX = 2;
+		public const int FEEDBININVENTORY_MATERIAL1_NAME_INDEX = 5;
+		public const int FEEDBININVENTORY_MATERIAL1_CODE_INDEX = 6;
+		public const int FEEDBININVENTORY_MATERIAL1_LAST_LEFT_INDEX = 7;
+		public const int FEEDBININVENTORY_MATERIAL1_CURRENT_LEFT_INDEX = 8;
+		public const int FEEDBININVENTORY_MATERIAL_CYCLE_SPAN = 4;
 
         //global and machine dispatch list table
         const string strDispatchList1 = "(id int(1) AUTO_INCREMENT primary key, machineID varchar(40), dispatchCode varchar(40), planTime1 varchar(20), planTime2 varchar(20), productCode varchar(40), " +
@@ -4750,5 +4758,19 @@ namespace MESSystem.common
             clearTable(databaseName, "dummy_craft");
             clearTable(databaseName, "dummy_volcur");
         }
+
+		public static int[] getFeedCurrentLeft(int feed_i, int num_stack)
+        {
+        	string dbName;
+        	string[,] tabledArray;
+			int[] sackNumLeftInStack = new int[num_stack];
+
+			dbName = gVariable.DBHeadString + (feed_i + 1).ToString().PadLeft(3, '0');
+			string commandText = "select * from `" + gVariable.feedBinInventoryListTableName + "` order by id desc limit 1";
+			tabledArray = databaseCommonReading(dbName, commandText);
+			for (int stack_i=0;stack_i<num_stack;stack_i++)
+				sackNumLeftInStack[stack_i] = Convert.ToInt32(tabledArray[0, FEEDBININVENTORY_MATERIAL1_CURRENT_LEFT_INDEX+stack_i*FEEDBININVENTORY_MATERIAL_CYCLE_SPAN]);
+			return sackNumLeftInStack;
+		}
     }
 }
