@@ -266,6 +266,25 @@ namespace MESSystem.zhihua_printerClient {
 			return globaldatabase.productcastinglist.writerecord(productcasting.Value);
 		}
 
+		private int setDispatchFinished(string dName, byte[] onePacket, int packetLen)
+		{
+			int len;
+			string strInput;
+			gVariable.dispatchSheetStruct dispatchImpl;
+			string[] input;
+
+			//MIN_PACKET_LEN include one byte of data, so we need to delete this byte
+			len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
+			strInput = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
+			
+			input = strInput.Split(';');
+
+			dispatchImpl.barCode = input[dispatch_barcode]
+
+			mySQLClass.writeDataToDispatchListTable(dName, gVariable.dispatchCurrentIndexTableName, )
+
+		}
+
 		public void processLabelPrintingFunc(int communicationType, byte[] onePacket, int packetLen)
 		{
 			int result;
@@ -308,7 +327,8 @@ namespace MESSystem.zhihua_printerClient {
 					break;
 				case COMMUNICATION_TYPE_CAST_PROCESS_END:
 					string dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
-					
+					result=setDispatchFinished(dName, onePacket, packetLen);
+					m_ClientThread.sendResponseOKBack(result);
 					break
 
 				case COMMUNICATION_TYPE_PRINT_PROCESS_START:  //印刷设备工人上班了
