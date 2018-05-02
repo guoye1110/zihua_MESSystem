@@ -56,8 +56,9 @@ namespace MESSystem.common
 		private const int OPERATOR_NAME2_INDEX = 33;
 		private const int OPERATOR_NAME3_INDEX = 34;
 		private const int BATCH_NUMBER_INDEX = 35;
+		private const int NOTES_INDEX = 36;
 
-		private const int TOTAL_DATAGRAM_NUM = BATCH_NUMBER_INDEX+1;
+		private const int TOTAL_DATAGRAM_NUM = NOTES_INDEX+1;
 
 		private const string c_dispatchListTableName = "0_dispatchlist";
         private const string c_dispatchListFileName = "..\\..\\data\\machine\\dispatchList.xlsx";
@@ -101,6 +102,7 @@ namespace MESSystem.common
             public string operatorName2; //操作员
             public string operatorName3; //操作员
             public string batchNum; //批次号，previously used inside Zihua, now we don't need this in new system, but need it to be compatible with the old system
+            public string notes;
         }
 
 		public machine.dispatchlist(int printingSWPCID)
@@ -115,7 +117,7 @@ namespace MESSystem.common
 
 			input = strInput.Split(';');
 
-			if (input.Length < LEFT_IN_FEEDBIN_INDEX)
+			if (input.Length < TOTAL_DATAGRAM_NUM)
 				return null;
 
 			st_dispatchlist.barCode = input[BARCODE_INDEX];
@@ -159,7 +161,7 @@ namespace MESSystem.common
 
         //return 0 written to table successfully
         //      -1 exception occurred
-        public int writerecord(productcastinglist_t st_productcasting)
+        public int writerecord(dispatchlist_t st_dispatchlist)
         {
             int num;
             int index;
@@ -168,7 +170,7 @@ namespace MESSystem.common
 			string connectionString;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
-			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_productcastinglistFileName);
+			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_dispatchListTableName);
 
             try
             {
@@ -180,18 +182,35 @@ namespace MESSystem.common
 
                 MySqlCommand myCommand = myConnection.CreateCommand();
 
-                myCommand.CommandText = "insert into `" + c_productcastinglistTableName + "`" + insertString;
+                myCommand.CommandText = "insert into `" + c_dispatchListTableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.machineID);
-				myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.barCode);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.scanTime);
-				myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.dispatchCode);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.salesOrderCode);
-				myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.batchNum);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.largeIndex);
-				myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.workerID);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.productCode);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.machineID);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.dispatchCode);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.planTime1);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.planTime2);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productCode);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productName);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.operatorName);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.plannedNumber);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.outputNumber);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.qualifiedNumber);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.unqualifiedNumber);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.processName);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.realStartTime);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.realFinishTime);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.prepareTimePoint);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.status);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.toolLifeTimes);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.toolUsedTimes);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.outputRatio);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.serialNumber);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.reportor);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.workshop);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.workshift);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.salesOrderCode);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.BOMCode);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.customer);
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
@@ -200,10 +219,100 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine(c_dbName + "write to " + c_productcastinglistTableName + " failed!" + ex);
+                Console.WriteLine(m_dbName+":"+c_dispatchListTableName+": write record failed!" + ex);
             }
             return -1;
         }
+
+		public int updateDispatchStatus(string[] in_dispatch)
+        {
+			string insertString;
+			string[] insertStringSplitted;
+			string connectionString;
+
+			if (in_dispatch.Length != TOTAL_DATAGRAM_NUM-1)	return gVariable.RESULT_ERR_DATA;
+
+			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
+			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_dispatchListFileName);
+			insertStringSplitted = insertString.Split(',@');
+
+            try
+            {
+                MySqlConnection myConnection = new MySqlConnection("database = " + m_dbName + "; " + connectionString);
+                myConnection.Open();
+
+                MySqlCommand myCommand = myConnection.CreateCommand();
+
+				myCommand.CommandText = "update ";
+				myCommand.CommandText += "`" + c_dispatchListTableName + "` ";
+				myCommand.CommandText += "set ";
+
+				for (int i=0;i<in_dispatch.Length;i++){
+					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + in_dispatch[i];
+					if (i != in_dispatch.Length )
+						myCommand.CommandText += ",";
+				}
+
+                myCommand.ExecuteNonQuery();
+                myConnection.Close();
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(c_dbName + ":" + c_productprintlistTableName + ": update product barcode failed! " + ex);
+            }
+            return -1;
+
+		}
+
+		public int updateDispatchStatus(dispatchlist_t st_dispatchlist)
+        {
+			string insertString;
+			string[] insertStringSplitted;
+			string connectionString;
+
+			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
+			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_dispatchListFileName);
+			insertStringSplitted = insertString.Split(',@');
+
+            try
+            {
+                MySqlConnection myConnection = new MySqlConnection("database = " + m_dbName + "; " + connectionString);
+                myConnection.Open();
+
+                MySqlCommand myCommand = myConnection.CreateCommand();
+
+				if (st_dispatchlist.status == gVariable.MACHINE_STATUS_DISPATCH_COMPLETED){
+                	myCommand.CommandText = "update ";
+                	myCommand.CommandText += "`" + c_dispatchListTableName + "` ";
+					myCommand.CommandText += "set ";
+					myCommand.CommandText += "`" + insertStringSplitted[OPERATOR_NAME_INDEX] + "`=" + st_dispatchlist.operatorName + ",";
+					myCommand.CommandText += "`" + insertStringSplitted[RECEIVE_NUM_INDEX] + "`=" + st_dispatchlist.receiveNum + ",";
+					myCommand.CommandText += "`" + insertStringSplitted[QUALIFY_NUM_INDEX] + "`=" + st_dispatchlist.qualifyNumber + ",";
+					myCommand.CommandText += "`" + insertStringSplitted[UNQUALIFY_NUM_INDEX] + "`=" + st_dispatchlist.unqualifyNumber + ",";
+					myCommand.CommandText += "`" + insertStringSplitted[COMPLETE_TIME_INDEX] + "`=" + st_dispatchlist.completeTime + ",";
+					myCommand.CommandText += "`" + insertStringSplitted[STATUS_INDEX] + "`=" + st_dispatchlist.status + ",";
+					myCommand.CommandText += "`" + insertStringSplitted[TOOL_LIFETIME_INDEX] + "`=" + st_dispatchlist.status + ",";
+					myCommand.CommandText += "`" + insertStringSplitted[TOOL_USED_TIMES_INDEX] + "`=" + st_dispatchlist.status + ",";
+					myCommand.CommandText += "`" + insertStringSplitted[OUTPUT_RATIO_INDEX] + "`=" + st_dispatchlist.status + ",";
+					myCommand.CommandText += "`" + insertStringSplitted[REPORTER_INDEX] + "`=" + st_dispatchlist.status + ",";
+					myCommand.CommandText += "`" + insertStringSplitted[STATUS_INDEX] + "`=" + st_dispatchlist.status + ",";
+					myCommand.CommandText += "`" + insertStringSplitted[WORKSHIFT_INDEX] + "`=" + st_dispatchlist.status + ",";
+					myCommand.CommandText += "`" + insertStringSplitted[RECEIVE_NUM_INDEX] + "`=" + st_dispatchlist.productScanTime;
+				}
+
+                myCommand.ExecuteNonQuery();
+                myConnection.Close();
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(c_dbName + ":" + c_productprintlistTableName + ": update product barcode failed! " + ex);
+            }
+            return -1;
+		}		
 	}
 }
 

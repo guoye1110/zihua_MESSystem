@@ -23,24 +23,32 @@ namespace MESSystem.zhihua_printerClient {
 
 		//communication between PC host and label printing SW
 		private const int COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID = 3;
+		private const int COMMUNICATION_TYPE_PRINTING_HEART_BEAT = 0xB3;
+		//出入库工序
 		private const int COMMUNICATION_TYPE_WAREHOUE_OUT_START = 0xB5;  //printing SW started and ask for material info, server send material info for all feeding machine to printing SW 
 		private const int COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE = 0xB6;  //printing machine send barcode info to server whever a stack of material is moved out of the warehouse
 		private const int COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE = 0xB7;  //printing machine send barcode info to server whever a stack of material is moved into the warehouse
+		//流延工序
 		private const int COMMUNICATION_TYPE_CAST_PROCESS_START = 0xB8;  //printing SW started cast process, server need to send dispatch info to printing SW
-		private const int COMMUNICATION_TYPE_CAST_BARCODE_UPLOAD = 0xB9;  //printing SW send large roll info to server
+		private const int COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD = 0xB9;  //printing SW send large roll info to server
 		private const int COMMUNICATION_TYPE_CAST_PROCESS_END = 0xBA;
-		//private const int COMMUNICATION_TYPE_CASE_SHIFT = 0xBA;
+		//印刷工序
 		private const int COMMUNICATION_TYPE_PRINT_PROCESS_START = 0xBB;
-        private const int COMMUNICATION_TYPE_PRINT_BARCODE_UPLOAD = 0xC7;
-        private const int COMMUNICATION_TYPE_SLIT_PROCESS_START = 0xC8;
-        private const int COMMUNICATION_TYPE_SLIT_BARCODE_UPLOAD = 0xC9;
-        private const int COMMUNICATION_TYPE_INSPECTION_PROCESS_START = 0xCA;
-        private const int COMMUNICATION_TYPE_INSPECTION_BARCODE_UPLOAD = 0xCB;
-        private const int COMMUNICATION_TYPE_REUSE_PROCESS_START = 0xCC;
-        private const int COMMUNICATION_TYPE_REUSE_BARCODE_UPLOAD = 0xCD;
-        private const int COMMUNICATION_TYPE_PACKING_PROCESS_START = 0xCE;
-        private const int COMMUNICATION_TYPE_PACKING_BARCODE_UPLOAD = 0xCF;
-        private const int COMMUNICATION_TYPE_PRINTING_HEART_BEAT = 0xD0;
+		private const int COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD = 0xBC;
+        private const int COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD = 0xBD;
+		private const int COMMUNICATION_TYPE_PRINT_PROCESS_END = 0xBE;
+		//分切工序
+        private const int COMMUNICATION_TYPE_SLIT_PROCESS_START = 0xBF;
+        private const int COMMUNICATION_TYPE_SLIT_PROCESS_MATERIAL_BARCODE_UPLOAD = 0xC0;
+		private const int COMMUNICATION_TYPE_SLIT_PROCESS_PRODUCT_BARCODE_UPLOAD = 0xC1;
+		private const int COMMUNICATION_TYPE_SLIT_PROCESS_PACKAGE_BARCODE_UPLOAD = 0xC2;
+		private const int COMMUNICATION_TYPE_SLIT_PROCESS_END = 0xC3;
+		//质检工序		
+        private const int COMMUNICATION_TYPE_INSPECTION_PROCESS_PRODUCT_BARCODE_UPLOAD = 0xC4;
+		//再造料工序
+        private const int COMMUNICATION_TYPE_REUSE_PROCESS_BARCODE_UPLOAD = 0xC5;
+		//打包工序		
+        private const int COMMUNICATION_TYPE_PACKING_PROCESS_PACKAGE_BARCODE_UPLOAD = 0xC6;
         //end of communication between PC host and label printing SW
 
 
@@ -217,17 +225,8 @@ namespace MESSystem.zhihua_printerClient {
 			string[,] tableArray;
 			gVariable.dispatchSheetStruct[] dispatchList;
 			string insertString;
-
-			commandText = "select * from `" + gVariable.dispatchListTableName + "` where status = '1'";
-			dispatchList = mySQLClass.getDispatchListInternal(dName, gVariable.dispatchListTableName, commandText, 1);
-			if (dispatchList!=null){
-				onePacket[PROTOCOL_DATA_POS] = 0xff;
-				len = MIN_PACKET_LEN;
-				m_ClientThread.sendDataToClient(onePacket, len, communicationType);
-				return;
-			}
 			
-			commandText = "select * from `" + gVariable.dispatchListTableName + "` where status = '0' order by id DESC";
+			commandText = "select * from `" + gVariable.dispatchListTableName + "` where status = '" + gVariable.MACHINE_STATUS_DISPATCH_PUBLISHED + "' order by id DESC";
 			dispatchList = mySQLClass.getDispatchListInternal(dName, gVariable.dispatchListTableName, commandText, 1);
 			if (dispatchList == null)
 			{
@@ -270,7 +269,6 @@ namespace MESSystem.zhihua_printerClient {
 		{
 			int len;
 			string strInput;
-			gVariable.dispatchSheetStruct dispatchImpl;
 			string[] input;
 
 			//MIN_PACKET_LEN include one byte of data, so we need to delete this byte
@@ -279,10 +277,31 @@ namespace MESSystem.zhihua_printerClient {
 			
 			input = strInput.Split(';');
 
-			dispatchImpl.barCode = input[dispatch_barcode]
+			return machine.dispatchlist.updateDispatchStatus(input);
+		}
 
-			mySQLClass.writeDataToDispatchListTable(dName, gVariable.dispatchCurrentIndexTableName, )
+		private int setPrintBarcode(int communicationType, byte[] onePacket, int packetLen)
+		{
+			int len;
+			string strInput;
+			globaldatabase.productprintlist.productprintlist_t? in_productprint;
 
+			//MIN_PACKET_LEN include one byte of data, so we need to delete this byte
+			len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
+			strInput = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
+			
+			in_productprint = globaldatabase.productprintlist.parseinput(strInput);
+			if (in_productprint == null){
+				return RESULT_ERR_DATA;
+			}
+
+			if (communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD){
+				return globaldatabase.productcastinglist.writerecord(in_productprint.Value);
+			}
+
+			if (communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD){
+				return globaldatabase.productprintlist.updateProductScancode(in_productprint.Value);
+			}
 		}
 
 		public void processLabelPrintingFunc(int communicationType, byte[] onePacket, int packetLen)
@@ -300,28 +319,33 @@ namespace MESSystem.zhihua_printerClient {
 					m_ClientThread.sendDataToClient(onePacket, MIN_PACKET_LEN, communicationType);
 					break;
 
-				//原料出库区的搬运工获取物料清单
+				/*--------------------------------------------------------------------------------------------
+				原料出库区的搬运工获取物料清单，hXX.dispatchList，根据物料清单中每个料仓需要的物料重量
+				（KG）确定并准备相应的码垛，一码垛对于一个料仓，一个料仓可能有多个码垛（取决于该工单的
+				BOM），将该信息输入并产生扫描标签，贴在每个码垛上，上传server（含条码），存储在
+				globaldatabase.materialinoutrecord；	当该码垛有多余的料要入库，			PC上选择入库，然后扫码垛上的条码，
+				本地根据条码得到该物料信息，然后选择入库，				并上传server（含条码）
+				---------------------------------------------------------------------------------------------*/
 				case COMMUNICATION_TYPE_WAREHOUE_OUT_START:
 					getMaterialInfoForAllMachines();
 					sendMaterialInfoToPrintSW();
 					break;
-
-				//一铲车的原料出库了, 存储在globaldatabase.materialinoutrecord，同时产生铲车标签
 				case COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE:
-				//一铲车的余料回收入库了, 扫描铲车标签信息，存储在globaldatabase.materialinoutrecord
 				case COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE:
 					result = setMaterialWareInOut(onePacket, packetLen);
 					m_ClientThread.sendResponseOKBack(result);
 					break;
 
+				/*-----------------------------------------------------------------------------------------------
 				//每一班流延设备工人上班后（本地PC会显示本地记录的上班次的情况），申请工单（工单在每个工人下班后
 				//就结束了，此时机器还在运行，一个标准大卷还未完成，该卷算在下个班次。从start，生产出的大卷标签上
-				//传，到下班填上交接班记录，该工单在数据库中(O_dispatchList就完整的封闭了（开始时间，结束时间，交接备注等）。
+				//传，到下班填上交接班记录，该工单在数据库中，hXX.O_dispatchList就完整的封闭了（开始时间，结束时间，交接备注等）。
+				-------------------------------------------------------------------------------------------------*/
 				case COMMUNICATION_TYPE_CAST_PROCESS_START:
 					string dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
 					sendDispatchToClient(dName, COMMUNICATION_TYPE_CAST_PROCESS_START, onePacket, packetLen);
 					break;
-				case COMMUNICATION_TYPE_CAST_BARCODE_UPLOAD:
+				case COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD:
 					result = setCastBarcode(onePacket, packetLen);
 					m_ClientThread.sendResponseOKBack(result);
 					break;
@@ -331,14 +355,35 @@ namespace MESSystem.zhihua_printerClient {
 					m_ClientThread.sendResponseOKBack(result);
 					break
 
-				case COMMUNICATION_TYPE_PRINT_PROCESS_START:  //印刷设备工人上班了
+				/*-----------------------------------------------------------------------------------------------
+				印刷工序和流延工序基本相同，工单，数据库不同而已
+				-------------------------------------------------------------------------------------------------*/
+				case COMMUNICATION_TYPE_PRINT_PROCESS_START:
+					string dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
+					sendDispatchToClient(dName, COMMUNICATION_TYPE_PRINT_PROCESS_START, onePacket, packetLen);
 					break;
-				case COMMUNICATION_TYPE_PRINT_BARCODE_UPLOAD:  //完成一个大卷，收到大卷印刷标签
+				case COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD:
+					result = setPrintBarcode(COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD, onePacket, packetLen);
+					m_ClientThread.sendResponseOKBack(result);
 					break;
+				case COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD:
+					result = setPrintBarcode(COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD, onePacket, packetLen);
+					m_ClientThread.sendResponseOKBack(result);
+					break;
+				case COMMUNICATION_TYPE_PRINT_PROCESS_END:
+					string dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
+					result=setDispatchFinished(dName, onePacket, packetLen);
+					m_ClientThread.sendResponseOKBack(result);
+					break;
+
+				/*-----------------------------------------------------------------------------------------------
+				分切工序基本相同，数据库不同而已
+				-------------------------------------------------------------------------------------------------*/				
 				case COMMUNICATION_TYPE_SLIT_PROCESS_START:  //分切工上班了
 					break;
 				case COMMUNICATION_TYPE_SLIT_BARCODE_UPLOAD:  //分切一个小卷完工，收到小卷分切标签
 					break;
+					
 				case COMMUNICATION_TYPE_INSPECTION_PROCESS_START:  //质检开始
 					break;
 				case COMMUNICATION_TYPE_INSPECTION_BARCODE_UPLOAD:  //质检结果上传，收到质检标签
