@@ -18,7 +18,7 @@ using System.Threading;
 
 namespace MESSystem.common
 {
-	public class globaldatabase.productcastinglist : mySQLClass
+	public class productcastinglistDB : mySQLClass
 	{
 		//index
         private const int MACHINE_ID_INDEX = 1;

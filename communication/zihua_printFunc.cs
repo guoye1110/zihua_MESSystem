@@ -51,7 +51,6 @@ namespace MESSystem.zhihua_printerClient {
         private const int COMMUNICATION_TYPE_PACKING_PROCESS_PACKAGE_BARCODE_UPLOAD = 0xC6;
         //end of communication between PC host and label printing SW
 
-
         private const int DISPATCHCODE_LENGTH = 11;
 
         private const int WAREHOUSE_INPUT_OUTPUT_PC = 101;
@@ -74,14 +73,19 @@ namespace MESSystem.zhihua_printerClient {
 
 		//material code for stacks(码垛对应的原料编号)
 		string[,] materialCodeForStack = new string[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE]; 
+
 		//total sack num for this dispatch, got from dispatch info（工单中原料需求的袋数）
 		int[,] sackNumTotalForDispatch = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
+
 		//sack num received from warehouse(搬运工已经搬来了几袋原料, 数量应小于等于 sackNumNeededForStack[])
 		int[,] sackNumReceivedFromWarehouse = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
+
 		//total sack num needed for this stack(or feed bin) for multiple dispatches in a period of time(对于搬运工而言，某个码垛中需要几袋原料，可能包括多个工单，可能超过码垛容量，需多次送料)
 		int[,] sackNumNeededForStack = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
+
 		//sack num left in the stack for the current time（码垛中的剩余袋数）
 		int[,] sackNumLeftInStack = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
+
 		//material left in feed bin(料箱中的余料公斤数)
 		int[,] kiloNumLeftInFeedBin = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
 		
@@ -89,7 +93,7 @@ namespace MESSystem.zhihua_printerClient {
 		int inoutFeedMachineID;
 		int inoutMaterialStackID;
 
-		private ClientThread m_ClientThread;
+		private ClientThread m_ClientThread=null;
 		private int m_machineIDForPrint;
 
 		public void printerClient(ClientThread cThread)
@@ -217,52 +221,76 @@ namespace MESSystem.zhihua_printerClient {
 			return globaldatabase.materialinoutrecord.writerecord(materialinouotrecord.Value);
 		}
 
-		void sendDispatchToClient(string dName, int communicationType, byte[] onePacket, int len)
+
+		/*void sendDispatchCodeToClient(int communicationType, byte[] onePacket, int len)
 		{
-			int i;
 			string str;
-			string commandText;
-			string[,] tableArray;
-			gVariable.dispatchSheetStruct[] dispatchList;
-			string insertString;
-			
-			commandText = "select * from `" + gVariable.dispatchListTableName + "` where status = '" + gVariable.MACHINE_STATUS_DISPATCH_PUBLISHED + "' order by id DESC";
-			dispatchList = mySQLClass.getDispatchListInternal(dName, gVariable.dispatchListTableName, commandText, 1);
-			if (dispatchList == null)
-			{
-				onePacket[PROTOCOL_DATA_POS] = 0xff;
-				len = MIN_PACKET_LEN;
-				m_ClientThread.sendDataToClient(onePacket, len, communicationType);
-			}
-			else
-			{
-				commandText = "select * from `" + gVariable.dispatchListTableName + "` where dispatchcode = '" + dispatchList[0].dispatchCode + "'";
-				tableArray = mySQLClass.databaseCommonReading(dName, commandText);
-		
-				str = null;
-				for (i = 1; i < tableArray.Length; i++)
-				{
-					str += tableArray[0, i] + ';';
+			dispatchlistDB dispatchlist_db;
+			dispatchlistDB.dispatchlist_t[] st_dispatchlist;
+
+			int printingSWPCID = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100 - CAST_PROCESS_PC1 + gVariable.castingProcess[0];
+
+			dispatchlist_db = new dispatchlistDB(printingSWPCID);
+
+			st_dispatchlist = dispatchlist_db.readallrecordOrdered();
+
+			for (int i=0;i<st_dispatchlist.Length;i++){
+				if (st_dispatchlist[i].status == gVariable.MACHINE_STATUS_DISPATCH_PUBLISHED){
+					str = st_dispatchlist[i].dispatchCode + ";" + st_dispatchlist[i].productCode;
+					m_ClientThread.sendStringToClient(str, communicationType);
+					return;
 				}
-				m_ClientThread.sendStringToClient(str, communicationType);
 			}
+			onePacket[PROTOCOL_DATA_POS] = 0xff;
+			len = MIN_PACKET_LEN;
+			m_ClientThread.sendDataToClient(onePacket, len, communicationType);
+		}*/		
+		void sendDispatchCodeToClient(int communicationType, byte[] onePacket, int len)
+		{
+			string str;
+			dispatchlistDB dispatchlist_db;
+			dispatchlistDB.dispatchlist_t? st_dispatchlist;
+
+			int printingSWPCID = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100 - CAST_PROCESS_PC1 + gVariable.castingProcess[0];
+
+			dispatchlist_db = new dispatchlistDB(printingSWPCID);
+
+			st_dispatchlist = dispatchlist_db.currentDispatch;
+			if (st_dispatchlist != null){
+				str = st_dispatchlist.Value.dispatchCode + ";" + st_dispatchlist.Value.productCode;
+				m_ClientThread.sendStringToClient(str, communicationType);
+				return;
+			}
+			onePacket[PROTOCOL_DATA_POS] = 0xff;
+			len = MIN_PACKET_LEN;
+			m_ClientThread.sendDataToClient(onePacket, len, communicationType);
 		}
 
 		private int setCastBarcode(byte[] onePacket, int packetLen)
 		{
 			int len;
 			string strInput;
-			globaldatabase.productcastinglist.productcastinglist_t? productcasting;
+			string[] strInputSplited;
+			productcastinglistDB productcasting_db;
+			productcastinglistDB.productcastinglist_t st_productcasting;
 
 			//MIN_PACKET_LEN include one byte of data, so we need to delete this byte
 			len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
 			strInput = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
+			strInputSplited = strInput.Split(";");
 
-			productcasting = globaldatabase.productcastinglist.parseinput(strInput);
-			if (productcasting == null){
-				return RESULT_ERR_DATA;
-			}
-			return globaldatabase.productcastinglist.writerecord(productcasting.Value);
+			st_productcasting.dispatchCode = strInputSplited[0].Substring(0,12);
+			st_productcasting.scanTime = strInputSplited[0].Substring(12,4);
+			st_productcasting.largeIndex = strInputSplited[0].Substring(16,3);
+			st_productcasting.machineID = productcasting.dispatchCode.Substring(11,1);
+			st_productcasting.batchNum = productcasting.dispatchCode.Substring(0,7);
+			st_productcasting.barCode = strInputSplited[0];
+			//？？以下信息在哪里？？
+			//productcasting.productCode = ;
+			//productcasting.workerID = ;
+			//productcasting.salesOrderCode = ;
+			
+			return globaldatabase.productcastinglist.writerecord(productcasting);
 		}
 
 		private int setDispatchFinished(string dName, byte[] onePacket, int packetLen)
@@ -337,13 +365,12 @@ namespace MESSystem.zhihua_printerClient {
 					break;
 
 				/*-----------------------------------------------------------------------------------------------
-				//每一班流延设备工人上班后（本地PC会显示本地记录的上班次的情况），申请工单（工单在每个工人下班后
+				//每一班流延设备工人上班后（本地PC会显示本地记录的上班次的情况），工单在每个工人下班后
 				//就结束了，此时机器还在运行，一个标准大卷还未完成，该卷算在下个班次。从start，生产出的大卷标签上
 				//传，到下班填上交接班记录，该工单在数据库中，hXX.O_dispatchList就完整的封闭了（开始时间，结束时间，交接备注等）。
 				-------------------------------------------------------------------------------------------------*/
 				case COMMUNICATION_TYPE_CAST_PROCESS_START:
-					string dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
-					sendDispatchToClient(dName, COMMUNICATION_TYPE_CAST_PROCESS_START, onePacket, packetLen);
+					sendDispatchCodeToClient(dName, COMMUNICATION_TYPE_CAST_PROCESS_START, onePacket, packetLen);
 					break;
 				case COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD:
 					result = setCastBarcode(onePacket, packetLen);
@@ -377,11 +404,19 @@ namespace MESSystem.zhihua_printerClient {
 					break;
 
 				/*-----------------------------------------------------------------------------------------------
-				分切工序基本相同，数据库不同而已
+				分切工序基本相同，工单，数据库不同而已
 				-------------------------------------------------------------------------------------------------*/				
 				case COMMUNICATION_TYPE_SLIT_PROCESS_START:  //分切工上班了
+					string dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
+					sendDispatchToClient(dName, COMMUNICATION_TYPE_SLIT_PROCESS_START, onePacket, packetLen);
 					break;
-				case COMMUNICATION_TYPE_SLIT_BARCODE_UPLOAD:  //分切一个小卷完工，收到小卷分切标签
+				case COMMUNICATION_TYPE_SLIT_PROCESS_MATERIAL_BARCODE_UPLOAD:
+					break;
+				case COMMUNICATION_TYPE_SLIT_PROCESS_PRODUCT_BARCODE_UPLOAD:
+					break;
+				case COMMUNICATION_TYPE_SLIT_PROCESS_PACKAGE_BARCODE_UPLOAD:
+					break;
+				case COMMUNICATION_TYPE_SLIT_PROCESS_END:
 					break;
 					
 				case COMMUNICATION_TYPE_INSPECTION_PROCESS_START:  //质检开始

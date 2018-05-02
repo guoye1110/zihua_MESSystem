@@ -18,7 +18,7 @@ using System.Threading;
 
 namespace MESSystem.common
 {
-	public class machine.dispatchlist : mySQLClass
+	public class dispatchlistDB : mySQLClass
 	{
 		//index
 		private const int MACHINE_ID_INDEX = 1;
@@ -105,7 +105,28 @@ namespace MESSystem.common
             public string notes;
         }
 
-		public machine.dispatchlist(int printingSWPCID)
+		public dispatchlist_t? currentDispatch
+        {
+        	get {
+				string[] recordArray;
+				dispatchlist_t? dd;
+				
+				string commandText = "select * from `" + c_dispatchListTableName + "` order by id DESC";
+				recordArray = databaseCommonReadingUnsplitted(m_dbName, commandText);
+				if (recordArray!=null){
+					for (int row=0;row<recordArray.GetLength(0);row++){
+						dd = parseinput(recordArray[row]);
+						if (dd != null && dd.Value.status == gVariable.MACHINE_STATUS_DISPATCH_PUBLISHED)
+								return dd.Value;
+					}
+				}
+				return null;
+        	}
+			set {
+			}
+		}
+
+		public dispatchlistDB(int printingSWPCID)
         {
         	m_dbName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
 		}
@@ -156,6 +177,23 @@ namespace MESSystem.common
 			st_dispatchlist.workshift = input[WORKSHIFT_INDEX];
 			st_dispatchlist.workshop = input[WORKSHOP_INDEX];
 			
+			return st_dispatchlist;
+		}
+
+		public dispatchlist_t[] readallrecordOrdered()
+		{
+			dispatchlist_t? dd;
+			string[] recordArray;
+			dispatchlist_t[] st_dispatchlist;
+			string commandText = "select * from `" + c_dispatchListTableName + "` order by id DESC";
+			recordArray = mySQLClass.databaseCommonReadingUnsplitted(m_dbName, commandText);
+			if (recordArray!=null){
+				st_dispatchlist = new dispatchlist_t[recordArray.Length];
+				for (int i=0;i<recordArray.Length;i++){
+					dd = parseinput(recordArray[i]);
+					st_dispatchlist[i] = dd.Value;
+				}
+			}
 			return st_dispatchlist;
 		}
 
@@ -312,7 +350,9 @@ namespace MESSystem.common
                 Console.WriteLine(c_dbName + ":" + c_productprintlistTableName + ": update product barcode failed! " + ex);
             }
             return -1;
-		}		
+		}	
+
+		public dispatchlist_t getCurrentDispatch
 	}
 }
 

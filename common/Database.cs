@@ -2300,18 +2300,15 @@ namespace MESSystem.common
             string[] recordArray;
             DataTable dTable;
 
-            try
-            {
+            try {
                 recordArray = null;
                 dTable = queryDataTableAction(databaseName, commandText, null);
-                if (dTable != null && dTable.Rows.Count != 0)
-                {
+                if (dTable != null && dTable.Rows.Count != 0) {
                     j = 0;
 
                     recordArray = new string[dTable.Rows.Count];
-                    for (i = 0; i < dTable.Rows.Count; i++)
-                        for (j = 0; j < dTable.Rows[0].ItemArray.Length; j++)
-                        {
+                    for (i = 0; i < dTable.Rows.Count; i++) {
+                        for (j = 0; j < dTable.Rows[0].ItemArray.Length; j++) {
                             recordArray[i] += dTable.Rows[i].ItemArray[j].ToString();
 							if (j!=dTable.Rows[0].ItemArray.Length)
 								recordArray[i] += ";";
