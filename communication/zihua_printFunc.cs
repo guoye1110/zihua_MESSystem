@@ -245,7 +245,8 @@ namespace MESSystem.zhihua_printerClient {
 			len = MIN_PACKET_LEN;
 			m_ClientThread.sendDataToClient(onePacket, len, communicationType);
 		}*/		
-		void sendDispatchCodeToClient(int communicationType, byte[] onePacket, int len)
+
+		public static string sendDispatchCodeToClient(int communicationType, byte[] onePacket, int len)
 		{
 			string str;
 			dispatchlistDB dispatchlist_db;
@@ -259,18 +260,22 @@ namespace MESSystem.zhihua_printerClient {
 			if (st_dispatchlist != null){
 				str = st_dispatchlist.Value.dispatchCode + ";" + st_dispatchlist.Value.productCode;
 				m_ClientThread.sendStringToClient(str, communicationType);
-				return;
+				return null;
 			}
 			onePacket[PROTOCOL_DATA_POS] = 0xff;
 			len = MIN_PACKET_LEN;
 			m_ClientThread.sendDataToClient(onePacket, len, communicationType);
+
+			return st_dispatchlist.Value.dispatchCode;
 		}
 
-		private int setCastBarcode(byte[] onePacket, int packetLen)
+		private int setBarcode(byte[] onePacket, int packetLen)
 		{
 			int len;
 			string strInput;
 			string[] strInputArray;
+
+			if ()
 			productcastinglistDB.productcastinglist_t st_productcasting;
 
 			//MIN_PACKET_LEN include one byte of data, so we need to delete this byte
@@ -290,6 +295,22 @@ namespace MESSystem.zhihua_printerClient {
 			return productcastinglistDB.writerecord(st_productcasting);
 		}
 
+		private int setDispatchOperator(int index, string dispatchCode, byte[] onePacket, int packetLen)
+		{
+			int len;
+			string strInput;
+			dispatchlistDB.dispatchlist_t st_dispatch = {0};
+			string dispatchCode;
+
+			//MIN_PACKET_LEN include one byte of data, so we need to delete this byte
+			len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
+			strInput = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
+
+			st_dispatch.operatorName = strInput;
+			
+			return dispatchlistDB.updaterecordby_dispatchcode(index, dispatchlistDB.format(st_dispatch), dispatchCode);
+		}
+
 		private int setDispatchNotes(int index,       byte[] onePacket, int packetLen)
 		{
 			int len;
@@ -305,16 +326,15 @@ namespace MESSystem.zhihua_printerClient {
 
 			dispatchCode = strInputArray[0];
 			st_dispatch.notes = strInputArray[1];
-
 			
 			return dispatchlistDB.updaterecordby_dispatchcode(index, dispatchlistDB.format(st_dispatch), dispatchCode);
 		}
 
-		private int setPrintBarcode(int communicationType, byte[] onePacket, int packetLen)
+		private int setMaterialBarcode(int communicationType, byte[] onePacket, int packetLen)
 		{
 			int len;
 			string strInput;
-			globaldatabase.productprintlist.productprintlist_t? in_productprint;
+			productprintlistDB.productprintlist_t? in_productprint;
 
 			//MIN_PACKET_LEN include one byte of data, so we need to delete this byte
 			len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
@@ -372,7 +392,8 @@ namespace MESSystem.zhihua_printerClient {
 				//传，到下班填上交接班记录，该工单在数据库中，hXX.O_dispatchList就完整的封闭了（开始时间，结束时间，交接备注等）。
 				-------------------------------------------------------------------------------------------------*/
 				case COMMUNICATION_TYPE_CAST_PROCESS_START:
-					sendDispatchCodeToClient(dName, COMMUNICATION_TYPE_CAST_PROCESS_START, onePacket, packetLen);
+					string dispatchCode = sendDispatchCodeToClient(COMMUNICATION_TYPE_CAST_PROCESS_START, onePacket, packetLen);
+					setDispatchOperator(printingSWPCID, dispatchCode , onePacket, packetLen);
 					break;
 				case COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD:
 					result = setCastBarcode(onePacket, packetLen);
@@ -380,7 +401,7 @@ namespace MESSystem.zhihua_printerClient {
 					break;
 				case COMMUNICATION_TYPE_CAST_PROCESS_END:
 					string dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
-					result=setDispatchNotes(dName, onePacket, packetLen);
+					result=setDispatchNotes(printingSWPCID, onePacket, packetLen);
 					m_ClientThread.sendResponseOKBack(result);
 					break
 
@@ -388,15 +409,15 @@ namespace MESSystem.zhihua_printerClient {
 				印刷工序和流延工序基本相同，工单，数据库不同而已
 				-------------------------------------------------------------------------------------------------*/
 				case COMMUNICATION_TYPE_PRINT_PROCESS_START:
-					string dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
-					sendDispatchToClient(dName, COMMUNICATION_TYPE_PRINT_PROCESS_START, onePacket, packetLen);
+					string dispatchCode = sendDispatchCodeToClient(COMMUNICATION_TYPE_PRINT_PROCESS_START, onePacket, packetLen);
+					setDispatchOperator(printingSWPCID, dispatchCode , onePacket, packetLen);
 					break;
 				case COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD:
-					result = setPrintBarcode(COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD, onePacket, packetLen);
+					result = setBarcode(COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD, onePacket, packetLen);
 					m_ClientThread.sendResponseOKBack(result);
 					break;
 				case COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD:
-					result = setPrintBarcode(COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD, onePacket, packetLen);
+					result = setProductBarcode(COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD, onePacket, packetLen);
 					m_ClientThread.sendResponseOKBack(result);
 					break;
 				case COMMUNICATION_TYPE_PRINT_PROCESS_END:

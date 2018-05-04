@@ -18,7 +18,7 @@ using System.Threading;
 
 namespace MESSystem.common
 {
-	public class globaldatabase.productprintlist : mySQLClass
+	public class productprintlist : mySQLClass
 	{
 		//index
         private const int MACHINE_ID_INDEX = 1;
@@ -27,11 +27,10 @@ namespace MESSystem.common
 		private const int PRODUCT_BARCODE_INDEX = 4;
 		private const int PRODUCT_SCAN_TIME_INDEX = 5;
 		private const int DISPATCH_CODE_INDEX = 6;
-		private const int SALES_ORDER_CODE_INDEX = 7;
-		private const int BATCH_NUM_INDEX = 8;
-		private const int LARGE_INDEX_INDEX = 9;
-		private const int WORKER_ID_INDEX = 10;
-		private const int TOTAL_DATAGRAM_NUM = WORKER_ID_INDEX+1;
+		private const int BATCH_NUM_INDEX = 7;
+		private const int LARGE_INDEX_INDEX = 8;
+		private const int WEIGHT_INDEX = 9;
+		private const int TOTAL_DATAGRAM_NUM = WEIGHT_INDEX+1;
 
 		private const string c_dbName = "globaldatabase";
         private const string c_productprintlistTableName = "productprintlist";
@@ -44,34 +43,95 @@ namespace MESSystem.common
 			string productBarCode;
 			string productScanTime;
 			string dispatchCode;
-			string salesOrderCode;
 			string batchNum;
 			string largeIndex;
-			string workerID;
+			string weight;
+		}
+
+		public static string format(productprintlist_t st)
+		{
+			string str = null;
+
+			str += st.machineID  		+ ";" + st.materialBarCode 	+ ";" + st.materialScanTime	+ ";" + st.productBarCode	+ ";";
+			str += st.productScanTime	+ ";" + st.dispatchCode		+ ";" + st.batchNum 		+ ";" + st.largeIndex		+ ";";
+			str += st.weight;
+			return str;
+		}
+
+		public static string[] format(dispatchlist_t st)
+		{
+			string str;
+			string[] strArray;
+
+			str = format(st);
+			strArray = str.Split(';');
+			return strArray;
 		}
 
 		public productprintlist_t? parseinput(string strInput)
 		{
 			string[] input;
-			productprintlist_t st_productprint;
+			productprintlist_t st;
 
 			input = strInput.Split(';');
 
 			if (input.Length < TOTAL_DATAGRAM_NUM)
 				return null;
 
-			st_productprint.batchNum = input[BATCH_NUM_INDEX];
-			st_productprint.dispatchCode = input[DISPATCH_CODE_INDEX];
-			st_productprint.largeIndex = input[LARGE_INDEX_INDEX];
-			st_productprint.machineID = input[MACHINE_ID_INDEX];
-			st_productprint.materialBarCode = input[MATERIAL_BARCODE_INDEX];
-			st_productprint.materialScanTime = input[MATERIAL_SCAN_TIME_INDEX];
-			st_productprint.productBarCode = input[PRODUCT_BARCODE_INDEX];
-			st_productprint.productScanTime = input[PRODUCT_SCAN_TIME_INDEX];
-			st_productprint.salesOrderCode = input[SALES_ORDER_CODE_INDEX];
-			st_productprint.workerID = input[WORKER_ID_INDEX];
-			
-			return st_productprint;
+			st.machineID = input[MACHINE_ID_INDEX];
+			st.materialBarCode = input[MATERIAL_BARCODE_INDEX];
+			st.materialScanTime = input[MATERIAL_SCAN_TIME_INDEX];
+			st.productBarCode = input[PRODUCT_BARCODE_INDEX];
+			st.productScanTime = input[PRODUCT_SCAN_TIME_INDEX];
+			st.dispatchCode = input[DISPATCH_CODE_INDEX];
+			st.batchNum = input[BATCH_NUM_INDEX];
+			st.largeIndex = input[LARGE_INDEX_INDEX];
+			st.weight = input[WEIGHT_INDEX];
+
+			return st;
+		}
+
+		public static int updaterecordby_dispatchcode(string[] strArray, string dispatchCode)
+		{
+			string insertString;
+			string[] insertStringSplitted;
+			string connectionString;
+
+			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
+			getDatabaseInsertStringFromExcel(ref insertString, c_productprintlistTableName);
+			insertStringSplitted = insertString.Split(',@');
+
+            try
+            {
+                MySqlConnection myConnection = new MySqlConnection("database = " + c_dbName + ";" + connectionString);
+                myConnection.Open();
+
+                MySqlCommand myCommand = myConnection.CreateCommand();
+
+				myCommand.CommandText = "update ";
+				myCommand.CommandText += "`" + c_productprintlistTableName + "` ";
+				myCommand.CommandText += "set ";
+
+				for (int i=0;i<strArray.Length;i++){
+					if (strArray[i] == null)	continue;
+
+					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + strArray[i];
+					if (i != strArray.Length )
+						myCommand.CommandText += ",";
+				}
+
+				myCommand.CommandText += "where `" + insertStringSplitted[DISPATCH_CODE_INDEX] + "`=" + dispatchCode;
+
+                myCommand.ExecuteNonQuery();
+                myConnection.Close();
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(c_dbName + ":" + c_productprintlistTableName + ": update product barcode failed! " + ex);
+            }
+            return -1;
 		}
 
 		public productprintlist_t[] readrecordBy(string materialScancode)

@@ -232,14 +232,14 @@ namespace MESSystem.common
 				myCommand.CommandText += "set ";
 
 				for (int i=0;i<strArray.Length;i++){
-					if (strArray[i] == null)	continue
+					if (strArray[i] == null)	continue;
 
 					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + strArray[i];
 					if (i != strArray.Length )
 						myCommand.CommandText += ",";
 				}
 
-				myCommand.CommandText += "where `" + insertStringSplitted[STATUS_INDEX] + "`=" + dispatchCode;
+				myCommand.CommandText += "where `" + insertStringSplitted[DISPATCH_CODE_INDEX] + "`=" + dispatchCode;
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
