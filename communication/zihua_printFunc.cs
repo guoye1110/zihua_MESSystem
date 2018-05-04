@@ -270,42 +270,44 @@ namespace MESSystem.zhihua_printerClient {
 		{
 			int len;
 			string strInput;
-			string[] strInputSplited;
-			productcastinglistDB productcasting_db;
+			string[] strInputArray;
 			productcastinglistDB.productcastinglist_t st_productcasting;
 
 			//MIN_PACKET_LEN include one byte of data, so we need to delete this byte
 			len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
 			strInput = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
-			strInputSplited = strInput.Split(";");
-
-			st_productcasting.dispatchCode = strInputSplited[0].Substring(0,12);
-			st_productcasting.scanTime = strInputSplited[0].Substring(12,4);
-			st_productcasting.largeIndex = strInputSplited[0].Substring(16,3);
-			st_productcasting.machineID = productcasting.dispatchCode.Substring(11,1);
-			st_productcasting.batchNum = productcasting.dispatchCode.Substring(0,7);
-			st_productcasting.barCode = strInputSplited[0];
-			//？？以下信息在哪里？？
-			//productcasting.productCode = ;
-			//productcasting.workerID = ;
-			//productcasting.salesOrderCode = ;
+			strInputArray = strInput.Split(";");
+			if (strInputArray.Length != 2)	return -1;
 			
-			return globaldatabase.productcastinglist.writerecord(productcasting);
+			st_productcasting.dispatchCode = strInputArray[0].Substring(0,12);
+			st_productcasting.scanTime = strInputArray[0].Substring(12,4);
+			st_productcasting.largeIndex = strInputArray[0].Substring(16,3);
+			st_productcasting.machineID = st_productcasting.dispatchCode.Substring(11,1);
+			st_productcasting.batchNum = st_productcasting.dispatchCode.Substring(0,7);
+			st_productcasting.barCode = strInputArray[0];
+			st_productcasting.weight = strInputArray[1];
+			
+			return productcastinglistDB.writerecord(st_productcasting);
 		}
 
-		private int setDispatchFinished(string dName, byte[] onePacket, int packetLen)
+		private int setDispatchNotes(int index,       byte[] onePacket, int packetLen)
 		{
 			int len;
 			string strInput;
-			string[] input;
+			string[] strInputArray;
+			dispatchlistDB.dispatchlist_t st_dispatch = {0};
+			string dispatchCode;
 
 			//MIN_PACKET_LEN include one byte of data, so we need to delete this byte
 			len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
 			strInput = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
-			
-			input = strInput.Split(';');
+			strInputArray = strInput.Split(';');
 
-			return machine.dispatchlist.updateDispatchStatus(input);
+			dispatchCode = strInputArray[0];
+			st_dispatch.notes = strInputArray[1];
+
+			
+			return dispatchlistDB.updaterecordby_dispatchcode(index, dispatchlistDB.format(st_dispatch), dispatchCode);
 		}
 
 		private int setPrintBarcode(int communicationType, byte[] onePacket, int packetLen)
@@ -378,7 +380,7 @@ namespace MESSystem.zhihua_printerClient {
 					break;
 				case COMMUNICATION_TYPE_CAST_PROCESS_END:
 					string dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
-					result=setDispatchFinished(dName, onePacket, packetLen);
+					result=setDispatchNotes(dName, onePacket, packetLen);
 					m_ClientThread.sendResponseOKBack(result);
 					break
 

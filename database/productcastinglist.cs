@@ -25,12 +25,10 @@ namespace MESSystem.common
 		private const int BARCODE_INDEX = 2;
 		private const int SCAN_TIME_INDEX= 3;
 		private const int DISPATCH_CODE_INDEX = 4;
-		private const int SALES_ORDER_CODE_INDEX = 5;
-		private const int BATCH_NUM_INDEX = 6;
-		private const int LARGE_INDEX_INDEX = 7;
-		private const int WORKER_ID_INDEX = 8;
-		private const int PRODUCT_CODE_INDEX = 9;
-		private const int TOTAL_DATAGRAM_NUM = PRODUCT_CODE_INDEX+1;
+		private const int BATCH_NUM_INDEX = 5;
+		private const int LARGE_INDEX_INDEX = 6;
+		private const int WEIGHT_INDEX = 7;
+		private const int TOTAL_DATAGRAM_NUM = WEIGHT_INDEX+1;
 
 		private const string c_dbName = "globaldatabase";
         private const string c_productcastinglistTableName = "productcastinglist";
@@ -41,11 +39,9 @@ namespace MESSystem.common
 			string barCode;
 			string scanTime;
 			string dispatchCode;
-			string salesOrderCode;
 			string batchNum;
 			string largeIndex;
-			string workerID;
-			string productCode;
+			string weight;
 		}
 
 		public productcastinglist_t? parseinput(string strInput)
@@ -63,10 +59,8 @@ namespace MESSystem.common
 			st_productcasting.dispatchCode = input[DISPATCH_CODE_INDEX];
 			st_productcasting.largeIndex = input[LARGE_INDEX_INDEX];
 			st_productcasting.machineID = input[MACHINE_ID_INDEX];
-			st_productcasting.productCode = input[PRODUCT_CODE_INDEX];
-			st_productcasting.salesOrderCode = input[SALES_ORDER_CODE_INDEX];
 			st_productcasting.scanTime = input[SCAN_TIME_INDEX];
-			st_productcasting.workerID = input[WORKER_ID_INDEX];
+			st_productcasting.weight = input[WEIGHT_INDEX];
 			
 			return st_productcasting;
 		}
@@ -101,11 +95,9 @@ namespace MESSystem.common
 				myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.barCode);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.scanTime);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.dispatchCode);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.salesOrderCode);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.batchNum);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.largeIndex);
-				myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.workerID);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.productCode);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.weight);
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();

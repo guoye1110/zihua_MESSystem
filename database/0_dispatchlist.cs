@@ -47,23 +47,26 @@ namespace MESSystem.common
 		private const int SALES_ORDER_CODE_INDEX = 24;
 		private const int BOM_CODE_INDEX = 25;
 		private const int CUSTOMER_INDEX = 26;
-		private const int BARCODE_INDEX = 27;
-		private const int BARCODE_FOR_REUSE_INDEX = 28;
-		private const int QUANTITY_OF_REUSED_INDEX = 29;
-		private const int MULTI_PRODUCT_INDEX = 30;
-		private const int PRODUCT_CODE2_INDEX = 31;
-		private const int PRODUCT_CODE3_INDEX = 32;
-		private const int OPERATOR_NAME2_INDEX = 33;
-		private const int OPERATOR_NAME3_INDEX = 34;
-		private const int BATCH_NUMBER_INDEX = 35;
-		private const int NOTES_INDEX = 36;
-
+		private const int MULTI_PRODUCT_INDEX = 27;
+		private const int PRODUCT_CODE2_INDEX = 28;
+		private const int PRODUCT_CODE3_INDEX = 29;
+		private const int OPERATOR_NAME2_INDEX = 30;
+		private const int OPERATOR_NAME3_INDEX = 31;
+		private const int BATCH_NUMBER_INDEX = 32;
+		private const int PRODUCT_COLOR_INDEX = 33;
+		private const int RAW_MATERIAL_CODE_INDEX = 34;
+		private const int PRODUCT_LENGTH_INDEX = 35;
+		private const int PRODUCT_DIAMETER_INDEX = 36;
+		private const int PRODUCT_WEIGHT_INDEX = 37;
+		private const int SLIT_WIDTH_INDEX = 38;
+		private const int PRINT_SIDE_INDEX = 39;
+		private const int NOTES_INDEX = 40;
 		private const int TOTAL_DATAGRAM_NUM = NOTES_INDEX+1;
 
 		private const string c_dispatchListTableName = "0_dispatchlist";
         private const string c_dispatchListFileName = "..\\..\\data\\machine\\dispatchList.xlsx";
 
-		private string m_dbName;
+		private static string m_dbName = gVariable.DBHeadString;
 
         public struct dispatchlist_t
         {
@@ -93,91 +96,101 @@ namespace MESSystem.common
             public string salesOrderCode; //订单号
             public string BOMCode; // 
             public string customer;
-            public string barCode;
-            public string barcodeForReuse;
-            public string quantityOfReused;
             public string multiProduct;
             public string productCode2;
             public string productCode3;
             public string operatorName2; //操作员
             public string operatorName3; //操作员
             public string batchNum; //批次号，previously used inside Zihua, now we don't need this in new system, but need it to be compatible with the old system
+			public string productColor;
+			public string rawMaterialCode;
+			public string productLength;
+			public string productDiameter;
+			public string productWeight;
+			public string slitWidth;
+			public string printSize;
             public string notes;
         }
 
-		public dispatchlist_t? currentDispatch
-        {
-        	get {
-				string[] recordArray;
-				dispatchlist_t? dd;
-				
-				string commandText = "select * from `" + c_dispatchListTableName + "` order by id DESC";
-				recordArray = databaseCommonReadingUnsplitted(m_dbName, commandText);
-				if (recordArray!=null){
-					for (int row=0;row<recordArray.GetLength(0);row++){
-						dd = parseinput(recordArray[row]);
-						if (dd != null && dd.Value.status == gVariable.MACHINE_STATUS_DISPATCH_PUBLISHED)
-								return dd.Value;
-					}
-				}
-				return null;
-        	}
-			set {
-			}
+		public static string format(dispatchlist_t st)
+		{
+			string str = null;
+
+			str += st.machineID  	+ ";" + st.dispatchCode 	+ ";" + st.planTime1 		+ ";" + st.planTime2 		+ ";";
+			str += st.productCode	+ ";" + st.productName 		+ ";" + st.operatorName 	+ ";" + st.forcastNum 		+ ";";
+			str += st.receiveNum  	+ ";" + st.qualifyNumber 	+ ";" + st.unqualifyNumber 	+ ";" + st.processName 		+ ";";
+			str += st.startTime   	+ ";" + st.completeTime 	+ ";" + st.prepareTimePoint	+ ";" + st.status 			+ ";";
+			str += st.toolLifeTimes + ";" + st.toolUsedTimes 	+ ";" + st.outputRatio 		+ ";" + st.serialNumber 	+ ";";
+			str += st.reportor 		+ ";" + st.workshop 		+ ";" + st.workshift 		+ ";" + st.salesOrderCode 	+ ";";
+			str += st.BOMCode 		+ ";" + st.customer 		+ ";" + st.multiProduct 	+ ";" + st.productCode2 	+ ";";
+			str += st.productCode3 	+ ";" + st.operatorName2 	+ ";" + st.operatorName3 	+ ";" + st.batchNum 		+ ";";
+			str += st.productColor 	+ ";" + st.rawMaterialCode 	+ ";" + st.productLength 	+ ";" + st.productDiameter	+ ";";
+			str += st.productWeight + ";" + st.slitWidth 		+ ";" + st.printSize;
+
+			return str;
 		}
 
-		public dispatchlistDB(int printingSWPCID)
-        {
-        	m_dbName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
+		public static string[] format(dispatchlist_t st)
+		{
+			string str;
+			string[] strArray;
+
+			str = format(st);
+			strArray = str.Split(';');
+			return strArray;
 		}
 		
-		public dispatchlist_t? parseinput(string strInput)
+		public static dispatchlist_t? parse(string strInput)
 		{
 			string[] input;
-			dispatchlist_t st_dispatchlist;
+			dispatchlist_t st;
 
 			input = strInput.Split(';');
 
 			if (input.Length < TOTAL_DATAGRAM_NUM)
 				return null;
 
-			st_dispatchlist.barCode = input[BARCODE_INDEX];
-			st_dispatchlist.barcodeForReuse = input[BARCODE_FOR_REUSE_INDEX];
-			st_dispatchlist.batchNum = input[BATCH_NUMBER_INDEX];
-			st_dispatchlist.BOMCode = input[BOM_CODE_INDEX];
-			st_dispatchlist.completeTime= input[COMPLETE_TIME_INDEX];
-			st_dispatchlist.customer = input[CUSTOMER_INDEX];
-			st_dispatchlist.dispatchCode = input[DISPATCH_CODE_INDEX];
-			st_dispatchlist.forcastNum = input[FORCAST_NUM_INDEX];
-			st_dispatchlist.machineID = input[MACHINE_ID_INDEX];
-			st_dispatchlist.multiProduct = input[MULTI_PRODUCT_INDEX];
-			st_dispatchlist.operatorName = input[OPERATOR_NAME_INDEX];
-			st_dispatchlist.operatorName2 = input[OPERATOR_NAME2_INDEX];
-			st_dispatchlist.operatorName3 = input[OPERATOR_NAME3_INDEX];
-			st_dispatchlist.outputRatio = input[OUTPUT_RATIO_INDEX];
-			st_dispatchlist.planTime1 = input[PLAN_TIME1_INDEX];
-			st_dispatchlist.planTime2 = input[PLAN_TIME2_INDEX];
-			st_dispatchlist.prepareTimePoint = input[PREPARE_TIMEPOINT_INDEX];
-			st_dispatchlist.processName = input[PROCESS_NAME_INDEX];
-			st_dispatchlist.productCode = input[PRODUCT_CODE_INDEX];
-			st_dispatchlist.productCode2 = input[PRODUCT_CODE2_INDEX];
-			st_dispatchlist.productCode3 = input[PRODUCT_CODE3_INDEX];
-			st_dispatchlist.productName = input[PRODUCT_NAME_INDEX];
-			st_dispatchlist.qualifyNumber = input[QUALIFY_NUM_INDEX];
-			st_dispatchlist.quantityOfReused = input[QUANTITY_OF_REUSED_INDEX];
-			st_dispatchlist.receiveNum = input[RECEIVE_NUM_INDEX]
-			st_dispatchlist.reportor = input[REPORTER_INDEX];
-			st_dispatchlist.salesOrderCode = input[SALES_ORDER_CODE_INDEX];
-			st_dispatchlist.serialNumber = input[SERIAL_NUMBER_INDEX];
-			st_dispatchlist.startTime = input[START_TIME_INDEX];
-			st_dispatchlist.status = input[STATUS_INDEX];
-			st_dispatchlist.toolLifeTimes = input[TOOL_LIFETIME_INDEX];
-			st_dispatchlist.toolUsedTimes = input[TOOL_USED_TIMES_INDEX];
-			st_dispatchlist.unqualifyNumber = input[UNQUALIFY_NUM_INDEX];
-			st_dispatchlist.workshift = input[WORKSHIFT_INDEX];
-			st_dispatchlist.workshop = input[WORKSHOP_INDEX];
+			st.machineID = input[MACHINE_ID_INDEX];
+			st.dispatchCode = input[DISPATCH_CODE_INDEX]; 
+			st.planTime1 = input[PLAN_TIME1_INDEX];
+			st.planTime2 = input[PLAN_TIME2_INDEX];
+			st.productCode = input[PRODUCT_CODE_INDEX];
+			st.productName = input[PRODUCT_NAME_INDEX];
+			st.operatorName = input[OPERATOR_NAME_INDEX];
+			st.forcastNum = input[FORCAST_NUM_INDEX];
+			st.receiveNum = input[RECEIVE_NUM_INDEX];
+			st.qualifyNumber = input[QUALIFY_NUM_INDEX];
+			st.unqualifyNumber = input[UNQUALIFY_NUM_INDEX];
+			st.processName = input[PROCESS_NAME_INDEX];
+			st.startTime = input[START_TIME_INDEX];
+			st.completeTime = input[COMPLETE_TIME_INDEX];
+			st.prepareTimePoint = input[PREPARE_TIMEPOINT_INDEX];
+			st.status = input[STATUS_INDEX];
+			st.toolLifeTimes = input[TOOL_LIFETIME_INDEX];
+			st.toolUsedTimes = input[TOOL_USED_TIMES_INDEX];
+			st.outputRatio = input[OUTPUT_RATIO_INDEX];
+			st.serialNumber = input[SERIAL_NUMBER_INDEX];
+			st.reportor = input[REPORTER_INDEX];
+			st.workshop = input[WORKSHOP_INDEX];
+			st.workshift = input[WORKSHIFT_INDEX];
+			st.salesOrderCode = input[SALES_ORDER_CODE_INDEX];
+			st.BOMCode = input[BOM_CODE_INDEX];
+			st.customer = input[CUSTOMER_INDEX];
+			st.multiProduct = input[MULTI_PRODUCT_INDEX];
+			st.productCode2 = input[PRODUCT_CODE2_INDEX];
+			st.productCode3 = input[PRODUCT_CODE3_INDEX];
+			st.operatorName2 = input[OPERATOR_NAME2_INDEX];
+			st.operatorName3 = input[OPERATOR_NAME3_INDEX];
+			st.batchNum = input[BATCH_NUMBER_INDEX];
+			st.productColor = input[PRODUCT_COLOR_INDEX];
+			st.rawMaterialCode = input[RAW_MATERIAL_CODE_INDEX];
+			st.productLength = input[PRODUCT_LENGTH_INDEX];
+			st.productDiameter = input[PRODUCT_DIAMETER_INDEX];
+			st.productWeight = input[PRODUCT_WEIGHT_INDEX];
+			st.slitWidth = input[SLIT_WIDTH_INDEX];
+			st.printSize = input[PRINT_SIDE_INDEX];
 			
-			return st_dispatchlist;
+			return st;
 		}
 
 		public dispatchlist_t[] readallrecordOrdered()
@@ -195,6 +208,49 @@ namespace MESSystem.common
 				}
 			}
 			return st_dispatchlist;
+		}
+
+		public static int updaterecordby_dispatchcode(int index, string[] strArray, string dispatchCode)
+		{
+			string insertString;
+			string[] insertStringSplitted;
+			string connectionString;
+
+			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
+			getDatabaseInsertStringFromExcel(ref insertString, c_dispatchListFileName);
+			insertStringSplitted = insertString.Split(',@');
+
+            try
+            {
+                MySqlConnection myConnection = new MySqlConnection("database = " + m_dbName + index.ToString().PadLeft(3, '0') + "; " + connectionString);
+                myConnection.Open();
+
+                MySqlCommand myCommand = myConnection.CreateCommand();
+
+				myCommand.CommandText = "update ";
+				myCommand.CommandText += "`" + c_dispatchListTableName + "` ";
+				myCommand.CommandText += "set ";
+
+				for (int i=0;i<strArray.Length;i++){
+					if (strArray[i] == null)	continue
+
+					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + strArray[i];
+					if (i != strArray.Length )
+						myCommand.CommandText += ",";
+				}
+
+				myCommand.CommandText += "where `" + insertStringSplitted[STATUS_INDEX] + "`=" + dispatchCode;
+
+                myCommand.ExecuteNonQuery();
+                myConnection.Close();
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(c_dbName + ":" + c_productprintlistTableName + ": update product barcode failed! " + ex);
+            }
+            return -1;
 		}
 
         //return 0 written to table successfully
@@ -261,6 +317,10 @@ namespace MESSystem.common
             }
             return -1;
         }
+
+		public int updateDispatchNotes(string dispatchCode, string notes)
+        {
+		}
 
 		public int updateDispatchStatus(string[] in_dispatch)
         {
