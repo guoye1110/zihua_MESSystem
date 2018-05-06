@@ -175,7 +175,9 @@
     <Compile Include="communication\serverBoardFunc.cs" />
     <Compile Include="communication\serverPCFunc.cs" />
     <Compile Include="communication\serverPrintFunc.cs" />
-    <Compile Include="communication\zihua_printFunc.cs" />
+    <Compile Include="communication\zihua_printFunc.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="curves\Column.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -206,6 +208,13 @@
     <Compile Include="curves\SPCCurve.designer.cs">
       <DependentUpon>SPCCurve.cs</DependentUpon>
     </Compile>
+    <Compile Include="databaseclient\0_dispatchlist.cs" />
+    <Compile Include="databaseclient\inspectionlist.cs" />
+    <Compile Include="databaseclient\materialinoutrecord.cs" />
+    <Compile Include="databaseclient\productcastinglist.cs" />
+    <Compile Include="databaseclient\productprintlist.cs" />
+    <Compile Include="databaseclient\productslitlist.cs" />
+    <Compile Include="databaseclient\reusematerial.cs" />
     <Compile Include="dispatchManagement\adjustDispatch.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -296,8 +296,6 @@ namespace MESSystem.communication
 
             object settingFileLocker = new object();
 
-            zihua_printerClient aa;
-
             //int emptyPacketIndex;
 
             //the user from PC decided to write one of the setting data to board
