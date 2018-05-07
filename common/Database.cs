@@ -2317,6 +2317,36 @@ namespace MESSystem.common
             return -1;
         }
 
+        public static string[] databaseCommonReadingUnsplitted(string databaseName, string commandText)
+        {
+            int i, j;
+            string[] recordArray;
+            DataTable dTable;
+
+            try {
+                recordArray = null;
+                dTable = queryDataTableAction(databaseName, commandText, null);
+                if (dTable != null && dTable.Rows.Count != 0) {
+                    j = 0;
+
+                    recordArray = new string[dTable.Rows.Count];
+                    for (i = 0; i < dTable.Rows.Count; i++) {
+                        for (j = 0; j < dTable.Rows[0].ItemArray.Length; j++) {
+                            recordArray[i] += dTable.Rows[i].ItemArray[j].ToString();
+							if (j!=dTable.Rows[0].ItemArray.Length)
+								recordArray[i] += ";";
+                        }
+                    }
+                }
+                return recordArray;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("databaseCommonReadingUnsplitted failed!" + ex);
+            }
+            return null;
+        }
+
         public static string [,] databaseCommonReading(string databaseName, string commandText)
         {
             int i, j;

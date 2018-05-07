@@ -210,6 +210,7 @@
     </Compile>
     <Compile Include="databaseclient\0_dispatchlist.cs" />
     <Compile Include="databaseclient\inspectionlist.cs" />
+    <Compile Include="databaseclient\materialdeliverylist.cs" />
     <Compile Include="databaseclient\materialinoutrecord.cs" />
     <Compile Include="databaseclient\productcastinglist.cs" />
     <Compile Include="databaseclient\productprintlist.cs" />

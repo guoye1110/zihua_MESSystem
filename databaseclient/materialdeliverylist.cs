@@ -36,14 +36,14 @@ namespace MESSystem.common
         private const string c_FileName = "..\\..\\data\\globalTables\\materialDeliveryList.xlsx";
 
 		public struct materialdelivery_t {
-			string materialCode;
-			string materialBatchNum;
-			string direction;
-			string inoutputTime;
-			string inoutputQuantity;
-			string targetMachine;
-			string targetFeedBinIndex;
-			string deliveryWorker;
+			public string materialCode;
+            public string materialBatchNum;
+            public string direction;
+            public string inoutputTime;
+            public string inoutputQuantity;
+            public string targetMachine;
+            public string targetFeedBinIndex;
+            public string deliveryWorker;
 		}
 
 		public string Serialize(materialdelivery_t st)
@@ -91,10 +91,9 @@ namespace MESSystem.common
         //      -1 exception occurred
         public int writerecord(materialdelivery_t st)
         {
-            int num;
             int index;
             string[] itemName;
-			string insertString;
+			string insertString=null;
 			string connectionString;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
@@ -113,22 +112,14 @@ namespace MESSystem.common
                 myCommand.CommandText = "insert into `" + c_TableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.rebuildDate);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.BOMCode);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.barcodeForReuse);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.rebuildNum);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.workerID);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.numberOfBarCodes);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.barCode1);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.barCode2);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.barCode3);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.barCode4);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.barCode5);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.barCode6);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.barCode7);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.barCode8);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.barCode9);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.barCode10);
+                myCommand.Parameters.AddWithValue(itemName[index++], st.materialCode);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.materialBatchNum);
+                myCommand.Parameters.AddWithValue(itemName[index++], st.direction);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.inoutputTime);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.inoutputQuantity);
+                myCommand.Parameters.AddWithValue(itemName[index++], st.targetMachine);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.targetFeedBinIndex);
+                myCommand.Parameters.AddWithValue(itemName[index++], st.deliveryWorker);
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();

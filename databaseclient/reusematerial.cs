@@ -43,21 +43,21 @@ namespace MESSystem.common
         private const string c_reusematerialFileName = "..\\..\\data\\globalTables\\reuseMaterial.xlsx";
 
 		public struct reusematerial_t{
-			string rebuildDate;
-			string BOMCode;
-			string barcodeForReuse;
-			string rebuildNum;
-			string workerID;
-			string barCode1;
-			string barCode2;
-			string barCode3;
-			string barCode4;
-			string barCode5;
-			string barCode6;
-			string barCode7;
-			string barCode8;
-			string barCode9;
-			string barCode10;
+            public string rebuildDate;
+            public string BOMCode;
+            public string barcodeForReuse;
+            public string rebuildNum;
+            public string workerID;
+            public string barCode1;
+            public string barCode2;
+            public string barCode3;
+            public string barCode4;
+            public string barCode5;
+            public string barCode6;
+            public string barCode7;
+            public string barCode8;
+            public string barCode9;
+            public string barCode10;
 		}
 
 		public string Serialize(reusematerial_t st)
@@ -65,7 +65,7 @@ namespace MESSystem.common
 			string str = null;
 
 			str += st.rebuildDate 	+ ";" + st.BOMCode 			+ ";" + st.barcodeForReuse	+ ";" + st.rebuildNum	+ ";";
-			str += st.workerID		+ ";" + st.numberOfBarCodes	+ ";" + st.barCode1 		+ ";" + st.barCode2 	+ ";";
+			str += st.workerID		+ ";" + st.barCode1 		+ ";" + st.barCode2 	+ ";";
 			str += st.barCode3		+ ";" + st.barCode4			+ ";" + st.barCode5 		+ ";" + st.barCode6 	+ ";";
 			str += st.barCode7		+ ";" + st.barCode8			+ ";" + st.barCode9 		+ ";" + st.barCode10;
 			return str;
@@ -88,7 +88,7 @@ namespace MESSystem.common
 
 			input = strInput.Split(';');
 
-			if (input.Length < LEFT_IN_FEEDBIN_INDEX)
+			if (input.Length < TOTAL_DATAGRAM_NUM)
 				return null;
 
 			st.barCode1 = input[BARCODE1_INDEX];
@@ -103,7 +103,6 @@ namespace MESSystem.common
 			st.barCode9 = input[BARCODE9_INDEX];
 			st.barcodeForReuse = input[BARCODE_FOR_REUSE_INDEX];
 			st.BOMCode = input[BOM_CODE_INDEX];
-			st.numberOfBarCodes = input[NUM_OF_BAR_CODES_INDEX];
 			st.rebuildDate = input[REBUILD_DATE_INDEX];
 			st.rebuildNum = input[REBUILD_NUM_INDEX];
 			st.workerID = input[WORKER_ID_INDEX];
@@ -118,7 +117,7 @@ namespace MESSystem.common
             int num;
             int index;
             string[] itemName;
-			string insertString;
+			string insertString=null;
 			string connectionString;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
@@ -142,7 +141,6 @@ namespace MESSystem.common
                 myCommand.Parameters.AddWithValue(itemName[index++], st.barcodeForReuse);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.rebuildNum);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.workerID);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.numberOfBarCodes);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.barCode1);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.barCode2);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.barCode3);
@@ -161,7 +159,7 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine(c_dbName + "write to " + c_productcastinglistTableName + " failed!" + ex);
+                Console.WriteLine(c_dbName + "write to " + c_reusematerialTableName + " failed!" + ex);
             }
             return -1;
         }

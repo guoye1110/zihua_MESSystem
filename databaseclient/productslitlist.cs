@@ -41,19 +41,34 @@ namespace MESSystem.common
         private const string c_productslitlistFileName = "..\\..\\data\\globalTables\\productSlitList.xlsx";
 
 		public struct productslit_t{
-			string machineID;
-			string materialBarCode;
-			string materialScanTime;
-			string productBarCode;
-			string productScanTime;
-			string dispatchCode;
-			string batchNum;
-			string largeIndex;
-			string smallIndex;
-			string customerIndex;
-			string errorStatus;
-			string numOfJoins;
-			string weight;
+			public string machineID;
+            public string materialBarCode;
+            public string materialScanTime;
+            public string productBarCode;
+            public string productScanTime;
+            public string dispatchCode;
+            public string batchNum;
+            public string largeIndex;
+            public string smallIndex;
+            public string customerIndex;
+            public string errorStatus;
+            public string numOfJoins;
+            public string weight;
+			public productslit_t(int value){
+				this.machineID = null;
+				this.materialBarCode = null;
+				this.materialScanTime = null;
+				this.productBarCode = null;
+				this.productScanTime = null;
+				this.dispatchCode = null;
+				this.batchNum = null;
+				this.largeIndex = null;
+				this.smallIndex = null;
+				this.customerIndex = null;
+				this.errorStatus = null;
+				this.numOfJoins = null;
+				this.weight = null;
+			}
 		}
 
 		public string Serialize(productslit_t st)
@@ -106,13 +121,13 @@ namespace MESSystem.common
 
 		public int updaterecord_ByMaterialBarCode(string[] strArray, string barcode)
 		{
-			string insertString;
+			string insertString = null;
 			string[] insertStringSplitted;
 			string connectionString;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			getDatabaseInsertStringFromExcel(ref insertString, c_productslitlistTableName);
-			insertStringSplitted = insertString.Split(',@');
+            insertStringSplitted = insertString.Split(new char[2] { ',', '@' });
 
             try
             {
@@ -147,7 +162,7 @@ namespace MESSystem.common
             return -1;
 		}
 
-#if 0
+/*
 		public productprintlist_t[] readrecordBy(string materialScancode)
 		{
 			string commandText;
@@ -165,15 +180,14 @@ namespace MESSystem.common
 			}
 			return st_productprint;
 		}
-#endif
+*/
         //return 0 written to table successfully
         //      -1 exception occurred
-        public int writerecord(productslitlist_t st_slit)
+        public int writerecord(productslit_t st_slit)
         {
-            int num;
             int index;
             string[] itemName;
-			string insertString;
+			string insertString=null;
 			string connectionString;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
@@ -218,7 +232,7 @@ namespace MESSystem.common
             return -1;
         }
 
-#if 0
+/*
 		public int updateProductScancode(productprintlist_t st_productprint)
         {
 			string insertString;
@@ -255,7 +269,7 @@ namespace MESSystem.common
             }
             return -1;			
 		}
-#endif
+*/
 	}
 }
 

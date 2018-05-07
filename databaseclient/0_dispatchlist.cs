@@ -60,8 +60,11 @@ namespace MESSystem.common
 		private const int PRODUCT_WEIGHT_INDEX = 37;
 		private const int SLIT_WIDTH_INDEX = 38;
 		private const int PRINT_SIDE_INDEX = 39;
-		private const int NOTES_INDEX = 40;
-		private const int TOTAL_DATAGRAM_NUM = NOTES_INDEX+1;
+		private const int PRODUCT_CODE4_INDEX = 40;
+		private const int OPERATOR_NAME4_INDEX = 41;
+		private const int NOTES_INDEX = 42;
+		private const int COMMENTS_INDDEX = 43;
+		private const int TOTAL_DATAGRAM_NUM = COMMENTS_INDDEX+1;
 
 		private const string c_dispatchListTableName = "0_dispatchlist";
         private const string c_dispatchListFileName = "..\\..\\data\\machine\\dispatchList.xlsx";
@@ -109,7 +112,56 @@ namespace MESSystem.common
 			public string productWeight;
 			public string slitWidth;
 			public string printSize;
+			public string productCode4;
+			public string operatorName4;
             public string notes;
+			public string comments;
+
+			public dispatchlist_t(int value){
+				this.machineID = null;
+				this.dispatchCode = null; 
+				this.planTime1 = null;
+				this.planTime2 = null;
+				this.productCode = null;
+				this.productName = null;
+				this.operatorName = null;
+				this.forcastNum = null;
+				this.receiveNum = null;
+				this.qualifyNumber = value;
+				this.unqualifyNumber = value;
+				this.processName = null;
+				this.startTime = null;
+				this.completeTime = null;
+				this.prepareTimePoint = null;
+				this.status = value;
+				this.toolLifeTimes = value;
+				this.toolUsedTimes = value;
+				this.outputRatio = value;
+				this.serialNumber = null;
+				this.reportor = null;
+				this.workshop = null;
+				this.workshift = null;
+				this.salesOrderCode = null;
+				this.BOMCode = null;
+				this.customer = null;
+				this.multiProduct = null;
+				this.productCode2 = null;
+				this.productCode3 = null;
+				this.operatorName2 = null;
+				this.operatorName3 = null;
+				this.batchNum = null;
+				this.productColor = null;
+				this.rawMaterialCode = null;
+				this.productLength = null;
+				this.productDiameter = null;
+				this.productWeight = null;
+				this.slitWidth = null;
+				this.printSize = null;
+				this.productCode4 = null;
+				this.operatorName4 = null;
+				this.notes = null;
+				this.comments = null;				
+			}			
         }
 
 		public dispatchlistDB(int index)
@@ -130,7 +182,8 @@ namespace MESSystem.common
 			str += st.BOMCode 		+ ";" + st.customer 		+ ";" + st.multiProduct 	+ ";" + st.productCode2 	+ ";";
 			str += st.productCode3 	+ ";" + st.operatorName2 	+ ";" + st.operatorName3 	+ ";" + st.batchNum 		+ ";";
 			str += st.productColor 	+ ";" + st.rawMaterialCode 	+ ";" + st.productLength 	+ ";" + st.productDiameter	+ ";";
-			str += st.productWeight + ";" + st.slitWidth 		+ ";" + st.printSize;
+			str += st.productWeight + ";" + st.slitWidth 		+ ";" + st.printSize		+ ";" + st.productCode4 	+ ";";
+			str += st.operatorName4 + ";" + st.notes			+ ";" + st.comments;
 
 			return str;
 		}
@@ -164,16 +217,16 @@ namespace MESSystem.common
 			st.operatorName = input[OPERATOR_NAME_INDEX];
 			st.forcastNum = input[FORCAST_NUM_INDEX];
 			st.receiveNum = input[RECEIVE_NUM_INDEX];
-			st.qualifyNumber = input[QUALIFY_NUM_INDEX];
-			st.unqualifyNumber = input[UNQUALIFY_NUM_INDEX];
+			st.qualifyNumber = int.Parse(input[QUALIFY_NUM_INDEX]);
+			st.unqualifyNumber = int.Parse(input[UNQUALIFY_NUM_INDEX]);
 			st.processName = input[PROCESS_NAME_INDEX];
 			st.startTime = input[START_TIME_INDEX];
 			st.completeTime = input[COMPLETE_TIME_INDEX];
 			st.prepareTimePoint = input[PREPARE_TIMEPOINT_INDEX];
-			st.status = input[STATUS_INDEX];
-			st.toolLifeTimes = input[TOOL_LIFETIME_INDEX];
-			st.toolUsedTimes = input[TOOL_USED_TIMES_INDEX];
-			st.outputRatio = input[OUTPUT_RATIO_INDEX];
+			st.status = int.Parse(input[STATUS_INDEX]);
+			st.toolLifeTimes = int.Parse(input[TOOL_LIFETIME_INDEX]);
+			st.toolUsedTimes = int.Parse(input[TOOL_USED_TIMES_INDEX]);
+			st.outputRatio = int.Parse(input[OUTPUT_RATIO_INDEX]);
 			st.serialNumber = input[SERIAL_NUMBER_INDEX];
 			st.reportor = input[REPORTER_INDEX];
 			st.workshop = input[WORKSHOP_INDEX];
@@ -194,6 +247,10 @@ namespace MESSystem.common
 			st.productWeight = input[PRODUCT_WEIGHT_INDEX];
 			st.slitWidth = input[SLIT_WIDTH_INDEX];
 			st.printSize = input[PRINT_SIDE_INDEX];
+			st.productCode4 = input[PRODUCT_CODE4_INDEX];
+			st.operatorName4 = input[OPERATOR_NAME4_INDEX];
+			st.notes = input[NOTES_INDEX];
+			st.comments = input[COMMENTS_INDDEX];
 			
 			return st;
 		}
@@ -202,7 +259,7 @@ namespace MESSystem.common
 		{
 			dispatchlist_t? dd;
 			string[] recordArray;
-			dispatchlist_t[] st_dispatchlist;
+			dispatchlist_t[] st_dispatchlist=null;
 			string commandText = "select * from `" + c_dispatchListTableName + "` order by id DESC";
 			recordArray = mySQLClass.databaseCommonReadingUnsplitted(m_dbName, commandText);
 			if (recordArray!=null){
@@ -217,7 +274,7 @@ namespace MESSystem.common
 
 		public int updaterecord_ByDispatchcode(string[] strArray, string dispatchCode)
 		{
-			string insertString;
+			string insertString=null;
 			string[] insertStringSplitted;
 			string connectionString;
 
@@ -254,7 +311,7 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine(c_dbName + ":" + c_productprintlistTableName + ": update product barcode failed! " + ex);
+                Console.WriteLine(m_dbName + ":" + c_dispatchListTableName + ": update product barcode failed! " + ex);
             }
             return -1;
 		}
@@ -266,7 +323,7 @@ namespace MESSystem.common
             int num;
             int index;
             string[] itemName;
-			string insertString;
+			string insertString=null;
 			string connectionString;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
@@ -292,13 +349,13 @@ namespace MESSystem.common
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productCode);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productName);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.operatorName);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.plannedNumber);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.outputNumber);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.qualifiedNumber);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.unqualifiedNumber);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.forcastNum);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.receiveNum);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.qualifyNumber);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.unqualifyNumber);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.processName);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.realStartTime);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.realFinishTime);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.startTime);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.completeTime);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.prepareTimePoint);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.status);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.toolLifeTimes);
@@ -311,6 +368,23 @@ namespace MESSystem.common
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.salesOrderCode);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.BOMCode);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.customer);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.multiProduct);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productCode2);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productCode3);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.operatorName2);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.operatorName3);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.batchNum);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productColor);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.rawMaterialCode);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productLength);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productDiameter);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productWeight);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.slitWidth);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.printSize);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productCode4);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.operatorName4);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.notes);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.comments);
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
@@ -420,6 +494,6 @@ namespace MESSystem.common
 		}	
 
 */
+			}
 	}
-}
 

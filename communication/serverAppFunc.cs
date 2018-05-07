@@ -22,9 +22,9 @@ namespace MESSystem.communication
             private int fileDataOffset;
             private FileStream fs;
 
-            private void sendResponseOKBack()
+            private void sendResponseOKBack(int result)
             {
-                onePacket[PROTOCOL_DATA_POS] = RESULT_OK;
+                onePacket[PROTOCOL_DATA_POS] = (byte)result;
                 onePacket[PROTOCOL_LEN_POS] = (byte)MIN_PACKET_LEN;
                 onePacket[PROTOCOL_LEN_POS + 1] = 0;
                 toolClass.addCrc32Code(onePacket, MIN_PACKET_LEN);
@@ -44,14 +44,14 @@ namespace MESSystem.communication
                         case COMMUNICATION_TYPE_APP_WORKING_BOARD_ID_TO_PC:
                             boardIDReviewedByApp = onePacket[PROTOCOL_DATA_POS];
                             handshakeWithClientOK = 1;
-                            sendResponseOKBack();
+                            sendResponseOKBack(0);
                             fs = null;
                             break;
                         case COMMUNICATION_TYPE_APP_FILE_NAME_TO_PC:
                             len -= MIN_PACKET_LEN_MINUS_ONE;  //MIN_PACKET_LEN include one byte of data, so we need to delete this byte
                             appFileName = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
                             fs = new FileStream("..\\..\\files\\" + boardIDReviewedByApp + "\\" + appFileName, FileMode.Create);
-                            sendResponseOKBack();
+                            sendResponseOKBack(0);
                             fileDataOffset = 0;
                             while(gVariable.fileDataInWriting == 1)  //someone else is now doing video file upload, wait for the completion of this action
                                 toolClass.nonBlockingDelay(1);
@@ -71,7 +71,7 @@ namespace MESSystem.communication
                             fileDataOffset += len;
 //                            str = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff");
 //                            Console.WriteLine(str + ": got file data packet from app, now file length now is " + fileDataOffset);
-                            sendResponseOKBack();
+                            sendResponseOKBack(0);
                             break;
                         case COMMUNICATION_TYPE_APP_FILE_END_TO_PC:
                             fs.Write(gVariable.fileDataBuf, 0, fileDataOffset);
@@ -80,14 +80,14 @@ namespace MESSystem.communication
                             gVariable.fileDataInWriting = 0;
                             str = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff");
                             Console.WriteLine(str + ": : file write complte!");
-                            sendResponseOKBack();
+                            sendResponseOKBack(0);
                             break;
                         case COMMUNICATION_TYPE_APP_DEVICE_NAME:
                             len -= MIN_PACKET_LEN_MINUS_ONE;  //MIN_PACKET_LEN include one byte of data, so we need to delete this byte
                             if (len <= 1)  //length is not correct
                                 break;
                             appDeviceName = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS + 1, len - 1);
-                            sendResponseOKBack();
+                            sendResponseOKBack(0);
                             break;
                     }
                 }

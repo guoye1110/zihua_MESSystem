@@ -36,14 +36,24 @@ namespace MESSystem.common
         private const string c_inspectionlistFileName = "..\\..\\data\\globalTables\\inspectionList.xlsx";
 
 		public struct inspection_t{
-			string materialScanTime;
-			string materialBarCode;
-			string productScanTime;
-			string productBarCode;
-			string dispatchCode;
-			string batchNum;
-			string inspector;
-			string checkingResult;
+			public string materialScanTime;
+            public string materialBarCode;
+            public string productScanTime;
+            public string productBarCode;
+            public string dispatchCode;
+            public string batchNum;
+            public string inspector;
+            public string checkingResult;
+			public inspection_t(int value){
+				this.materialScanTime = null;
+				this.materialBarCode = null;
+				this.productScanTime = null;
+				this.productBarCode = null;
+				this.dispatchCode = null;
+				this.batchNum = null;
+				this.inspector = null;
+				this.checkingResult = null;
+			}
 		}
 
 		public string Serialize(inspection_t st)
@@ -72,7 +82,7 @@ namespace MESSystem.common
 
 			input = strInput.Split(';');
 
-			if (input.Length < LEFT_IN_FEEDBIN_INDEX)
+			if (input.Length < TOTAL_DATAGRAM_NUM)
 				return null;
 
 			st.materialScanTime = input[MATERIAL_SCANTIME_INDEX];
@@ -89,13 +99,13 @@ namespace MESSystem.common
 
 		public int updaterecord_ByMaterialBarCode(string[] strArray, string barcode)
 		{
-			string insertString;
+			string insertString=null;
 			string[] insertStringSplitted;
 			string connectionString;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			getDatabaseInsertStringFromExcel(ref insertString, c_inspectionlistTableName);
-			insertStringSplitted = insertString.Split(',@');
+			insertStringSplitted = insertString.Split(new char[2]{',','@'});
 
             try
             {
@@ -138,7 +148,7 @@ namespace MESSystem.common
             int num;
             int index;
             string[] itemName;
-			string insertString;
+			string insertString=null;
 			string connectionString;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";

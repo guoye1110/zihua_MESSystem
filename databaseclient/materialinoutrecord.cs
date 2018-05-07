@@ -18,7 +18,7 @@ using System.Threading;
 
 namespace MESSystem.common
 {
-	public class globaldatabase.materialinoutrecord : mySQLClass
+	public class materialinoutrecordDB : mySQLClass
 	{
 		//index
         private const int MATERIAL_CODE_INDEX = 1;
@@ -41,20 +41,20 @@ namespace MESSystem.common
         private const string c_materialInOutRecordFileName = "..\\..\\data\\globalTables\\materialInOutRecord.xlsx";
 
 		public struct materialinoutrecord_t{
-			string materialCode;
-			string materialName;
-			string direction;
-			string inoutPutTime;
-			string inoutputQuantity;
-			string targetMachine;
-			string feedBinIndex;
-			string diliveryWorker;
-			string leftInStack;
-			string feedTime;
-			string feeder;
-			string feedQuantity;
-			string dispatchCode;
-			string leftInFeedbin;
+			public string materialCode;
+            public string materialName;
+            public string direction;
+            public string inoutPutTime;
+            public string inoutputQuantity;
+            public string targetMachine;
+            public string feedBinIndex;
+            public string diliveryWorker;
+            public string leftInStack;
+            public string feedTime;
+            public string feeder;
+            public string feedQuantity;
+            public string dispatchCode;
+            public string leftInFeedbin;
 		};
 
 		public materialinoutrecord_t? parseinput(string strInput)
@@ -89,10 +89,9 @@ namespace MESSystem.common
         //      -1 exception occurred
         public int writerecord(materialinoutrecord_t st_material)
         {
-            int num;
             int index;
             string[] itemName;
-			string insertString;
+			string insertString=null;
 			string connectionString;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";

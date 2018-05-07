@@ -37,15 +37,26 @@ namespace MESSystem.common
         private const string c_productprintlistFileName = "..\\..\\data\\globalTables\\productPrintList.xlsx";
 
 		public struct productprint_t{
-			string machineID;
-			string materialBarCode;
-			string materialScanTime;
-			string productBarCode;
-			string productScanTime;
-			string dispatchCode;
-			string batchNum;
-			string largeIndex;
-			string weight;
+            public string machineID;
+            public string materialBarCode;
+            public string materialScanTime;
+            public string productBarCode;
+            public string productScanTime;
+            public string dispatchCode;
+            public string batchNum;
+            public string largeIndex;
+            public string weight;
+			public productprint_t(int value){
+				this.machineID = null;
+				this.materialBarCode = null;
+				this.materialScanTime = null;
+				this.productBarCode = null;
+				this.productScanTime = null;
+				this.dispatchCode = null;
+				this.batchNum = null;
+				this.largeIndex = null;
+				this.weight = null;				
+			}
 		}
 
 		public string Serialize(productprint_t st)
@@ -93,13 +104,13 @@ namespace MESSystem.common
 
 		public int updaterecord_ByMaterialBarCode(string[] strArray, string barcode)
 		{
-			string insertString;
+			string insertString=null;
 			string[] insertStringSplitted;
 			string connectionString;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			getDatabaseInsertStringFromExcel(ref insertString, c_productprintlistTableName);
-			insertStringSplitted = insertString.Split(',@');
+            insertStringSplitted = insertString.Split(new char[2] { ',','@' });
 
             try
             {
@@ -134,7 +145,7 @@ namespace MESSystem.common
             return -1;
 		}
 
-	#if 0
+/*
 		public productprintlist_t[] readrecordBy(string materialScancode)
 		{
 			string commandText;
@@ -152,16 +163,15 @@ namespace MESSystem.common
 			}
 			return st_productprint;
 		}
-	#endif
+*/
 		
         //return 0 written to table successfully
         //      -1 exception occurred
         public int writerecord(productprint_t st_productprint)
         {
-            int num;
             int index;
             string[] itemName;
-			string insertString;
+			string insertString=null;
 			string connectionString;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
@@ -202,7 +212,7 @@ namespace MESSystem.common
             return -1;
         }
 
-#if 0
+/*
 		public int updateProductScancode(productprintlist_t st_productprint)
         {
 			string insertString;
@@ -239,7 +249,7 @@ namespace MESSystem.common
             }
             return -1;			
 		}
-#endif
+*/
 	}
 }
 

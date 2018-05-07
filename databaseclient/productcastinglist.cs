@@ -35,13 +35,13 @@ namespace MESSystem.common
         private const string c_productcastinglistFileName = "..\\..\\data\\globalTables\\productCastList.xlsx";
 
 		public struct productcast_t{
-			string machineID;
-			string barCode;
-			string scanTime;
-			string dispatchCode;
-			string batchNum;
-			string largeIndex;
-			string weight;
+			public string machineID;
+			public string barCode;
+			public string scanTime;
+			public string dispatchCode;
+			public string batchNum;
+			public string largeIndex;
+			public string weight;
 		}
 
 		public string Serialize(productcast_t st)
@@ -70,7 +70,7 @@ namespace MESSystem.common
 
 			input = strInput.Split(';');
 
-			if (input.Length < LEFT_IN_FEEDBIN_INDEX)
+			if (input.Length < TOTAL_DATAGRAM_NUM)
 				return null;
 
 			st.barCode = input[BARCODE_INDEX];
@@ -88,10 +88,9 @@ namespace MESSystem.common
         //      -1 exception occurred
         public int writerecord(productcast_t st_productcasting)
         {
-            int num;
             int index;
             string[] itemName;
-			string insertString;
+			string insertString=null;
 			string connectionString;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";

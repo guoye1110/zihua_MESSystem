@@ -150,7 +150,7 @@ namespace MESSystem.communication
                     {
                         for (i = 0; i < NUM_OF_FEEDING_MACHINE; i++)
                         {
-                            int[] lefts = mySQLClass.getFeedCurrentLeft(i, STACK_NUM_ONE_MACHINE);
+                            int[] lefts = new int[] { 1, 2 };//mySQLClass.getFeedCurrentLeft(i, STACK_NUM_ONE_MACHINE);
                             for (int index = 0; index < lefts.Length; index++)
                                 sackNumLeftInStack[i, index] = lefts[index];
 
@@ -224,19 +224,21 @@ namespace MESSystem.communication
                 {
                     int len;
                     string strInput;
+                    string[] strInputArray;
 					materialdeliverylistDB db = new materialdeliverylistDB();
                     materialdeliverylistDB.materialdelivery_t materialdelivery;
 
 					//MIN_PACKET_LEN include one byte of data, so we need to delete this byte
                     len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
                     strInput = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
+                    strInputArray = strInput.Split(';');
 
-					materialdelivery.materialCode = strInput[0];
-					materialdelivery.materialBatchNum = strInput[1];
-					materialdelivery.targetMachine = strInput[2];
-					materialdelivery.targetFeedBinIndex = strInput[3];
-					materialdelivery.inoutputQuantity = strInput[4];
-					materialdelivery.direction = (communicationType&COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE) + 1;//1: 出库 2：入库
+                    materialdelivery.materialCode = strInputArray[0];
+                    materialdelivery.materialBatchNum = strInputArray[1];
+                    materialdelivery.targetMachine = strInputArray[2];
+                    materialdelivery.targetFeedBinIndex = strInputArray[3];
+                    materialdelivery.inoutputQuantity = strInputArray[4];
+					materialdelivery.direction = ((communicationType&COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE) + 1).ToString();//1: 出库 2：入库
 					materialdelivery.inoutputTime = System.DateTime.Now.ToString();
 					materialdelivery.deliveryWorker = m_Operator;
 					
@@ -301,8 +303,7 @@ namespace MESSystem.communication
                 private int HandleHandShake(int communicationType, byte[] onePacket, int packetLen)
                 {
                     m_machineIDForPrint = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100;
-                    onePacket[PROTOCOL_DATA_POS] = RESULT_OK;
-                    return m_ClientThread.sendDataToClient(onePacket, MIN_PACKET_LEN, communicationType);
+                    return 0;
                 }
 
                 //return value: -1: no action
@@ -310,7 +311,6 @@ namespace MESSystem.communication
                 //				>0: Fail
                 private int HandleMaterialProcess(int communicationType, byte[] onePacket, int packetLen)
                 {
-                    int result;
                     string operatorID;
 
                     //MIN_PACKET_LEN include one byte of data, so we need to delete this byte
@@ -320,12 +320,12 @@ namespace MESSystem.communication
                     {
 	                    m_Operator = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
                         getMaterialInfoForAllMachines();
-                        return sendMaterialInfoToPrintSW();
+                        sendMaterialInfoToPrintSW();
+                        return 0;
                     }
                     if (communicationType == COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE || communicationType == COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE)
                     {
-                        result = setMaterialWareInOut(communicationType, onePacket, packetLen);
-                        return m_ClientThread.sendResponseOKBack(result);
+                        return setMaterialWareInOut(communicationType, onePacket, packetLen);
                     }
                     return -1;
                 }
@@ -335,8 +335,7 @@ namespace MESSystem.communication
                 //				>0: Fail
                 private int HandleProcessStart(int communicationType, byte[] onePacket, int packetLen, ref string dispatchCode, ref string productCode)
                 {
-                    dispatchlistDB.dispatchlist_t st_dispatchArray;
-                    string operatorID;
+                    dispatchlistDB.dispatchlist_t[] st_dispatchArray;
 
                     //MIN_PACKET_LEN include one byte of data, so we need to delete this byte
                     int len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
@@ -358,9 +357,9 @@ namespace MESSystem.communication
                                     dispatchCode = st_dispatchArray[i].dispatchCode;
                                     productCode = st_dispatchArray[i].productCode;
                                     //Save operator to it 
-                                    dispatchlistDB.dispatchlist_t st;
-                                    st.operatorName = operatorID;
-                                    dispatchlist_db.updaterecord_ByDispatchcode(dispatchlist_db.Serialize(st), dispatchCode);
+                                    dispatchlistDB.dispatchlist_t st = new dispatchlistDB.dispatchlist_t(0);
+                                    st.operatorName = m_Operator;
+                                    dispatchlist_db.updaterecord_ByDispatchcode(dispatchlist_db.Format(st), dispatchCode);
 			                        string str = dispatchCode + ";" + productCode;
 			                        m_ClientThread.sendStringToClient(str, communicationType);
 									return -1;//We have send data to client, same as no action from caller's point of view
@@ -384,12 +383,12 @@ namespace MESSystem.communication
                     //MIN_PACKET_LEN include one byte of data, so we need to delete this byte
                     len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
                     strInput = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
-                    strInputArray = strInput.Split(";");
+                    strInputArray = strInput.Split(';');
 
                     //流延工序
                     if (communicationType == COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD)
                     {
-                        productcastinglistDB.productcast_t st_cast = { 0 };
+                        productcastinglistDB.productcast_t st_cast;
                         productcastinglistDB db = new productcastinglistDB();
 
                         if (strInputArray.Length != 2) return -1;
@@ -408,7 +407,7 @@ namespace MESSystem.communication
                     //印刷工序
                     if (communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD)
                     {
-                        productprintlistDB.productprint_t st_print = { 0 };
+                        productprintlistDB.productprint_t st_print = new productprintlistDB.productprint_t(0);
                         productprintlistDB db = new productprintlistDB();
 
                         st_print.materialScanTime = System.DateTime.Now.ToString();
@@ -420,8 +419,8 @@ namespace MESSystem.communication
                     }
                     if (communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD)
                     {
-                        productprintlistDB.productprint_t st_print;
-                        productprintlistDB db = new productcastinglistDB();
+                        productprintlistDB.productprint_t st_print = new productprintlistDB.productprint_t(0);
+                        productprintlistDB db = new productprintlistDB();
 
                         st_print.dispatchCode = strInputArray[1].Substring(0, 12);
                         st_print.batchNum = st_print.dispatchCode.Substring(0, 7);
@@ -429,12 +428,12 @@ namespace MESSystem.communication
                         st_print.productBarCode = strInputArray[1];
                         st_print.weight = strInputArray[2];
 
-                        return db.updaterecord_ByMaterialBarCode(db.Serialize(st_print), strInputArray[0]);
+                        return db.updaterecord_ByMaterialBarCode(db.Format(st_print), strInputArray[0]);
                     }
                     //分切工序
                     if (communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_MATERIAL_BARCODE_UPLOAD)
                     {
-                        productslitlistDB.productslit_t st_slit = { 0 };
+                        productslitlistDB.productslit_t st_slit = new productslitlistDB.productslit_t(0);
                         productslitlistDB db = new productslitlistDB();
 
                         st_slit.materialScanTime = System.DateTime.Now.ToString();
@@ -446,7 +445,7 @@ namespace MESSystem.communication
                     }
                     if (communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_PRODUCT_BARCODE_UPLOAD)
                     {
-                        productslitlistDB.productslit_t st_slit;
+                        productslitlistDB.productslit_t st_slit = new productslitlistDB.productslit_t(0);
                         productslitlistDB db = new productslitlistDB();
 
                         st_slit.dispatchCode = strInputArray[1].Substring(0, 12);
@@ -459,12 +458,12 @@ namespace MESSystem.communication
                         st_slit.numOfJoins = strInputArray[3];
                         st_slit.weight = strInputArray[2];
 
-                        return db.updaterecord_ByMaterialBarCode(db.Serialize(st_slit), strInputArray[0]);
+                        return db.updaterecord_ByMaterialBarCode(db.Format(st_slit), strInputArray[0]);
                     }
                     //质检工序
                     if (communicationType == COMMUNICATION_TYPE_INSPECTION_PROCESS_MATERIAL_BARCODE_UPLOAD)
                     {
-                        inspectionlistDB.inspection_t st_inspect = { 0 };
+                        inspectionlistDB.inspection_t st_inspect = new inspectionlistDB.inspection_t(0);
                         inspectionlistDB db = new inspectionlistDB();
 
                         st_inspect.materialBarCode = strInputArray[0];
@@ -474,17 +473,17 @@ namespace MESSystem.communication
                     }
                     if (communicationType == COMMUNICATION_TYPE_INSPECTION_PROCESS_PRODUCT_BARCODE_UPLOAD)
                     {
-                        inspectionlistDB.inspection_t st_inspect;
+                        inspectionlistDB.inspection_t st_inspect = new inspectionlistDB.inspection_t(0);
                         inspectionlistDB db = new inspectionlistDB();
 
                         st_inspect.dispatchCode = strInputArray[1].Substring(0, 12);
                         st_inspect.batchNum = st_inspect.dispatchCode.Substring(0, 7);
                         st_inspect.productBarCode = strInputArray[1];
                         st_inspect.productScanTime = System.DateTime.Now.ToString();
-                        st_inspect.checkingResult = strInputArray[1].Substring(strInputArray[1].Lenght - 1, 1);
+                        st_inspect.checkingResult = strInputArray[1].Substring(strInputArray[1].Length - 1, 1);
                         st_inspect.inspector = strInputArray[2];
 
-                        return db.updaterecord_ByMaterialBarCode(db.Serialize(st_inspect), strInputArray[0]);
+                        return db.updaterecord_ByMaterialBarCode(db.Format(st_inspect), strInputArray[0]);
                     }
                     //再造料工序
                     if (communicationType == COMMUNICATION_TYPE_REUSE_PROCESS_BARCODE_UPLOAD)
@@ -532,11 +531,11 @@ namespace MESSystem.communication
                     if (communicationType == COMMUNICATION_TYPE_CAST_PROCESS_END || communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_END || communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_END)
                     {
                         dispatchlistDB db = new dispatchlistDB(printingSWPCID);
-                        dispatchlistDB.dispatchlist_t st_dispatch;
+                        dispatchlistDB.dispatchlist_t st_dispatch = new dispatchlistDB.dispatchlist_t(0);
 
                         st_dispatch.notes = strInputArray[1];
 						st_dispatch.operatorName = m_Operator;
-                        return dispatchlistDB.updaterecord_ByDispatchcode(db.Serialize(st_dispatch), strInputArray[0]);
+                        return db.updaterecord_ByDispatchcode(db.Format(st_dispatch), strInputArray[0]);
                     }
                     return -1;
                 }
@@ -544,29 +543,30 @@ namespace MESSystem.communication
                 public void processLabelPrintingFunc(int communicationType, byte[] onePacket, int packetLen)
                 {
                     int result;
-                    string dispatchCode, productCode;
+                    string dispatchCode=null, productCode=null;
                     int printingSWPCID = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100 - CAST_PROCESS_PC1 + gVariable.castingProcess[0];
-
-                    result = HandleHandShake(communicationType, onePacket, packetLen);
-                    if (result >= 0) m_ClientThread.sendResponseOKBack(result);
-
-                    result = HandleMaterialProcess(communicationType, onePacket, packetLen);
-                    if (result >= 0) m_ClientThread.sendResponseOKBack(result);
-
-                    result = HandleProcessStart(communicationType, onePacket, packetLen, ref dispatchCode, ref productCode);
-                    if (result >= 0) m_ClientThread.sendResponseOKBack(result);
-
-                    result = HandleBarcode(communicationType, onePacket, packetLen);
-                    if (result >= 0) m_ClientThread.sendResponseOKBack(result);
-
-                    result = HandleProcessEnd(communicationType, onePacket, packetLen);
-					if (result >= 0) m_ClientThread.sendResponseOKBack(result);
-
-					result = HandlePackingProcess(communicationType, onePacket, packetLen);
-					if (result >= 0) m_ClientThread.sendResponseOKBack(result);
 
                     try
                     {
+                        result = HandleHandShake(communicationType, onePacket, packetLen);
+                        if (result >= 0) m_ClientThread.sendResponseOKBack(result);
+
+                        result = HandleMaterialProcess(communicationType, onePacket, packetLen);
+                        if (result >= 0) m_ClientThread.sendResponseOKBack(result);
+
+                        result = HandleProcessStart(communicationType, onePacket, packetLen, ref dispatchCode, ref productCode);
+                        if (result >= 0) m_ClientThread.sendResponseOKBack(result);
+
+                        result = HandleBarcode(communicationType, onePacket, packetLen);
+                        if (result >= 0) m_ClientThread.sendResponseOKBack(result);
+
+                        result = HandleProcessEnd(communicationType, onePacket, packetLen);
+	    				if (result >= 0) m_ClientThread.sendResponseOKBack(result);
+
+		    			//result = HandlePackingProcess(communicationType, onePacket, packetLen);
+			    		//if (result >= 0) m_ClientThread.sendResponseOKBack(result);
+
+
                         switch (communicationType)
                         {
                             //握手信息
@@ -583,7 +583,7 @@ namespace MESSystem.communication
                             globaldatabase.materialinoutrecord；	当该码垛有多余的料要入库，			PC上选择入库，然后扫码垛上的条码，
                             本地根据条码得到该物料信息，然后选择入库，				并上传server（含条码）
                             ---------------------------------------------------------------------------------------------*/
-                            case COMMUNICATION_TYPE_WAREHOUE_OUT_START:
+                            /*case COMMUNICATION_TYPE_WAREHOUE_OUT_START:
                                 getMaterialInfoForAllMachines();
                                 sendMaterialInfoToPrintSW();
                                 break;
@@ -591,14 +591,14 @@ namespace MESSystem.communication
                             case COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE:
                                 result = setMaterialWareInOut(onePacket, packetLen);
                                 m_ClientThread.sendResponseOKBack(result);
-                                break;
+                                break;*/
 
                             /*-----------------------------------------------------------------------------------------------
                             //每一班流延设备工人上班后（本地PC会显示本地记录的上班次的情况），工单在每个工人下班后
                             //就结束了，此时机器还在运行，一个标准大卷还未完成，该卷算在下个班次。从start，生产出的大卷标签上
                             //传，到下班填上交接班记录，该工单在数据库中，hXX.O_dispatchList就完整的封闭了（开始时间，结束时间，交接备注等）。
                             -------------------------------------------------------------------------------------------------*/
-                            case COMMUNICATION_TYPE_CAST_PROCESS_START:
+                            /*case COMMUNICATION_TYPE_CAST_PROCESS_START:
                                 string dispatchCode = sendDispatchCodeToClient(COMMUNICATION_TYPE_CAST_PROCESS_START, onePacket, packetLen);
                                 setDispatchOperator(printingSWPCID, dispatchCode, onePacket, packetLen);
                                 break;
@@ -610,12 +610,12 @@ namespace MESSystem.communication
                                 string dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
                                 result = setDispatchNotes(printingSWPCID, onePacket, packetLen);
                                 m_ClientThread.sendResponseOKBack(result);
-                                break;
+                                break;*/
 
                             /*-----------------------------------------------------------------------------------------------
                             印刷工序和流延工序基本相同，工单，数据库不同而已
                             -------------------------------------------------------------------------------------------------*/
-                            case COMMUNICATION_TYPE_PRINT_PROCESS_START:
+                            /*case COMMUNICATION_TYPE_PRINT_PROCESS_START:
                                 string dispatchCode = sendDispatchCodeToClient(COMMUNICATION_TYPE_PRINT_PROCESS_START, onePacket, packetLen);
                                 setDispatchOperator(printingSWPCID, dispatchCode, onePacket, packetLen);
                                 break;
@@ -631,12 +631,12 @@ namespace MESSystem.communication
                                 string dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
                                 result = setDispatchFinished(dName, onePacket, packetLen);
                                 m_ClientThread.sendResponseOKBack(result);
-                                break;
+                                break;*/
 
                             /*-----------------------------------------------------------------------------------------------
                             分切工序基本相同，工单，数据库不同而已
                             -------------------------------------------------------------------------------------------------*/
-                            case COMMUNICATION_TYPE_SLIT_PROCESS_START:  //分切工上班了
+                            /*case COMMUNICATION_TYPE_SLIT_PROCESS_START:  //分切工上班了
                                 string dName = gVariable.DBHeadString + printingSWPCID.ToString().PadLeft(3, '0');
                                 sendDispatchToClient(dName, COMMUNICATION_TYPE_SLIT_PROCESS_START, onePacket, packetLen);
                                 break;
@@ -662,12 +662,12 @@ namespace MESSystem.communication
                             case COMMUNICATION_TYPE_PACKING_BARCODE_UPLOAD:  //打包工序完成一个大包，收到大包标签
                                 break;
                             case COMMUNICATION_TYPE_PRINTING_HEART_BEAT:  //收到打印扫描软件发送的心跳包
-                                break;
+                                break;*/
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("processLabelPrintingFunc(" + communicationType + "," + packetLen + ") for printingMachineID = " + machineIDForPrint + "failed, " + ex);
+                        Console.WriteLine("processLabelPrintingFunc(" + communicationType + "," + packetLen + ") for printingMachineID = " + m_machineIDForPrint + "failed, " + ex);
                     }
                 }
             }
