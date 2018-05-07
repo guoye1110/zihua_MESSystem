@@ -99,6 +99,8 @@ namespace MESSystem.communication
 
                 private ClientThread m_ClientThread = null;
                 private int m_machineIDForPrint;
+				private string m_Operator;
+				private int index;
 
                 public zihua_printerClient(ClientThread cThread)
                 {
@@ -218,22 +220,27 @@ namespace MESSystem.communication
                     m_ClientThread.sendStringToClient(str, COMMUNICATION_TYPE_WAREHOUE_OUT_START);
                 }
 
-                private int setMaterialWareInOut(byte[] onePacket, int packetLen)
+                private int setMaterialWareInOut(int communicationType, byte[] onePacket, int packetLen)
                 {
                     int len;
                     string strInput;
-                    materialinoutrecord.materialinoutrecord_t? materialinouotrecord;
+					materialdeliverylistDB db = new materialdeliverylistDB();
+                    materialdeliverylistDB.materialdelivery_t materialdelivery;
 
-                    //MIN_PACKET_LEN include one byte of data, so we need to delete this byte
+					//MIN_PACKET_LEN include one byte of data, so we need to delete this byte
                     len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
                     strInput = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
 
-                    materialinouotrecord = globaldatabase.materialinoutrecord.parseinput(strInput);
-                    if (materialinouotrecord == null)
-                    {
-                        return RESULT_ERR_DATA;
-                    }
-                    return globaldatabase.materialinoutrecord.writerecord(materialinouotrecord.Value);
+					materialdelivery.materialCode = strInput[0];
+					materialdelivery.materialBatchNum = strInput[1];
+					materialdelivery.targetMachine = strInput[2];
+					materialdelivery.targetFeedBinIndex = strInput[3];
+					materialdelivery.inoutputQuantity = strInput[4];
+					materialdelivery.direction = (communicationType&COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE) + 1;//1: 出库 2：入库
+					materialdelivery.inoutputTime = System.DateTime.Now.ToString();
+					materialdelivery.deliveryWorker = m_Operator;
+					
+                    return db.writerecord(materialdelivery);
                 }
 
 
@@ -312,7 +319,7 @@ namespace MESSystem.communication
                     }
                     if (communicationType == COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE || communicationType == COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE)
                     {
-                        result = setMaterialWareInOut(onePacket, packetLen);
+                        result = setMaterialWareInOut(communicationType, onePacket, packetLen);
                         return m_ClientThread.sendResponseOKBack(result);
                     }
                     return -1;
