@@ -300,7 +300,7 @@ namespace MESSystem.communication
                 //				>0: Fail
                 private int HandleHandShake(int communicationType, byte[] onePacket, int packetLen)
                 {
-                    m_machineIDForPrint = onePacket[PROTOCOL_DATA_POS];
+                    m_machineIDForPrint = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100;
                     onePacket[PROTOCOL_DATA_POS] = RESULT_OK;
                     return m_ClientThread.sendDataToClient(onePacket, MIN_PACKET_LEN, communicationType);
                 }
@@ -311,9 +311,14 @@ namespace MESSystem.communication
                 private int HandleMaterialProcess(int communicationType, byte[] onePacket, int packetLen)
                 {
                     int result;
+                    string operatorID;
+
+                    //MIN_PACKET_LEN include one byte of data, so we need to delete this byte
+                    int len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
 
                     if (communicationType == COMMUNICATION_TYPE_WAREHOUE_OUT_START)
                     {
+	                    m_Operator = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
                         getMaterialInfoForAllMachines();
                         return sendMaterialInfoToPrintSW();
                     }
@@ -335,13 +340,12 @@ namespace MESSystem.communication
 
                     //MIN_PACKET_LEN include one byte of data, so we need to delete this byte
                     int len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
-                    operatorID = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
-
-                    int printingSWPCID = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100 - CAST_PROCESS_PC1 + gVariable.castingProcess[0];
 
                     if (communicationType == COMMUNICATION_TYPE_CAST_PROCESS_START || communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_START || communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_START)
                     {
-                        dispatchlistDB dispatchlist_db = new dispatchlistDB(printingSWPCID);
+                        dispatchlistDB dispatchlist_db = new dispatchlistDB(m_machineIDForPrint-CAST_PROCESS_PC1+gVariable.castingProcess[0]);
+
+						m_Operator = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
 
                         st_dispatchArray = dispatchlist_db.readallrecord_Ordered();
                         if (st_dispatchArray != null)
@@ -356,7 +360,10 @@ namespace MESSystem.communication
                                     //Save operator to it 
                                     dispatchlistDB.dispatchlist_t st;
                                     st.operatorName = operatorID;
-                                    return dispatchlist_db.updaterecord_ByDispatchcode(dispatchlist_db.Serialize(st), dispatchCode);
+                                    dispatchlist_db.updaterecord_ByDispatchcode(dispatchlist_db.Serialize(st), dispatchCode);
+			                        string str = dispatchCode + ";" + productCode;
+			                        m_ClientThread.sendStringToClient(str, communicationType);
+									return -1;//We have send data to client, same as no action from caller's point of view
                                 }
                             }
                         }
@@ -528,6 +535,7 @@ namespace MESSystem.communication
                         dispatchlistDB.dispatchlist_t st_dispatch;
 
                         st_dispatch.notes = strInputArray[1];
+						st_dispatch.operatorName = m_Operator;
                         return dispatchlistDB.updaterecord_ByDispatchcode(db.Serialize(st_dispatch), strInputArray[0]);
                     }
                     return -1;
@@ -540,23 +548,22 @@ namespace MESSystem.communication
                     int printingSWPCID = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100 - CAST_PROCESS_PC1 + gVariable.castingProcess[0];
 
                     result = HandleHandShake(communicationType, onePacket, packetLen);
-                    if (result > 0) m_ClientThread.sendResponseOKBack(result);
+                    if (result >= 0) m_ClientThread.sendResponseOKBack(result);
+
+                    result = HandleMaterialProcess(communicationType, onePacket, packetLen);
+                    if (result >= 0) m_ClientThread.sendResponseOKBack(result);
 
                     result = HandleProcessStart(communicationType, onePacket, packetLen, ref dispatchCode, ref productCode);
-                    if (result > 0) m_ClientThread.sendResponseOKBack(result);
-                    else if (!result)
-                    {
-                        string str = dispatchCode + ";" + productCode;
-                        m_ClientThread.sendStringToClient(str, communicationType);
-                    }
+                    if (result >= 0) m_ClientThread.sendResponseOKBack(result);
 
-                    result = HandleMaterialBarcode(communicationType, onePacket, packetLen);
-                    if (result > 0) m_ClientThread.sendResponseOKBack(result);
-
-                    result = HandleProductBarcode(communicationType, onePacket, packetLen);
-                    if (result > 0) m_ClientThread.sendResponseOKBack(result);
+                    result = HandleBarcode(communicationType, onePacket, packetLen);
+                    if (result >= 0) m_ClientThread.sendResponseOKBack(result);
 
                     result = HandleProcessEnd(communicationType, onePacket, packetLen);
+					if (result >= 0) m_ClientThread.sendResponseOKBack(result);
+
+					result = HandlePackingProcess(communicationType, onePacket, packetLen);
+					if (result >= 0) m_ClientThread.sendResponseOKBack(result);
 
                     try
                     {
