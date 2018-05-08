@@ -291,7 +291,8 @@ namespace MESSystem.communication
                                                 else if (communicationType >= COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID)
                                                 {
                                                     //communication with label printing PC
-                                                    processLabelPrintingFunc(communicationType, packetLen);
+                                                    //processLabelPrintingFunc(communicationType, packetLen);
+                                                    m_printClient.processLabelPrintingFunc(communicationType, onePacket,packetLen);
                                                 }
                                                 else if (communicationType >= COMMUNICATION_TYPE_CLIENT_PC)
                                                 {
