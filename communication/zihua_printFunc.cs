@@ -541,6 +541,50 @@ namespace MESSystem.communication
                     return -1;
                 }
 
+                //return value: -1: no action
+                //				 0: OK
+                //				>0: Fail
+				private int HandlePackingProcess(int communicationType, byte[] onePacket, int packetLen)
+                {
+                    int len;
+                    string strInput;
+                    string[] strInputArray;
+
+                    //MIN_PACKET_LEN include one byte of data, so we need to delete this byte
+                    len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
+                    strInput = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
+                    strInputArray = strInput.Split(';');
+
+                	if (communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_PACKAGE_BARCODE_UPLOAD){
+						finalpackingDB db = new finalpackingDB();
+						finalpackingDB.finalpacking_t st_packing = new finalpackingDB.finalpacking_t();
+
+						//<产品代码>;<打包条码>;<总重量>;<总长度>;<卷数N>;<卷码1>...<卷码N>
+						st_packing.productCode = strInputArray[0];
+						st_packing.packageBarcode = strInputArray[1];
+						st_packing.totalWeight = int.Parse(strInputArray[2]);
+						st_packing.totalLength = int.Parse(strInputArray[3]);
+						st_packing.rollNumber = int.Parse(strInputArray[4]);
+						st_packing.uploadTime = System.DateTime.Now.ToString();
+						st_packing.machineID = m_machineIDForPrint.ToString();
+						for (int i=0;i<st_packing.rollNumber;i++){
+							st_packing.barcode = strInputArray[5+i];
+							db.writerecord(st_packing);
+						}
+						return 0;
+					}
+					if (communicationType == COMMUNICATION_TYPE_PACKING_PROCESS_PACKAGE_BARCODE_UPLOAD) {
+						finalpackingDB db = new finalpackingDB();
+						finalpackingDB.finalpacking_t st_packing = new finalpackingDB.finalpacking_t();
+
+						//<打包条码>;<员工>
+						st_packing.scanTime = System.DateTime.Now.ToString();
+						st_packing.workerID = strInputArray[1];
+						return db.updaterecordBy_packageBarcode(st_packing, strInputArray[0]);
+					}
+					return -1;
+				}
+
                 public void processLabelPrintingFunc(int communicationType, byte[] onePacket, int packetLen)
                 {
                     int result;
@@ -564,8 +608,8 @@ namespace MESSystem.communication
                         result = HandleProcessEnd(communicationType, onePacket, packetLen);
 	    				if (result >= 0) m_ClientThread.sendResponseOKBack(result);
 
-		    			//result = HandlePackingProcess(communicationType, onePacket, packetLen);
-			    		//if (result >= 0) m_ClientThread.sendResponseOKBack(result);
+		    			result = HandlePackingProcess(communicationType, onePacket, packetLen);
+			    		if (result >= 0) m_ClientThread.sendResponseOKBack(result);
 
 
                         switch (communicationType)
