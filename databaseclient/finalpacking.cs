@@ -54,7 +54,7 @@ namespace MESSystem.common
 		{
 			string str = null;
 
-			str += st.machineID		+ ";" + st.barCode 		+ ";" + st.packageBarcode	+ ";" + st.uploadTime + ";";
+			str += st.machineID		+ ";" + st.barcode 		+ ";" + st.packageBarcode	+ ";" + st.uploadTime + ";";
 			str += st.scanTime		+ ";" + st.productCode	+ ";" + st.workerID			+ ";" + st.rollNumber + ";";
 			str += st.totalWeight	+ ";" + st.totalLength;
 			return str;
@@ -143,7 +143,7 @@ namespace MESSystem.common
 
 		public int updaterecordBy_packageBarcode(finalpacking_t st, string value)
 		{
-			string insertString;
+			string insertString=null;
 			string[] insertStringSplitted;
 			string connectionString;
 			string[] strArray;

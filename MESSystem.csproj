@@ -209,6 +209,7 @@
       <DependentUpon>SPCCurve.cs</DependentUpon>
     </Compile>
     <Compile Include="databaseclient\0_dispatchlist.cs" />
+    <Compile Include="databaseclient\finalpacking.cs" />
     <Compile Include="databaseclient\inspectionlist.cs" />
     <Compile Include="databaseclient\materialdeliverylist.cs" />
     <Compile Include="databaseclient\materialinoutrecord.cs" />
