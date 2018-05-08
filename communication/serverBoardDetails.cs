@@ -296,6 +296,8 @@ namespace MESSystem.communication
 
             object settingFileLocker = new object();
 
+			zihua_printerClient m_printClient;
+
             //int emptyPacketIndex;
 
             //the user from PC decided to write one of the setting data to board
@@ -943,6 +945,7 @@ namespace MESSystem.communication
             {
                 this.clientSocketInServer = ClientSocket;
                 handshakeWithClientOK = 0;
+				m_printClient = new zihua_printerClient(this);
             }
 
 

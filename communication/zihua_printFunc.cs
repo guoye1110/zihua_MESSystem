@@ -100,11 +100,12 @@ namespace MESSystem.communication
                 private ClientThread m_ClientThread = null;
                 private int m_machineIDForPrint;
 				private string m_Operator;
-				private int index;
 
                 public zihua_printerClient(ClientThread cThread)
                 {
                     m_ClientThread = cThread;
+					m_machineIDForPrint = 0;
+					m_Operator = null;
                 }
 
                 private void initVariables()
