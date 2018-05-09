@@ -303,8 +303,11 @@ namespace MESSystem.communication
                 //				>0: Fail
                 private int HandleHandShake(int communicationType, byte[] onePacket, int packetLen)
                 {
-                    m_machineIDForPrint = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100;
-                    return 0;
+                	if (communicationType == COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID){
+                    	m_machineIDForPrint = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100;
+                    	return 0;
+                	}
+					return -1;
                 }
 
                 //return value: -1: no action

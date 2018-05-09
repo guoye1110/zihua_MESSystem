@@ -283,29 +283,29 @@ namespace MESSystem.communication
                                         {
                                             try
                                             {
-                                                if (communicationType >= COMMUNICATION_TYPE_EMAIL_HEART_BEAT)
+                                                //if (communicationType >= COMMUNICATION_TYPE_EMAIL_HEART_BEAT)
                                                 {
                                                     //communication with email forwarder
                                                     processClientInstruction(communicationType, packetLen);
                                                 }
-                                                else if (communicationType >= COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID)
+                                                //else if (communicationType >= COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID)
                                                 {
                                                     //communication with label printing PC
                                                     //processLabelPrintingFunc(communicationType, packetLen);
                                                     m_printClient.processLabelPrintingFunc(communicationType, onePacket,packetLen);
                                                 }
-                                                else if (communicationType >= COMMUNICATION_TYPE_CLIENT_PC)
+                                                //else if (communicationType >= COMMUNICATION_TYPE_CLIENT_PC)
                                                 {
                                                     //communication with client PC
                                                     processClientInstruction(communicationType, packetLen);
                                                 }
-                                                else if (communicationType >= COMMUNICATION_TYPE_APP_WORKING_BOARD_ID_TO_PC && communicationType <= COMMUNICATION_TYPE_APP_DEVICE_NAME)
+                                                //else if (communicationType >= COMMUNICATION_TYPE_APP_WORKING_BOARD_ID_TO_PC && communicationType <= COMMUNICATION_TYPE_APP_DEVICE_NAME)
                                                 {
                                                     //communication with mobile devices
                                                     if (appHandshakeCompleted == 1)
                                                         processClientMobileApp(communicationType, packetLen);
                                                 }
-                                                else
+                                                //else
                                                 {
                                                     //communication with data collect board
                                                     processClientDataCollectBoard(communicationType, packetLen);
