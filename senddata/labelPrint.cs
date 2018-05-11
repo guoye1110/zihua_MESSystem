@@ -341,9 +341,12 @@ namespace tcpClient
                 return;
             }
 
+            string response = Microsoft.VisualBasic.Interaction.InputBox("流延扫描（0xB8）", "", "", -1, -1);
+			if (response == "")
+            	return;
             // dispatchCode:"S171109J002", cast process:"3", cast machine ID:"5", time:"1801201431", large roll ID:"05"  
-            str = "S171109J00235180120143105";
-            sendStringToServer(str, COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD);
+            //str = "S171109J00235180120143105";
+            sendStringToServer(response, COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD);
 
             Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
 

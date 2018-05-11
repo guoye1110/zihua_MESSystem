@@ -106,11 +106,12 @@ namespace MESSystem.communication
                     m_ClientThread = cThread;
 					m_machineIDForPrint = 0;
 					m_Operator = null;
+					initVariables();
                 }
 
                 private void initVariables()
                 {
-                    m_ClientThread.handshakeWithClientOK = 1;
+                    m_ClientThread.handshakeWithClientOK = 0;
 
                     inoutMaterialQuantity = 0;
                     inoutFeedMachineID = 0;
@@ -305,6 +306,7 @@ namespace MESSystem.communication
                 {
                 	if (communicationType == COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID){
                     	m_machineIDForPrint = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100;
+						m_ClientThread.handshakeWithClientOK = 1;
                     	return 0;
                 	}
 					return -1;
@@ -405,6 +407,7 @@ namespace MESSystem.communication
                         //st_cast.scanTime = st_cast.dispatchCode.Substring(0,4) + st_cast.dispatchCode.Substring(7,2) + strInputArray[0].Substring(12,4);
                         st_cast.scanTime = System.DateTime.Now.ToString();
                         st_cast.weight = strInputArray[1];
+						st_cast.errorStatus = strInputArray[0].Substring(19, 1);
                         return db.writerecord(st_cast);
                     }
 

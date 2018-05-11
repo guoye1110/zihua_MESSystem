@@ -28,7 +28,8 @@ namespace MESSystem.common
 		private const int BATCH_NUM_INDEX = 5;
 		private const int LARGE_INDEX_INDEX = 6;
 		private const int WEIGHT_INDEX = 7;
-		private const int TOTAL_DATAGRAM_NUM = WEIGHT_INDEX+1;
+		private const int ERROR_STATUS_INDEX = 8;
+		private const int TOTAL_DATAGRAM_NUM = ERROR_STATUS_INDEX+1;
 
 		private const string c_dbName = "globaldatabase";
         private const string c_productcastinglistTableName = "productcastinglist";
@@ -42,6 +43,7 @@ namespace MESSystem.common
 			public string batchNum;
 			public string largeIndex;
 			public string weight;
+			public string errorStatus;
 		}
 
 		public string Serialize(productcast_t st)
@@ -49,7 +51,7 @@ namespace MESSystem.common
 			string str = null;
 
 			str += st.machineID	+ ";" + st.barCode 		+ ";" + st.scanTime	+ ";" + st.dispatchCode + ";";
-			str += st.batchNum	+ ";" + st.largeIndex	+ ";" + st.weight;
+			str += st.batchNum	+ ";" + st.largeIndex	+ ";" + st.weight	+ ";" + st.errorStatus;
 			return str;
 		}
 
@@ -80,6 +82,7 @@ namespace MESSystem.common
 			st.machineID = input[MACHINE_ID_INDEX];
 			st.scanTime = input[SCAN_TIME_INDEX];
 			st.weight = input[WEIGHT_INDEX];
+			st.errorStatus = input[ERROR_STATUS_INDEX];
 			
 			return st;
 		}
@@ -98,7 +101,7 @@ namespace MESSystem.common
 
             try
             {
-                index = 0;
+                index = 1;
                 itemName = insertString.Split(',', ')');
 
                 MySqlConnection myConnection = new MySqlConnection("database = " + c_dbName + "; " + connectionString);
@@ -116,6 +119,7 @@ namespace MESSystem.common
 				myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.batchNum);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.largeIndex);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.weight);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_productcasting.errorStatus);
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
