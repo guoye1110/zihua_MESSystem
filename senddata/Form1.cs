@@ -2450,5 +2450,6 @@ namespace tcpClient
             }
             hintThenVanish("不合格品节拍数据上传成功！");
         }
+
     }
 }

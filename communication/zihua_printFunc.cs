@@ -21,8 +21,8 @@ namespace MESSystem.communication
         {
             public class zihua_printerClient
             {
-                private const int NUM_OF_FEEDING_MACHINE = 7;//7条流水线，每条一个投料设备
-                private const int STACK_NUM_ONE_MACHINE = 8;//每个偷料设备有8个料仓，每个料仓不同的原料
+                //private const int NUM_OF_FEEDING_MACHINE = 7;//7条流水线，每条一个投料设备
+                //private const int STACK_NUM_ONE_MACHINE = 8;//每个偷料设备有8个料仓，每个料仓不同的原料
 
                 //communication between PC host and label printing SW
                 private const int COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID = 3;
@@ -117,9 +117,9 @@ namespace MESSystem.communication
                     inoutFeedMachineID = 0;
                     inoutMaterialStackID = 0;
 
-                    for (int i = 0; i < NUM_OF_FEEDING_MACHINE; i++)
+                    for (int i = 0; i < communicate.NUM_OF_FEEDING_MACHINE; i++)
                     {
-                        for (int j = 0; j < STACK_NUM_ONE_MACHINE; j++)
+                        for (int j = 0; j < communicate.STACK_NUM_ONE_MACHINE; j++)
                         {
                             materialCodeForStack[i, j] = null;
                             sackNumTotalForDispatch[i, j] = 0;
@@ -143,44 +143,51 @@ namespace MESSystem.communication
                     string endDay;
                     string commandText;
                     string[,] tableArray;
-                    gVariable.dispatchSheetStruct[] dispatchList;
+                    gVariable.dispatchSheetStruct[] dispatchs;
 
                     today = DateTime.Now.Date.ToString("yyyy-MM-dd 08:00:00");
-                    endDay = DateTime.Now.Date.AddDays(2).ToString("yyyy-MM-dd 08:00:00");
+                    endDay = DateTime.Now.Date.AddDays(1).ToString("yyyy-MM-dd 08:00:00");
 
                     try
                     {
-                        for (i = 0; i < NUM_OF_FEEDING_MACHINE; i++)
+                        for (i = 0; i < communicate.NUM_OF_FEEDING_MACHINE; i++)
                         {
-                            int[] lefts = new int[] { 1, 2 };//mySQLClass.getFeedCurrentLeft(i, STACK_NUM_ONE_MACHINE);
-                            for (int index = 0; index < lefts.Length; index++)
-                                sackNumLeftInStack[i, index] = lefts[index];
+                            //int[] lefts = new int[] { 1, 2 };//mySQLClass.getFeedCurrentLeft(i, STACK_NUM_ONE_MACHINE);
+                            //for (int index = 0; index < lefts.Length; index++)
+                             //   sackNumLeftInStack[i, index] = lefts[index];
 
                             //get dispatch list for this machine in defined period
                             dName = gVariable.DBHeadString + (i + 1).ToString().PadLeft(3, '0');
 
-                            dispatchList = mySQLClass.getDispatchListInPeriodOfTime(dName, gVariable.dispatchListTableName, today, endDay, gVariable.MACHINE_STATUS_DISPATCH_PUBLISHED,
+                            dispatchs = mySQLClass.getDispatchListInPeriodOfTime(dName, gVariable.dispatchListTableName, today, endDay, gVariable.MACHINE_STATUS_DISPATCH_PUBLISHED,
                                                                                     gVariable.TIME_CHECK_TYPE_PLANNED_START);
 
-                            if (dispatchList == null)
+                            if (dispatchs == null)
                                 continue;
 
+							materiallistDB db = new materiallistDB(i+1);
+
                             ingredient = null;
-                            for (j = 0; j < dispatchList.Length; j++)
+                            for (j = 0; j < dispatchs.Length; j++)
                             {
                                 //deal with one dispatch and its related material table, material informaion stored in tableArray
-                                commandText = "select * from `" + gVariable.materialListTableName + "` where dispatchCode = '" + dispatchList[j].dispatchCode + "'";
-                                tableArray = mySQLClass.databaseCommonReading(gVariable.globalDatabaseName, commandText);
+                                //string dbName = gVariable.DBHeadString + (j+1).ToString().PadLeft(3, '0');
+                                materiallistDB.material_t[] materials;
+
+								materials = db.readrecord_byDispatchCode(dispatchs[j].dispatchCode);
+                                //commandText = "select * from `" + gVariable.materialListTableName + "` where dispatchCode = '" + dispatchList[j].dispatchCode + "'";
+                                //tableArray = mySQLClass.databaseCommonReading(dName, commandText);
                                 //materialTypeNum = tableArray[j, mySQLClass.MATERIAL_LIST_NUM_OF_TYPE];
 
                                 //the next dispatch uses different materials, we will consider it when current dispatch are all completed
-                                if (ingredient != null && ingredient != tableArray[0, mySQLClass.BOM_CODE_IN_DISPATCHLIST_DATABASE])
+                                if (ingredient != null && ingredient != dispatchs[j].BOMCode)// [0, mySQLClass.BOM_CODE_IN_DISPATCHLIST_DATABASE])
                                     break;
-                                ingredient = tableArray[0, mySQLClass.BOM_CODE_IN_DISPATCHLIST_DATABASE];
+                                ingredient = dispatchs[j].BOMCode;//tableArray[0, mySQLClass.BOM_CODE_IN_DISPATCHLIST_DATABASE];
 
                                 for (k = 0; k < gVariable.maxMaterialTypeNum; k++)
                                 {
-                                    requiredNum = Convert.ToInt32(tableArray[0, mySQLClass.MATERIAL_LIST_MATERIAL_REQUIRED1 + k * mySQLClass.MATERIAL_LIST_CYCLE_SPAN]);
+                                    //requiredNum = Convert.ToInt32(tableArray[0, mySQLClass.MATERIAL_LIST_MATERIAL_REQUIRED1 + k * mySQLClass.MATERIAL_LIST_CYCLE_SPAN]);
+                                    
                                     numForOneSack = Convert.ToInt32(tableArray[0, mySQLClass.MATERIAL_LIST_FULL_PACK_NUM1 + k * mySQLClass.MATERIAL_LIST_CYCLE_SPAN]);
                                     sackNumTotalForDispatch[i, k] = requiredNum / numForOneSack;
 
@@ -372,7 +379,7 @@ namespace MESSystem.communication
                                 }
                             }
                         }
-                        return 1;
+                        return 0;
                     }
                     return -1;
                 }
@@ -414,7 +421,7 @@ namespace MESSystem.communication
                     //印刷工序
                     if (communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD)
                     {
-                        productprintlistDB.productprint_t st_print = new productprintlistDB.productprint_t(0);
+                        productprintlistDB.productprint_t st_print = new productprintlistDB.productprint_t();
                         productprintlistDB db = new productprintlistDB();
 
                         st_print.materialScanTime = System.DateTime.Now.ToString();
@@ -426,7 +433,7 @@ namespace MESSystem.communication
                     }
                     if (communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD)
                     {
-                        productprintlistDB.productprint_t st_print = new productprintlistDB.productprint_t(0);
+                        productprintlistDB.productprint_t st_print = new productprintlistDB.productprint_t();
                         productprintlistDB db = new productprintlistDB();
 
                         st_print.dispatchCode = strInputArray[1].Substring(0, 12);
@@ -440,7 +447,7 @@ namespace MESSystem.communication
                     //分切工序
                     if (communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_MATERIAL_BARCODE_UPLOAD)
                     {
-                        productslitlistDB.productslit_t st_slit = new productslitlistDB.productslit_t(0);
+                        productslitlistDB.productslit_t st_slit = new productslitlistDB.productslit_t();
                         productslitlistDB db = new productslitlistDB();
 
                         st_slit.materialScanTime = System.DateTime.Now.ToString();
@@ -452,7 +459,7 @@ namespace MESSystem.communication
                     }
                     if (communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_PRODUCT_BARCODE_UPLOAD)
                     {
-                        productslitlistDB.productslit_t st_slit = new productslitlistDB.productslit_t(0);
+                        productslitlistDB.productslit_t st_slit = new productslitlistDB.productslit_t();
                         productslitlistDB db = new productslitlistDB();
 
                         st_slit.dispatchCode = strInputArray[1].Substring(0, 12);
@@ -565,12 +572,12 @@ namespace MESSystem.communication
 						finalpackingDB db = new finalpackingDB();
 						finalpackingDB.finalpacking_t st_packing = new finalpackingDB.finalpacking_t();
 
-						//<产品代码>;<打包条码>;<总重量>;<总长度>;<卷数N>;<卷码1>...<卷码N>
+						//<产品代码>;<卷数>;<重量>;<长度>;<打包条码>;<卷条码1>;...;<卷条码N>
 						st_packing.productCode = strInputArray[0];
-						st_packing.packageBarcode = strInputArray[1];
+						st_packing.packageBarcode = strInputArray[4];
 						st_packing.totalWeight = int.Parse(strInputArray[2]);
 						st_packing.totalLength = int.Parse(strInputArray[3]);
-						st_packing.rollNumber = int.Parse(strInputArray[4]);
+						st_packing.rollNumber = int.Parse(strInputArray[1]);
 						st_packing.uploadTime = System.DateTime.Now.ToString();
 						st_packing.machineID = m_machineIDForPrint.ToString();
 						for (int i=0;i<st_packing.rollNumber;i++){

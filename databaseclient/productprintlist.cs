@@ -30,7 +30,8 @@ namespace MESSystem.common
 		private const int BATCH_NUM_INDEX = 7;
 		private const int LARGE_INDEX_INDEX = 8;
 		private const int WEIGHT_INDEX = 9;
-		private const int TOTAL_DATAGRAM_NUM = WEIGHT_INDEX+1;
+		private const int ERROR_STATUS_INDEX = 10;
+		private const int TOTAL_DATAGRAM_NUM = ERROR_STATUS_INDEX+1;
 
 		private const string c_dbName = "globaldatabase";
         private const string c_productprintlistTableName = "productprintlist";
@@ -46,7 +47,8 @@ namespace MESSystem.common
             public string batchNum;
             public string largeIndex;
             public string weight;
-			public productprint_t(int value){
+			public string errorStatus;
+			/*public productprint_t(int value){
 				this.machineID = null;
 				this.materialBarCode = null;
 				this.materialScanTime = null;
@@ -56,7 +58,7 @@ namespace MESSystem.common
 				this.batchNum = null;
 				this.largeIndex = null;
 				this.weight = null;				
-			}
+			}*/
 		}
 
 		public string Serialize(productprint_t st)
@@ -65,7 +67,7 @@ namespace MESSystem.common
 
 			str += st.machineID  		+ ";" + st.materialBarCode 	+ ";" + st.materialScanTime	+ ";" + st.productBarCode	+ ";";
 			str += st.productScanTime	+ ";" + st.dispatchCode		+ ";" + st.batchNum 		+ ";" + st.largeIndex		+ ";";
-			str += st.weight;
+			str += st.weight 			+ ";" + st.errorStatus;
 			return str;
 		}
 
@@ -86,7 +88,7 @@ namespace MESSystem.common
 
 			input = strInput.Split(';');
 
-			if (input.Length < TOTAL_DATAGRAM_NUM)
+			if (input.Length < TOTAL_DATAGRAM_NUM-1)
 				return null;
 
 			st.machineID = input[MACHINE_ID_INDEX];
@@ -98,6 +100,7 @@ namespace MESSystem.common
 			st.batchNum = input[BATCH_NUM_INDEX];
 			st.largeIndex = input[LARGE_INDEX_INDEX];
 			st.weight = input[WEIGHT_INDEX];
+			st.errorStatus = input[ERROR_STATUS_INDEX];
 
 			return st;
 		}
@@ -110,7 +113,7 @@ namespace MESSystem.common
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			getDatabaseInsertStringFromExcel(ref insertString, c_productprintlistTableName);
-            insertStringSplitted = insertString.Split(new char[2] { ',','@' });
+            insertStringSplitted = insertString.Split(new char[2]{',','@' });
 
             try
             {
@@ -179,7 +182,7 @@ namespace MESSystem.common
 
             try
             {
-                index = 0;
+                index = 1;
                 itemName = insertString.Split(',', ')');
 
                 MySqlConnection myConnection = new MySqlConnection("database = " + c_dbName + "; " + connectionString);
@@ -199,6 +202,7 @@ namespace MESSystem.common
 				myCommand.Parameters.AddWithValue(itemName[index++], st_productprint.batchNum);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_productprint.largeIndex);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_productprint.weight);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_productprint.errorStatus);
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();

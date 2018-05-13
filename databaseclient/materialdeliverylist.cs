@@ -72,7 +72,7 @@ namespace MESSystem.common
 
 			input = strInput.Split(';');
 
-			if (input.Length < TOTAL_DATAGRAM_NUM)
+			if (input.Length < TOTAL_DATAGRAM_NUM-1)
 				return null;
 
 			st.deliveryWorker = input[DELIVERY_WORKER_INDEX];
@@ -101,7 +101,7 @@ namespace MESSystem.common
 
             try
             {
-                index = 0;
+                index = 1;
                 itemName = insertString.Split(',', ')');
 
                 MySqlConnection myConnection = new MySqlConnection("database = " + c_dbName + "; " + connectionString);

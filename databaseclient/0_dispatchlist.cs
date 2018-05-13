@@ -281,7 +281,7 @@ namespace MESSystem.common
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			getDatabaseInsertStringFromExcel(ref insertString, c_dispatchListFileName);
 			//insertStringSplitted = insertString.Split(',@');
-            insertStringSplitted = insertString.Split('@');
+            insertStringSplitted = insertString.Split(new char[2]{',','@'});
 
             try
             {

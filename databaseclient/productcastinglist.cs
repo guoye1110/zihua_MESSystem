@@ -72,7 +72,7 @@ namespace MESSystem.common
 
 			input = strInput.Split(';');
 
-			if (input.Length < TOTAL_DATAGRAM_NUM)
+			if (input.Length < TOTAL_DATAGRAM_NUM-1)
 				return null;
 
 			st.barCode = input[BARCODE_INDEX];

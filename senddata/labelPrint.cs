@@ -202,284 +202,104 @@ namespace tcpClient
 
 
         //start working for printing SW  
+        //申请物料（0xB5）
         private void button41_Click(object sender, EventArgs e)
         {
-            int len;
-            byte[] data = new byte[1000];
-            string str;
-            string[] strArray;
+        	string title = "申请物料（0xB5）";
+            string prompt = "数据：<员工号>\n\n";
+			prompt += "返回：7台设备，每台7个料仓，每个料仓包括：<物料代码>;<物料数量>";
 
-            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
-            {
-                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-
-            len = MIN_PACKET_LEN_MINUS_ONE + 1;
-            inputDataHeader(data, len, COMMUNICATION_TYPE_WAREHOUE_OUT_START, 0);
-            data[PROTOCOL_DATA_POS] = 0;
-
-            CRC16.addCrcCode(data, len);
-            socketArray[selectedMachineIndex].Send(data, len, 0);
-
-            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
-
-            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
-
-            str = System.Text.Encoding.GetEncoding("gb2312").GetString(receiveByte, PROTOCOL_DATA_POS, len - MIN_PACKET_LEN_MINUS_ONE);
-
-            strArray = str.Split(';');
+			do_processStart(COMMUNICATION_TYPE_WAREHOUE_OUT_START, prompt, title);
         }
 
 
         //label scan: material sent to feed machine from warehouse
+        //出库扫描（0xB6）
         private void button42_Click(object sender, EventArgs e)
         {
-            int len;
-            string str;
-            byte[] data = new byte[1000];
-            //byte[] buf;
+        	string title = "出库扫描（0xB6）";
+            string prompt = "数据：<原料代码>;<原料批次号>;<目标设备号>;<料仓号>;<重量>\n\n";
 
-            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
-            {
-                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-
-            str = "as1245;5;1;20;";
-            sendStringToServer(str, COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE);
-
-            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
-
-            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
-            if (len != MIN_PACKET_LEN || receiveByte[PROTOCOL_DATA_POS] != 0)
-            {
-                MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
-            }
+			do_productBarcodeUpload(COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE, prompt, title);
         }
 
 
         //label scan: remanent material return to warehouse
+        //入库扫描（0xB7）
         private void button43_Click(object sender, EventArgs e)
         {
-            int len;
-            string str;
-            byte[] data = new byte[1000];
-            //byte[] buf;
+        	string title = "入库扫描（0xB7）";
+            string prompt = "数据：<原料代码>;<原料批次号>;<目标设备号>;<料仓号>;<重量>\n\n";
 
-            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
-            {
-                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-            //
-            str = "as1245;5;1;20;";
-            sendStringToServer(str, COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE);
-
-            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
-
-            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
-
-            if (len != MIN_PACKET_LEN || receiveByte[PROTOCOL_DATA_POS] != 0)
-            {
-                MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
-            }
+			do_productBarcodeUpload(COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE, prompt, title);
         }
 
         //cast process start, send cast machine ID to server
+        //流延开工（0xB8）
         private void button44_Click(object sender, EventArgs e)
         {
-            //int i;
-            int len;
-            byte[] data = new byte[1000];
-            string str;
-            string[] strArray;
-            gVariable.dispatchSheetStruct dispatchList = new gVariable.dispatchSheetStruct();
+        	string title = "流延开工（0xB8）";
+            string prompt = "数据：<员工号>\n\n";
+			prompt += "返回：<工单号：12>;<产品代码>";
 
-            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
-            {
-                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-
-            data[PROTOCOL_DATA_POS] = PRINTING_MACHINE_ID_CAST5;
-            data[PROTOCOL_DATA_POS + 1] = 0;
-            data[PROTOCOL_DATA_POS + 2] = 0;
-            data[PROTOCOL_DATA_POS + 3] = 0;
-
-            len = MIN_PACKET_LEN + 3;
-            inputDataHeader(data, len, COMMUNICATION_TYPE_CAST_PROCESS_START, 0);
-            CRC16.addCrcCode(data, len);
-            socketArray[selectedMachineIndex].Send(data, len, 0);
-
-            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
-
-            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
-            str = System.Text.Encoding.GetEncoding("gb2312").GetString(receiveByte, PROTOCOL_DATA_POS, len - MIN_PACKET_LEN_MINUS_ONE);
-            if (receiveByte[PROTOCOL_DATA_POS] == 0xff)
-            {
-                MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-            strArray = str.Split(';');
+			do_processStart(COMMUNICATION_TYPE_CAST_PROCESS_START, prompt, title);
 
             //put received dispatch info into dispatch structure
-            getDispatchInfo(dispatchList, strArray);
+            //getDispatchInfo(dispatchList, strArray);
+            
         }
 
         //label scan(cast): scan cast label then upload to server
+        //流延产品扫描（0xB9）
         private void button45_Click(object sender, EventArgs e)
         {
-            int len;
-            string str;
-            byte[] data = new byte[1000];
-            //byte[] buf;
+        	string title = "流延膜标签上传（0xB9）";
+            string prompt = "数据：<条码>;<卷重>\n\n";
+            prompt += "       条码: <工单号：12><时分：4><大卷号：3><质量：1>";
+			prompt += "返回：<0/0xff>";
 
-            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
-            {
-                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-
-            string response = Microsoft.VisualBasic.Interaction.InputBox("流延扫描（0xB8）", "", "", -1, -1);
-			if (response == "")
-            	return;
-            // dispatchCode:"S171109J002", cast process:"3", cast machine ID:"5", time:"1801201431", large roll ID:"05"  
-            //str = "S171109J00235180120143105";
-            sendStringToServer(response, COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD);
-
-            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
-
-            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
-
-            if (len != MIN_PACKET_LEN || receiveByte[PROTOCOL_DATA_POS] != 0)
-            {
-                MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
-            }
+			do_productBarcodeUpload(COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD, prompt, title);
         }
 
         //label scan(print): scan cast label for printing
+        //印刷原料标签（0xBC）
         private void button46_Click(object sender, EventArgs e)
         {
-            int i;
-            int len;
-            byte[] data = new byte[1000];
-            byte[] buf;
-            string str;
-            string[] strArray;
-            gVariable.dispatchSheetStruct dispatchList = new gVariable.dispatchSheetStruct();
-
-            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
-            {
-                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-
-            data[0] = PRINTING_MACHINE_ID_PRINT2;
-            data[1] = 0;
-            data[2] = 0;
-            data[3] = 0;
-
-            // dispatchCode:"S171109J002", cast process:"3", cast machine ID:"5", time:"1801201431", large roll ID:"05"  
-            str = "S171109J00235180120143105";
-            buf = System.Text.Encoding.Default.GetBytes(str);
-
-            for (i = 0; i < buf.Length; i++)
-            {
-                data[i + 4] = buf[i];
-            }
-
-            sendDataToServer(data, COMMUNICATION_TYPE_PRINT_PROCESS_START, buf.Length + 4);
-
-            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
-
-            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
-            str = System.Text.Encoding.GetEncoding("gb2312").GetString(receiveByte, PROTOCOL_DATA_POS, len - MIN_PACKET_LEN_MINUS_ONE);
-            if (receiveByte[PROTOCOL_DATA_POS] == 0xff)
-            {
-                MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-            strArray = str.Split(';');
+			string title = "印刷原料标签（0xBC）";
+			string prompt = "数据：<条码>\n\n";
+			prompt += " 	  条码: <工单号：12><时分：4><大卷号：3><质量：1>";
+			prompt += "返回：<0/0xff>";
+		
+			do_productBarcodeUpload(COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD, prompt, title);
 
             //put received dispatch info into dispatch structure
-            getDispatchInfo(dispatchList, strArray);
+            //getDispatchInfo(dispatchList, strArray);
         }
 
         //label scan(print): get output label for print then upload to server
+        //印刷膜标签上传（0xBD）
         private void button47_Click(object sender, EventArgs e)
         {
-            int len;
-            string str;
-            byte[] data = new byte[1000];
-            //byte[] buf;
+        	string title = "印刷膜标签上传（0xBD）";
+            string prompt = "数据：<条码>;<卷重>\n\n";
+            prompt += "       条码: <工单号：12><时分：4><大卷号：3><质量：1>";
+			prompt += "返回：<0/0xff>";
 
-            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
-            {
-                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-
-            // dispatchCode:"S171109N003", print process:"4", print machine ID:"3", time:"1801201431", large roll ID:"05"  
-            str = "S171109N00343180120143105";
-            sendStringToServer(str, COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD);
-
-            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
-
-            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
-            if (len != MIN_PACKET_LEN || receiveByte[PROTOCOL_DATA_POS] != 0)
-            {
-                MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
-            }
+			do_productBarcodeUpload(COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD,prompt, title);
         }
 
         //label scan(slit): get cast/print label for slit
+        //分切原料标签上传（0xC0）
         private void button48_Click(object sender, EventArgs e)
         {
-            int i;
-            int len;
-            byte[] data = new byte[1000];
-            byte[] buf;
-            string str;
-            string[] strArray;
-            gVariable.dispatchSheetStruct dispatchList = new gVariable.dispatchSheetStruct();
+        	string title = "分切原料标签上传（0xC0）";
+            string prompt = "数据：<条码>\n\n";
+            prompt += "       条码: <工单号：12><时分：4><大卷号：3><质量：1>";
+			prompt += "返回：<0/0xff>";
 
-            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
-            {
-                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-
-            //based on PC ID for slit function
-            data[0] = PRINTING_MACHINE_ID_SLIT2;
-            data[1] = 0;
-            data[2] = 0;
-            data[3] = 0;
-
-            // dispatchCode:"S171108O004", cast process:"3", cast machine ID:"2", time:"1801201431", large roll ID:"05"  
-            str = "S171108O00432180120143105";
-            buf = System.Text.Encoding.Default.GetBytes(str);
-
-            for (i = 0; i < buf.Length; i++)
-            {
-                data[i + 4] = buf[i];
-            }
-
-            sendDataToServer(data, COMMUNICATION_TYPE_SLIT_PROCESS_START, buf.Length + 4);
-
-            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
-
-            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
-            str = System.Text.Encoding.GetEncoding("gb2312").GetString(receiveByte, PROTOCOL_DATA_POS, len - MIN_PACKET_LEN_MINUS_ONE);
-            if (receiveByte[PROTOCOL_DATA_POS] == 0xff)
-            {
-                MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-            strArray = str.Split(';');
-
+			do_productBarcodeUpload(COMMUNICATION_TYPE_SLIT_PROCESS_MATERIAL_BARCODE_UPLOAD,prompt, title);
             //put received dispatch info into dispatch structure
-            getDispatchInfo(dispatchList, strArray);
+            //getDispatchInfo(dispatchList, strArray);
         }
 
         //label scan(slit multi-product): get cast/print label for slit
@@ -532,30 +352,15 @@ namespace tcpClient
         }
 
         //label scan(slit): get output label for slit then upload to server
+        //分切小卷膜标签上传（0xC1）
         private void button49_Click(object sender, EventArgs e)
         {
-            int len;
-            string str;
-            byte[] data = new byte[1000];
-            //byte[] buf;
+        	string title = "分切小卷膜标签上传（0xC1）";
+            string prompt = "数据：<条码>;<卷重>;<接头数量>\n\n";
+            prompt += "       条码: <工单号：12><时分：4><大卷号：3><小卷号：2><客户序号：1><质量：1>";
+			prompt += "返回：<0/0xff>";
 
-            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
-            {
-                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-
-            // dispatchCode:"S171109Q004", slit process:"5", slit machine ID:"5", time:"1801201431", large roll ID:"05", small roll ID:"001", customer:"0", inspection:"0"  
-            str = "S171109Q0045518012014310500100";
-            sendStringToServer(str, COMMUNICATION_TYPE_SLIT_PROCESS_PRODUCT_BARCODE_UPLOAD);
-
-            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
-
-            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
-            if (len != MIN_PACKET_LEN || receiveByte[PROTOCOL_DATA_POS] != 0)
-            {
-                MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
-            }
+			do_productBarcodeUpload(COMMUNICATION_TYPE_SLIT_PROCESS_PRODUCT_BARCODE_UPLOAD,prompt, title);
         }
 
         //label scan: get label for inspection
@@ -593,90 +398,43 @@ namespace tcpClient
         }
 
         //label scan: get output label for the result of inspection then upload to server
+        //质检膜标签上传（0xC5）
         private void button50_Click(object sender, EventArgs e)
         {
-            int len;
-            string str;
+        	string title = "质检膜标签上传（0xC4）";
+            string prompt = "数据：<条码>;<检验员员工号>\n\n";
+            prompt += "       条码: <被检产品工单号中工序变为J：12><质量：1>";
+			prompt += "返回：<0/0xff>";
 
-            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
-            {
-                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-
-            // dispatchCode:"S171109Q004", inspection process:"5", slit machine ID:"5", time:"1801201431", large roll ID:"05", small roll ID:"001", customer:"0", inspection result:"3"  
-            str = "S171109Q0055518012014310500103";
-            sendStringToServer(str, COMMUNICATION_TYPE_INSPECTION_PROCESS_PRODUCT_BARCODE_UPLOAD);
-
-            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
-
-            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
-            if (receiveByte[PROTOCOL_DATA_POS] != 0)
-            {
-                MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
+			do_productBarcodeUpload(COMMUNICATION_TYPE_INSPECTION_PROCESS_PRODUCT_BARCODE_UPLOAD,prompt, title);
         }
 
         //label scan: get label for reusing material
+        //质检原料标签上传（0xC4）
         private void button53_Click(object sender, EventArgs e)
         {
-            int len;
-            byte[] data = new byte[4];
-            string str;
-            string[] strArray;
-            gVariable.dispatchSheetStruct dispatchList = new gVariable.dispatchSheetStruct();
-
-            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
-            {
-                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-
-            // dispatchCode:"S171109Q004", slit process:"5", slit machine ID:"2", time:"1801201431", large roll ID:"05", small roll ID:"001", customer:"0", inspection:"0"  
-            str = "S171109Q0045218012014310500100";
-            //sendStringToServer(str, COMMUNICATION_TYPE_REUSE_PROCESS_START);
-
-            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
-
-            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
-            str = System.Text.Encoding.GetEncoding("gb2312").GetString(receiveByte, PROTOCOL_DATA_POS, len - MIN_PACKET_LEN_MINUS_ONE);
-            if (receiveByte[PROTOCOL_DATA_POS] == 0xff)
-            {
-                MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-            strArray = str.Split(';');
+			string title = "质检原料标签上传（0xC4）";
+			string prompt = "数据：<条码>\n\n";
+			prompt += " 	  小卷条码：<工单号：12><时分：4><大卷号：3><小卷号：2><客户序号：1><质量：1>";
+			prompt += "       大卷条码：<工单号：12><时分：4><大卷号：3><质量：1>";
+			prompt += "返回：<0/0xff>";
+		
+			do_productBarcodeUpload(COMMUNICATION_TYPE_INSPECTION_PROCESS_MATERIAL_BARCODE_UPLOAD,prompt, title);
 
             //put received dispatch info into dispatch structure
-            getDispatchInfo(dispatchList, strArray);
+            //getDispatchInfo(dispatchList, strArray);
         }
 
         //label scan: get output label for reusing material then upload to server
+        //再造料标签上传（0xC6）
         private void button52_Click(object sender, EventArgs e)
         {
-            int len;
-            string str;
+        	string title = "再造料标签上传（0xC6）";
+            string prompt = "数据：<条码>;<重量>;<不良条码个数>;<条码1>;...;<配方单>;<员工号>\n\n";
+            prompt += "       条码: <不合格大卷/小卷产品工单号中工序变为Z>";
+			prompt += "返回：<0/0xff>";
 
-            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
-            {
-                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
-
-            //reuse process:"6"  means this is reuse material
-            // dispatchCode:"S171109Q005", reuse process:"6", slit machine ID:"2", time:"1801201431", large roll ID:"05", small roll ID:"001", customer:"0", inspection result:"0"  
-            str = "S171109Q0056218012014310500103";
-            sendStringToServer(str, COMMUNICATION_TYPE_REUSE_PROCESS_BARCODE_UPLOAD);
-
-            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
-
-            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
-            if (receiveByte[PROTOCOL_DATA_POS] != 0)
-            {
-                MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
+			do_productBarcodeUpload(COMMUNICATION_TYPE_REUSE_PROCESS_BARCODE_UPLOAD,prompt, title);
         }
 
         //label scan: get slit label for packing
@@ -714,14 +472,15 @@ namespace tcpClient
         }
 
         //label scan: get output label for packing then upload to server
+        //打包完成标签上传（0xC7）
         private void button54_Click(object sender, EventArgs e)
         {
-            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
-            {
-                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
+        	string title = "打包完成标签上传（0xC7）";
+            string prompt = "数据：<条码>;<员工号>\n\n";
+            prompt += "       条码: <>";
+			prompt += "返回：<0/0xff>";
 
+			do_productBarcodeUpload(COMMUNICATION_TYPE_PACKING_PROCESS_PACKAGE_BARCODE_UPLOAD ,prompt, title);
         }
 
         //update basic info by heart beat
@@ -752,6 +511,220 @@ namespace tcpClient
             }
         }
 
+		//印刷开工0xBB
+        private void button58_Click(object sender, EventArgs e)
+        {
+        	string title = "印刷开工（0xBB） ";
+            string prompt = "数据：<员工号>\n\n";
+			prompt += "返回：<工单号：12>;<产品代码>";
+
+			do_processStart(COMMUNICATION_TYPE_PRINT_PROCESS_START, prompt, title);
+            //put received dispatch info into dispatch structure
+           //getDispatchInfo(dispatchList, strArray);
+        }
+
+		//流延交接班0xBA
+        private void button59_Click(object sender, EventArgs e)
+        {
+        	string title = "流延交接班（0xBA）";
+			string prompt = "数据：<工单编号：12>;<交接班记录>\n\n";
+			prompt += "返回：<0/0xff>";
+			
+        	do_processEnd(COMMUNICATION_TYPE_CAST_PROCESS_END , prompt, title);
+
+            //put received dispatch info into dispatch structure
+            //getDispatchInfo(dispatchList, strArray);
+
+        }
+
+        /*private void label22_Click(object sender, EventArgs e)
+        {
+
+        }*/
+
+		//印刷交接班0xBE
+        private void button60_Click(object sender, EventArgs e)
+        {
+        	string title = "印刷交接班（0xBE）";
+			string prompt = "数据：<工单编号：12>;<交接班记录>\n\n";
+			prompt += "返回：<0/0xff>";
+			
+        	do_processEnd(COMMUNICATION_TYPE_PRINT_PROCESS_END, prompt, title);
+        }
+
+		//分切开工（0xBF）
+        private void button61_Click(object sender, EventArgs e)
+        {
+			 string title = "分切开工（0xBF） ";
+			 string prompt = "数据：<员工号>\n\n";
+			 prompt += "返回：<工单号：12>;<产品代码>";
+			
+			 do_processStart(COMMUNICATION_TYPE_SLIT_PROCESS_START,prompt, title);
+			 //put received dispatch info into dispatch structure
+			//getDispatchInfo(dispatchList, strArray);
+
+        }
+
+		//分切交接班0xC3
+        private void button62_Click(object sender, EventArgs e)
+        {
+        	string title = "分切交接班（0xC3）";
+			string prompt = "数据：<工单编号：12>;<交接班记录>\n\n";
+			prompt += "返回：<0/0xff>";
+			
+        	do_processEnd(COMMUNICATION_TYPE_SLIT_PROCESS_END,prompt, title);
+        }
+
+		//创建打包条码（0xC2）
+        private void button57_Click(object sender, EventArgs e)
+        {
+        	string title = "创建打包条码（0xC2）";
+            string prompt = "数据：<产品代码>;<卷数>;<重量>;<长度>;<打包条码>;<卷条码1>;...;<卷条码N>\n\n";
+            prompt += "       条码: <>";
+			prompt += "返回：<0/0xff>";
+
+			do_productBarcodeUpload(COMMUNICATION_TYPE_SLIT_PROCESS_PACKAGE_BARCODE_UPLOAD ,prompt, title);
+        }
+
+		void do_processStart(int communicationType, string prompt, string title)
+        {
+            //int i;
+            int len;
+            byte[] data = new byte[1000];
+            string str;
+            string[] strArray;
+            gVariable.dispatchSheetStruct dispatchList = new gVariable.dispatchSheetStruct();
+
+            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
+            {
+                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
+                return;
+            }
+
+            string response = Microsoft.VisualBasic.Interaction.InputBox(prompt, title, "", -1, -1);
+			if (response == "")
+            	return;
+
+			Array.Copy(System.Text.Encoding.Default.GetBytes(response), 0, data, PROTOCOL_DATA_POS, response.Length);
+            /*data[PROTOCOL_DATA_POS] = PRINTING_MACHINE_ID_CAST5;
+            data[PROTOCOL_DATA_POS + 1] = 0;
+            data[PROTOCOL_DATA_POS + 2] = 0;
+            data[PROTOCOL_DATA_POS + 3] = 0;
+
+            len = MIN_PACKET_LEN + 3;*/
+            len = MIN_PACKET_LEN + response.Length - 1;
+            inputDataHeader(data, len, communicationType, 0);
+            CRC16.addCrcCode(data, len);
+            socketArray[selectedMachineIndex].Send(data, len, 0);
+
+			string show_value = "===>" + title + response;
+			listBox1.Items.Add(show_value);
+
+            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
+
+            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
+            str = System.Text.Encoding.GetEncoding("gb2312").GetString(receiveByte, PROTOCOL_DATA_POS, len - MIN_PACKET_LEN_MINUS_ONE);
+            if (receiveByte[PROTOCOL_DATA_POS] == 0xff)
+            {
+                MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
+                return;
+            }
+            strArray = str.Split(';');
+			show_value = "<=== ";
+			if (strArray.Length <= 2)
+				show_value += "没有工单";
+			else
+				show_value += "工单编号：" + strArray[0] + "   产品代码：" + strArray[1];
+
+			listBox1.Items.Add(show_value);
+
+		}
+
+		void do_processEnd(int communicationType, string prompt, string title)
+        {
+            //int i;
+            int len;
+            byte[] data = new byte[1000];
+            string str;
+            string[] strArray;
+            gVariable.dispatchSheetStruct dispatchList = new gVariable.dispatchSheetStruct();
+
+            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
+            {
+                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
+                return;
+            }
+
+            string response = Microsoft.VisualBasic.Interaction.InputBox(prompt, title, "", -1, -1);
+			if (response == "")
+            	return;
+
+			Array.Copy(System.Text.Encoding.Default.GetBytes(response), 0, data, PROTOCOL_DATA_POS, response.Length);
+            /*data[PROTOCOL_DATA_POS] = PRINTING_MACHINE_ID_CAST5;
+            data[PROTOCOL_DATA_POS + 1] = 0;
+            data[PROTOCOL_DATA_POS + 2] = 0;
+            data[PROTOCOL_DATA_POS + 3] = 0;
+
+            len = MIN_PACKET_LEN + 3;*/
+            len = MIN_PACKET_LEN + response.Length - 1;
+            inputDataHeader(data, len, communicationType, 0);
+            CRC16.addCrcCode(data, len);
+            socketArray[selectedMachineIndex].Send(data, len, 0);
+
+			string show_value = "===>" + title + response;
+			listBox1.Items.Add(show_value);
+
+            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
+
+            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
+            str = System.Text.Encoding.GetEncoding("gb2312").GetString(receiveByte, PROTOCOL_DATA_POS, len - MIN_PACKET_LEN_MINUS_ONE);
+            if (receiveByte[PROTOCOL_DATA_POS] == 0xff)
+            {
+                //MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
+            	listBox1.Items.Add("<=== ！失败！");
+            }
+			if (receiveByte[PROTOCOL_DATA_POS] == 0)
+				listBox1.Items.Add("<=== ！成功！");
+
+			return;
+		}
+
+		public void do_productBarcodeUpload(int communicationType, string prompt, string title)
+		{
+            int len;
+            string str;
+            byte[] data = new byte[1000];
+            //byte[] buf;
+
+            if (communicationStatusArray[selectedMachineIndex] < handshakeOK)
+            {
+                MessageBox.Show("设备尚未握手成功，请先开始模拟通讯.", "信息提示", MessageBoxButtons.OK);
+                return;
+            }
+
+            string response = Microsoft.VisualBasic.Interaction.InputBox(prompt, title,"", -1, -1);
+			if (response == "")
+            	return;
+            // dispatchCode:"S171109J002", cast process:"3", cast machine ID:"5", time:"1801201431", large roll ID:"05"  
+            //str = "S171109J00235180120143105";
+            sendStringToServer(response, communicationType);
+
+			string show_value = "===>" + title + response;
+			listBox1.Items.Add(show_value);
+
+            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
+
+            len = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
+
+            if (receiveByte[PROTOCOL_DATA_POS] == 0xff)
+            {
+                //MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
+            	listBox1.Items.Add("<=== ！失败！");
+            }
+			if (receiveByte[PROTOCOL_DATA_POS] == 0)
+				listBox1.Items.Add("<=== ！成功！");
+		}
+		
         public void sendStringToServer(string str, int type)
         {
             int j;

@@ -54,7 +54,7 @@ namespace MESSystem.common
             public string errorStatus;
             public string numOfJoins;
             public string weight;
-			public productslit_t(int value){
+			/*public productslit_t(int value){
 				this.machineID = null;
 				this.materialBarCode = null;
 				this.materialScanTime = null;
@@ -68,7 +68,7 @@ namespace MESSystem.common
 				this.errorStatus = null;
 				this.numOfJoins = null;
 				this.weight = null;
-			}
+			}*/
 		}
 
 		public string Serialize(productslit_t st)
@@ -99,7 +99,7 @@ namespace MESSystem.common
 
 			input = strInput.Split(';');
 
-			if (input.Length < TOTAL_DATAGRAM_NUM)
+			if (input.Length < TOTAL_DATAGRAM_NUM-1)
 				return null;
 
 			st.machineID = input[MACHINE_ID_INDEX];
@@ -195,7 +195,7 @@ namespace MESSystem.common
 
             try
             {
-                index = 0;
+                index = 1;
                 itemName = insertString.Split(',', ')');
 
                 MySqlConnection myConnection = new MySqlConnection("database = " + c_dbName + "; " + connectionString);
