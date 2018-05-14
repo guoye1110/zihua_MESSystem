@@ -1,0 +1,200 @@
+{
+  "Desc": "Hello",
+  "Version": "V1.0.0",
+  "Width": 100,
+  "Height": 60,
+  "receiptInfos": [
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 7.672917,
+        "Y": 10.31875
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "客户名称",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 26.19375,
+        "Y": 10.583333
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "②",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 2
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 8.73125,
+        "Y": 17.9916668
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "宽度",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 27.5166664,
+        "Y": 18.25625
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "⑦",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 7
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 8.202084,
+        "Y": 25.6645832
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "工人",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 26.7229176,
+        "Y": 25.6645832
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "③",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 3
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 8.73125,
+        "Y": 33.3375
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "大卷号",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 27.2520828,
+        "Y": 33.0729179
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "⑪",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 11
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 8.202084,
+        "Y": 41.275
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "小卷号",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 27.78125,
+        "Y": 40.2166672
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "⑫",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 12
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 41.275,
+        "Y": 10.8479166
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "材料名称",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 60.325,
+        "Y": 10.583333
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "⑤",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 5
+    }
+  ]
+}

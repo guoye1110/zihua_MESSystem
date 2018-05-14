@@ -1,0 +1,110 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using LabelPrint.Data;
+namespace LabelPrint.EditorForms
+{
+    public partial class RecoveryEditorForm : Form
+    {
+        DataTable dtEditor;
+        int selId;
+        RcvInputData UserInput;
+        public void SetSelItem(DataTable dt, int id)
+        {
+            this.selId = id;
+            dtEditor = dt;
+        }
+        public RecoveryEditorForm()
+        {
+            InitializeComponent();
+        }
+
+        private void InitialDataForForm()
+        {
+            tb_DateTime.Text = UserInput.GetDateTime();
+            //tb_WorkProcess.Text = UserInput.WorkProcess;
+            tb_RecipeNo.Text = UserInput.Recipe;
+            tb_Color.Text = UserInput.Color;
+           // tb_Vendor.Text = UserInput.Vendor;
+           // tb_StackWeight.Text = UserInput.StackWeight;
+            tb_WeightPerBag.Text = UserInput.WeightPerBag;
+           // tb_Bagx.Text = UserInput.Bags_x;
+           // tb_Bagy.Text = UserInput.Bags_y;
+           // tb_Bagxy.Text = UserInput.Bags_xy;
+            tb_WorkerNo.Text = UserInput.WorkerNo;
+            tb_Desc.Text = UserInput.Desc;
+
+        }
+        private void UpdateUserInput()
+        {
+          //  UserInput.WorkProcess = tb_WorkProcess.Text;
+            UserInput.Recipe = tb_RecipeNo.Text;
+            UserInput.Color = tb_Color.Text;
+            //UserInput.Vendor = tb_Vendor.Text;
+            //UserInput.StackWeight = tb_StackWeight.Text;
+            UserInput.WeightPerBag = tb_WeightPerBag.Text;
+           // UserInput.Bags_x = tb_Bagx.Text;
+           // UserInput.Bags_y = tb_Bagy.Text;
+            //UserInput.Bags_xy = tb_Bagxy.Text;
+            UserInput.WorkerNo = tb_WorkerNo.Text;
+            UserInput.Desc = tb_Desc.Text;
+
+        }
+
+        private void UpdateProductData()
+        {
+            CutSampleData SysData;
+            SystemSetting SysSetting;
+            SysSetting = GlobalConfig.Setting;
+            //CutProductItem ProdItem;
+            SysData = CutSampleData.Instance;
+
+            UpdateUserInput();
+
+            DynamicPrintLabelData DynPrintData = SysSetting.DynPrintData;
+            UserInput.UpdatePrintPrintData(DynPrintData);
+        }
+
+        private void RecoveryEditorForm_Load(object sender, EventArgs e)
+        {
+            UserInput = new RcvInputData();
+            UserInput.GetSelItemFromDB(selId);
+            SystemSetting SysSetting;
+            SysSetting = GlobalConfig.Setting;
+            SysSetting.DynPrintData = new DynamicPrintLabelData();
+            SysSetting.DynPrintData.setWorkProcess("Cut");
+
+            InitialDataForForm();
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void bt_Save_Click(object sender, EventArgs e)
+        {
+            UpdateProductData();
+            //updatedata
+            UserInput.UpdateOneRow(selId);
+            Close();
+        }
+
+        private void bt_Cancel_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void bt_Printing_Click(object sender, EventArgs e)
+        {
+            UpdateProductData();
+            UserInput.PrintLabel();
+        }
+    }
+}

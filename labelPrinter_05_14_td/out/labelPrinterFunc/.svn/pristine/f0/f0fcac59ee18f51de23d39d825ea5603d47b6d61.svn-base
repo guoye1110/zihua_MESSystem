@@ -1,0 +1,355 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using LabelPrint.Receipt;
+using LabelPrint.Data;
+using LabelPrint.PrintForms;
+namespace LabelPrint
+{
+    public partial class LiuYanForm : Form
+    {
+        LiuYanUserinputData UserInput;
+        public LiuYanForm()
+        {
+            InitializeComponent();
+        }
+
+        private void LiuYanForm_Load(object sender, EventArgs e)
+        {
+            SystemSetting SysSetting;
+            SysSetting = GlobalConfig.Setting;
+            //rb_NoonWork.Visible = false;
+            UserInput = new LiuYanUserinputData();
+            UserInput.CreateDataTable();
+            object[] productCodes = UserInput.GetComboStrsForProductCode();
+            cb_ProductCode.Items.AddRange(productCodes);
+            tb_DateTime.Enabled = false;
+
+            SetWorkClassType(WorkClassType.JIA);
+            SetManufactureType(ManufactureType.M_SINGLE);
+            SetWorkTimeType(WorkTimeType.DAYWORK);
+            tb_ManHour.Text = "0";
+            tb_LiuYanMachineNo.Text = SysSetting.CurSettingInfo.MachineNo;
+            tb_LiuYanMachineNo.Enabled = false;
+            tb_worker.Text = gVariable.userAccount;
+            tb_worker.Enabled = false;
+            cb_ProductState.Items.AddRange(LiuYanUserinputData.PrintProductStateStr);
+            cb_ProductState.SelectedIndex = 0;
+        }
+        private void SetManufactureType(ManufactureType type)
+        {
+            switch (type)
+            {
+                case ManufactureType.M_MULTIPLE:
+                    //rb_SetWork.Checked = true;
+                    break;
+                case ManufactureType.M_SINGLE:
+                    //rb_SingleWork.Checked = true;
+                    break;
+            }
+        }
+
+        private void SetWorkClassType(WorkClassType type)
+        {
+            switch (type)
+            {
+                case WorkClassType.JIA:
+                    rb_Jia.Checked = true;
+                    break;
+                case WorkClassType.YI:
+                    rb_Yi.Checked = true;
+                    break;
+                case WorkClassType.BING:
+                    rb_Bing.Checked = true;
+                    break;
+                    //case WorkClassType.DING:
+                    //    rb_Ding.Checked = true;
+                    //    break;
+            }
+        }
+        private void SetWorkClassTypeUnChangeAble(WorkClassType type)
+        {
+            rb_Jia.Enabled = false;
+            rb_Yi.Enabled = false;
+            rb_Bing.Enabled = false;
+            //rb_Ding.Enabled = false;
+            switch (type)
+            {
+                case WorkClassType.JIA:
+                    rb_Jia.Enabled = true;
+                    break;
+                case WorkClassType.YI:
+                    rb_Yi.Enabled = true;
+                    break;
+                case WorkClassType.BING:
+                    rb_Bing.Enabled = true;
+                    break;
+                    //case WorkClassType.DING:
+                    //    rb_Ding.Enabled = true;
+                    //    break;
+            }
+        }
+
+        private WorkClassType GetWorkClassType()
+        {
+            if (rb_Jia.Checked)
+            {
+                return WorkClassType.JIA;
+            }
+            else if (rb_Yi.Checked)
+            {
+                return WorkClassType.YI;
+            }
+            else if (rb_Bing.Checked)
+            {
+                return WorkClassType.BING;
+            }
+            //else if (rb_Ding.Checked)
+            //{
+            //    return WorkClassType.DING;
+            //}
+            return WorkClassType.JIA;
+        }
+
+        private void SetWorkTimeType(WorkTimeType type)
+        {
+            switch (type)
+            {
+                case WorkTimeType.DAYWORK:
+                    rb_DayWork.Checked = true;
+                    break;
+                //case WorkTimeType.MIDDLEWORK:
+                //    rb_NoonWork.Checked = true;
+                //    break;
+                case WorkTimeType.NIGHTWORK:
+                    rb_NightWork.Checked = true;
+                    break;
+            }
+        }
+        private WorkTimeType GetWorkTimeType()
+        {
+            if (rb_DayWork.Checked)
+            {
+                return WorkTimeType.DAYWORK;
+            }
+            else if (rb_NightWork.Checked)
+            {
+                return WorkTimeType.NIGHTWORK;
+            }
+            //else if (rb_NoonWork.Checked)
+            //{
+            //    return WorkTimeType.MIDDLEWORK;
+            //}
+            return WorkTimeType.DAYWORK;
+        }
+        private void bt_Printing_Click(object sender, EventArgs e)
+        {
+            //update the data from UI or Scale.
+            UpdateProductData();
+
+
+            if (!UserInput.CheckUserInput())
+                return;
+            UserInput.UpdateDateTime();
+            tb_DateTime.Text = UserInput.GetDateTime();
+            //Printing
+            PrintLabel();
+
+            //save the data to local database
+            CreateLocalDataBaseItem();
+            //Save the data to server
+            SendItemToServer();
+            PostUpdateProductData();
+
+        }
+
+        private void UpdateUserInput()
+        {
+
+            UserInput.ProductCode = cb_ProductCode.Text;
+           // UserInput.LittleRollCount = tb_LittleRollCount1.Text;
+            //UserInput.LittleRollCount2 = tb_LittleRollCount2.Text;
+            //UserInput.LittleRollCount3 = tb_LittleRollCount3.Text;
+
+            UserInput.Width = tb_Width.Text;
+            //UserInput.Width2 = tb_Width2.Text;
+            //UserInput.Width3 = tb_Width3.Text;
+
+
+            UserInput.CustomerName = tb_CustomerName.Text;
+            //UserInput.CustomerName2 = tb_CustomerName2.Text;
+            //UserInput.CustomerName3 = tb_CustomerName3.Text;
+
+            UserInput.RecipeCode = tb_RecipeCode.Text;
+            //UserInput.RawMaterialCode2 = tb_RawMaterialCode2.Text;
+            //UserInput.RawMaterialCode3 = tb_RawMaterialCode3.Text;
+
+            //UserInput.MaterialName = tb_MaterialName1.Text;
+            //UserInput.MaterialName2 = tb_MaterialName2.Text;
+            //UserInput.MaterialName3 = tb_MaterialName3.Text;
+
+            UserInput.BatchNo = tb_BatchNo.Text;
+            //UserInput.BatchNo2 = tb_BatchNo2.Text;
+            //UserInput.BatchNo3 = tb_BatchNo3.Text;
+
+          //  UserInput.LittleRollCount = tb_LittleRollCount.Text;
+
+            UserInput.WorkNo = tb_WorkNo.Text;
+            UserInput.WorkHour = tb_ManHour.Text;
+            UserInput.WorkerNo = tb_worker.Text;
+            UserInput.LiuYanMachineNo = tb_LiuYanMachineNo.Text;
+
+
+            //Get the Selected Item from ProductState/ ProductQuality / RealWeight
+            UserInput.Desc = GetDesc(tb_Desc);
+            UserInput.BigRollNo = GetCurBigRollNo(tb_BigRollNo);
+            UserInput.WorkClsType = GetWorkClassType();
+            UserInput.WorkTType = GetWorkTimeType();
+            UserInput.Product_State = cb_ProductState.Text;
+            UserInput.Roll_Weight = tb_RollWeight.Text;
+
+        }
+
+        private String GetDesc(TextBox tb)
+        {
+            return tb.Text;
+        }
+
+        private String GetCurBigRollNo(TextBox tb)
+        {
+            return tb.Text;
+        }
+        private void UpdateProductData()
+        {
+            UpdateUserInput();
+        }
+
+        private void PrintLabel()
+        {
+
+            SystemSetting SysSetting;
+            SysSetting = GlobalConfig.Setting;
+            
+            SysSetting.DynPrintData = new DynamicPrintLabelData();
+            DynamicPrintLabelData DynPrintData = SysSetting.DynPrintData;
+            UserInput.UpdatePrintPrintData(DynPrintData);
+
+            //LiuYanLabel label = new LiuYanLabel();
+            //label.Printlabel();
+            UserInput.PrintLabel();
+
+        }
+        private void CreateLocalDataBaseItem()
+        {
+            UserInput.insertOneRowMSateZero();
+        }
+        private void SendItemToServer()
+        {
+
+        }
+        private void PostUpdateProductData()
+        {
+            cb_ProductState.SelectedIndex = 0;
+            tb_BigRollNo.Text = CommonFormHelper.UpdateBigRollNo(tb_BigRollNo.Text);
+            //tb_DateTime.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        private void bt_scan_Click(object sender, EventArgs e)
+        {
+            //String barcode;
+            //String orderNo;
+            //String batchNo;
+            //String DevNo;
+            //String WorkNoSn;
+            //String productName;
+            //String fixture;
+
+            //ScanForm f = new ScanForm();
+            //f.ShowDialog();
+            //if (f.DialogResult == DialogResult.OK)
+            //{
+            //    barcode = f.GetBarCodeValue();
+            //    barcode = "S17110906L302S118012014310500100";
+            //    if (!UserInput.ParseBarCode(barcode))
+            //        return;
+
+            //    tb_WorkNo.Text = UserInput.WorkNo;
+            //    if (!UserInput.ParseWorkNo(tb_WorkNo.Text, out orderNo, out batchNo, out DevNo, out WorkNoSn))
+            //        return;
+            //    if (!UserInput.GetProductInfoBySaleOrder(orderNo, out UserInput.ProductCode, out productName, out UserInput.CustomerName))
+            //        return;
+            //    if (!UserInput.GetInfoByProductCode(UserInput.ProductCode, out UserInput.Width, out UserInput.RecipeCode, out fixture, out UserInput.CustomerName))
+            //        return;
+
+            //    tb_Width.Text = UserInput.Width;
+            //    tb_RecipeCode.Text = UserInput.RecipeCode;
+            //    tb_CustomerName.Text = UserInput.CustomerName;
+            //    tb_BatchNo.Text = batchNo;
+            //    tb_BigRollNo.Text = UserInput.BigRollNo;
+
+            //    tb_BatchNo.Text = UserInput.BatchNo;
+            //    SetManufactureType(UserInput.MType);
+            //    cb_ProductCode.Text = UserInput.ProductCode;
+            //}
+        }
+
+        private void bt_GongDanOk_Click(object sender, EventArgs e)
+        {
+            String orderNo;
+            String batchNo;
+            String DevNo;
+            String WorkNoSn;
+            String productName;
+            String fixture;
+            UserInput.ParseWorkNo(tb_WorkNo.Text, out batchNo, out DevNo, out WorkNoSn);
+            if (gVariable.orderNo != null)
+            {
+                orderNo = gVariable.orderNo;
+                UserInput.GetProductInfoBySaleOrder(orderNo, out UserInput.ProductCode, out productName, out UserInput.CustomerName);
+                UserInput.GetInfoByProductCode(UserInput.ProductCode, out UserInput.Width, out UserInput.RecipeCode, out fixture, out UserInput.CustomerName);
+            }
+
+            tb_Width.Text = UserInput.Width;
+            tb_RecipeCode.Text = UserInput.RecipeCode;
+            tb_CustomerName.Text = UserInput.CustomerName;
+            tb_BatchNo.Text = batchNo;
+            cb_ProductCode.Text = UserInput.ProductCode;
+            tb_ManHour.Text = "0";
+            tb_Desc.Text = "";
+        }
+
+        private void bt_Record_Click(object sender, EventArgs e)
+        {
+
+            JiaoJieBanForm f = new JiaoJieBanForm();
+            f.ShowDialog();
+#if true
+#if false
+            String barcode;
+            UpdateScanForm f = new UpdateScanForm();
+            f.SetUserInput(UserInput);
+            f.ShowDialog();
+#endif
+#else
+            String barcode;
+
+            ScanForm f = new ScanForm();
+            f.ShowDialog();
+            if (f.DialogResult == DialogResult.OK)
+            {
+                barcode = f.GetBarCodeValue();
+
+                barcode = UserInput.OutputBarcode;
+                if (!UserInput.UpdateMStateInDB(barcode))
+                    return;
+            }
+#endif
+        }
+    }
+}

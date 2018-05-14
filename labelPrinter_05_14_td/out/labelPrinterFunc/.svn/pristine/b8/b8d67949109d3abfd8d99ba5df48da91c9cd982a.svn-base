@@ -1,0 +1,214 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using LabelPrint.Data;
+using LabelPrint.Receipt;
+using LabelPrint.Util;
+using LabelPrint.PrintForms;
+namespace LabelPrint
+{
+    public partial class OutBoundingForm : Form
+    {
+        OutBoundingInputData UserInput;
+        public OutBoundingForm()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //update the data from UI or Scale.
+            UpdateProductData();
+
+
+            if (!UserInput.CheckUserInput())
+                return;
+
+            UserInput.UpdateDateTime();
+            tb_DateTime.Text = UserInput.GetDateTime();
+
+            //Printing
+            PrintLabel();
+            //save the data to local database
+            CreateLocalDataBaseItem();
+            //Save the data to server
+            SendItemToServer();
+            PostUpdateProductData();
+        }
+
+
+        private void UpdateUserInput()
+        {
+            UserInput.MaterialName = cb_RawMaterialName.Text;
+            UserInput.RawMaterialGrade = tb_RawMaterialGrade.Text;
+            UserInput.RawMaterialCode = tb_RawMaterialCode.Text;
+            UserInput.RawMaterialBatchNo = tb_RawMaterialBatchNo.Text;
+            // UserInput.Recipe = tb_Recipe.Text;
+            UserInput.Vendor = tb_Vendor.Text;
+            UserInput.WeightPerBag = tb_WeightPerBag.Text;
+            // UserInput.StackWeight = tb_StackWeight.Text;
+            UserInput.Bags_x = tb_Bags_x.Text;
+            UserInput.Bags_y = tb_Bags_y.Text;
+            UserInput.Bags_xy = tb_Bags_xy.Text;
+            UserInput.WorkerNo = tb_WorkerNo.Text;
+            UserInput.Desc = tb_Desc.Text;
+            UserInput.NeedBags = tb_NeedBags.Text;
+            UserInput.OutBags = tb_OutBags.Text;
+            UserInput.TargetMachineNo = cb_TargetMachineNo.Text;
+
+            //public String Date_Time;
+        }
+
+        private void UpdateProductData()
+        {
+            UpdateUserInput();
+        }
+
+        private void PrintLabel()
+        {
+            SystemSetting SysSetting;
+            SysSetting = GlobalConfig.Setting;
+
+            SysSetting.DynPrintData = new DynamicPrintLabelData();
+            DynamicPrintLabelData DynPrintData = SysSetting.DynPrintData;
+            UserInput.UpdatePrintPrintData(DynPrintData);
+            //OutBoundingLabel label = new OutBoundingLabel();
+            //label.Printlabel();
+            UserInput.PrintLabel();
+        }
+        private void CreateLocalDataBaseItem()
+        {
+            UserInput.insertOneRowMSateZero();
+        }
+        private void SendItemToServer()
+        {
+
+        }
+        private void PostUpdateProductData()
+        {
+            //tb_DateTime.Text = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
+
+        }
+
+        private void OutBoundingForm_Load(object sender, EventArgs e)
+        {
+            UserInput = new OutBoundingInputData();
+            UserInput.CreateDataTable();
+
+            tb_DateTime.Enabled = false;
+            tb_WorkerNo.Text = gVariable.userAccount;
+            tb_WorkerNo.Enabled = false;
+            object[] combosStrs = UserInput.GetComboStrsForMaterialName();
+            if (combosStrs != null)
+                cb_RawMaterialName.Items.AddRange(combosStrs);
+            cb_TargetMachineNo.Items.AddRange(UserInput.targets);
+
+
+        }
+
+        private void tb_Bags_x_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            ControlHelper.LimitToDigitOnly(e);
+        }
+
+        private void cb_RawMaterialName_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                UserInput.MaterialName = cb_RawMaterialName.SelectedItem.ToString();
+                UserInput.GetInfoByMaterialName(UserInput.MaterialName, out UserInput.RawMaterialCode, out UserInput.Vendor, out UserInput.WeightPerBag, out UserInput.NeedBags);
+            }
+            catch (Exception arg)
+            {
+
+            }
+            tb_Vendor.Text = UserInput.Vendor;
+            tb_RawMaterialCode.Text = UserInput.RawMaterialCode;
+            tb_RawMaterialGrade.Text = "0";
+            tb_NeedBags.Text = UserInput.NeedBags;
+            tb_WeightPerBag.Text = UserInput.WeightPerBag;
+
+            //                UserInput.ProductCode = (String)productCodes[cb_ProductCode.SelectedIndex];
+            //UserInput.GetInfoByProductCode(UserInput.ProductCode, out UserInput.Width, out UserInput.RecipeCode, out fixture, out UserInput.CustomerName);
+
+            //tb_Width.Text = UserInput.Width;
+            //tb_RecipeCode.Text = UserInput.RecipeCode;
+            //tb_CustomerName.Text = UserInput.CustomerName;
+
+
+        }
+
+        private void rb_LiaoCangNoClick(object sender, EventArgs e)
+        {
+            if (rb_button1.Checked)
+            {
+                UserInput.LiaoCangNo = "1";
+            }
+            else
+            if (rb_button2.Checked)
+            {
+                UserInput.LiaoCangNo = "2";
+            }
+            else
+            if (rb_button3.Checked)
+            {
+                UserInput.LiaoCangNo = "3";
+            }
+            else
+            if (rb_button4.Checked)
+            {
+                UserInput.LiaoCangNo = "4";
+            }
+            else
+            if (rb_button5.Checked)
+            {
+                UserInput.LiaoCangNo = "5";
+            }
+            else
+            if (rb_button6.Checked)
+            {
+                UserInput.LiaoCangNo = "6";
+            }
+            else
+            if (rb_button7.Checked)
+            {
+                UserInput.LiaoCangNo = "7";
+            }
+            else
+            if (rb_button8.Checked)
+            {
+                UserInput.LiaoCangNo = "8";
+            }
+
+        }
+
+        private void bt_Record_Click(object sender, EventArgs e)
+        {
+#if true
+            String barcode;
+            UpdateScanForm f = new UpdateScanForm();
+            f.SetUserInput(UserInput);
+            f.ShowDialog();
+#else
+            String barcode;
+
+            ScanForm f = new ScanForm();
+            f.ShowDialog();
+            if (f.DialogResult == DialogResult.OK)
+            {
+                barcode = f.GetBarCodeValue();
+
+                barcode = UserInput.OutputBarcode;
+                if (!UserInput.UpdateMStateInDB(barcode))
+                    return;
+            }
+#endif
+        }
+    }
+}

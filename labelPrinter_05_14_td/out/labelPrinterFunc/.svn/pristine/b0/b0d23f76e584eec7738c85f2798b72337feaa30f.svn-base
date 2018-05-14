@@ -1,0 +1,105 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace LabelPrint.Data
+{
+    public class LittleRollBarcode: RollBarcode
+    {
+
+        public String LittleRStr;
+        public String VendorStr;
+
+      //  public String SalesOrder;
+       // public String BatchNo;
+
+
+        //public Boolean ParserWorNo()
+        //{
+        //    try
+        //    {
+        //        String order = WorkNoStr.Substring(5, 2);
+        //        String LiuYanDevice = WorkNoStr.Substring(4, 1);
+        //        String YearMonth = TimeStr.Substring(0, 4);
+
+        //        BatchNo = YearMonth + LiuYanDevice + order;
+
+        //     //   SalesOrder = WorkNoStr.Substring(0, 7);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return false;
+        //    }
+
+        //    return true;
+        //}
+
+        public Boolean ParseBarcode(String str)
+        {
+            if (str.Length != getTotalStrLen())
+                return false;
+            try
+            {
+                WorkNoStr = str.Substring(getWorkNoStrIndex(), WorkNoStrLen);
+                //ProcessStr = str.Substring(getProcessStrIndex(), ProcessStrLen);
+                //MachineIDStr = str.Substring(getMachineIDSrIndex(), MachineIDStrLen);
+                TimeStr = str.Substring(getTimeStrIndex(), TimeStrLen);
+                BigRStr = str.Substring(getBigRStrIndex(), BigRStrLen);
+                LittleRStr = str.Substring(getLittleRStrIndex(), LittleRStrLen);
+                VendorStr = str.Substring(getVendorStrIndex(), VendorStrLen);
+                QAStr = str.Substring(getQAStrIndex(), QAStrLen);
+                ParserWorNo();
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public String createBarcode()
+        {
+            if (WorkNoStr.Length != WorkNoStrLen)
+                return null;
+//            if (ProcessStr.Length != ProcessStrLen)
+//                return null;
+//            if (MachineIDStr.Length != MachineIDStrLen)
+//                return null;
+            if (TimeStr.Length != TimeStrLen)
+                return null;
+            if (BigRStr.Length != BigRStrLen)
+                return null;
+            if (LittleRStr.Length != LittleRStrLen)
+                return null;
+            if (VendorStr.Length != VendorStrLen)
+                return null;
+            if (QAStr.Length != QAStrLen)
+                return null;
+            String barcode = WorkNoStr +  TimeStr + BigRStr + LittleRStr + VendorStr + QAStr;
+            return barcode;
+        }
+
+
+        public static int getLittleRStrIndex()
+        {
+            int index = getBigRStrIndex() + BigRStrLen;
+            return index;
+        }
+        public static int getVendorStrIndex()
+        {
+            int index = getLittleRStrIndex() + LittleRStrLen;
+            return index;
+        }
+        public static int getQAStrIndex()
+        {
+            int index = getVendorStrIndex() + VendorStrLen;
+            return index;
+        }
+        public static int getTotalStrLen()
+        {
+            int index = getQAStrIndex() + QAStrLen;
+            return index;
+        }
+    }
+}

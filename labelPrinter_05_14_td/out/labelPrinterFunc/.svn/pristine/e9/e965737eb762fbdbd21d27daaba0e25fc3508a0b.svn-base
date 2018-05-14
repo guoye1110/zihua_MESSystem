@@ -1,0 +1,264 @@
+{
+  "Desc": "Hello",
+  "Version": "V1.0.0",
+  "Width": 100,
+  "Height": 60,
+  "receiptInfos": [
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 21.9604168,
+        "Y": 2.64583325
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 2,
+      "Content": "②",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 23.8125,
+        "Y": 12.1708336
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 1,
+      "Content": "①",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 3.70416665,
+        "Y": 2.9104166
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 0,
+      "Content": "客户名称",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 3.175,
+        "Y": 11.1125
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 0,
+      "Content": "产品代号",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 3.70416665,
+        "Y": 21.6958332
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 0,
+      "Content": "材料名称",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 21.6958332,
+        "Y": 21.166666
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 5,
+      "Content": "⑤",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 23.5479164,
+        "Y": 31.2208328
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 3,
+      "Content": "③",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 5.55625,
+        "Y": 30.95625
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 0,
+      "Content": "生产者",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 5.29166651,
+        "Y": 37.5708351
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 0,
+      "Content": "宽度",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 19.05,
+        "Y": 35.9833336
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 7,
+      "Content": "⑦",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 50.00625,
+        "Y": 4.233333
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 0,
+      "Content": "生产日期",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 69.58542,
+        "Y": 2.64583325
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 9,
+      "Content": "⑨",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 44.7145844,
+        "Y": 11.90625
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 0,
+      "Content": "卷重/卷长",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 66.4104156,
+        "Y": 12.4354162
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 10,
+      "Content": "⑩",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 45.7729149,
+        "Y": 21.43125
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 0,
+      "Content": "卷号",
+      "Column": 0,
+      "Row": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 57.15,
+        "Y": 22.225
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "PrintPropIndex": 11,
+      "Content": "⑪",
+      "Column": 0,
+      "Row": 0
+    }
+  ]
+}

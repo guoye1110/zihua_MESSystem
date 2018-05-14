@@ -1,0 +1,611 @@
+{
+  "Desc": "Hello",
+  "Version": "V1.0.0",
+  "Width": 100,
+  "Height": 60,
+  "receiptInfos": [
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 18.25625,
+        "Y": 1.85208333
+      },
+      "End": null,
+      "Size": 12.0,
+      "FontStyle": 1,
+      "Content": "中国. 上海紫华企业有限公司",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 3.70416665,
+        "Y": 13.229167
+      },
+      "End": null,
+      "Size": 9.0,
+      "FontStyle": 0,
+      "Content": "客户名称",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 45.5083351,
+        "Y": 12.7
+      },
+      "End": null,
+      "Size": 9.0,
+      "FontStyle": 0,
+      "Content": "原材料代码",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 2.64583325,
+        "Y": 15.875
+      },
+      "End": null,
+      "Size": 8.0,
+      "FontStyle": 1,
+      "Content": "Customer",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 47.0958328,
+        "Y": 16.4041672
+      },
+      "End": null,
+      "Size": 8.0,
+      "FontStyle": 1,
+      "Content": "IRMS.No",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 3.4395833,
+        "Y": 22.489584
+      },
+      "End": null,
+      "Size": 9.0,
+      "FontStyle": 0,
+      "Content": "材料名称",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 2.38125,
+        "Y": 25.4
+      },
+      "End": null,
+      "Size": 8.0,
+      "FontStyle": 1,
+      "Content": "Material",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 15.875,
+        "Y": 6.61458349
+      },
+      "End": null,
+      "Size": 9.0,
+      "FontStyle": 0,
+      "Content": "ShangHai Zihua Enterprise Co.LTD.China",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 47.3604164,
+        "Y": 22.489584
+      },
+      "End": null,
+      "Size": 9.0,
+      "FontStyle": 0,
+      "Content": "宽度",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 46.5666656,
+        "Y": 25.6645832
+      },
+      "End": null,
+      "Size": 8.0,
+      "FontStyle": 1,
+      "Content": "Width",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 2.9104166,
+        "Y": 31.4854164
+      },
+      "End": null,
+      "Size": 9.0,
+      "FontStyle": 0,
+      "Content": "产品批号",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 45.5083351,
+        "Y": 30.6916676
+      },
+      "End": null,
+      "Size": 9.0,
+      "FontStyle": 0,
+      "Content": "卷号",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 3.96875,
+        "Y": 34.925
+      },
+      "End": null,
+      "Size": 8.0,
+      "FontStyle": 1,
+      "Content": "Lot.No",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 45.5083351,
+        "Y": 34.6604156
+      },
+      "End": null,
+      "Size": 8.0,
+      "FontStyle": 1,
+      "Content": "Roll No.",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 3.175,
+        "Y": 39.9520836
+      },
+      "End": null,
+      "Size": 9.0,
+      "FontStyle": 0,
+      "Content": "生产者",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 3.70416665,
+        "Y": 43.3916664
+      },
+      "End": null,
+      "Size": 8.0,
+      "FontStyle": 1,
+      "Content": "W.NO",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 45.5083351,
+        "Y": 39.6875
+      },
+      "End": null,
+      "Size": 9.0,
+      "FontStyle": 0,
+      "Content": "卷重/卷长",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 46.3020821,
+        "Y": 42.8625
+      },
+      "End": null,
+      "Size": 8.0,
+      "FontStyle": 1,
+      "Content": "WT/Length",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 2,
+      "PrtColor": "Black",
+      "PenWidth": 0.264583319,
+      "Start": {
+        "X": 20.6375,
+        "Y": 19.84375
+      },
+      "End": {
+        "X": 45.5083351,
+        "Y": 19.84375
+      },
+      "Size": 0.0,
+      "FontStyle": 0,
+      "Content": null,
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 2,
+      "PrtColor": "Black",
+      "PenWidth": 0.264583319,
+      "Start": {
+        "X": 20.6375,
+        "Y": 29.104166
+      },
+      "End": {
+        "X": 45.5083351,
+        "Y": 29.104166
+      },
+      "Size": 0.0,
+      "FontStyle": 0,
+      "Content": null,
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 2,
+      "PrtColor": "Black",
+      "PenWidth": 0.264583319,
+      "Start": {
+        "X": 19.84375,
+        "Y": 38.89375
+      },
+      "End": {
+        "X": 45.5083351,
+        "Y": 38.89375
+      },
+      "Size": 0.0,
+      "FontStyle": 0,
+      "Content": null,
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 2,
+      "PrtColor": "Black",
+      "PenWidth": 0.264583319,
+      "Start": {
+        "X": 19.5791664,
+        "Y": 46.5666656
+      },
+      "End": {
+        "X": 45.24375,
+        "Y": 46.5666656
+      },
+      "Size": 0.0,
+      "FontStyle": 0,
+      "Content": null,
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 2,
+      "PrtColor": "Black",
+      "PenWidth": 0.264583319,
+      "Start": {
+        "X": 67.20417,
+        "Y": 20.6375
+      },
+      "End": {
+        "X": 97.36667,
+        "Y": 20.6375
+      },
+      "Size": 0.0,
+      "FontStyle": 0,
+      "Content": null,
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 2,
+      "PrtColor": "Black",
+      "PenWidth": 0.264583319,
+      "Start": {
+        "X": 66.93958,
+        "Y": 28.3104172
+      },
+      "End": {
+        "X": 98.425,
+        "Y": 28.3104172
+      },
+      "Size": 0.0,
+      "FontStyle": 0,
+      "Content": null,
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 2,
+      "PrtColor": "Black",
+      "PenWidth": 0.264583319,
+      "Start": {
+        "X": 66.93958,
+        "Y": 37.5708351
+      },
+      "End": {
+        "X": 97.8958359,
+        "Y": 37.5708351
+      },
+      "Size": 0.0,
+      "FontStyle": 0,
+      "Content": null,
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 2,
+      "PrtColor": "Black",
+      "PenWidth": 0.264583319,
+      "Start": {
+        "X": 67.20417,
+        "Y": 45.5083351
+      },
+      "End": {
+        "X": 98.1604156,
+        "Y": 45.5083351
+      },
+      "Size": 0.0,
+      "FontStyle": 0,
+      "Content": null,
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 4,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 6.35,
+        "Y": 48.41875
+      },
+      "End": {
+        "X": 94.1916656,
+        "Y": 57.6791649
+      },
+      "Size": 10.0,
+      "FontStyle": 0,
+      "Content": "1234567890",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 21.43125,
+        "Y": 13.7583332
+      },
+      "End": null,
+      "Size": 10.0,
+      "FontStyle": 0,
+      "Content": "②",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 2
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 67.99792,
+        "Y": 13.229167
+      },
+      "End": null,
+      "Size": 10.0,
+      "FontStyle": 0,
+      "Content": "④",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 4
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 21.166666,
+        "Y": 21.6958332
+      },
+      "End": null,
+      "Size": 10.0,
+      "FontStyle": 0,
+      "Content": "⑤",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 5
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 21.43125,
+        "Y": 32.2791672
+      },
+      "End": null,
+      "Size": 10.0,
+      "FontStyle": 0,
+      "Content": "⑥",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 6
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 68.2625,
+        "Y": 30.6916676
+      },
+      "End": null,
+      "Size": 10.0,
+      "FontStyle": 0,
+      "Content": "⑫",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 12
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 67.99792,
+        "Y": 39.6875
+      },
+      "End": null,
+      "Size": 10.0,
+      "FontStyle": 0,
+      "Content": "⑩",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 10
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 67.99792,
+        "Y": 21.43125
+      },
+      "End": null,
+      "Size": 10.0,
+      "FontStyle": 0,
+      "Content": "⑦",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 7
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 21.6958332,
+        "Y": 39.9520836
+      },
+      "End": null,
+      "Size": 10.0,
+      "FontStyle": 0,
+      "Content": "③",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 3
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 82.0208359,
+        "Y": 2.11666656
+      },
+      "End": null,
+      "Size": 12.0,
+      "FontStyle": 1,
+      "Content": "(质检)",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    }
+  ]
+}

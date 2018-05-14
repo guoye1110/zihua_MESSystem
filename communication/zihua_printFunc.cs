@@ -21,8 +21,8 @@ namespace MESSystem.communication
         {
             public class zihua_printerClient
             {
-                //private const int NUM_OF_FEEDING_MACHINE = 7;//7条流水线，每条一个投料设备
-                //private const int STACK_NUM_ONE_MACHINE = 8;//每个偷料设备有8个料仓，每个料仓不同的原料
+                private const int NUM_OF_FEEDING_MACHINE = 7;//7条流水线，每条一个投料设备
+                private const int STACK_NUM_ONE_MACHINE = 7;//每个偷料设备有8个料仓，每个料仓不同的原料
 
                 //communication between PC host and label printing SW
                 private const int COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID = 3;
@@ -75,28 +75,6 @@ namespace MESSystem.communication
                 private const int REBUILD_PROCESS_PC1 = 221;
                 private const int PACKING_PROCESS_PC1 = 241;
 
-                //material code for stacks(码垛对应的原料编号)
-                string[,] materialCodeForStack = new string[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
-
-                //total sack num for this dispatch, got from dispatch info（工单中原料需求的袋数）
-                int[,] sackNumTotalForDispatch = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
-
-                //sack num received from warehouse(搬运工已经搬来了几袋原料, 数量应小于等于 sackNumNeededForStack[])
-                int[,] sackNumReceivedFromWarehouse = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
-
-                //total sack num needed for this stack(or feed bin) for multiple dispatches in a period of time(对于搬运工而言，某个码垛中需要几袋原料，可能包括多个工单，可能超过码垛容量，需多次送料)
-                int[,] sackNumNeededForStack = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
-
-                //sack num left in the stack for the current time（码垛中的剩余袋数）
-                int[,] sackNumLeftInStack = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
-
-                //material left in feed bin(料箱中的余料公斤数)
-                int[,] kiloNumLeftInFeedBin = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
-
-                int inoutMaterialQuantity;
-                int inoutFeedMachineID;
-                int inoutMaterialStackID;
-
                 private ClientThread m_ClientThread = null;
                 private int m_machineIDForPrint;
 				private string m_Operator;
@@ -106,29 +84,6 @@ namespace MESSystem.communication
                     m_ClientThread = cThread;
 					m_machineIDForPrint = 0;
 					m_Operator = null;
-					initVariables();
-                }
-
-                private void initVariables()
-                {
-                    m_ClientThread.handshakeWithClientOK = 0;
-
-                    inoutMaterialQuantity = 0;
-                    inoutFeedMachineID = 0;
-                    inoutMaterialStackID = 0;
-
-                    for (int i = 0; i < communicate.NUM_OF_FEEDING_MACHINE; i++)
-                    {
-                        for (int j = 0; j < communicate.STACK_NUM_ONE_MACHINE; j++)
-                        {
-                            materialCodeForStack[i, j] = null;
-                            sackNumTotalForDispatch[i, j] = 0;
-                            sackNumReceivedFromWarehouse[i, j] = 0;
-                            sackNumNeededForStack[i, j] = 0;
-                            sackNumLeftInStack[i, j] = 0;
-                            kiloNumLeftInFeedBin[i, j] = 0;
-                        }
-                    }
                 }
 
                 private void getMaterialInfoForAllMachines()
@@ -143,6 +98,9 @@ namespace MESSystem.communication
                     string endDay;
                     string commandText;
                     string[,] tableArray;
+					int[,] weightRequiredOfEachStack = new int[communicate.NUM_OF_FEEDING_MACHINE, gVariable.maxMaterialTypeNum];
+					int[,] sackRequiredOfEachStack = new int[communicate.NUM_OF_FEEDING_MACHINE, gVariable.maxMaterialTypeNum];
+					string[,] materialCodeOfEachStack = new string[communicate.NUM_OF_FEEDING_MACHINE, gVariable.maxMaterialTypeNum];
                     gVariable.dispatchSheetStruct[] dispatchs;
 
                     today = DateTime.Now.Date.ToString("yyyy-MM-dd 08:00:00");
@@ -152,10 +110,6 @@ namespace MESSystem.communication
                     {
                         for (i = 0; i < communicate.NUM_OF_FEEDING_MACHINE; i++)
                         {
-                            //int[] lefts = new int[] { 1, 2 };//mySQLClass.getFeedCurrentLeft(i, STACK_NUM_ONE_MACHINE);
-                            //for (int index = 0; index < lefts.Length; index++)
-                             //   sackNumLeftInStack[i, index] = lefts[index];
-
                             //get dispatch list for this machine in defined period
                             dName = gVariable.DBHeadString + (i + 1).ToString().PadLeft(3, '0');
 
@@ -165,68 +119,55 @@ namespace MESSystem.communication
                             if (dispatchs == null)
                                 continue;
 
-							materiallistDB db = new materiallistDB(i+1);
+							materiallistDB db_list = new materiallistDB(i+1);
 
+							//首先计算所有工单每个料仓所需的总重量，方法是从0_materiallist中根据工单号查找到相应的物料需求
+							//然后按每个料仓需要的重量累计，保存到weightRequiredOfEachStack。这里唯一的变数是dispatch的BOMCode
+							//变了的话，就停止累计。
                             ingredient = null;
                             for (j = 0; j < dispatchs.Length; j++)
                             {
                                 //deal with one dispatch and its related material table, material informaion stored in tableArray
                                 //string dbName = gVariable.DBHeadString + (j+1).ToString().PadLeft(3, '0');
-                                materiallistDB.material_t[] materials;
+                                materiallistDB.material_t? materials;
 
-								materials = db.readrecord_byDispatchCode(dispatchs[j].dispatchCode);
-                                //commandText = "select * from `" + gVariable.materialListTableName + "` where dispatchCode = '" + dispatchList[j].dispatchCode + "'";
-                                //tableArray = mySQLClass.databaseCommonReading(dName, commandText);
-                                //materialTypeNum = tableArray[j, mySQLClass.MATERIAL_LIST_NUM_OF_TYPE];
+								materials = db_list.readrecord_byDispatchCode(dispatchs[j].dispatchCode);
 
                                 //the next dispatch uses different materials, we will consider it when current dispatch are all completed
-                                if (ingredient != null && ingredient != dispatchs[j].BOMCode)// [0, mySQLClass.BOM_CODE_IN_DISPATCHLIST_DATABASE])
+                                if (ingredient != null && ingredient != dispatchs[j].BOMCode)
                                     break;
-                                ingredient = dispatchs[j].BOMCode;//tableArray[0, mySQLClass.BOM_CODE_IN_DISPATCHLIST_DATABASE];
+                                ingredient = dispatchs[j].BOMCode;
 
-                                for (k = 0; k < gVariable.maxMaterialTypeNum; k++)
-                                {
-                                    //requiredNum = Convert.ToInt32(tableArray[0, mySQLClass.MATERIAL_LIST_MATERIAL_REQUIRED1 + k * mySQLClass.MATERIAL_LIST_CYCLE_SPAN]);
-                                    
-                                    numForOneSack = Convert.ToInt32(tableArray[0, mySQLClass.MATERIAL_LIST_FULL_PACK_NUM1 + k * mySQLClass.MATERIAL_LIST_CYCLE_SPAN]);
-                                    sackNumTotalForDispatch[i, k] = requiredNum / numForOneSack;
+								materialCodeOfEachStack[i,1] = materials.Value.materialCode1;
+								materialCodeOfEachStack[i,2] = materials.Value.materialCode2;
+								materialCodeOfEachStack[i,3] = materials.Value.materialCode3;
+								materialCodeOfEachStack[i,4] = materials.Value.materialCode4;
+								materialCodeOfEachStack[i,5] = materials.Value.materialCode5;
+								materialCodeOfEachStack[i,6] = materials.Value.materialCode6;
+								materialCodeOfEachStack[i,7] = materials.Value.materialCode7;
 
-                                    //need one more sack
-                                    if (requiredNum % numForOneSack != 0)
-                                        sackNumTotalForDispatch[i, k]++;
-
-                                    //how many sacks are needed for this stack
-                                    sackNumNeededForStack[i, k] += sackNumTotalForDispatch[i, k];
-
-                                    if (k == 0)
-                                        sackNumNeededForStack[i, k] -= sackNumLeftInStack[i, k];
-
-                                    materialCodeForStack[i, k] = tableArray[0, mySQLClass.MATERIAL_LIST_MATERIAL_CODE1 + k * mySQLClass.MATERIAL_LIST_CYCLE_SPAN];
-                                }
+								weightRequiredOfEachStack[i,1] += materials.Value.materialRequired1;
+								weightRequiredOfEachStack[i,2] += materials.Value.materialRequired2;
+								weightRequiredOfEachStack[i,3] += materials.Value.materialRequired3;
+								weightRequiredOfEachStack[i,4] += materials.Value.materialRequired4;
+								weightRequiredOfEachStack[i,5] += materials.Value.materialRequired5;
+								weightRequiredOfEachStack[i,6] += materials.Value.materialRequired6;
+								weightRequiredOfEachStack[i,7] += materials.Value.materialRequired7;
                             }
                         }
+				
+						string str;
+						str = null;
+						for (i = 1; i < NUM_OF_FEEDING_MACHINE+1; i++)
+							for (j = 1; j < STACK_NUM_ONE_MACHINE+1; j++)
+								str += materialCodeOfEachStack[i, j] + ";" + weightRequiredOfEachStack[i, j].ToString() + ";";
+						
+						m_ClientThread.sendStringToClient(str, COMMUNICATION_TYPE_WAREHOUE_OUT_START);
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine("getMaterialInfoForAllMachines failed!" + ex);
                     }
-                }
-
-                private void sendMaterialInfoToPrintSW()
-                {
-                    int i, j;
-                    string str;
-
-                    str = null;
-                    for (i = 0; i < NUM_OF_FEEDING_MACHINE; i++)
-                    {
-                        for (j = 0; j < STACK_NUM_ONE_MACHINE; j++)
-                        {
-                            str += materialCodeForStack[i, j] + ";" + sackNumNeededForStack[i, j].ToString() + ";";
-                        }
-                    }
-
-                    m_ClientThread.sendStringToClient(str, COMMUNICATION_TYPE_WAREHOUE_OUT_START);
                 }
 
                 private int setMaterialWareInOut(int communicationType, byte[] onePacket, int packetLen)
@@ -333,8 +274,7 @@ namespace MESSystem.communication
                     {
 	                    m_Operator = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
                         getMaterialInfoForAllMachines();
-                        sendMaterialInfoToPrintSW();
-                        return 0;
+                        return -1;
                     }
                     if (communicationType == COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE || communicationType == COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE)
                     {

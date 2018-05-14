@@ -1,0 +1,321 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Drawing;
+using System.Drawing.Printing;
+using System.Windows.Forms;
+using System.Data;
+
+namespace LabelPrint.Print
+{
+    class Report_Cut : Report
+    {
+
+
+
+
+        private int Tabx;
+        private int Taby;
+        protected override void InitialVariableForPrint()
+        {
+            base.InitialVariableForPrint();
+            XUnit = new int[DataTablePrint.Columns.Count];
+            //   Tabx = SubTitleRows *YUnit +
+        }
+
+
+        // PrintRecordNumber = Convert.ToInt32((PHeigh - PTop - PBottom - YUnit) / YUnit);
+        // FirstPrintRecordNumber = Convert.ToInt32((PHeigh - PTop - PBottom - HeadHeight - YUnit) / YUnit);
+
+        override protected int GetTotalPrintPage() { return 0; }
+
+        override protected void PrinterPageSetting()
+        {
+            PageSetupDialog PageSetup = new PageSetupDialog();
+            PageSetup.Document = DataTablePrinter;
+            DataTablePrinter.DefaultPageSettings = PageSetup.PageSettings;
+            DataTablePrinter.DefaultPageSettings.Landscape = false;//设置打印横向还是纵向
+        }
+        override protected void DataTablePrinter_PrintPage(object sende, PrintPageEventArgs Ev)
+        {
+            g = Ev.Graphics;
+            PrintReportHeader(Ev);
+            PrintReportSubHeaders(Ev);
+            PrintTableFirstPart(Ev);
+            PrintTableSecond(Ev);
+            PrintTableThird(Ev);
+            PrintTableFourth(Ev);
+        }
+
+        void PrintReportHeader(PrintPageEventArgs Ev)
+        {
+            HeadText = "分切生产日报表";
+            if (PrintingPageNumber == 1)
+            {
+                Graphics g = Ev.Graphics;
+                StringFormat sf = new StringFormat();
+                sf.Alignment = StringAlignment.Center;
+                g.DrawString(HeadText, HeadFont, DrawBrush, new Point(Ev.PageBounds.Width / 2, PTop), sf);
+            }
+        }
+        void PrintReportSubHeaders(PrintPageEventArgs Ev)
+        {
+            if (PrintingPageNumber == 1)
+            {
+                Graphics g = Ev.Graphics;
+                //StringFormat sf = new StringFormat();
+                //sf.Alignment = StringAlignment.Center;
+                g.DrawString("班别", TableFont, DrawBrush, new Point(PLeft + 20, PTop + 2 * YUnit));
+                g.DrawString("班次", TableFont, DrawBrush, new Point(Ev.PageBounds.Width * 1 / 3 + PLeft, PTop + 2 * YUnit));
+                g.DrawString("配方号", TableFont, DrawBrush, new Point(Ev.PageBounds.Width * 3 / 5 + PLeft, PTop + 2 * YUnit));
+                g.DrawString("生产日期", TableFont, DrawBrush, new Point(PLeft + 20, PTop + YUnit));
+            }
+        }
+
+        void PrintTableFirstPart(PrintPageEventArgs Ev)
+        {
+            Graphics g = Ev.Graphics;
+            int starty = PTop + 3 * YUnit;
+            int startx = PLeft;
+            int endx = PWidth - PRight;
+            int width = endx - startx;
+            int height = 2 * YUnit;
+
+
+            Pen PenLittle = new Pen(Brushes.Black, 1);
+            Pen Penbold = new Pen(Brushes.Black, 3);
+            g.DrawRectangle(Penbold, startx, starty, width, height);
+            g.DrawLine(PenLittle, startx, starty + YUnit, endx, starty + YUnit);
+
+            int dtx = startx;
+            int dty = starty;
+            int[] colsw1 = new int[6];
+            colsw1[0] = 20;
+            colsw1[1] = 35;
+            colsw1[2] = 16;
+            colsw1[3] = 41;
+            colsw1[4] = 13;
+            colsw1[5] = 85;
+
+            String[] Titles1 = { "产品名称", "", "膜宽", "", "克重", "" };
+            PrintTableWithTitleByCols(startx, starty, width, 1, YUnit, colsw1, Titles1, (YUnit - TableFont.Height) / 2);
+
+ 
+            int[] colsw2 = new int[4];
+            colsw2[0] = 20;
+            colsw2[1] = 35;
+            colsw2[2] = 16;
+            colsw2[3] = 139;
+            String[] Titles2 = { "产品代号", "", "分切规格", "" };
+            PrintTableWithTitleByCols(startx, starty+YUnit, width, 1, YUnit, colsw2, Titles2, (YUnit - TableFont.Height) / 2);
+        }
+
+        void PrintTableSecond(PrintPageEventArgs Ev)
+        {
+            Graphics g = Ev.Graphics;
+            int rows = 6;
+            int starty = PTop + 5 * YUnit;
+            int startx = PLeft;
+            int endx = PWidth - PRight;
+            int width = endx - startx;
+            int height = rows * YUnit;
+            int c1_width = 35;
+            int Bigcellwidth = (width - c1_width) / 2;
+
+            int c2_startx = startx + c1_width;
+            int c2_width = 35;
+            int c2_mid_x = GetMiddleX(c2_startx, c2_width);
+
+            int c3_start = c2_width + c2_startx;
+            int c3_width = (width - c1_width - 2 * c2_width) / 4;
+            int stringstarty = starty + (YUnit - TableFont.Height) / 2;
+
+            int[] xw = new int[6];
+
+
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+
+            Pen PenLittle = new Pen(Brushes.Black, 1);
+            Pen Penbold = new Pen(Brushes.Black, 3);
+            g.DrawRectangle(Penbold, startx, starty, width, height);
+
+            int[] colsw = new int[6];
+
+            colsw[0] = 8;
+            colsw[1] = 35;
+            colsw[2] = 55;
+            colsw[3] = 8;
+            colsw[4] = 35;
+            colsw[5] = 55;
+
+            String[] Titles = { "序号", "投入公斤数", "上道工序卷号", "序号", "投入公斤数", "上道工序卷号" };
+            PrintTableWithTitleByCols(startx + 35, starty, width - 35, rows, YUnit, colsw, Titles, (YUnit - TableFont.Height) / 2);
+            int dty = starty;
+            int[] realColsw1 = GetRealColsw(width-35, colsw);
+            int[] realColMid1 = GetColumMidOffsetXs(realColsw1);
+
+
+            DrawVDigitalIndex(realColMid1[0] + startx + 35, dty + YUnit, 1, 5);
+            DrawVDigitalIndex(realColMid1[3]+startx+35, dty + YUnit, 6, 5);
+
+            DrawVStringAlignCenter("投 入 量", startx, starty + (int)(6 * YUnit) / 2);
+        }
+
+
+        int[] realColsw;
+        void PrintTableThird(PrintPageEventArgs Ev)
+        {
+            g = Ev.Graphics;
+            int rows = 19;
+
+            int starty = PTop + 11 * YUnit;
+            int startx = PLeft;
+            int endx = PWidth - PRight;
+            int width = endx - startx;
+            int height = rows * YUnit;
+            int stringstarty = starty + (YUnit - TableFont.Height) / 2;
+            int Bigcellwidth = (width - 35) / 3;
+            int c1_width = 35;
+
+            int c2_startx = startx + c1_width;
+            int c2_width = 35;
+            int c2_mid_x = GetMiddleX(c2_startx, c2_width);
+
+            int c3_start = c2_width + c2_startx;
+            int c3_width = (width - c1_width - 2 * c2_width) / 10;
+
+            StringFormat sf = new StringFormat();
+            sf.Alignment = StringAlignment.Center;
+
+
+            Pen PenLittle = new Pen(Brushes.Black, 1);
+            Pen Penbold = new Pen(Brushes.Black, 3);
+
+            int dtx = startx + 35;
+            int dty = starty + (int)(1.5 * YUnit);
+            int stringoffset = (YUnit - TableFont.Height) / 2;
+            int dty_stroffset = dty + stringoffset;
+            int tablew = width - 35;
+
+
+            g.DrawRectangle(Penbold, startx, starty, width, (int)(height + 0.5 * YUnit));
+
+
+
+            int[] colsw = new int[12];
+            colsw[0] = 8;
+            colsw[1] = 20;
+            colsw[2] = 15;
+            colsw[3] = 15;
+            colsw[4] = 20;
+            colsw[5] = 20;
+            colsw[6] = 8;
+            colsw[7] = 20;
+            colsw[8] = 15;
+            colsw[9] = 15;
+            colsw[10] = 20;
+            colsw[11] = 20;
+            realColsw = GetRealColsw(width - 35, colsw);
+            int[] unitmids = GetColumMidOffsetXs(realColsw);
+
+            int DRowCount = rows - 1; 
+            //for (int i = 1; i < rows; i++)
+            //{
+            //    g.DrawString(i.ToString(), TableFont, DrawBrush, new Point(dtx + unitmids[0], dty_stroffset + (i - 1) * YUnit), sf);
+            //}
+            //for (int i = 1; i < rows; i++)
+            //{
+            //    g.DrawString((i+rows-1).ToString(), TableFont, DrawBrush, new Point(dtx + unitmids[6] , dty_stroffset + (i - 1) * YUnit), sf);
+            //}
+            DrawVDigitalIndex(dtx + unitmids[0], dty , 1, DRowCount);
+            DrawVDigitalIndex(dtx + unitmids[6], dty , DRowCount+1, DRowCount);
+
+            String[] Titles = { "序号", "产出公斤数", "膜卷号", "", "质量问题", "产品状态", "序号", "产出公斤数", "膜卷号", "", "质量问题", "产品状态" };
+            PrintTableWithTitleByCols(startx + 35, starty, width - 35, 1, (int)(1.5 * YUnit), colsw, Titles, (int)(1.5 * YUnit - TableFont.Height) / 2);
+
+
+            PrintTableByCols(dtx, dty, tablew, rows - 1, YUnit, realColsw);
+
+            g.DrawString("日期/班", TableFont, DrawBrush, dtx + unitmids[3], starty + 2, sf);
+            for (int i = 0; i < 10; i++)
+            {
+                DrawHStringAlignCenter(rollIndex[i].ToString(), dtx + unitmids[2], dty + i * YUnit);
+            }
+
+            DrawVStringAlignCenter("产 出 量", startx, starty+ (int)(19.5 * YUnit)/2);
+
+        }
+
+        String ChanChuCol1 = "  合格品总量：	";
+        String ChanChuCol2 = "  不合格总量：	";
+        String ChanChuCol3 = "  待 处理品 量： ";
+        String ChanChuCol4 = "  等级品量：	";
+        String ChanChuCol5 = "  可再 生料：	";
+        String ChanChuCol6 = "  废    料：	";
+        String ChanChuCol7 = "  半 成 品：	";
+        String ChanChuCol8 = "  操作者：	";
+
+        List<String> mList = new List<String>();
+
+        void BuildChanChu()
+        {
+            mList.Clear();
+            mList.Add(ChanChuCol1);
+            mList.Add(ChanChuCol2);
+            mList.Add(ChanChuCol3);
+            mList.Add(ChanChuCol4);
+            mList.Add(ChanChuCol5);
+            mList.Add(ChanChuCol6);
+            mList.Add(ChanChuCol7);
+            mList.Add(ChanChuCol8);
+        }
+
+
+        void PrintTableFourth(PrintPageEventArgs Ev)
+        {
+            Graphics g = Ev.Graphics;
+            int colums = 9;
+            int starty = (int)(PTop + 30 * YUnit + 0.5 * YUnit);
+            int startx = PLeft;
+
+            int margin = (YUnit - TableFont.Height) / 2;
+            int endx = PWidth - PRight;
+            int width = endx - startx;
+            int height = colums * YUnit;
+
+            Pen PenLittle = new Pen(Brushes.Black, 1);
+            Pen Penbold = new Pen(Brushes.Black, 3);
+            int dw = GetTotalLen(realColsw, 4) + 35;
+            g.DrawLine(PenLittle, startx, starty + YUnit, startx + dw, starty + YUnit);
+
+            g.DrawRectangle(Penbold, startx, starty, width, height);
+            g.DrawString("投 入 总 量:", TableFont, DrawBrush, startx + margin, starty + margin);
+
+            int midy = starty + (colums - 2) * YUnit / 2;
+            DrawVStringAlignCenter("产 出 量", startx, midy + YUnit);
+
+            BuildChanChu();
+
+            for (int i = 1; i < colums; i++)
+            {
+                if (i != (colums - 1)) {
+                    g.DrawLine(PenLittle, startx + 35, starty + i * YUnit, startx + dw, starty + i * YUnit);
+                    g.DrawString(mList[i-1], TableFont, DrawBrush, startx + 35, starty + i * YUnit + margin);
+
+                }
+                else { 
+                    g.DrawLine(PenLittle, startx, starty + i * YUnit, startx + dw, starty + i * YUnit);
+                    g.DrawString(mList[i - 1], TableFont, DrawBrush, startx, starty + i * YUnit + margin);
+                }
+            }
+
+            g.DrawLine(PenLittle, startx + 35, starty + 1 * YUnit, startx + 35, starty + (colums - 1) * YUnit);
+            int dw2 = realColsw[10] + realColsw[11];
+            g.DrawRectangle(Penbold, startx + dw, starty, width - dw2 - dw, colums * YUnit);
+            g.DrawRectangle(Penbold, startx + dw, starty, width - dw2 - dw, 6 * YUnit);
+            g.DrawRectangle(Penbold, startx + width - dw2, starty, dw2, colums * YUnit);
+        }
+    }
+}

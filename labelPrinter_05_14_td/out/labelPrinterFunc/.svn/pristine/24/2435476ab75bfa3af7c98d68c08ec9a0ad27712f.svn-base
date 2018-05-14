@@ -1,0 +1,17 @@
+{
+  "SiteConfigured": true,
+  "MachineNo": "3",
+  "ServerIP": "1.1.1.1",
+  "ScaleSerialPort": "COM1",
+  "ScaleBaudRate": "115200",
+  "ScaleDataBit": "8",
+  "ScaleSerialParity": "None",
+  "ScaleStopBit": "1",
+  "PrinterSerialPort": null,
+  "PrinterBaudRate": null,
+  "ThermalPrinter": "Bar Code Printer T-4503E",
+  "Printer": "Gprinter  GP-3150TN (1)",
+  "Label": "Label1",
+  "ManufacturePhase": 2,
+  "LabelFileName": "meinv.json"
+}

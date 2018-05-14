@@ -161,11 +161,10 @@ namespace MESSystem.common
             return -1;
         }
 
-		public material_t[] readrecord_byDispatchCode(string dispatchCode)
+		public material_t? readrecord_byDispatchCode(string dispatchCode)
         {
 			material_t? dd;
 			string[] recordArray;
-			material_t[] st_materiallist=null;
 			string insertString,insertStringSplitted;
 
 			getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
@@ -176,14 +175,9 @@ namespace MESSystem.common
 			
 			recordArray = databaseCommonReadingUnsplitted(m_dbName, commandText);
 			if (recordArray!=null){
-				st_materiallist = new material_t[recordArray.Length];
-				for (int i=0;i<recordArray.Length;i++){
-					dd = Deserialize(recordArray[i]);
-					st_materiallist[i] = dd.Value;
-				}
+				dd = Deserialize(recordArray[0]);
 			}
-			return st_materiallist;
-    	
+			return dd;
 		}
 	}
 }

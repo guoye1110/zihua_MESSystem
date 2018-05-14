@@ -1,0 +1,494 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2C85D0D6-E9A8-4262-98BD-9A5633F2A19C}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LabelPrint</RootNamespace>
+    <AssemblyName>LabelPrint</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.6.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data.Entity, Version=6.6.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\MySql.Data.Entity.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI">
+      <HintPath>..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML">
+      <HintPath>..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net">
+      <HintPath>..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats">
+      <HintPath>..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="zxing">
+      <HintPath>lib\zxing.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BasicDataForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BasicDataForm.Designer.cs">
+      <DependentUpon>BasicDataForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CommonFormHelper.cs" />
+    <Compile Include="Data\Barcode\BigRollBarcode.cs" />
+    <Compile Include="Data\Barcode\LittleRollBarcode.cs" />
+    <Compile Include="Data\Barcode\RollBarcode.cs" />
+    <Compile Include="Data\PrintData\CutDataPrint.cs" />
+    <Compile Include="Data\PrintData\PrintFilmPrintData.cs" />
+    <Compile Include="Data\PrintData\PrintLiuYanData.cs" />
+    <Compile Include="Data\PrintData\PrintOutBoundingData.cs" />
+    <Compile Include="Data\PrintData\PrintPackData.cs" />
+    <Compile Include="Data\PrintData\PrintQAData.cs" />
+    <Compile Include="Data\PrintData\PrintRecoveryData.cs" />
+    <Compile Include="Data\PrintData\PrintRuKuData.cs" />
+    <Compile Include="Data\SitesData\RuKuData.cs" />
+    <Compile Include="Data\SetWorkProductData.cs" />
+    <Compile Include="EditorForms\CutEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditorForms\CutEditorForm.Designer.cs">
+      <DependentUpon>CutEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Data\SitesData\CutData.cs" />
+    <Compile Include="Data\DynamicPrintLabelData.cs" />
+    <Compile Include="Data\SitesData\FilmPrintData.cs" />
+    <Compile Include="Data\SitesData\LiuYanData.cs" />
+    <Compile Include="Data\SitesData\OutBoundingData.cs" />
+    <Compile Include="Data\SitesData\PackData.cs" />
+    <Compile Include="Data\ProcessData.cs" />
+    <Compile Include="Data\SitesData\QAData.cs" />
+    <Compile Include="Data\SitesData\RecoveryData.cs" />
+    <Compile Include="EditorForms\LiuYanEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditorForms\LiuYanEditorForm.Designer.cs">
+      <DependentUpon>LiuYanEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditorForms\OutBoundingEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditorForms\OutBoundingEditorForm.Designer.cs">
+      <DependentUpon>OutBoundingEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditorForms\PackEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditorForms\PackEditorForm.Designer.cs">
+      <DependentUpon>PackEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditorForms\PrintEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditorForms\PrintEditorForm.Designer.cs">
+      <DependentUpon>PrintEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditorForms\QAEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditorForms\QAEditorForm.Designer.cs">
+      <DependentUpon>QAEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditorForms\RecoveryEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditorForms\RecoveryEditorForm.Designer.cs">
+      <DependentUpon>RecoveryEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditorForms\RuKuEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditorForms\RuKuEditorForm.Designer.cs">
+      <DependentUpon>RuKuEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NetWork\CutSockets.cs" />
+    <Compile Include="NetWork\FilmSocket.cs" />
+    <Compile Include="NetWork\HandShakeSockets.cs" />
+    <Compile Include="NetWork\HeartBeatSockets.cs" />
+    <Compile Include="NetWork\LiuYanSockets.cs" />
+    <Compile Include="NetWork\OutBoundingSockets.cs" />
+    <Compile Include="NetWork\PackSockets.cs" />
+    <Compile Include="NetWork\PrintSockets.cs" />
+    <Compile Include="NetWork\QASockets.cs" />
+    <Compile Include="NetWork\RecoverySockets.cs" />
+    <Compile Include="NetWork\RuKuSockets.cs" />
+    <Compile Include="PrintForms\excelOutput.cs" />
+    <Compile Include="PrintForms\JiaoJieBanForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PrintForms\JiaoJieBanForm.Designer.cs">
+      <DependentUpon>JiaoJieBanForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PrintForms\LiuYanForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PrintForms\LiuYanForm.Designer.cs">
+      <DependentUpon>LiuYanForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PrintForms\OutBoundingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PrintForms\OutBoundingForm.Designer.cs">
+      <DependentUpon>OutBoundingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PrintForms\PackForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PrintForms\PackForm.Designer.cs">
+      <DependentUpon>PackForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PrintForms\PrintForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PrintForms\PrintForm.Designer.cs">
+      <DependentUpon>PrintForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PrintForms\RuKuForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PrintForms\RuKuForm.Designer.cs">
+      <DependentUpon>RuKuForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PrintForms\ScanForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PrintForms\ScanForm.Designer.cs">
+      <DependentUpon>ScanForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PrintForms\UpdateScanForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PrintForms\UpdateScanForm.Designer.cs">
+      <DependentUpon>UpdateScanForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Print\Report.cs" />
+    <Compile Include="Print\Report1.cs" />
+    <Compile Include="Print\Report_BangMa.cs" />
+    <Compile Include="Print\Report_ChuRuKu.cs" />
+    <Compile Include="Print\Report_Cut.cs" />
+    <Compile Include="Print\Report_LiuYan.cs" />
+    <Compile Include="Print\Report_Print.cs" />
+    <Compile Include="Print\ToPrint.cs" />
+    <Compile Include="PrintForms\QAForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PrintForms\QAForm.Designer.cs">
+      <DependentUpon>QAForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QueryForms\LiuYanSysForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QueryForms\LiuYanSysForm.Designer.cs">
+      <DependentUpon>LiuYanSysForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QueryForms\OutBoundingSysForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QueryForms\OutBoundingSysForm.Designer.cs">
+      <DependentUpon>OutBoundingSysForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QueryForms\PackSysForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QueryForms\PackSysForm.Designer.cs">
+      <DependentUpon>PackSysForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QueryForms\PrintSysForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QueryForms\PrintSysForm.Designer.cs">
+      <DependentUpon>PrintSysForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QueryForms\QASysForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QueryForms\QASysForm.Designer.cs">
+      <DependentUpon>QASysForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QueryForms\RecoverySysForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QueryForms\RecoverySysForm.Designer.cs">
+      <DependentUpon>RecoverySysForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Receipt\SitesLabel\CutLabel.cs" />
+    <Compile Include="Receipt\SitesLabel\FilmPrintLabel.cs" />
+    <Compile Include="Receipt\SitesLabel\LiuYanLabel.cs" />
+    <Compile Include="Receipt\SitesLabel\OutBoundingLabel.cs" />
+    <Compile Include="Receipt\SitesLabel\PackLabel.cs" />
+    <Compile Include="Receipt\SitesLabel\QulityCheckLabel.cs" />
+    <Compile Include="Receipt\SitesLabel\RecoveryLabel.cs" />
+    <Compile Include="PrintForms\RecoveryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PrintForms\RecoveryForm.Designer.cs">
+      <DependentUpon>RecoveryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Receipt\SitesLabel\RukuLabel.cs" />
+    <Compile Include="Scan.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Scan.Designer.cs">
+      <DependentUpon>Scan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Util\BardCodeHooK .cs" />
+    <Compile Include="Util\CommonUtils.cs" />
+    <Compile Include="Util\ControlHelper.cs" />
+    <Compile Include="Util\Database.cs" />
+    <Compile Include="Util\ExcelHelper.cs" />
+    <Compile Include="Util\jsonhelper.cs" />
+    <Compile Include="Label\BigRollLabel.cs" />
+    <Compile Include="Data\Samples\CutProductItem.cs" />
+    <Compile Include="Data\Samples\CutSampleData.cs" />
+    <Compile Include="QueryForms\CutSystemForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="QueryForms\CutSystemForm.Designer.cs">
+      <DependentUpon>CutSystemForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Setting\GlobalConfig.cs" />
+    <Compile Include="LabelDesignForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LabelDesignForm.Designer.cs">
+      <DependentUpon>LabelDesignForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Label\SmallRollLabel.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Receipt\printDemo.cs" />
+    <Compile Include="PrintForms\ProductCutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PrintForms\ProductCutForm.Designer.cs">
+      <DependentUpon>ProductCutForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Data\ProductInfo.cs" />
+    <Compile Include="productselForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="productselForm.Designer.cs">
+      <DependentUpon>productselForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Receipt\Receipt1.cs" />
+    <Compile Include="Receipt\ReceiptCreator.cs" />
+    <Compile Include="Receipt\ReceiptPatternFactory.cs" />
+    <Compile Include="Util\MySQlHelper.cs" />
+    <Compile Include="Util\StringHelper.cs" />
+    <Compile Include="Setting\SystemSetting.cs" />
+    <Compile Include="SystemSettingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SystemSettingForm.Designer.cs">
+      <DependentUpon>SystemSettingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Util\tools.cs" />
+    <Compile Include="UserManagementForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserManagementForm.Designer.cs">
+      <DependentUpon>UserManagementForm.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="BasicDataForm.resx">
+      <DependentUpon>BasicDataForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditorForms\CutEditorForm.resx">
+      <DependentUpon>CutEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditorForms\RuKuEditorForm.resx">
+      <DependentUpon>RuKuEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PrintForms\JiaoJieBanForm.resx">
+      <DependentUpon>JiaoJieBanForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PrintForms\RuKuForm.resx">
+      <DependentUpon>RuKuForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PrintForms\ScanForm.resx">
+      <DependentUpon>ScanForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PrintForms\UpdateScanForm.resx">
+      <DependentUpon>UpdateScanForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QueryForms\CutSystemForm.resx">
+      <DependentUpon>CutSystemForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditorForms\LiuYanEditorForm.resx">
+      <DependentUpon>LiuYanEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditorForms\OutBoundingEditorForm.resx">
+      <DependentUpon>OutBoundingEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditorForms\PackEditorForm.resx">
+      <DependentUpon>PackEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditorForms\PrintEditorForm.resx">
+      <DependentUpon>PrintEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditorForms\QAEditorForm.resx">
+      <DependentUpon>QAEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditorForms\RecoveryEditorForm.resx">
+      <DependentUpon>RecoveryEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LabelDesignForm.resx">
+      <DependentUpon>LabelDesignForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PrintForms\LiuYanForm.resx">
+      <DependentUpon>LiuYanForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PrintForms\OutBoundingForm.resx">
+      <DependentUpon>OutBoundingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PrintForms\PackForm.resx">
+      <DependentUpon>PackForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PrintForms\PrintForm.resx">
+      <DependentUpon>PrintForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PrintForms\ProductCutForm.resx">
+      <DependentUpon>ProductCutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="productselForm.resx">
+      <DependentUpon>productselForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="PrintForms\QAForm.resx">
+      <DependentUpon>QAForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PrintForms\RecoveryForm.resx">
+      <DependentUpon>RecoveryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QueryForms\LiuYanSysForm.resx">
+      <DependentUpon>LiuYanSysForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QueryForms\OutBoundingSysForm.resx">
+      <DependentUpon>OutBoundingSysForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QueryForms\PackSysForm.resx">
+      <DependentUpon>PackSysForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QueryForms\PrintSysForm.resx">
+      <DependentUpon>PrintSysForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QueryForms\QASysForm.resx">
+      <DependentUpon>QASysForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QueryForms\RecoverySysForm.resx">
+      <DependentUpon>RecoverySysForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scan.resx">
+      <DependentUpon>Scan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SystemSettingForm.resx">
+      <DependentUpon>SystemSettingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserManagementForm.resx">
+      <DependentUpon>UserManagementForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="outputTables\2018-04-05.xlsx" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,315 @@
+{
+  "Desc": "Hello",
+  "Version": "V1.0.0",
+  "Width": 100,
+  "Height": 60,
+  "receiptInfos": [
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 5.820833,
+        "Y": 7.672917
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "客户名称",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 28.575,
+        "Y": 6.61458349
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "②",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 2
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 6.35,
+        "Y": 14.552083
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "产品代号",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 28.575,
+        "Y": 13.229167
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "①",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 1
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 6.8791666,
+        "Y": 20.6375
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "材料名称",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 28.575,
+        "Y": 20.6375
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "⑤",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 5
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 8.995833,
+        "Y": 28.575
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "基重",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 29.36875,
+        "Y": 28.575
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "⑯",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 16
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 9.260417,
+        "Y": 38.1
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "宽度",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 28.575,
+        "Y": 37.5708351
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "⑦",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 7
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 48.9479179,
+        "Y": 29.104166
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "生产者",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 70.1145859,
+        "Y": 27.2520828
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "③",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 3
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 42.8625,
+        "Y": 6.8791666
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "生产日期",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 64.02917,
+        "Y": 6.8791666
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "⑨",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 9
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 42.3333321,
+        "Y": 13.229167
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "卷重/卷长",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 63.2354164,
+        "Y": 12.9645834
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "⑩",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 10
+    },
+    {
+      "PrtType": 0,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 42.8625,
+        "Y": 20.6375
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "卷号",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    },
+    {
+      "PrtType": 100,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 62.1770821,
+        "Y": 20.1083336
+      },
+      "End": null,
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "⑪",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 11
+    },
+    {
+      "PrtType": 4,
+      "PrtColor": "Black",
+      "PenWidth": 0.0,
+      "Start": {
+        "X": 3.70416665,
+        "Y": 48.1541672
+      },
+      "End": {
+        "X": 94.1916656,
+        "Y": 58.7375
+      },
+      "Size": 10,
+      "FontStyle": 0,
+      "Content": "1234567890",
+      "Column": 0,
+      "Row": 0,
+      "DynamicTextData": 0
+    }
+  ]
+}
