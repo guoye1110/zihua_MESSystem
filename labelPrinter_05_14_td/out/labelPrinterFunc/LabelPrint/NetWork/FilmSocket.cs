@@ -11,10 +11,17 @@ namespace LabelPrint.NetWork
 {
     public class FilmSocket
     {
-        IPEndPoint point;
-        Boolean bConnected = false;
-        public Socket sock;
-        IPAddress HostIP;
+		const int RECV_BUFFER_SIZE = 2000;
+		const int COMMUNICATION_TYPE_HEART_BEAT = 0xB3;
+		private Boolean m_isConnected = false;
+        private Socket m_sock;
+        private IPAddress m_hostIP;
+		private int m_port;
+		private Thread m_comThread;
+		
+		
+		
+
         byte[] handshake_packet = new byte[100];
 
         byte[] dummyMachine_packet = new byte[100];
@@ -24,6 +31,7 @@ namespace LabelPrint.NetWork
         public const int SITE_TO_SERVER = 0;
         public const int SERVER_TO_SITE = 1;
 
+		
 
         const int COMMUNICATION_TYPE_START_HANDSHAKE_WITHOUT_ID_TO_PC = 0;
         const int COMMUNICATION_TYPE_REDO_HANDSHAKE_TO_BOARD = 0x82;
@@ -40,7 +48,17 @@ namespace LabelPrint.NetWork
         public int RESPONSE_OK = 0;
         public int RESPONSE_FAIL = 0;
         public int SendPacketLen = 0;
-        public void inputDataHeader(byte[] packet, int len,int direction,  int type, int dataStatus)
+
+		public FilmSocket(string ip, int port)
+		{
+			m_hostIP = IPAddress.Parse(ip);
+			m_port = port;
+			m_sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			m_comThread = new Thread((startCommunication));
+			m_comThread.Start();
+		}
+		
+        void inputDataHeader(byte[] packet, int len, int type, int dataType)
         {
             int i;
 
@@ -52,76 +70,101 @@ namespace LabelPrint.NetWork
             packet[i++] = (byte)'i';
 
             packet[i++] = (byte)len;
-            packet[i++] = (byte)(len >>8);
+            packet[i++] = (byte) (len / 0x100);
 
             packet[i++] = (byte)type;
-            packet[i++] = (byte)dataStatus;
-        }
 
+            packet[i++] = (byte)(DateTime.Now.Year % 100 / 10 + '0');
+            packet[i++] = (byte)(DateTime.Now.Year % 100 % 10 + '0');
+            packet[i++] = (byte)(DateTime.Now.Month / 10 + '0');
+            packet[i++] = (byte)(DateTime.Now.Month % 10 + '0');
+            packet[i++] = (byte)(DateTime.Now.Day / 10 + '0');
+            packet[i++] = (byte)(DateTime.Now.Day % 10 + '0');
+            packet[i++] = (byte)(DateTime.Now.Hour / 10 + '0');
+            packet[i++] = (byte)(DateTime.Now.Hour % 10 + '0');
+            packet[i++] = (byte)(DateTime.Now.Minute / 10 + '0');
+            packet[i++] = (byte)(DateTime.Now.Minute % 10 + '0');
+            packet[i++] = (byte)(DateTime.Now.Second / 10 + '0');
+            packet[i++] = (byte)(DateTime.Now.Second % 10 + '0');
+
+            packet[i++] = (byte)0;
+            packet[i++] = (byte)0;
+            packet[i++] = (byte)0;
+            packet[i++] = (byte)0;
+
+            packet[i++] = 0;
+            packet[i++] = 0;
+            packet[i++] = 0;
+            packet[i++] = 0;
+
+            packet[i++] = (byte)dataType;
+         }
 
         const int MIN_PACKET_LEN_MINUS_ONE = 32;   //header(4) + len(2) + communicationtype(1) + time(12) + index(4) + reserved(4) + type(1) + CRC(4)
 
 
         const int WAIT_BETWEEN_SEND_RECEIVE = 200;
 
+        public void sendHeartBeat(byte[] buf, int type, int len)
+        {
+            int j;
+            byte[] data = new byte[MAX_PACKET_LEN];
 
-        public  void startCommunication()
+            for (j = 0; j < len; j++)
+            {
+                data[j + PROTOCOL_DATA_POS] = (byte)buf[j];
+            }
+
+            len = MIN_PACKET_LEN_MINUS_ONE + buf.Length;
+            inputDataHeader(data, len, type, 0);
+
+            CRC16.addCrcCode(data, len);
+            socketArray[selectedMachineIndex].Send(data, len, 0);
+        }
+
+		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		//始终尝试连接，发送心跳，接受回复，若失败表示连接中断，尝试再连3次，若再失败，则60秒后重试。
+		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        public void startCommunication()
         {
             int recCount;
             int len;
-            HostIP =  new IPAddress(new byte[] { 10,200,1,109 });
-            if (bConnected == true)
-            {
-                MessageBox.Show("该设备已经在通讯中, 无法再次开启通讯功能", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
+			int retry_cnt = 3;
+			byte[] buf = new byte[RECV_BUFFER_SIZE];
+			IPEndPoint point = new IPEndPoint(m_hostIP, m_port);
 
-            try
-            {
-                bConnected = true;
-                len = MIN_PACKET_LEN_MINUS_ONE + 4;
+			while (1) {
+				if (retry_cnt==0)	Thread.Sleep(60000);//retry 3 times failed, sleep 60 seconds
+				
+            	try {
+                	bConnected = true;
+                	len = MIN_PACKET_LEN_MINUS_ONE + 4;
 
-                inputDataHeader(handshake_packet, len, SITE_TO_SERVER, COMMUNICATION_TYPE_START_HANDSHAKE_WITH_ID_TO_PC, DATA_TYPE_ADC_DEVICE);
+					m_sock.Connect(point);
 
+                	if (m_sock.Connected) {
+						retry_cnt = 3;
+						m_isConnected = true;
 
-                //if (startCommnuicateAs[selectedMachineIndex] == communicateAsTouchpad)
-                //    handshake_packet[PROTOCOL_DATA_POS + 3] = 0; //so the final value is ID
-                //else
-                //    handshake_packet[PROTOCOL_DATA_POS + 3] = 1; //so the final value is 0x1000000 + ID
-
-                point = new IPEndPoint(HostIP, 8899);
-                sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                sock.Connect(point);
-
-                if (sock.Connected)
-                {
-             //       CRC16.addCrcCode(handshake_packet, len);
-             //       recCount = socketArray[selectedMachineIndex].Send(handshake_packet, len, 0);
-
-                    //len = MIN_PACKET_LEN_MINUS_ONE + 12;  //12 is the length of a time value
-                    //recCount = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
-
-                    //len = MIN_PACKET_LEN_MINUS_ONE + 11;  //length of the dummy data
-
-                    //inputDataHeader(dummyMachine_packet, len, COMMUNICATION_TYPE_SEND_DUMMY_MACHINE_CODE_TO_PC, DATA_TYPE_MES_INSTRUCTION);
-                    //CRC16.addCrcCode(dummyMachine_packet, len);
-                    //recCount = socketArray[selectedMachineIndex].Send(dummyMachine_packet, len, 0);
-
-                    //Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
-
-                    //recCount = socketArray[selectedMachineIndex].Receive(receiveByte, REV_LEN, 0);
-                    //communicationStatusArray[selectedMachineIndex] = handshakeOK;
-
-                    //currentConnectedNum++;
-                    //connectedMachineArray[selectedComboBoxIndex] = 1;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                MessageBox.Show("通讯失败，可能服务器端未启动或者网络连接出错", "信息提示", MessageBoxButtons.OK);
-                return;
-            }
+						inputDataHeader(buf, MIN_PACKET_LEN_MINUS_ONE+1, COMMUNICATION_TYPE_HEART_BEAT, 0);
+						CRC16.addCrcCode(buf, MIN_PACKET_LEN_MINUS_ONE+1);
+						m_sock.Send(buf, MIN_PACKET_LEN_MINUS_ONE+1, 0);
+						recCount = m_sock.Receive(buf, RECV_BUFFER_SIZE, 0);
+						if (!recCount){
+							//length is 0, means TCP/IP disconnected, retry 3 times
+							retry_cnt--;
+							m_isConnected = false;
+							continue;
+						}
+                	}
+            	}
+            	catch (Exception ex)
+            	{
+                	Console.WriteLine("通讯失败，可能服务器端未启动或者网络连接出错: "+ex);
+					retry_cnt--;
+					m_isConnected = false;
+            	}
+			}
 
         }
 
