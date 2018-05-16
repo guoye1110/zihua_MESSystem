@@ -9,18 +9,30 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelPrint.Data;
 using LabelPrint.EditorForms;
+using LabelPrint.NetWork;
+
 namespace LabelPrint.QueryForms
 {
     public partial class LiuYanSysForm : Form
     {
         LiuYanSysData PSysData;
         DataTable dt;
+		FilmSocket m_FilmSocket;
 
         public LiuYanSysForm()
         {
             InitializeComponent();
         }
 
+		public void network_status_change(bool status)
+        {
+        	Console.WriteLine("network changed to {0}", status);
+
+			if (status == true) {//connected
+				HandShake();
+			}
+		}
+		
         private void LiuYanSysForm_Load(object sender, EventArgs e)
         {
             PSysData = new LiuYanSysData();
@@ -31,6 +43,8 @@ namespace LabelPrint.QueryForms
             UpdateUserInput();
             dt = PSysData.UpdateDBViewBy2Date(dataGridView1);
 
+			m_FilmSocket = new FilmSocket(GlobalConfig.Setting.CurSettingInfo.ServerIP, 8899);
+			m_FilmSocket.network_state_event += new FilmSocket.networkstatehandler(network_status_change);
         }
         void UpdateUserInput()
         {
@@ -79,5 +93,18 @@ namespace LabelPrint.QueryForms
             dt = PSysData.UpdateDBViewBy2Date(dataGridView1);
 
         }
+
+		public void HandShake(void)
+        {
+        	int machineID;
+        	byte[] data = new byte[4];
+
+			machineID = 141 + GlobalConfig.Setting.CurSettingInfo.MachineNo.ToInt();
+			data[0] = (byte)(machineID&0xff);
+			data[1] = (byte)((machineID&0xff00)>>8);
+        	m_FilmSocket.sendDataPacketToServer(data, 0x3, 2);
+
+			m_FilmSocket.RecvResponse(1000);
+		}
     }
 }

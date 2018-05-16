@@ -12,16 +12,29 @@ namespace LabelPrint.NetWork
     public class FilmSocket
     {
 		const int RECV_BUFFER_SIZE = 2000;
+		//header(4) + len(2) + communicationtype(1) + time(12) + index(4) + reserved(4) + type(1) + CRC(4)
+		const int MIN_PACKET_LEN_WITHOUT_DATA = 32;
+		const int MIN_PACKET_LEN = 33;
+		const int PACKET_DATASTATUS_POS = 28;
 		const int COMMUNICATION_TYPE_HEART_BEAT = 0xB3;
-		private Boolean m_isConnected = false;
+		//5秒
+		const int HEART_BEAT_INTERVAL = 5000;
+		//1秒
+		const int COMMUNICATION_TIMEOUT = 1000;
+        const int RESPONSE_OK = 0;
+        const int RESPONSE_FAIL = 1;
+
+		private Boolean m_Abort = false;
         private Socket m_sock;
         private IPAddress m_hostIP;
 		private int m_port;
 		private Thread m_comThread;
-		
-		
-		
 
+		public delegate void networkstatehandler(bool      connected);
+
+		public event networkstatehandler network_state_event;
+		
+/*
         byte[] handshake_packet = new byte[100];
 
         byte[] dummyMachine_packet = new byte[100];
@@ -39,16 +52,8 @@ namespace LabelPrint.NetWork
 
         const int DATA_TYPE_ADC_DEVICE = 0; //device type definition
 
-        public const int MIN_PACKET_LEN = 12;
-        public const int PACKET_DATASTATUS_POS = 7;
-
-        public const int REV_LEN = 2000;
-        public byte[] receiveByte = new byte[REV_LEN];
-
-        public int RESPONSE_OK = 0;
-        public int RESPONSE_FAIL = 0;
         public int SendPacketLen = 0;
-
+*/
 		public FilmSocket(string ip, int port)
 		{
 			m_hostIP = IPAddress.Parse(ip);
@@ -57,8 +62,14 @@ namespace LabelPrint.NetWork
 			m_comThread = new Thread((startCommunication));
 			m_comThread.Start();
 		}
+		~ FilmSocket()
+		{
+			m_Abort = true;
+			m_sock.Shutdown(SocketShutdown.Both);
+			m_sock.Close();
+		}
 		
-        void inputDataHeader(byte[] packet, int len, int type, int dataType)
+        private void inputDataHeader(byte[] packet, int len, int type, int dataType)
         {
             int i;
 
@@ -100,158 +111,126 @@ namespace LabelPrint.NetWork
             packet[i++] = (byte)dataType;
          }
 
-        const int MIN_PACKET_LEN_MINUS_ONE = 32;   //header(4) + len(2) + communicationtype(1) + time(12) + index(4) + reserved(4) + type(1) + CRC(4)
-
-
-        const int WAIT_BETWEEN_SEND_RECEIVE = 200;
-
-        public void sendHeartBeat(byte[] buf, int type, int len)
-        {
-            int j;
-            byte[] data = new byte[MAX_PACKET_LEN];
-
-            for (j = 0; j < len; j++)
-            {
-                data[j + PROTOCOL_DATA_POS] = (byte)buf[j];
-            }
-
-            len = MIN_PACKET_LEN_MINUS_ONE + buf.Length;
-            inputDataHeader(data, len, type, 0);
-
-            CRC16.addCrcCode(data, len);
-            socketArray[selectedMachineIndex].Send(data, len, 0);
-        }
-
 		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		//始终尝试连接，发送心跳，接受回复，若失败表示连接中断，尝试再连3次，若再失败，则60秒后重试。
 		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        public void startCommunication()
+        private void startCommunication()
         {
             int recCount;
             int len;
 			int retry_cnt = 3;
 			byte[] buf = new byte[RECV_BUFFER_SIZE];
 			IPEndPoint point = new IPEndPoint(m_hostIP, m_port);
+			int old_timeout = m_sock.ReceiveTimeout;
 
 			while (1) {
+				if (m_Abort == true)	break;
+
 				if (retry_cnt==0)	Thread.Sleep(60000);//retry 3 times failed, sleep 60 seconds
 				
             	try {
-                	bConnected = true;
-                	len = MIN_PACKET_LEN_MINUS_ONE + 4;
-
-					m_sock.Connect(point);
+					if (!m_sock.Connected)	m_sock.Connect(point);
 
                 	if (m_sock.Connected) {
+						network_state_event(m_sock.Connected);
 						retry_cnt = 3;
-						m_isConnected = true;
 
-						inputDataHeader(buf, MIN_PACKET_LEN_MINUS_ONE+1, COMMUNICATION_TYPE_HEART_BEAT, 0);
-						CRC16.addCrcCode(buf, MIN_PACKET_LEN_MINUS_ONE+1);
-						m_sock.Send(buf, MIN_PACKET_LEN_MINUS_ONE+1, 0);
+						inputDataHeader(buf, MIN_PACKET_LEN, COMMUNICATION_TYPE_HEART_BEAT, 0);
+						CRC16.addCrcCode(buf, MIN_PACKET_LEN);
+
+						m_sock.ReceiveTimeout = COMMUNICATION_TIMEOUT;
+						m_sock.Send(buf, MIN_PACKET_LEN, 0);
 						recCount = m_sock.Receive(buf, RECV_BUFFER_SIZE, 0);
-						if (!recCount){
+						m_sock.ReceiveTimeout = old_timeout;
+						if (!recCount) {
 							//length is 0, means TCP/IP disconnected, retry 3 times
+							network_state_event(m_sock.Connected);
 							retry_cnt--;
-							m_isConnected = false;
 							continue;
 						}
+						//心跳协议每隔5秒发送
+						Thread.Sleep(5000);
                 	}
             	}
             	catch (Exception ex)
             	{
                 	Console.WriteLine("通讯失败，可能服务器端未启动或者网络连接出错: "+ex);
+					network_state_event(m_sock.Connected);
 					retry_cnt--;
 					m_isConnected = false;
             	}
 			}
-
         }
 
-        private string getCommunicationHostIP()
-        {
-        //    string filePath = "..\\..\\init\\init.txt";
-        //    StreamReader streamReader;
-            string IPString = null;
-
-        //    try
-        //    {
-        //        streamReader = new StreamReader(filePath, System.Text.Encoding.Default);
-        //        IPString = streamReader.ReadLine().Trim();
-        //        streamReader.Close();
-
-        //        return IPString;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.Write("无法开启 ..\\..\\init\\init.txt 文件, 因此无法得知服务器 ip 地址");
-        //        Console.WriteLine(ex.ToString());
-        //        return null;
-        //    }
-            return IPString;
-        }
-
-
-        Socket socketArray ;
-
-
-        public int sendDataPacketToServer(byte[] buf, int type, int len)
+        public int sendDataPacketToServer(byte[] data, int type, int len)
         {
             int j;
             int PacketLen = 0;
-            if (buf != null)
-            {
-                for (j = 0; j < len; j++)
-                {
-                    send_packet[j + PACKET_DATASTATUS_POS] = (byte)buf[j];
-                }
-            }
+			byte[] send_packet = new byte[RECV_BUFFER_SIZE];
+			
+            if (data != null)
+				Array.ConstrainedCopy(data, 0, send_packet, PACKET_DATASTATUS_POS, len);
 
-            PacketLen = MIN_PACKET_LEN - 4 + len;
-            SendPacketLen = PacketLen;
-            inputDataHeader(send_packet, PacketLen, SITE_TO_SERVER, type, 0);
-
+            PacketLen = MIN_PACKET_LEN_WITHOUT_DATA + len;
+            inputDataHeader(send_packet, PacketLen, type, 0);
             CRC16.addCrcCode(send_packet, PacketLen);
-            return sock.Send(send_packet, PacketLen, 0);
-        }
-        public int sendPackedWithNoDataToServer(int type)
-        {
-            int PacketLen = 0;
-            PacketLen = MIN_PACKET_LEN - 4;
-            inputDataHeader(send_packet, PacketLen, SITE_TO_SERVER, type, 0);
 
-            CRC16.addCrcCode(send_packet, PacketLen);
-            return sock.Send(send_packet, PacketLen, 0);
+			return m_sock.Send(send_packet, PacketLen, 0);
         }
 
-        public int RecvResponseWithNoData()
+        public int RecvResponse(int timeout)
         {
             int len = 0;
+			int old_timeout;
+			byte[] buf = new byte[RECV_BUFFER_SIZE];
 
-            Thread.Sleep(WAIT_BETWEEN_SEND_RECEIVE);
+			old_timeout = m_sock.ReceiveTimeout;
 
-            len = sock.Receive(receiveByte, REV_LEN, 0);
-            if (len == 0)
-                return RESPONSE_FAIL;
-            if (receiveByte[PACKET_DATASTATUS_POS] != RESPONSE_OK)
-            {
-                // MessageBox.Show("服务器返回错误", "信息提示", MessageBoxButtons.OK);
-                return RESPONSE_FAIL;
-            }
-            return RESPONSE_OK;
+			try {
+	            m_sock.ReceiveTimeout = timeout;
+    	        len = m_sock.Receive(buf, RECV_BUFFER_SIZE, 0);
+				m_sock.ReceiveTimeout = old_timeout;
+
+				//Tcp connection disconnected
+        	    if (len == 0)   return -1;
+				
+				return buf[PACKET_DATASTATUS_POS].ToInt();
+			}
+			catch (SocketException e) {
+				m_sock.ReceiveTimeout = old_timeout;
+				Console.WriteLine("RecvResponse: {0} Error code: {1}.", e.Message, e.ErrorCode);
+				return -1;
+			}
         }
 
-
-        public Boolean CheckRespAndRetry()
+        public byte[] RecvData(int timeout)
         {
-            int i = 0;
-            for (i = 0; i < 3; i++)
-            {
-                if (RecvResponseWithNoData() == RESPONSE_OK)
-                    return true;
-                sock.Send(send_packet, SendPacketLen, 0);
-            }
-            return false;
+            int len = 0;
+			int old_timeout;
+			byte[] buf = new byte[RECV_BUFFER_SIZE];
+			byte[] data;
+
+			old_timeout = m_sock.ReceiveTimeout;
+
+			try {
+	            m_sock.ReceiveTimeout = timeout;
+    	        len = m_sock.Receive(buf, RECV_BUFFER_SIZE, 0);
+				m_sock.ReceiveTimeout = old_timeout;
+
+				//Tcp connection disconnected
+        	    if (len == 0)   return -1;
+
+				if (buf[PACKET_DATASTATUS_POS]==(byte)0xff)		return null;
+
+				data = new byte[len];
+				Array.ConstrainedCopy(buf, PACKET_DATASTATUS_POS, data, 0, len-PACKET_DATASTATUS_POS);
+				return data;
+			}
+			catch (SocketException e) {
+				m_sock.ReceiveTimeout = old_timeout;
+				Console.WriteLine("RecvData: {0} Error code: {1}.", e.Message, e.ErrorCode);
+				return -1;
+			}
         }
     }
 }
