@@ -39,10 +39,10 @@ namespace LabelPrint
         }
 		~LiuYanForm()
         {
-        	m_FilmSocket.network_state -= m_networkstatehandler;
+            m_FilmSocket.network_state_event -= m_networkstatehandler;
 		}
 
-		public void network_status_change(int status)
+		public void network_status_change(bool status)
         {
         	Console.WriteLine("network changed to {0}", status);
 		}
@@ -546,11 +546,11 @@ namespace LabelPrint
         //start work
         private void button1_Click(object sender, EventArgs e)
         {
-        	byte[] send_buf = System.Text.Encoding.Default.GetBytes (UserInput.WorkerNo);
+        	byte[] send_buf = System.Text.Encoding.Default.GetBytes(tb_worker.Text);
 			byte[] recv_buf;
 			string[] start_work;
         
-        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_START, UserInput.Length);
+        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_START, tb_worker.Text.Length);
 
 			recv_buf = m_FilmSocket.RecvData(1000);
 			start_work = recv_buf.ToString().Split(';');

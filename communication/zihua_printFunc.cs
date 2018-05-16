@@ -146,13 +146,13 @@ namespace MESSystem.communication
 								materialCodeOfEachStack[i,6] = materials.Value.materialCode6;
 								materialCodeOfEachStack[i,7] = materials.Value.materialCode7;
 
-								weightRequiredOfEachStack[i,1] += materials.Value.materialRequired1;
-								weightRequiredOfEachStack[i,2] += materials.Value.materialRequired2;
-								weightRequiredOfEachStack[i,3] += materials.Value.materialRequired3;
-								weightRequiredOfEachStack[i,4] += materials.Value.materialRequired4;
-								weightRequiredOfEachStack[i,5] += materials.Value.materialRequired5;
-								weightRequiredOfEachStack[i,6] += materials.Value.materialRequired6;
-								weightRequiredOfEachStack[i,7] += materials.Value.materialRequired7;
+								weightRequiredOfEachStack[i,1] += Convert.ToInt32(materials.Value.materialRequired1);
+								weightRequiredOfEachStack[i,2] += Convert.ToInt32(materials.Value.materialRequired2);
+								weightRequiredOfEachStack[i,3] += Convert.ToInt32(materials.Value.materialRequired3);
+								weightRequiredOfEachStack[i,4] += Convert.ToInt32(materials.Value.materialRequired4);
+								weightRequiredOfEachStack[i,5] += Convert.ToInt32(materials.Value.materialRequired5);
+								weightRequiredOfEachStack[i,6] += Convert.ToInt32(materials.Value.materialRequired6);
+								weightRequiredOfEachStack[i,7] += Convert.ToInt32(materials.Value.materialRequired7);
                             }
                         }
 				

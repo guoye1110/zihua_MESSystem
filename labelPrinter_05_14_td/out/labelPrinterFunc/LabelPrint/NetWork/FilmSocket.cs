@@ -54,10 +54,10 @@ namespace LabelPrint.NetWork
 
         public int SendPacketLen = 0;
 */
-		public FilmSocket(string ip, int port)
+		public FilmSocket()
 		{
-			m_hostIP = IPAddress.Parse(ip);
-			m_port = port;
+			m_hostIP = IPAddress.Parse(GlobalConfig.Setting.CurSettingInfo.ServerIP);
+			m_port = 8899;
 			m_sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			m_comThread = new Thread((startCommunication));
 			m_comThread.Start();
@@ -112,7 +112,7 @@ namespace LabelPrint.NetWork
          }
 
 		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		//始终尝试连接，发送心跳，接受回复，若失败表示连接中断，尝试再连3次，若再失败，则60秒后重试。
+		//始终尝试连接，发送心跳，接受回复，若失败表示连接中断，尝试再连3次，若3次失败，则60秒后重试。
 		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         private void startCommunication()
         {
@@ -123,26 +123,30 @@ namespace LabelPrint.NetWork
 			IPEndPoint point = new IPEndPoint(m_hostIP, m_port);
 			int old_timeout = m_sock.ReceiveTimeout;
 
-			while (1) {
+			while (true) {
 				if (m_Abort == true)	break;
 
 				if (retry_cnt==0)	Thread.Sleep(60000);//retry 3 times failed, sleep 60 seconds
 				
             	try {
-					if (!m_sock.Connected)	m_sock.Connect(point);
+					if (!m_sock.Connected) {
+						m_sock.Connect(point);
+						if (m_sock.Connected)
+							network_state_event(m_sock.Connected);
+					}
 
                 	if (m_sock.Connected) {
-						network_state_event(m_sock.Connected);
+						
 						retry_cnt = 3;
 
 						inputDataHeader(buf, MIN_PACKET_LEN, COMMUNICATION_TYPE_HEART_BEAT, 0);
 						CRC16.addCrcCode(buf, MIN_PACKET_LEN);
 
-						m_sock.ReceiveTimeout = COMMUNICATION_TIMEOUT;
+						//m_sock.ReceiveTimeout = COMMUNICATION_TIMEOUT;
 						m_sock.Send(buf, MIN_PACKET_LEN, 0);
 						recCount = m_sock.Receive(buf, RECV_BUFFER_SIZE, 0);
-						m_sock.ReceiveTimeout = old_timeout;
-						if (!recCount) {
+						//m_sock.ReceiveTimeout = old_timeout;
+						if (recCount == 0) {
 							//length is 0, means TCP/IP disconnected, retry 3 times
 							network_state_event(m_sock.Connected);
 							retry_cnt--;
@@ -157,7 +161,6 @@ namespace LabelPrint.NetWork
                 	Console.WriteLine("通讯失败，可能服务器端未启动或者网络连接出错: "+ex);
 					network_state_event(m_sock.Connected);
 					retry_cnt--;
-					m_isConnected = false;
             	}
 			}
         }
@@ -194,7 +197,7 @@ namespace LabelPrint.NetWork
 				//Tcp connection disconnected
         	    if (len == 0)   return -1;
 				
-				return buf[PACKET_DATASTATUS_POS].ToInt();
+				return Convert.ToInt16(buf[PACKET_DATASTATUS_POS]);
 			}
 			catch (SocketException e) {
 				m_sock.ReceiveTimeout = old_timeout;
@@ -218,7 +221,7 @@ namespace LabelPrint.NetWork
 				m_sock.ReceiveTimeout = old_timeout;
 
 				//Tcp connection disconnected
-        	    if (len == 0)   return -1;
+        	    if (len == 0)   return null;
 
 				if (buf[PACKET_DATASTATUS_POS]==(byte)0xff)		return null;
 
@@ -229,7 +232,7 @@ namespace LabelPrint.NetWork
 			catch (SocketException e) {
 				m_sock.ReceiveTimeout = old_timeout;
 				Console.WriteLine("RecvData: {0} Error code: {1}.", e.Message, e.ErrorCode);
-				return -1;
+				return null;
 			}
         }
     }

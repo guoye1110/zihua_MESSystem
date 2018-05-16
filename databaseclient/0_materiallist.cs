@@ -42,7 +42,7 @@ namespace MESSystem.common
 		private const int MATERIAL_REQUIRED7_INDEX = 20;
 		private const int TOTAL_DATAGRAM_NUM = MATERIAL_REQUIRED7_INDEX+1;
 
-		private const string m_dbName = null;
+		private string m_dbName = null;
         private const string c_TableName = "0_materiallist";
         private const string c_FileName = "..\\..\\data\\machine\\materialList.xlsx";
 
@@ -80,13 +80,14 @@ namespace MESSystem.common
 
 			input = strInput.Split(';');
 
-			if (input.Length < LEFT_IN_FEEDBIN_INDEX)
+            if (input.Length < TOTAL_DATAGRAM_NUM)
 				return null;
 
 			st.salesOrderCode = input[SALES_ORDER_CODE_INDEX];
 			st.dispatchCode = input[DISPATCH_CODE_INDEX];
 			st.machineID = input[MACHINE_ID_INDEX];
 			st.machineName = input[MACHINE_NAME_INDEX];
+            st.numOfTypes = input[NUM_OF_TYPES_INDEX];
 			st.materialCode1 = input[MATERIAL_CODE1_INDEX];
 			st.materialRequired1 = input[MATERIAL_REQUIRED1_INDEX];
 			st.materialCode2 = input[MATERIAL_CODE2_INDEX];
@@ -163,9 +164,10 @@ namespace MESSystem.common
 
 		public material_t? readrecord_byDispatchCode(string dispatchCode)
         {
-			material_t? dd;
+			material_t? dd=null;
 			string[] recordArray;
-			string insertString,insertStringSplitted;
+            string insertString = null;
+            string[] insertStringSplitted;
 
 			getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
 			insertStringSplitted = insertString.Split(new char[2]{',','@'});

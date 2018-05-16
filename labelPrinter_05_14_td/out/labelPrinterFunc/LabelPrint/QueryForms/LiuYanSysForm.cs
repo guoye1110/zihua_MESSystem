@@ -43,7 +43,7 @@ namespace LabelPrint.QueryForms
             UpdateUserInput();
             dt = PSysData.UpdateDBViewBy2Date(dataGridView1);
 
-			m_FilmSocket = new FilmSocket(GlobalConfig.Setting.CurSettingInfo.ServerIP, 8899);
+			m_FilmSocket = new FilmSocket();
 			m_FilmSocket.network_state_event += new FilmSocket.networkstatehandler(network_status_change);
         }
         void UpdateUserInput()
@@ -62,7 +62,7 @@ namespace LabelPrint.QueryForms
 
         private void bt_New_Click(object sender, EventArgs e)
         {
-            LiuYanForm f = new LiuYanForm();
+            LiuYanForm f = new LiuYanForm(m_FilmSocket);
             f.ShowDialog();
             dt = PSysData.UpdateDBViewBy2Date(dataGridView1);
         }
@@ -94,17 +94,18 @@ namespace LabelPrint.QueryForms
 
         }
 
-		public void HandShake(void)
+		public void HandShake()
         {
         	int machineID;
         	byte[] data = new byte[4];
+			int rsp;
 
-			machineID = 141 + GlobalConfig.Setting.CurSettingInfo.MachineNo.ToInt();
+			machineID = 140 + Convert.ToInt16(GlobalConfig.Setting.CurSettingInfo.MachineNo);
 			data[0] = (byte)(machineID&0xff);
 			data[1] = (byte)((machineID&0xff00)>>8);
         	m_FilmSocket.sendDataPacketToServer(data, 0x3, 2);
 
-			m_FilmSocket.RecvResponse(1000);
+			rsp = m_FilmSocket.RecvResponse(1000);
 		}
     }
 }
