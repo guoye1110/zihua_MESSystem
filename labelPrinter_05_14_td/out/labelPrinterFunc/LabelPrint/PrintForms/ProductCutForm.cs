@@ -18,11 +18,22 @@ using LabelPrint.Util;
 using LabelPrint.Data;
 using LabelPrint.PrintForms;
 using LabelPrint.excelOuput;
+using LabelPrint.NetWork;
 
 namespace LabelPrint
 {
     public partial class ProductCutForm : Form
     {
+		//分切工序
+		private const int COMMUNICATION_TYPE_SLIT_PROCESS_START = 0xBF;
+		private const int COMMUNICATION_TYPE_SLIT_PROCESS_MATERIAL_BARCODE_UPLOAD = 0xC0;
+		private const int COMMUNICATION_TYPE_SLIT_PROCESS_PRODUCT_BARCODE_UPLOAD = 0xC1;
+		private const int COMMUNICATION_TYPE_SLIT_PROCESS_PACKAGE_BARCODE_UPLOAD = 0xC2;
+		private const int COMMUNICATION_TYPE_SLIT_PROCESS_END = 0xC3;
+
+		private FilmSocket m_FilmSocket;
+		FilmSocket.networkstatehandler m_networkstatehandler;
+
         String[] ProductStateStr = { "合格品", "不合格品","待处理","边角料","废料" };
         String[] ProductQualityStr = { "A", "B", "C", "D", "DC", "E", "W" };
         String[] ProductQualityStrForComBoList = { "A-晶点孔洞", "B-厚薄暴筋", "C-皱折", "D-端面错位(毛糙)", "DC-待处理", "E-油污", "W-蚊虫" };
@@ -82,11 +93,21 @@ namespace LabelPrint
         //        MiscDataList[i].Width = null;
         //    }
         //}
-        public ProductCutForm()
+        public ProductCutForm(FilmSocket filmsocket)
         {
           //  InitMiscDataList();
             InitializeComponent();
+			m_FilmSocket = filmsocket;
         }
+		~ProductCutForm()
+        {
+            m_FilmSocket.network_state_event -= m_networkstatehandler;
+		}
+
+		public void network_status_change(bool status)
+        {
+        	Console.WriteLine("network changed to {0}", status);
+		}
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -532,6 +553,9 @@ namespace LabelPrint
             //rb_NoonWork.Visible = false;
 
             initSerialPort();
+
+			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
+			m_FilmSocket.network_state_event += m_networkstatehandler;
         }
 
         private void ProductCutForm_FormClosing(object sender, EventArgs e)

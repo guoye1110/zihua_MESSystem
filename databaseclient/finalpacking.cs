@@ -31,7 +31,7 @@ namespace MESSystem.common
 		private const int ROLL_NUMBER_INDEX = 8;
 		private const int TOTAL_WEIGHT_INDEX = 9;
 		private const int TOTAL_LENGTH_INDEX = 10;
-		private const int TOTAL_DATAGRAM_NUM = TOTAL_LENGTH_INDEX+1;
+		private const int TOTAL_DATAGRAM_NUM = TOTAL_LENGTH_INDEX;
 
 		private const string c_dbName = "globaldatabase";
         private const string c_TableName = "finalpacking";
@@ -84,10 +84,10 @@ namespace MESSystem.common
 			st.machineID = input[MACHINE_ID_INDEX];
 			st.packageBarcode = input[PACKING_BARCODE_INDEX];
 			st.productCode = input[PRODUCT_CODE_INDEX];
-			st.rollNumber = int.Parse(input[ROLL_NUMBER_INDEX]);
+			st.rollNumber = Convert.ToUint32(input[ROLL_NUMBER_INDEX],10);
 			st.scanTime = input[SCAN_TIME_INDEX];
-			st.totalLength = int.Parse(input[TOTAL_LENGTH_INDEX]);
-			st.totalWeight = int.Parse(input[TOTAL_WEIGHT_INDEX]);
+			st.totalLength = Convert.ToUint32(input[TOTAL_LENGTH_INDEX],10);
+			st.totalWeight = Convert.ToUint32(input[TOTAL_WEIGHT_INDEX],10);
 			st.uploadTime = input[UPLOAD_TIME_INDEX];
 			st.workerID = input[WORKER_ID_INDEX];
 			
@@ -107,7 +107,7 @@ namespace MESSystem.common
 			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
 
             try {
-                index = 0;
+                index = 1;
                 itemName = insertString.Split(',', ')');
 
                 MySqlConnection myConnection = new MySqlConnection("database = " + c_dbName + "; " + connectionString);
@@ -118,16 +118,16 @@ namespace MESSystem.common
                 myCommand.CommandText = "insert into `" + c_TableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
-                if (st.machineID!=null) 		myCommand.Parameters.AddWithValue(itemName[index++], st.machineID);
-				if (st.barcode!=null) 			myCommand.Parameters.AddWithValue(itemName[index++], st.barcode);
-                if (st.packageBarcode!=null)	myCommand.Parameters.AddWithValue(itemName[index++], st.packageBarcode);
-				if (st.uploadTime!=null) 		myCommand.Parameters.AddWithValue(itemName[index++], st.uploadTime);
-				if (st.scanTime!=null) 			myCommand.Parameters.AddWithValue(itemName[index++], st.scanTime);
-                if (st.productCode!=null) 		myCommand.Parameters.AddWithValue(itemName[index++], st.productCode);
-				if (st.workerID!=null) 			myCommand.Parameters.AddWithValue(itemName[index++], st.workerID);
-				if (st.rollNumber!=null) 		myCommand.Parameters.AddWithValue(itemName[index++], st.rollNumber);
-                if (st.totalWeight!=null) 		myCommand.Parameters.AddWithValue(itemName[index++], st.totalWeight);
-				if (st.totalLength!=null) 		myCommand.Parameters.AddWithValue(itemName[index++], st.totalLength);
+                myCommand.Parameters.AddWithValue(itemName[index++], st.machineID);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.barcode);
+                myCommand.Parameters.AddWithValue(itemName[index++], st.packageBarcode);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.uploadTime);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.scanTime);
+                myCommand.Parameters.AddWithValue(itemName[index++], st.productCode);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.workerID);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.rollNumber.ToString());
+                myCommand.Parameters.AddWithValue(itemName[index++], st.totalWeight.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.totalLength.ToString());
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();

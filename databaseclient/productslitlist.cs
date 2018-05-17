@@ -34,11 +34,11 @@ namespace MESSystem.common
 		private const int ERROR_STATUS_INDEX = 11;
 		private const int NUM_OF_JOINS = 12;
 		private const int WEIGHT_INDEX = 13;
-		private const int TOTAL_DATAGRAM_NUM = WEIGHT_INDEX+1;
+		private const int TOTAL_DATAGRAM_NUM = WEIGHT_INDEX;
 
 		private const string c_dbName = "globaldatabase";
-        private const string c_productslitlistTableName = "productslitlist";
-        private const string c_productslitlistFileName = "..\\..\\data\\globalTables\\productSlitList.xlsx";
+        private const string c_TableName = "productslitlist";
+        private const string c_FileName = "..\\..\\data\\globalTables\\productSlitList.xlsx";
 
 		public struct productslit_t{
 			public string machineID;
@@ -53,22 +53,7 @@ namespace MESSystem.common
             public string customerIndex;
             public string errorStatus;
             public string numOfJoins;
-            public string weight;
-			/*public productslit_t(int value){
-				this.machineID = null;
-				this.materialBarCode = null;
-				this.materialScanTime = null;
-				this.productBarCode = null;
-				this.productScanTime = null;
-				this.dispatchCode = null;
-				this.batchNum = null;
-				this.largeIndex = null;
-				this.smallIndex = null;
-				this.customerIndex = null;
-				this.errorStatus = null;
-				this.numOfJoins = null;
-				this.weight = null;
-			}*/
+            public float? weight;
 		}
 
 		public string Serialize(productslit_t st)
@@ -99,7 +84,7 @@ namespace MESSystem.common
 
 			input = strInput.Split(';');
 
-			if (input.Length < TOTAL_DATAGRAM_NUM-1)
+			if (input.Length < TOTAL_DATAGRAM_NUM)
 				return null;
 
 			st.machineID = input[MACHINE_ID_INDEX];
@@ -114,7 +99,7 @@ namespace MESSystem.common
 			st.customerIndex = input[CUSTOMER_INDEX_INDEX];
 			st.errorStatus = input[ERROR_STATUS_INDEX];
 			st.numOfJoins = input[NUM_OF_JOINS];
-			st.weight = input[WEIGHT_INDEX];
+			st.weight = Convert.ToSingle(input[WEIGHT_INDEX]);
 
 			return st;
 		}
@@ -126,7 +111,7 @@ namespace MESSystem.common
 			string connectionString;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
-			getDatabaseInsertStringFromExcel(ref insertString, c_productslitlistTableName);
+			getDatabaseInsertStringFromExcel(ref insertString, c_TableName);
             insertStringSplitted = insertString.Split(new char[2] { ',', '@' });
 
             try
@@ -137,7 +122,7 @@ namespace MESSystem.common
                 MySqlCommand myCommand = myConnection.CreateCommand();
 
 				myCommand.CommandText = "update ";
-				myCommand.CommandText += "`" + c_productslitlistTableName + "` ";
+				myCommand.CommandText += "`" + c_TableName + "` ";
 				myCommand.CommandText += "set ";
 
 				for (int i=0;i<strArray.Length;i++){
@@ -157,7 +142,7 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine(c_dbName + ":" + c_productslitlistTableName + ": update product barcode failed! " + ex);
+                Console.WriteLine(c_dbName + ":" + c_TableName + ": update product barcode failed! " + ex);
             }
             return -1;
 		}
@@ -203,7 +188,7 @@ namespace MESSystem.common
 
                 MySqlCommand myCommand = myConnection.CreateCommand();
 
-                myCommand.CommandText = "insert into `" + c_productslitlistTableName + "`" + insertString;
+                myCommand.CommandText = "insert into `" + c_TableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_slit.machineID);
@@ -218,7 +203,7 @@ namespace MESSystem.common
                 myCommand.Parameters.AddWithValue(itemName[index++], st_slit.customerIndex);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_slit.errorStatus);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_slit.numOfJoins);
-				myCommand.Parameters.AddWithValue(itemName[index++], st_slit.weight);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_slit.weight.ToString());
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
@@ -227,7 +212,7 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine(c_dbName + ":" + c_productslitlistTableName + ": write record failed! " + ex);
+                Console.WriteLine(c_dbName + ":" + c_TableName + ": write record failed! " + ex);
             }
             return -1;
         }

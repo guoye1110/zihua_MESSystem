@@ -13,10 +13,21 @@ using LabelPrint.Data;
 using LabelPrint.Util;
 using LabelPrint.Receipt;
 using LabelPrint.PrintForms;
+using LabelPrint.NetWork;
+
 namespace LabelPrint
 {
     public partial class PrintForm : Form
     {
+		//印刷工序
+		private const int COMMUNICATION_TYPE_PRINT_PROCESS_START = 0xBB;
+		private const int COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD = 0xBC;
+		private const int COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD = 0xBD;
+		private const int COMMUNICATION_TYPE_PRINT_PROCESS_END = 0xBE;
+    
+		private FilmSocket m_FilmSocket;
+		FilmSocket.networkstatehandler m_networkstatehandler;
+
         FilmPrintUserinputData UserInput;
         BardCodeHooK BarCodeHook = new BardCodeHooK();
         object[] productCodes;
@@ -24,10 +35,20 @@ namespace LabelPrint
         SerialPort serialPort1;
         Byte[] serialDataBuf = new Byte[128];
 
-        public PrintForm()
+        public PrintForm(FilmSocket filmsocket)
         {
             InitializeComponent();
+			m_FilmSocket = filmsocket;
         }
+		~PrintForm()
+        {
+            m_FilmSocket.network_state_event -= m_networkstatehandler;
+		}
+
+		public void network_status_change(bool status)
+        {
+        	Console.WriteLine("network changed to {0}", status);
+		}
 
         private void PrintForm_Load(object sender, EventArgs e)
         {
@@ -62,6 +83,9 @@ namespace LabelPrint
 
 
             initSerialPort();
+
+			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
+			m_FilmSocket.network_state_event += m_networkstatehandler;			
         }
 
         private void ProductCutForm_FormClosing(object sender, EventArgs e)
@@ -460,6 +484,19 @@ namespace LabelPrint
             String WorkNoSn;
             String productName;
             String fixture;
+
+        	byte[] send_buf = System.Text.Encoding.Default.GetBytes(tb_worker.Text);
+			byte[] recv_buf;
+			string[] start_work;
+        
+        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_PRINT_PROCESS_START, tb_worker.Text.Length);
+
+			recv_buf = m_FilmSocket.RecvData(1000);
+			start_work = recv_buf.ToString().Split(';');
+
+			//To Do after communication
+			//<工单编号>;<产品编号>
+			
             UserInput.ParseWorkNo(tb_WorkNo.Text,  out batchNo, out DevNo, out WorkNoSn);
             if (gVariable.orderNo != null)
             {

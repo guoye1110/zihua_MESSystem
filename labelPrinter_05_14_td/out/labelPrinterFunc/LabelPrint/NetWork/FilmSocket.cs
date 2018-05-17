@@ -140,7 +140,7 @@ namespace LabelPrint.NetWork
 						retry_cnt = 3;
 
 						inputDataHeader(buf, MIN_PACKET_LEN, COMMUNICATION_TYPE_HEART_BEAT, 0);
-						CRC16.addCrcCode(buf, MIN_PACKET_LEN);
+						toolClass.addCrc32Code(buf, MIN_PACKET_LEN);
 
 						//m_sock.ReceiveTimeout = COMMUNICATION_TIMEOUT;
 						m_sock.Send(buf, MIN_PACKET_LEN, 0);
@@ -176,7 +176,7 @@ namespace LabelPrint.NetWork
 
             PacketLen = MIN_PACKET_LEN_WITHOUT_DATA + len;
             inputDataHeader(send_packet, PacketLen, type, 0);
-            CRC16.addCrcCode(send_packet, PacketLen);
+            toolClass.addCrc32Code(send_packet, PacketLen);
 
 			return m_sock.Send(send_packet, PacketLen, 0);
         }

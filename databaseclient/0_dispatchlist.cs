@@ -64,7 +64,7 @@ namespace MESSystem.common
 		private const int OPERATOR_NAME4_INDEX = 41;
 		private const int NOTES_INDEX = 42;
 		private const int COMMENTS_INDDEX = 43;
-		private const int TOTAL_DATAGRAM_NUM = COMMENTS_INDDEX+1;
+		private const int TOTAL_DATAGRAM_NUM = COMMENTS_INDDEX;
 
 		private const string c_dispatchListTableName = "0_dispatchlist";
         private const string c_dispatchListFileName = "..\\..\\data\\machine\\dispatchList.xlsx";
@@ -82,16 +82,16 @@ namespace MESSystem.common
             public string operatorName; //操作员
             public string forcastNum;
 			public string receiveNum;
-            public int qualifyNumber;  //合格数量
-            public int unqualifyNumber;  //不合格数量
+            public uint? qualifyNumber;  //合格数量
+            public uint? unqualifyNumber;  //不合格数量
             public string processName; //工序（工艺路线中包含多个工序）
             public string startTime;	  //实际开始时间
             public string completeTime;	  //实际完工时间
             public string prepareTimePoint;   //调整时间（试产时间），开工后先经过调整时间，然后再正式生产
-            public int status;	  //0：dummy/prepared 工单准备完成但未发布，1:工单完工，新工单未发布，2：工单发布至设备 3：工单已启动 4：试产（调整时间） OK
-            public int toolLifeTimes;  //刀具寿命次数
-            public int toolUsedTimes;  //刀具使用次数
-            public int outputRatio;  //单件系数
+            public string status;	  //0：dummy/prepared 工单准备完成但未发布，1:工单完工，新工单未发布，2：工单发布至设备 3：工单已启动 4：试产（调整时间） OK
+            public uint? toolLifeTimes;  //刀具寿命次数
+            public uint? toolUsedTimes;  //刀具使用次数
+            public uint? outputRatio;  //单件系数
             public string serialNumber; //流水号
             public string reportor; //报工员工号, 报工员和操作员可能不是同一个人
             public string workshop;	 //车间名称，或者是流水线的名字
@@ -107,8 +107,8 @@ namespace MESSystem.common
             public string batchNum; //批次号，previously used inside Zihua, now we don't need this in new system, but need it to be compatible with the old system
 			public string productColor;
 			public string rawMaterialCode;
-			public string productLength;
-			public string productDiameter;
+			public float? productLength;
+			public float? productDiameter;
 			public string productWeight;
 			public string slitWidth;
 			public string printSize;
@@ -116,52 +116,6 @@ namespace MESSystem.common
 			public string operatorName4;
             public string notes;
 			public string comments;
-
-			public dispatchlist_t(int value){
-				this.machineID = null;
-				this.dispatchCode = null; 
-				this.planTime1 = null;
-				this.planTime2 = null;
-				this.productCode = null;
-				this.productName = null;
-				this.operatorName = null;
-				this.forcastNum = null;
-				this.receiveNum = null;
-				this.qualifyNumber = value;
-				this.unqualifyNumber = value;
-				this.processName = null;
-				this.startTime = null;
-				this.completeTime = null;
-				this.prepareTimePoint = null;
-				this.status = value;
-				this.toolLifeTimes = value;
-				this.toolUsedTimes = value;
-				this.outputRatio = value;
-				this.serialNumber = null;
-				this.reportor = null;
-				this.workshop = null;
-				this.workshift = null;
-				this.salesOrderCode = null;
-				this.BOMCode = null;
-				this.customer = null;
-				this.multiProduct = null;
-				this.productCode2 = null;
-				this.productCode3 = null;
-				this.operatorName2 = null;
-				this.operatorName3 = null;
-				this.batchNum = null;
-				this.productColor = null;
-				this.rawMaterialCode = null;
-				this.productLength = null;
-				this.productDiameter = null;
-				this.productWeight = null;
-				this.slitWidth = null;
-				this.printSize = null;
-				this.productCode4 = null;
-				this.operatorName4 = null;
-				this.notes = null;
-				this.comments = null;				
-			}			
         }
 
 		public dispatchlistDB(int index)
@@ -217,16 +171,16 @@ namespace MESSystem.common
 			st.operatorName = input[OPERATOR_NAME_INDEX];
 			st.forcastNum = input[FORCAST_NUM_INDEX];
 			st.receiveNum = input[RECEIVE_NUM_INDEX];
-			st.qualifyNumber = int.Parse(input[QUALIFY_NUM_INDEX]);
-			st.unqualifyNumber = int.Parse(input[UNQUALIFY_NUM_INDEX]);
+			st.qualifyNumber = Convert.ToUInt32(input[QUALIFY_NUM_INDEX],10);
+			st.unqualifyNumber = Convert.ToUInt32(input[UNQUALIFY_NUM_INDEX],10);
 			st.processName = input[PROCESS_NAME_INDEX];
 			st.startTime = input[START_TIME_INDEX];
 			st.completeTime = input[COMPLETE_TIME_INDEX];
 			st.prepareTimePoint = input[PREPARE_TIMEPOINT_INDEX];
-			st.status = int.Parse(input[STATUS_INDEX]);
-			st.toolLifeTimes = int.Parse(input[TOOL_LIFETIME_INDEX]);
-			st.toolUsedTimes = int.Parse(input[TOOL_USED_TIMES_INDEX]);
-			st.outputRatio = int.Parse(input[OUTPUT_RATIO_INDEX]);
+			st.status = input[STATUS_INDEX];
+			st.toolLifeTimes = Convert.ToUInt32(input[TOOL_LIFETIME_INDEX],10);
+			st.toolUsedTimes = Convert.ToUInt32(input[TOOL_USED_TIMES_INDEX],10);
+			st.outputRatio = Convert.ToUInt32(input[OUTPUT_RATIO_INDEX],10);
 			st.serialNumber = input[SERIAL_NUMBER_INDEX];
 			st.reportor = input[REPORTER_INDEX];
 			st.workshop = input[WORKSHOP_INDEX];
@@ -242,9 +196,9 @@ namespace MESSystem.common
 			st.batchNum = input[BATCH_NUMBER_INDEX];
 			st.productColor = input[PRODUCT_COLOR_INDEX];
 			st.rawMaterialCode = input[RAW_MATERIAL_CODE_INDEX];
-			st.productLength = input[PRODUCT_LENGTH_INDEX];
-			st.productDiameter = input[PRODUCT_DIAMETER_INDEX];
-			st.productWeight = input[PRODUCT_WEIGHT_INDEX];
+			st.productLength = Convert.ToSingle(input[PRODUCT_LENGTH_INDEX]);
+			st.productDiameter = Convert.ToSingle(input[PRODUCT_DIAMETER_INDEX]);
+			st.productWeight = Convert.ToSingle(input[PRODUCT_WEIGHT_INDEX]);
 			st.slitWidth = input[SLIT_WIDTH_INDEX];
 			st.printSize = input[PRINT_SIDE_INDEX];
 			st.productCode4 = input[PRODUCT_CODE4_INDEX];
@@ -331,7 +285,7 @@ namespace MESSystem.common
 
             try
             {
-                index = 0;
+                index = 1;
                 itemName = insertString.Split(',', ')');
 
                 MySqlConnection myConnection = new MySqlConnection("database = " + m_dbName + "; " + connectionString);
@@ -351,16 +305,16 @@ namespace MESSystem.common
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.operatorName);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.forcastNum);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.receiveNum);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.qualifyNumber);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.unqualifyNumber);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.qualifyNumber.ToString());
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.unqualifyNumber.ToString());
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.processName);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.startTime);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.completeTime);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.prepareTimePoint);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.status);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.toolLifeTimes);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.toolUsedTimes);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.outputRatio);
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.toolLifeTimes.ToString());
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.toolUsedTimes.ToString());
+                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.outputRatio.ToString());
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.serialNumber);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.reportor);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.workshop);
@@ -376,9 +330,9 @@ namespace MESSystem.common
 				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.batchNum);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productColor);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.rawMaterialCode);
-				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productLength);
-				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productDiameter);
-				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productWeight);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productLength.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productDiameter.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productWeight.ToString());
 				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.slitWidth);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.printSize);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productCode4);

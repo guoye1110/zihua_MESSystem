@@ -13,11 +13,14 @@ using LabelPrint.Data;
 using LabelPrint.excelOuput;
 //using LabelPrint.excelOuput;
 using LabelPrint.NetWork;
+
 namespace LabelPrint
 {
     public partial class CutSystemForm : Form
     {
+	    FilmSocket m_FilmSocket;
         CutSysData PSysData;
+
         public CutSystemForm()
         {
             InitializeComponent();
@@ -34,6 +37,15 @@ namespace LabelPrint
         {
         
         }
+
+		public void network_status_change(bool status)
+        {
+        	Console.WriteLine("network changed to {0}", status);
+
+			if (status == true) {//connected
+				HandShake();
+			}
+		}
 
         /*
          * 当该小卷为不合格品时，产品质量栏位需显示不合格分类编码，如“图 5 分切打印中的问题点选择”中的A/B/C/D/DC/E/W。
@@ -63,13 +75,13 @@ namespace LabelPrint
 
             dataGridView1_widthSetting(dataGridView1);
 
-            //FilmSocket sock = new FilmSocket();
-            //sock.startCommunication();
+			m_FilmSocket = new FilmSocket();
+			m_FilmSocket.network_state_event += new FilmSocket.networkstatehandler(network_status_change);
         }
 
         private void bt_New_Click(object sender, EventArgs e)
         {
-            ProductCutForm f = new ProductCutForm();
+            ProductCutForm f = new ProductCutForm(m_FilmSocket);
             f.ShowDialog();
             dt = PSysData.UpdateDBViewBy2Date(dataGridView1);
         }
@@ -269,5 +281,18 @@ namespace LabelPrint
          * 分切清单界面还可以根据标签的生产批号/产品编号/大卷号/小卷号/客户编号/配方号进行查询，列表显示。
          */
 
+		public void HandShake()
+		{
+			int machineID;
+			byte[] data = new byte[4];
+			int rsp;
+			
+			machineID = 140 + Convert.ToInt16(GlobalConfig.Setting.CurSettingInfo.MachineNo);
+			data[0] = (byte)(machineID&0xff);
+			data[1] = (byte)((machineID&0xff00)>>8);
+			m_FilmSocket.sendDataPacketToServer(data, 0x3, 2);
+			
+			rsp = m_FilmSocket.RecvResponse(1000);
+		}
     }
 }

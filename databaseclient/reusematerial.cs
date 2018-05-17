@@ -36,17 +36,17 @@ namespace MESSystem.common
 		private const int BARCODE8_INDEX = 13;
 		private const int BARCODE9_INDEX = 14;
 		private const int BARCODE10_INDEX = 15;
-		private const int TOTAL_DATAGRAM_NUM = BARCODE10_INDEX+1;
+		private const int TOTAL_DATAGRAM_NUM = BARCODE10_INDEX;
 
 		private const string c_dbName = "globaldatabase";
-        private const string c_reusematerialTableName = "reusematerial";
-        private const string c_reusematerialFileName = "..\\..\\data\\globalTables\\reuseMaterial.xlsx";
+        private const string c_TableName = "reusematerial";
+        private const string c_FileName = "..\\..\\data\\globalTables\\reuseMaterial.xlsx";
 
 		public struct reusematerial_t{
             public string rebuildDate;
             public string BOMCode;
             public string barcodeForReuse;
-            public string rebuildNum;
+            public uint? rebuildNum;
             public string workerID;
             public string barCode1;
             public string barCode2;
@@ -104,7 +104,7 @@ namespace MESSystem.common
 			st.barcodeForReuse = input[BARCODE_FOR_REUSE_INDEX];
 			st.BOMCode = input[BOM_CODE_INDEX];
 			st.rebuildDate = input[REBUILD_DATE_INDEX];
-			st.rebuildNum = input[REBUILD_NUM_INDEX];
+			st.rebuildNum = Convert.ToUInt32(input[REBUILD_NUM_INDEX],10);
 			st.workerID = input[WORKER_ID_INDEX];
 
 			return st;
@@ -121,11 +121,11 @@ namespace MESSystem.common
 			string connectionString;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
-			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_reusematerialFileName);
+			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
 
             try
             {
-                index = 0;
+                index = 1;
                 itemName = insertString.Split(',', ')');
 
                 MySqlConnection myConnection = new MySqlConnection("database = " + c_dbName + "; " + connectionString);
@@ -133,13 +133,13 @@ namespace MESSystem.common
 
                 MySqlCommand myCommand = myConnection.CreateCommand();
 
-                myCommand.CommandText = "insert into `" + c_reusematerialTableName + "`" + insertString;
+                myCommand.CommandText = "insert into `" + c_TableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.rebuildDate);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.BOMCode);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.barcodeForReuse);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.rebuildNum);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.rebuildNum.ToString());
 				myCommand.Parameters.AddWithValue(itemName[index++], st.workerID);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.barCode1);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.barCode2);
@@ -159,7 +159,7 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine(c_dbName + "write to " + c_reusematerialTableName + " failed!" + ex);
+                Console.WriteLine(c_dbName + "write to " + c_TableName + " failed!" + ex);
             }
             return -1;
         }

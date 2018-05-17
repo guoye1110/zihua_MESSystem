@@ -26,18 +26,19 @@ namespace MESSystem.common
 		private const int STATUS_CHANGE_TIME_INDEX = 3;
 		private const int BIN_LEFT_1_PREVIOUS = 4;
 		private const int QUANTITY_USED_1_CURRENT = 5;
-		private const int BIN_LEFT_1_PREVIOUS = 6;
-		private const int QUANTITY_USED_1_CURRENT = 7;
-		private const int BIN_LEFT_1_PREVIOUS = 8;
-		private const int QUANTITY_USED_1_CURRENT = 9;
-		private const int BIN_LEFT_1_PREVIOUS = 10;
-		private const int QUANTITY_USED_1_CURRENT = 11;
-		private const int BIN_LEFT_1_PREVIOUS = 12;
-		private const int QUANTITY_USED_1_CURRENT = 13;
-		private const int BIN_LEFT_1_PREVIOUS = 14;
-		private const int QUANTITY_USED_1_CURRENT = 15;
-		private const int BIN_LEFT_1_PREVIOUS = 16;
-		private const int QUANTITY_USED_1_CURRENT = 17;
+		private const int BIN_LEFT_2_PREVIOUS = 6;
+		private const int QUANTITY_USED_2_CURRENT = 7;
+		private const int BIN_LEFT_3_PREVIOUS = 8;
+		private const int QUANTITY_USED_3_CURRENT = 9;
+		private const int BIN_LEFT_4_PREVIOUS = 10;
+		private const int QUANTITY_USED_4_CURRENT = 11;
+		private const int BIN_LEFT_5_PREVIOUS = 12;
+		private const int QUANTITY_USED_5_CURRENT = 13;
+		private const int BIN_LEFT_6_PREVIOUS = 14;
+		private const int QUANTITY_USED_6_CURRENT = 15;
+		private const int BIN_LEFT_7_PREVIOUS = 16;
+		private const int QUANTITY_USED_7_CURRENT = 17;
+		private const int TOTAL_DATAGRAM_NUM = QUANTITY_USED_1_CURRENT;
 
 		private const string m_dbName = null;
         private const string c_TableName = "0_feedbininventory";
@@ -48,25 +49,37 @@ namespace MESSystem.common
             public string dispatchStatus;
             public string statusChangeTime;
 			
-            public string binLeft1;
-			public string quantityUsed1;
-            public string binLeft2;
-			public string quantityUsed2;
-            public string binLeft3;
-			public string quantityUsed3;
-            public string binLeft4;
-			public string quantityUsed4;
-            public string binLeft5;
-			public string quantityUsed5;
-            public string binLeft6;
-			public string quantityUsed6;
-            public string binLeft7;
-			public string quantityUsed7;
+            public float binLeft1;
+			public float quantityUsed1;
+            public float binLeft2;
+			public float quantityUsed2;
+            public float binLeft3;
+			public float quantityUsed3;
+            public float binLeft4;
+			public float quantityUsed4;
+            public float binLeft5;
+			public float quantityUsed5;
+            public float binLeft6;
+			public float quantityUsed6;
+            public float binLeft7;
+			public float quantityUsed7;
 		};
 
 		public feedbininventoryDB(int index)
        	{
        		m_dbName = gVariable.DBHeadString + index.ToString().PadLeft(3, '0');
+		}
+
+		public string Serialize(feedbin_t st)
+		{
+			string str = null;
+
+			str += st.dispatchCode	+ ";" + st.dispatchStatus 	+ ";" + st.statusChangeTime		+ ";";
+			str += st.binLeft1  	+ ";" + st.quantityUsed1 	+ ";" + st.binLeft2 	+ ";" + st.quantityUsed2	+ ";";
+			str += st.binLeft3  	+ ";" + st.quantityUsed3 	+ ";" + st.binLeft4 	+ ";" + st.quantityUsed4	+ ";";
+			str += st.binLeft5  	+ ";" + st.quantityUsed5 	+ ";" + st.binLeft6 	+ ";" + st.quantityUsed6	+ ";";
+			str += st.binLeft7  	+ ";" + st.quantityUsed7;
+			return str;
 		}
 
 		public feedbin_t? Deserialize(string strInput)
@@ -76,26 +89,27 @@ namespace MESSystem.common
 
 			input = strInput.Split(';');
 
-			if (input.Length < LEFT_IN_FEEDBIN_INDEX)
+			if (input.Length < TOTAL_DATAGRAM_NUM)
 				return null;
 
-			st.dispatchCode;
-			st.dispatchStatus;
-			st.statusChangeTime;
-			st.binLeft1;
-			st.quantityUsed1;
-			st.binLeft2;
-			st.quantityUsed2;
-			st.binLeft3;
-			st.quantityUsed3;
-			st.binLeft4;
-			st.quantityUsed4;
-			st.binLeft5;
-			st.quantityUsed5;
-			st.binLeft6;
-			st.quantityUsed6;
-			st.binLeft7;
-			st.quantityUsed7;
+			st.dispatchCode = input[DISPATCH_CODE_INDEX];
+			st.dispatchStatus = input[DISPATCH_STATUS_INDEX];
+			st.statusChangeTime = input[STATUS_CHANGE_TIME_INDEX];
+			
+			st.binLeft1 = Convert.ToSingle(input[BIN_LEFT_1_PREVIOUS]);
+			st.quantityUsed1 = Convert.ToSingle(input[QUANTITY_USED_1_CURRENT]);
+			st.binLeft2 = Convert.ToSingle(input[BIN_LEFT_2_PREVIOUS]);
+			st.quantityUsed2 = Convert.ToSingle(input[QUANTITY_USED_2_CURRENT]);
+			st.binLeft3 = Convert.ToSingle(input[BIN_LEFT_3_PREVIOUS]);
+			st.quantityUsed3 = Convert.ToSingle(input[QUANTITY_USED_3_CURRENT]);
+			st.binLeft4 = Convert.ToSingle(input[BIN_LEFT_4_PREVIOUS]);
+			st.quantityUsed4 = Convert.ToSingle(input[QUANTITY_USED_4_CURRENT]);
+			st.binLeft5 = Convert.ToSingle(input[BIN_LEFT_5_PREVIOUS]);
+			st.quantityUsed5 = Convert.ToSingle(input[QUANTITY_USED_5_CURRENT]);
+			st.binLeft6 = Convert.ToSingle(input[BIN_LEFT_6_PREVIOUS]);
+			st.quantityUsed6 = Convert.ToSingle(input[QUANTITY_USED_6_CURRENT]);
+			st.binLeft7 = Convert.ToSingle(input[BIN_LEFT_7_PREVIOUS]);
+			st.quantityUsed7 = Convert.ToSingle(input[QUANTITY_USED_7_CURRENT]);
 
 			return st;
 		}
@@ -128,20 +142,20 @@ namespace MESSystem.common
                 myCommand.Parameters.AddWithValue(itemName[index++], st.dispatchCode);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.dispatchStatus);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.statusChangeTime);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft1);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed1);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft2);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed2);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft3);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed3);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft4);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed4);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft5);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed5);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft6);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed6);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft7);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed7);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft1.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed1.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft2.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed2.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft3.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed3.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft4.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed4.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft5.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed5.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft6.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed6.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft7.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed7.ToString());
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();

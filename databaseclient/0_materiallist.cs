@@ -53,24 +53,47 @@ namespace MESSystem.common
             public string machineName;
             public string numOfTypes;
             public string materialCode1;
-            public string materialRequired1;
+            public float materialRequired1;
             public string materialCode2;
-            public string materialRequired2;
+            public float materialRequired2;
             public string materialCode3;
-            public string materialRequired3;
+            public float materialRequired3;
             public string materialCode4;
-            public string materialRequired4;
+            public float materialRequired4;
             public string materialCode5;
-            public string materialRequired5;
+            public float materialRequired5;
             public string materialCode6;
-            public string materialRequired6;
+            public float materialRequired6;
             public string materialCode7;
-            public string materialRequired7;
+            public float materialRequired7;
 		};
 
 		public materiallistDB(int index)
        	{
        		m_dbName = gVariable.DBHeadString + index.ToString().PadLeft(3, '0');
+		}
+
+		public string Serialize(material_t st)
+		{
+			string str = null;
+
+			str += st.salesOrderCode	+ ";" + st.dispatchCode 		+ ";" + st.machineID 		+ ";" + st.machineName 			+ ";";
+			str += st.numOfTypes		+ ";";
+			str += st.materialCode1  	+ ";" + st.materialRequired1 	+ ";" + st.materialCode2 	+ ";" + st.materialRequired2	+ ";";
+			str += st.materialCode3  	+ ";" + st.materialRequired3 	+ ";" + st.materialCode4 	+ ";" + st.materialRequired4	+ ";";
+			str += st.materialCode5  	+ ";" + st.materialRequired5 	+ ";" + st.materialCode6 	+ ";" + st.materialRequired6	+ ";";
+			str += st.materialCode7  	+ ";" + st.materialRequired7;
+			return str;
+		}
+
+		public string[] Format(material_t st)
+		{
+			string str;
+			string[] strArray;
+
+			str = Serialize(st);
+			strArray = str.Split(';');
+			return strArray;
 		}
 
 		public material_t? Deserialize(string strInput)
@@ -89,19 +112,19 @@ namespace MESSystem.common
 			st.machineName = input[MACHINE_NAME_INDEX];
             st.numOfTypes = input[NUM_OF_TYPES_INDEX];
 			st.materialCode1 = input[MATERIAL_CODE1_INDEX];
-			st.materialRequired1 = input[MATERIAL_REQUIRED1_INDEX];
+			st.materialRequired1 = Convert.ToSingle(input[MATERIAL_REQUIRED1_INDEX]);
 			st.materialCode2 = input[MATERIAL_CODE2_INDEX];
-			st.materialRequired2 = input[MATERIAL_REQUIRED2_INDEX];
+			st.materialRequired2 = Convert.ToSingle(input[MATERIAL_REQUIRED2_INDEX]);
 			st.materialCode3 = input[MATERIAL_CODE3_INDEX];
-			st.materialRequired3 = input[MATERIAL_REQUIRED3_INDEX];
+			st.materialRequired3 = Convert.ToSingle(input[MATERIAL_REQUIRED3_INDEX]);
 			st.materialCode4 = input[MATERIAL_CODE4_INDEX];
-			st.materialRequired4 = input[MATERIAL_REQUIRED4_INDEX];
+			st.materialRequired4 = Convert.ToSingle(input[MATERIAL_REQUIRED4_INDEX]);
 			st.materialCode5 = input[MATERIAL_CODE5_INDEX];
-			st.materialRequired5 = input[MATERIAL_REQUIRED5_INDEX];
+			st.materialRequired5 = Convert.ToSingle(input[MATERIAL_REQUIRED5_INDEX]);
 			st.materialCode6 = input[MATERIAL_CODE6_INDEX];
-			st.materialRequired6 = input[MATERIAL_REQUIRED6_INDEX];
+			st.materialRequired6 = Convert.ToSingle(input[MATERIAL_REQUIRED6_INDEX]);
 			st.materialCode7 = input[MATERIAL_CODE7_INDEX];
-			st.materialRequired7 = input[MATERIAL_REQUIRED7_INDEX];
+			st.materialRequired7 = Convert.ToSingle(input[MATERIAL_REQUIRED7_INDEX]);
 
 			return st;
 		}
@@ -136,19 +159,19 @@ namespace MESSystem.common
                 myCommand.Parameters.AddWithValue(itemName[index++], st.machineID);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.machineName);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.materialCode1);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.materialRequired1);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.materialRequired1.ToString());
 				myCommand.Parameters.AddWithValue(itemName[index++], st.materialCode2);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.materialRequired2);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.materialRequired2.ToString());
 				myCommand.Parameters.AddWithValue(itemName[index++], st.materialCode3);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.materialRequired3);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.materialRequired3.ToString());
 				myCommand.Parameters.AddWithValue(itemName[index++], st.materialCode4);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.materialRequired4);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.materialRequired4.ToString());
 				myCommand.Parameters.AddWithValue(itemName[index++], st.materialCode5);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.materialRequired5);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.materialRequired5.ToString());
 				myCommand.Parameters.AddWithValue(itemName[index++], st.materialCode6);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.materialRequired6);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.materialRequired6.ToString());
 				myCommand.Parameters.AddWithValue(itemName[index++], st.materialCode7);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.materialRequired7);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.materialRequired7.ToString());
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
