@@ -45,9 +45,9 @@ namespace MESSystem.common
 			public string scanTime;
 			public string productCode;
 			public string workerID;
-			public int rollNumber;
-			public int totalWeight;
-			public int totalLength;
+			public uint? rollNumber;
+			public float? totalWeight;
+			public float? totalLength;
 		}
 
 		public string Serialize(finalpacking_t st)
@@ -84,10 +84,10 @@ namespace MESSystem.common
 			st.machineID = input[MACHINE_ID_INDEX];
 			st.packageBarcode = input[PACKING_BARCODE_INDEX];
 			st.productCode = input[PRODUCT_CODE_INDEX];
-			st.rollNumber = Convert.ToUint32(input[ROLL_NUMBER_INDEX],10);
+			st.rollNumber = Convert.ToUInt32(input[ROLL_NUMBER_INDEX],10);
 			st.scanTime = input[SCAN_TIME_INDEX];
-			st.totalLength = Convert.ToUint32(input[TOTAL_LENGTH_INDEX],10);
-			st.totalWeight = Convert.ToUint32(input[TOTAL_WEIGHT_INDEX],10);
+			st.totalLength = Convert.ToSingle(input[TOTAL_LENGTH_INDEX]);
+			st.totalWeight = Convert.ToSingle(input[TOTAL_WEIGHT_INDEX]);
 			st.uploadTime = input[UPLOAD_TIME_INDEX];
 			st.workerID = input[WORKER_ID_INDEX];
 			
@@ -102,9 +102,12 @@ namespace MESSystem.common
             string[] itemName;
 			string insertString=null;
 			string connectionString;
+			string[] inputArray;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+
+			inputArray = Format(st);
 
             try {
                 index = 1;
@@ -118,7 +121,10 @@ namespace MESSystem.common
                 myCommand.CommandText = "insert into `" + c_TableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.machineID);
+				for (index=1;index<=TOTAL_DATAGRAM_NUM;index++)
+					myCommand.Parameters.AddWithValue(itemName[index], inputArray[index-1]);
+
+                /*myCommand.Parameters.AddWithValue(itemName[index++], st.machineID);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.barcode);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.packageBarcode);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.uploadTime);
@@ -127,7 +133,7 @@ namespace MESSystem.common
 				myCommand.Parameters.AddWithValue(itemName[index++], st.workerID);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.rollNumber.ToString());
                 myCommand.Parameters.AddWithValue(itemName[index++], st.totalWeight.ToString());
-				myCommand.Parameters.AddWithValue(itemName[index++], st.totalLength.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.totalLength.ToString());*/
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
@@ -146,13 +152,13 @@ namespace MESSystem.common
 			string insertString=null;
 			string[] insertStringSplitted;
 			string connectionString;
-			string[] strArray;
-
-			strArray = Format(st);
+			string[] inputArray;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			getDatabaseInsertStringFromExcel(ref insertString, c_TableName);
 			insertStringSplitted = insertString.Split(new char[2]{',','@'});
+
+			inputArray = Format(st);
 
             try
             {
@@ -165,11 +171,11 @@ namespace MESSystem.common
 				myCommand.CommandText += "`" + c_TableName + "` ";
 				myCommand.CommandText += "set ";
 
-				for (int i=0;i<strArray.Length;i++){
-					if (strArray[i] == null)	continue;
+				for (int i=0;i<inputArray.Length;i++){
+					if (inputArray[i] == null || inputArray[i] == "")	continue;
 
-					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + strArray[i];
-					if (i != strArray.Length )
+					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + inputArray[i];
+					if (i != inputArray.Length )
 						myCommand.CommandText += ",";
 				}
 

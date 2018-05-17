@@ -31,11 +31,11 @@ namespace MESSystem.common
 		private const int LARGE_INDEX_INDEX = 8;
 		private const int WEIGHT_INDEX = 9;
 		private const int ERROR_STATUS_INDEX = 10;
-		private const int TOTAL_DATAGRAM_NUM = ERROR_STATUS_INDEX+1;
+		private const int TOTAL_DATAGRAM_NUM = ERROR_STATUS_INDEX;
 
 		private const string c_dbName = "globaldatabase";
-        private const string c_productprintlistTableName = "productprintlist";
-        private const string c_productprintlistFileName = "..\\..\\data\\globalTables\\productPrintList.xlsx";
+        private const string c_TableName = "productprintlist";
+        private const string c_FileName = "..\\..\\data\\globalTables\\productPrintList.xlsx";
 
 		public struct productprint_t{
             public string machineID;
@@ -46,19 +46,8 @@ namespace MESSystem.common
             public string dispatchCode;
             public string batchNum;
             public string largeIndex;
-            public string weight;
+            public float? weight;
 			public string errorStatus;
-			/*public productprint_t(int value){
-				this.machineID = null;
-				this.materialBarCode = null;
-				this.materialScanTime = null;
-				this.productBarCode = null;
-				this.productScanTime = null;
-				this.dispatchCode = null;
-				this.batchNum = null;
-				this.largeIndex = null;
-				this.weight = null;				
-			}*/
 		}
 
 		public string Serialize(productprint_t st)
@@ -88,7 +77,7 @@ namespace MESSystem.common
 
 			input = strInput.Split(';');
 
-			if (input.Length < TOTAL_DATAGRAM_NUM-1)
+			if (input.Length < TOTAL_DATAGRAM_NUM)
 				return null;
 
 			st.machineID = input[MACHINE_ID_INDEX];
@@ -99,21 +88,24 @@ namespace MESSystem.common
 			st.dispatchCode = input[DISPATCH_CODE_INDEX];
 			st.batchNum = input[BATCH_NUM_INDEX];
 			st.largeIndex = input[LARGE_INDEX_INDEX];
-			st.weight = input[WEIGHT_INDEX];
+			st.weight = Convert.ToSingle(input[WEIGHT_INDEX]);
 			st.errorStatus = input[ERROR_STATUS_INDEX];
 
 			return st;
 		}
 
-		public int updaterecord_ByMaterialBarCode(string[] strArray, string barcode)
+		public int updaterecord_ByMaterialBarCode(productprint_t st, string barcode)
 		{
 			string insertString=null;
 			string[] insertStringSplitted;
 			string connectionString;
+			string[] inputArray; 
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
-			getDatabaseInsertStringFromExcel(ref insertString, c_productprintlistTableName);
+			getDatabaseInsertStringFromExcel(ref insertString, c_TableName);
             insertStringSplitted = insertString.Split(new char[2]{',','@' });
+
+			inputArray = Format(st);
 
             try
             {
@@ -123,14 +115,14 @@ namespace MESSystem.common
                 MySqlCommand myCommand = myConnection.CreateCommand();
 
 				myCommand.CommandText = "update ";
-				myCommand.CommandText += "`" + c_productprintlistTableName + "` ";
+				myCommand.CommandText += "`" + c_TableName + "` ";
 				myCommand.CommandText += "set ";
 
-				for (int i=0;i<strArray.Length;i++){
-					if (strArray[i] == null)	continue;
+				for (int i=0;i<inputArray.Length;i++){
+					if (inputArray[i] == null || inputArray[i] == "")	continue;
 
-					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + strArray[i];
-					if (i != strArray.Length )
+					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + inputArray[i];
+					if (i != inputArray.Length )
 						myCommand.CommandText += ",";
 				}
 
@@ -143,7 +135,7 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine(c_dbName + ":" + c_productprintlistTableName + ": update product barcode failed! " + ex);
+                Console.WriteLine(c_dbName + ":" + c_TableName + ": update product barcode failed! " + ex);
             }
             return -1;
 		}
@@ -170,15 +162,18 @@ namespace MESSystem.common
 		
         //return 0 written to table successfully
         //      -1 exception occurred
-        public int writerecord(productprint_t st_productprint)
+        public int writerecord(productprint_t st)
         {
             int index;
             string[] itemName;
 			string insertString=null;
 			string connectionString;
+			string[] inputArray;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
-			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_productprintlistFileName);
+			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+
+			inputArray = Format(st);
 
             try
             {
@@ -190,10 +185,14 @@ namespace MESSystem.common
 
                 MySqlCommand myCommand = myConnection.CreateCommand();
 
-                myCommand.CommandText = "insert into `" + c_productprintlistTableName + "`" + insertString;
+                myCommand.CommandText = "insert into `" + c_TableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_productprint.machineID);
+
+				for (index=1;index<=TOTAL_DATAGRAM_NUM;index++)
+					myCommand.Parameters.AddWithValue(itemName[index], inputArray[index-1]);
+					
+                /*myCommand.Parameters.AddWithValue(itemName[index++], st_productprint.machineID);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_productprint.materialBarCode);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_productprint.materialScanTime);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_productprint.productBarCode);
@@ -202,7 +201,7 @@ namespace MESSystem.common
 				myCommand.Parameters.AddWithValue(itemName[index++], st_productprint.batchNum);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_productprint.largeIndex);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_productprint.weight);
-				myCommand.Parameters.AddWithValue(itemName[index++], st_productprint.errorStatus);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_productprint.errorStatus);*/
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
@@ -211,7 +210,7 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine(c_dbName + ":" + c_productprintlistTableName + ": write record failed! " + ex);
+                Console.WriteLine(c_dbName + ":" + c_TableName + ": write record failed! " + ex);
             }
             return -1;
         }

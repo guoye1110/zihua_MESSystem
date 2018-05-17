@@ -104,15 +104,18 @@ namespace MESSystem.common
 			return st;
 		}
 
-		public int updaterecord_ByMaterialBarCode(string[] strArray, string barcode)
+		public int updaterecord_ByMaterialBarCode(productslit_t st, string barcode)
 		{
 			string insertString = null;
 			string[] insertStringSplitted;
 			string connectionString;
+			string[] inputArray;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			getDatabaseInsertStringFromExcel(ref insertString, c_TableName);
             insertStringSplitted = insertString.Split(new char[2] { ',', '@' });
+
+			inputArray = Format(st);
 
             try
             {
@@ -125,11 +128,11 @@ namespace MESSystem.common
 				myCommand.CommandText += "`" + c_TableName + "` ";
 				myCommand.CommandText += "set ";
 
-				for (int i=0;i<strArray.Length;i++){
-					if (strArray[i] == null)	continue;
+				for (int i=0;i<inputArray.Length;i++){
+					if (inputArray[i] == null || inputArray[i] == "")	continue;
 
-					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + strArray[i];
-					if (i != strArray.Length )
+					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + inputArray[i];
+					if (i != inputArray.Length )
 						myCommand.CommandText += ",";
 				}
 
@@ -168,15 +171,18 @@ namespace MESSystem.common
 */
         //return 0 written to table successfully
         //      -1 exception occurred
-        public int writerecord(productslit_t st_slit)
+        public int writerecord(productslit_t st)
         {
             int index;
             string[] itemName;
 			string insertString=null;
 			string connectionString;
+			string[] inputArray;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
-			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_productslitlistTableName);
+			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_TableName);
+
+			inputArray = Format(st);
 
             try
             {
@@ -191,7 +197,10 @@ namespace MESSystem.common
                 myCommand.CommandText = "insert into `" + c_TableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_slit.machineID);
+				for(index=1;index<TOTAL_DATAGRAM_NUM;index++)
+					myCommand.Parameters.AddWithValue(itemName[index], inputArray[index-1]);
+				
+                /*myCommand.Parameters.AddWithValue(itemName[index++], st_slit.machineID);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_slit.materialBarCode);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_slit.materialScanTime);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_slit.productBarCode);
@@ -203,7 +212,7 @@ namespace MESSystem.common
                 myCommand.Parameters.AddWithValue(itemName[index++], st_slit.customerIndex);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_slit.errorStatus);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_slit.numOfJoins);
-				myCommand.Parameters.AddWithValue(itemName[index++], st_slit.weight.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st_slit.weight.ToString());*/
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();

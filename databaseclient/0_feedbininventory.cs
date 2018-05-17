@@ -82,6 +82,16 @@ namespace MESSystem.common
 			return str;
 		}
 
+		public string[] Format(feedbin_t st)
+		{
+			string str;
+			string[] strArray;
+
+			str = Serialize(st);
+			strArray = str.Split(';');
+			return strArray;
+		}
+
 		public feedbin_t? Deserialize(string strInput)
 		{
 			string[] input;
@@ -122,9 +132,12 @@ namespace MESSystem.common
             string[] itemName;
 			string insertString=null;
 			string connectionString;
+			string[] inputArray;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+
+			inputArray = Format(st);
 
             try
             {
@@ -139,7 +152,10 @@ namespace MESSystem.common
                 myCommand.CommandText = "insert into `" + c_TableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.dispatchCode);
+				for (index=1;index<=TOTAL_DATAGRAM_NUM;index++)
+					myCommand.Parameters.AddWithValue(itemName[index], inputArray[index-1]);
+
+                /*myCommand.Parameters.AddWithValue(itemName[index++], st.dispatchCode);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.dispatchStatus);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.statusChangeTime);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft1.ToString());
@@ -155,7 +171,7 @@ namespace MESSystem.common
 				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft6.ToString());
 				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed6.ToString());
 				myCommand.Parameters.AddWithValue(itemName[index++], st.binLeft7.ToString());
-				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed7.ToString());
+				myCommand.Parameters.AddWithValue(itemName[index++], st.quantityUsed7.ToString());*/
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();

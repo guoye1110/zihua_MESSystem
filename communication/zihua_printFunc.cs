@@ -98,9 +98,9 @@ namespace MESSystem.communication
                     string endDay;
                     string commandText;
                     string[,] tableArray;
-					int[,] weightRequiredOfEachStack = new int[communicate.NUM_OF_FEEDING_MACHINE, gVariable.maxMaterialTypeNum];
-					int[,] sackRequiredOfEachStack = new int[communicate.NUM_OF_FEEDING_MACHINE, gVariable.maxMaterialTypeNum];
-					string[,] materialCodeOfEachStack = new string[communicate.NUM_OF_FEEDING_MACHINE, gVariable.maxMaterialTypeNum];
+					float[,] weightRequiredOfEachStack = new float[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
+					int[,] sackRequiredOfEachStack = new int[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
+					string[,] materialCodeOfEachStack = new string[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE];
                     gVariable.dispatchSheetStruct[] dispatchs;
 
                     today = DateTime.Now.Date.ToString("yyyy-MM-dd 08:00:00");
@@ -146,13 +146,13 @@ namespace MESSystem.communication
 								materialCodeOfEachStack[i,6] = materials.Value.materialCode6;
 								materialCodeOfEachStack[i,7] = materials.Value.materialCode7;
 
-								weightRequiredOfEachStack[i,1] += Convert.ToInt32(materials.Value.materialRequired1);
-								weightRequiredOfEachStack[i,2] += Convert.ToInt32(materials.Value.materialRequired2);
-								weightRequiredOfEachStack[i,3] += Convert.ToInt32(materials.Value.materialRequired3);
-								weightRequiredOfEachStack[i,4] += Convert.ToInt32(materials.Value.materialRequired4);
-								weightRequiredOfEachStack[i,5] += Convert.ToInt32(materials.Value.materialRequired5);
-								weightRequiredOfEachStack[i,6] += Convert.ToInt32(materials.Value.materialRequired6);
-								weightRequiredOfEachStack[i,7] += Convert.ToInt32(materials.Value.materialRequired7);
+								weightRequiredOfEachStack[i,1] += materials.Value.materialRequired1;
+								weightRequiredOfEachStack[i,2] += materials.Value.materialRequired2;
+								weightRequiredOfEachStack[i,3] += materials.Value.materialRequired3;
+								weightRequiredOfEachStack[i,4] += materials.Value.materialRequired4;
+								weightRequiredOfEachStack[i,5] += materials.Value.materialRequired5;
+								weightRequiredOfEachStack[i,6] += materials.Value.materialRequired6;
+								weightRequiredOfEachStack[i,7] += materials.Value.materialRequired7;
                             }
                         }
 				
@@ -305,14 +305,14 @@ namespace MESSystem.communication
                             for (int i = 0; i < st_dispatchArray.Length; i++)
                             {
                                 //Find first published dispatch
-                                if (st_dispatchArray[i].status == gVariable.MACHINE_STATUS_DISPATCH_PUBLISHED)
+                                if (st_dispatchArray[i].status == gVariable.MACHINE_STATUS_DISPATCH_PUBLISHED.ToString())
                                 {
                                     dispatchCode = st_dispatchArray[i].dispatchCode;
                                     productCode = st_dispatchArray[i].productCode;
                                     //Save operator to it 
-                                    dispatchlistDB.dispatchlist_t st = new dispatchlistDB.dispatchlist_t(0);
+                                    dispatchlistDB.dispatchlist_t st = new dispatchlistDB.dispatchlist_t();
                                     st.operatorName = m_Operator;
-                                    dispatchlist_db.updaterecord_ByDispatchcode(dispatchlist_db.Format(st), dispatchCode);
+                                    dispatchlist_db.updaterecord_ByDispatchcode(st, dispatchCode);
 			                        string str = dispatchCode + ";" + productCode;
 			                        m_ClientThread.sendStringToClient(str, communicationType);
 									return -1;//We have send data to client, same as no action from caller's point of view
@@ -353,7 +353,7 @@ namespace MESSystem.communication
                         st_cast.machineID = m_machineIDForPrint.ToString();
                         //st_cast.scanTime = st_cast.dispatchCode.Substring(0,4) + st_cast.dispatchCode.Substring(7,2) + strInputArray[0].Substring(12,4);
                         st_cast.scanTime = System.DateTime.Now.ToString();
-                        st_cast.weight = strInputArray[1];
+                        st_cast.weight = Convert.ToSingle(strInputArray[1]);
 						st_cast.errorStatus = strInputArray[0].Substring(19, 1);
                         return db.writerecord(st_cast);
                     }
@@ -380,9 +380,9 @@ namespace MESSystem.communication
                         st_print.batchNum = st_print.dispatchCode.Substring(0, 7);
                         st_print.productScanTime = System.DateTime.Now.ToString();
                         st_print.productBarCode = strInputArray[1];
-                        st_print.weight = strInputArray[2];
+                        st_print.weight = Convert.ToSingle(strInputArray[2]);
 
-                        return db.updaterecord_ByMaterialBarCode(db.Format(st_print), strInputArray[0]);
+                        return db.updaterecord_ByMaterialBarCode(st_print, strInputArray[0]);
                     }
                     //分切工序
                     if (communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_MATERIAL_BARCODE_UPLOAD)
@@ -410,14 +410,14 @@ namespace MESSystem.communication
                         st_slit.customerIndex = strInputArray[1].Substring(21, 1);
                         st_slit.errorStatus = strInputArray[1].Substring(22, 1);
                         st_slit.numOfJoins = strInputArray[3];
-                        st_slit.weight = strInputArray[2];
+                        st_slit.weight = Convert.ToSingle(strInputArray[2]);
 
-                        return db.updaterecord_ByMaterialBarCode(db.Format(st_slit), strInputArray[0]);
+                        return db.updaterecord_ByMaterialBarCode(st_slit, strInputArray[0]);
                     }
                     //质检工序
                     if (communicationType == COMMUNICATION_TYPE_INSPECTION_PROCESS_MATERIAL_BARCODE_UPLOAD)
                     {
-                        inspectionlistDB.inspection_t st_inspect = new inspectionlistDB.inspection_t(0);
+                        inspectionlistDB.inspection_t st_inspect = new inspectionlistDB.inspection_t();
                         inspectionlistDB db = new inspectionlistDB();
 
                         st_inspect.materialBarCode = strInputArray[0];
@@ -427,7 +427,7 @@ namespace MESSystem.communication
                     }
                     if (communicationType == COMMUNICATION_TYPE_INSPECTION_PROCESS_PRODUCT_BARCODE_UPLOAD)
                     {
-                        inspectionlistDB.inspection_t st_inspect = new inspectionlistDB.inspection_t(0);
+                        inspectionlistDB.inspection_t st_inspect = new inspectionlistDB.inspection_t();
                         inspectionlistDB db = new inspectionlistDB();
 
                         st_inspect.dispatchCode = strInputArray[1].Substring(0, 12);
@@ -437,7 +437,7 @@ namespace MESSystem.communication
                         st_inspect.checkingResult = strInputArray[1].Substring(strInputArray[1].Length - 1, 1);
                         st_inspect.inspector = strInputArray[2];
 
-                        return db.updaterecord_ByMaterialBarCode(db.Format(st_inspect), strInputArray[0]);
+                        return db.updaterecord_ByMaterialBarCode(st_inspect, strInputArray[0]);
                     }
                     //再造料工序
                     if (communicationType == COMMUNICATION_TYPE_REUSE_PROCESS_BARCODE_UPLOAD)
@@ -448,7 +448,7 @@ namespace MESSystem.communication
                         st_reuse.barcodeForReuse = strInputArray[0];
                         st_reuse.rebuildDate = System.DateTime.Now.ToString();
                         st_reuse.BOMCode = strInputArray[12];
-                        st_reuse.rebuildNum = strInputArray[1];
+                        st_reuse.rebuildNum = Convert.ToUInt16(strInputArray[1]);
                         st_reuse.workerID = strInputArray[13];
                         st_reuse.barCode1 = strInputArray[2];
                         st_reuse.barCode2 = strInputArray[3];
@@ -485,11 +485,11 @@ namespace MESSystem.communication
                     if (communicationType == COMMUNICATION_TYPE_CAST_PROCESS_END || communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_END || communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_END)
                     {
                         dispatchlistDB db = new dispatchlistDB(printingSWPCID);
-                        dispatchlistDB.dispatchlist_t st_dispatch = new dispatchlistDB.dispatchlist_t(0);
+                        dispatchlistDB.dispatchlist_t st_dispatch = new dispatchlistDB.dispatchlist_t();
 
                         st_dispatch.notes = strInputArray[1];
 						st_dispatch.operatorName = m_Operator;
-                        return db.updaterecord_ByDispatchcode(db.Format(st_dispatch), strInputArray[0]);
+                        return db.updaterecord_ByDispatchcode(st_dispatch, strInputArray[0]);
                     }
                     return -1;
                 }
@@ -515,9 +515,9 @@ namespace MESSystem.communication
 						//<产品代码>;<卷数>;<重量>;<长度>;<打包条码>;<卷条码1>;...;<卷条码N>
 						st_packing.productCode = strInputArray[0];
 						st_packing.packageBarcode = strInputArray[4];
-						st_packing.totalWeight = int.Parse(strInputArray[2]);
-						st_packing.totalLength = int.Parse(strInputArray[3]);
-						st_packing.rollNumber = int.Parse(strInputArray[1]);
+                        st_packing.totalWeight = Convert.ToSingle(strInputArray[2]);
+                        st_packing.totalLength = Convert.ToSingle(strInputArray[3]);
+						st_packing.rollNumber = Convert.ToUInt16(strInputArray[1]);
 						st_packing.uploadTime = System.DateTime.Now.ToString();
 						st_packing.machineID = m_machineIDForPrint.ToString();
 						for (int i=0;i<st_packing.rollNumber;i++){

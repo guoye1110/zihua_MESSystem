@@ -66,8 +66,8 @@ namespace MESSystem.common
 		private const int COMMENTS_INDDEX = 43;
 		private const int TOTAL_DATAGRAM_NUM = COMMENTS_INDDEX;
 
-		private const string c_dispatchListTableName = "0_dispatchlist";
-        private const string c_dispatchListFileName = "..\\..\\data\\machine\\dispatchList.xlsx";
+		private const string c_TableName = "0_dispatchlist";
+        private const string c_FileName = "..\\..\\data\\machine\\dispatchList.xlsx";
 
 		private string m_dbName;
 
@@ -109,7 +109,7 @@ namespace MESSystem.common
 			public string rawMaterialCode;
 			public float? productLength;
 			public float? productDiameter;
-			public string productWeight;
+			public float? productWeight;
 			public string slitWidth;
 			public string printSize;
 			public string productCode4;
@@ -214,7 +214,7 @@ namespace MESSystem.common
 			dispatchlist_t? dd;
 			string[] recordArray;
 			dispatchlist_t[] st_dispatchlist=null;
-			string commandText = "select * from `" + c_dispatchListTableName + "` order by id DESC";
+			string commandText = "select * from `" + c_TableName + "` order by id DESC";
 			recordArray = mySQLClass.databaseCommonReadingUnsplitted(m_dbName, commandText);
 			if (recordArray!=null){
 				st_dispatchlist = new dispatchlist_t[recordArray.Length];
@@ -226,16 +226,19 @@ namespace MESSystem.common
 			return st_dispatchlist;
 		}
 
-		public int updaterecord_ByDispatchcode(string[] strArray, string dispatchCode)
+		public int updaterecord_ByDispatchcode(dispatchlist_t st, string dispatchCode)
 		{
 			string insertString=null;
 			string[] insertStringSplitted;
 			string connectionString;
+			string[] inputArray;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
-			getDatabaseInsertStringFromExcel(ref insertString, c_dispatchListFileName);
+			getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
 			//insertStringSplitted = insertString.Split(',@');
             insertStringSplitted = insertString.Split(new char[2]{',','@'});
+
+			inputArray = Format(st);
 
             try
             {
@@ -245,14 +248,14 @@ namespace MESSystem.common
                 MySqlCommand myCommand = myConnection.CreateCommand();
 
 				myCommand.CommandText = "update ";
-				myCommand.CommandText += "`" + c_dispatchListTableName + "` ";
+				myCommand.CommandText += "`" + c_TableName + "` ";
 				myCommand.CommandText += "set ";
 
-				for (int i=0;i<strArray.Length;i++){
-					if (strArray[i] == null)	continue;
+				for (int i=0;i<inputArray.Length;i++){
+					if (inputArray[i] == null || inputArray[i] == "")	continue;
 
-					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + strArray[i];
-					if (i != strArray.Length )
+					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + inputArray[i];
+					if (i != inputArray.Length )
 						myCommand.CommandText += ",";
 				}
 
@@ -265,23 +268,26 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine(m_dbName + ":" + c_dispatchListTableName + ": update product barcode failed! " + ex);
+                Console.WriteLine(m_dbName + ":" + c_TableName + ": update product barcode failed! " + ex);
             }
             return -1;
 		}
 
         //return 0 written to table successfully
         //      -1 exception occurred
-        public int writerecord(dispatchlist_t st_dispatchlist)
+        public int writerecord(dispatchlist_t st)
         {
             int num;
             int index;
             string[] itemName;
 			string insertString=null;
 			string connectionString;
+			string[] inputArray;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
-			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_dispatchListTableName);
+			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_TableName);
+
+			inputArray = Format(st);
 
             try
             {
@@ -293,10 +299,13 @@ namespace MESSystem.common
 
                 MySqlCommand myCommand = myConnection.CreateCommand();
 
-                myCommand.CommandText = "insert into `" + c_dispatchListTableName + "`" + insertString;
+                myCommand.CommandText = "insert into `" + c_TableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
-                myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.machineID);
+				for (index=1;index<=TOTAL_DATAGRAM_NUM;index++)
+					myCommand.Parameters.AddWithValue(itemName[index], inputArray[index-1]);
+
+				/*myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.machineID);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.dispatchCode);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.planTime1);
                 myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.planTime2);
@@ -338,7 +347,7 @@ namespace MESSystem.common
 				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.productCode4);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.operatorName4);
 				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.notes);
-				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.comments);
+				myCommand.Parameters.AddWithValue(itemName[index++], st_dispatchlist.comments);*/
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
@@ -347,7 +356,7 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine(m_dbName+":"+c_dispatchListTableName+": write record failed!" + ex);
+                Console.WriteLine(m_dbName+":"+c_TableName+": write record failed!" + ex);
             }
             return -1;
         }

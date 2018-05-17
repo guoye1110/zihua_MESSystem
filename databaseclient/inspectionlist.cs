@@ -32,8 +32,8 @@ namespace MESSystem.common
 		private const int TOTAL_DATAGRAM_NUM = CHECKING_RESULT_INDEX+1;
 
 		private const string c_dbName = "globaldatabase";
-        private const string c_inspectionlistTableName = "inspectionlist";
-        private const string c_inspectionlistFileName = "..\\..\\data\\globalTables\\inspectionList.xlsx";
+        private const string c_TableName = "inspectionlist";
+        private const string c_FileName = "..\\..\\data\\globalTables\\inspectionList.xlsx";
 
 		public struct inspection_t{
 			public string materialScanTime;
@@ -44,16 +44,6 @@ namespace MESSystem.common
             public string batchNum;
             public string inspector;
             public string checkingResult;
-			public inspection_t(int value){
-				this.materialScanTime = null;
-				this.materialBarCode = null;
-				this.productScanTime = null;
-				this.productBarCode = null;
-				this.dispatchCode = null;
-				this.batchNum = null;
-				this.inspector = null;
-				this.checkingResult = null;
-			}
 		}
 
 		public string Serialize(inspection_t st)
@@ -97,15 +87,18 @@ namespace MESSystem.common
 			return st;
 		}
 
-		public int updaterecord_ByMaterialBarCode(string[] strArray, string barcode)
+		public int updaterecord_ByMaterialBarCode(inspection_t st, string barcode)
 		{
 			string insertString=null;
 			string[] insertStringSplitted;
 			string connectionString;
+			string[] inputArray;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
-			getDatabaseInsertStringFromExcel(ref insertString, c_inspectionlistTableName);
+			getDatabaseInsertStringFromExcel(ref insertString, c_TableName);
 			insertStringSplitted = insertString.Split(new char[2]{',','@'});
+
+			inputArray = Format(st);
 
             try
             {
@@ -115,14 +108,14 @@ namespace MESSystem.common
                 MySqlCommand myCommand = myConnection.CreateCommand();
 
 				myCommand.CommandText = "update ";
-				myCommand.CommandText += "`" + c_inspectionlistTableName + "` ";
+				myCommand.CommandText += "`" + c_TableName + "` ";
 				myCommand.CommandText += "set ";
 
-				for (int i=0;i<strArray.Length;i++){
-					if (strArray[i] == null)	continue;
+				for (int i=0;i<inputArray.Length;i++){
+					if (inputArray[i] == null || inputArray[i] == "")	continue;
 
-					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + strArray[i];
-					if (i != strArray.Length )
+					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + inputArray[i];
+					if (i != inputArray.Length )
 						myCommand.CommandText += ",";
 				}
 
@@ -135,7 +128,7 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine(c_dbName + ":" + c_inspectionlistTableName + ": update product barcode failed! " + ex);
+                Console.WriteLine(c_dbName + ":" + c_TableName + ": update product barcode failed! " + ex);
             }
             return -1;
 		}
@@ -150,9 +143,12 @@ namespace MESSystem.common
             string[] itemName;
 			string insertString=null;
 			string connectionString;
+			string[] inputArray;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
-			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_inspectionlistFileName);
+			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+
+			inputArray = Format(st);
 
             try
             {
@@ -164,17 +160,20 @@ namespace MESSystem.common
 
                 MySqlCommand myCommand = myConnection.CreateCommand();
 
-                myCommand.CommandText = "insert into `" + c_inspectionlistTableName + "`" + insertString;
+                myCommand.CommandText = "insert into `" + c_TableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.materialScanTime);
+				for (index=1;index<=TOTAL_DATAGRAM_NUM;index++)
+					myCommand.Parameters.AddWithValue(itemName[index], inputArray[index-1]);
+
+                /*myCommand.Parameters.AddWithValue(itemName[index++], st.materialScanTime);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.materialBarCode);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.productScanTime);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.productBarCode);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.dispatchCode);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.batchNum);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.inspector);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.checkingResult);
+                myCommand.Parameters.AddWithValue(itemName[index++], st.checkingResult);*/
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
@@ -183,7 +182,7 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine(c_dbName + "write to " + c_inspectionlistTableName + " failed!" + ex);
+                Console.WriteLine(c_dbName + "write to " + c_TableName + " failed!" + ex);
             }
             return -1;
         }

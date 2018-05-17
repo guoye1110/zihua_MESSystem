@@ -119,9 +119,12 @@ namespace MESSystem.common
             string[] itemName;
 			string insertString=null;
 			string connectionString;
+			string[] inputArray;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+
+			inputArray = Format(st);
 
             try
             {
@@ -136,7 +139,11 @@ namespace MESSystem.common
                 myCommand.CommandText = "insert into `" + c_TableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.rebuildDate);
+
+				for (index=1;index<=TOTAL_DATAGRAM_NUM;index++)
+					myCommand.Parameters.AddWithValue(itemName[index], inputArray[index-1]);
+				
+                /*myCommand.Parameters.AddWithValue(itemName[index++], st.rebuildDate);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.BOMCode);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.barcodeForReuse);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.rebuildNum.ToString());
@@ -150,7 +157,7 @@ namespace MESSystem.common
                 myCommand.Parameters.AddWithValue(itemName[index++], st.barCode7);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.barCode8);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.barCode9);
-				myCommand.Parameters.AddWithValue(itemName[index++], st.barCode10);
+				myCommand.Parameters.AddWithValue(itemName[index++], st.barCode10);*/
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
