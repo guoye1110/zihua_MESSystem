@@ -24,9 +24,9 @@ namespace LabelPrint
 		private const int COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD = 0xBC;
 		private const int COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD = 0xBD;
 		private const int COMMUNICATION_TYPE_PRINT_PROCESS_END = 0xBE;
-    
 		private FilmSocket m_FilmSocket;
 		FilmSocket.networkstatehandler m_networkstatehandler;
+		private string m_dispatchCode;
 
         FilmPrintUserinputData UserInput;
         BardCodeHooK BarCodeHook = new BardCodeHooK();
@@ -383,9 +383,24 @@ namespace LabelPrint
         {
             UserInput.insertOneRowMSateZero();
         }
-        private void SendItemToServer()
+        private void SendItemToServer(int communicationType)
         {
+        	string str;
+			byte[] send_buf;
 
+        	if (communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD) {
+				//<大卷条码>
+				str = UserInput.InputBarcode;
+        	}
+			if (communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD){
+				//<印刷条码>;<卷重>
+				str = UserInput.OutputBarcode + ";" + UserInput.Roll_Weight;
+			}
+
+			send_buf = System.Text.Encoding.Default.GetBytes(str);
+			m_FilmSocket.sendDataPacketToServer(send_buf, communicationType, send_buf.Length);
+			int rsp = m_FilmSocket.RecvResponse(1000);
+			if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
         }
 
         delegate void AsynBarCode_BarCodeEvent(BardCodeHooK.BarCodes barCode);
@@ -399,8 +414,10 @@ namespace LabelPrint
             else
             {
                 Log.d("HH", "final keyboard =" + barCode.BarCode);
-                if (barCode.BarCode != null && barCode.BarCode.Length > 5 && barCode.BarCode.Remove(1) == "`")
+                if (barCode.BarCode != null && barCode.BarCode.Length > 5 && barCode.BarCode.Remove(1) == "`"){
                     lb_InputBarCode1.Text = barCode.BarCode;
+					SendItemToServer(COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD);
+                }
             }
         }
 
@@ -578,6 +595,14 @@ namespace LabelPrint
                     UserInput.InsertJIaoJieRecord();
                     //write jiao JIe Record to DB
 
+					//<工单编码>;<记录>
+					string str = m_dispatchCode + ";" + UserInput.JiaoJiRecord;
+					byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+					
+					m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_PRINT_PROCESS_END, send_buf.Length);
+					
+					int rsp = m_FilmSocket.RecvResponse(1000);
+					if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
                 }
             }
 
@@ -602,6 +627,25 @@ namespace LabelPrint
 //                    return;
 //            }
 //#endif
+        }
+		
+        //start work
+        //To Do: Add start work button in UI
+        private void button_StartWork_Click(object sender, EventArgs e)
+        {
+        	byte[] send_buf = System.Text.Encoding.Default.GetBytes(tb_worker.Text);
+			byte[] recv_buf;
+			string[] start_work;
+        
+        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_PRINT_PROCESS_START, tb_worker.Text.Length);
+
+			recv_buf = m_FilmSocket.RecvData(1000);
+			if (recv_buf != null) {
+				start_work = recv_buf.ToString().Split(';');
+				//To Do after communication
+				//<工单编号>;<产品编号>
+				m_dispatchCode = start_work[0];
+			}
         }
     }
 }

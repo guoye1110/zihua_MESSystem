@@ -11,10 +11,19 @@ using LabelPrint.Data;
 using LabelPrint.Receipt;
 using LabelPrint.Util;
 using LabelPrint.PrintForms;
+using LabelPrint.NetWork;
+
 namespace LabelPrint
 {
     public partial class OutBoundingForm : Form
     {
+		//出入库工序
+		private const int COMMUNICATION_TYPE_WAREHOUE_OUT_START = 0xB5;  //printing SW started and ask for material info, server send material info for all feeding machine to printing SW 
+		private const int COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE = 0xB6;	//printing machine send barcode info to server whever a stack of material is moved out of the warehouse
+		private const int COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE = 0xB7;  //printing machine send barcode info to server whever a stack of material is moved into the warehouse
+		private FilmSocket m_FilmSocket;
+		FilmSocket.networkstatehandler m_networkstatehandler;
+		
         OutBoundingInputData UserInput;
 
         const int MAX_LIAOCANG_NUM = 8;
@@ -27,11 +36,20 @@ namespace LabelPrint
 
         BardCodeHooK BarCodeHook = new BardCodeHooK();
 
-        public OutBoundingForm()
+        public OutBoundingForm(FilmSocket filmsocket)
         {
             InitializeComponent();
+			m_FilmSocket = filmsocket;
         }
+		~OutBoundingForm()
+        {
+	        m_FilmSocket.network_state_event -= m_networkstatehandler;
+		}
 
+		public void network_status_change(bool status)
+        {
+        	Console.WriteLine("network changed to {0}", status);
+		}
 
         void InitComponentsArray()
         {
@@ -347,7 +365,8 @@ namespace LabelPrint
 
             cb_TargetMachineNo.Items.AddRange(UserInput.targets);
 
-
+			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
+			m_FilmSocket.network_state_event += m_networkstatehandler;
         }
 
         private void tb_Bags_x_KeyPress(object sender, KeyPressEventArgs e)
@@ -454,7 +473,19 @@ namespace LabelPrint
         //get material requirement list from server
         private void bt_Record_Click(object sender, EventArgs e)
         {
+        	byte[] send_buf = System.Text.Encoding.Default.GetBytes(tb_WorkerNo.Text);
+			byte[] recv_buf;
+			string[] start_work;
+        
+        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_WAREHOUE_OUT_START, send_buf.Length);
 
+			recv_buf = m_FilmSocket.RecvData(1000);
+			if (recv_buf != null){
+				start_work = recv_buf.ToString().Split(';');
+
+				//To Do:
+				//7台设备，每台7个料仓，一共49组数据，每组数据格式如下：物料代码;物料数量;
+			}
         }
 
         private void cb_RawMaterialCode1_SelectionChangeCommitted(object sender, EventArgs e)
@@ -475,13 +506,38 @@ namespace LabelPrint
         //material in
         private void button3_Click(object sender, EventArgs e)
         {
+        	//<原料代码>;<原料批次号>;<目标设备号>;<料仓号>;<重量>
+        	string str;
+			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+	
+			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE, send_buf.Length);
 
+			int rsp = m_FilmSocket.RecvResponse(1000);
+			if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
         }
 
         //material out 
         private void button2_Click(object sender, EventArgs e)
         {
+			//<原料代码>;<原料批次号>;<目标设备号>;<料仓号>;<重量>
+			string str;
+			int index;
+			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
 
+			str += UserInput.RawMaterialCode + ";";
+			str	+= UserInput.RawMaterialBatchNo + ";";
+			for (index=0;index<UserInput.targets.Length;index++) {
+				if (UserInput.TargetMachineNo == UserInput.targets[index]) {
+					str += index + ";";
+					break;
+				}
+			}
+			str += UserInput.LiaoCangNo + ";";
+			str += UserInput.BenCiChuKuWeight;
+			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE, send_buf.Length);
+
+			int rsp = m_FilmSocket.RecvResponse(1000);
+			if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
         }
 
         private void cb_RawMaterialCode1_SelectedIndexChanged(object sender, EventArgs e)

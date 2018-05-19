@@ -23,11 +23,12 @@ namespace LabelPrint
 		private const int COMMUNICATION_TYPE_CAST_PROCESS_START = 0xB8;  //printing SW started cast process, server need to send dispatch info to printing SW
 		private const int COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD = 0xB9;  //printing SW send large roll info to server
 		private const int COMMUNICATION_TYPE_CAST_PROCESS_END = 0xBA;
+		private FilmSocket m_FilmSocket;
+		FilmSocket.networkstatehandler m_networkstatehandler;
+		private string m_dispatchCode;
 
         LiuYanUserinputData UserInput;
         BardCodeHooK BarCodeHook = new BardCodeHooK();
-		private FilmSocket m_FilmSocket;
-		FilmSocket.networkstatehandler m_networkstatehandler;
 
         SerialPort serialPort1;
         Byte[] serialDataBuf = new Byte[128];
@@ -311,7 +312,7 @@ namespace LabelPrint
             //save the data to local database
             CreateLocalDataBaseItem();
             //Save the data to server
-            SendItemToServer();
+            //SendItemToServer();
             PostUpdateProductData();
 
         }
@@ -415,7 +416,14 @@ namespace LabelPrint
         }
         private void SendItemToServer()
         {
+			//<大卷条码>;<重量>
+			string str = UserInput.OutputBarcode + ";" + UserInput.Roll_Weight;
+			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
 
+			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD, send_buf.Length);
+
+			int rsp = m_FilmSocket.RecvResponse(1000);
+			if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
         }
         private void PostUpdateProductData()
         {
@@ -506,6 +514,16 @@ namespace LabelPrint
 
                 }
             }
+
+			//<工单编码>;<记录>
+			string str = m_dispatchCode + ";" + UserInput.JiaoJiRecord;
+			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+
+			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_END, send_buf.Length);
+
+			int rsp = m_FilmSocket.RecvResponse(1000);
+			if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
+			
 #if true
 #if false
             String barcode;
@@ -553,10 +571,12 @@ namespace LabelPrint
         	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_START, tb_worker.Text.Length);
 
 			recv_buf = m_FilmSocket.RecvData(1000);
-			start_work = recv_buf.ToString().Split(';');
-
-			//To Do after communication
-			//<工单编号>;<产品编号>
+			if (recv_buf != null) {
+				start_work = recv_buf.ToString().Split(';');
+				//To Do after communication
+				//<工单编号>;<产品编号>
+				m_dispatchCode = start_work[0];
+			}
         }
     }
 }

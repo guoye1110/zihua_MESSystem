@@ -30,9 +30,9 @@ namespace LabelPrint
 		private const int COMMUNICATION_TYPE_SLIT_PROCESS_PRODUCT_BARCODE_UPLOAD = 0xC1;
 		private const int COMMUNICATION_TYPE_SLIT_PROCESS_PACKAGE_BARCODE_UPLOAD = 0xC2;
 		private const int COMMUNICATION_TYPE_SLIT_PROCESS_END = 0xC3;
-
 		private FilmSocket m_FilmSocket;
 		FilmSocket.networkstatehandler m_networkstatehandler;
+		private string m_dispatchCode;
 
         String[] ProductStateStr = { "合格品", "不合格品","待处理","边角料","废料" };
         String[] ProductQualityStr = { "A", "B", "C", "D", "DC", "E", "W" };
@@ -1113,9 +1113,44 @@ namespace LabelPrint
             UserInput.PrintLabel();
         }
 
-        private void SendItemToServer()
+		private void SendPackItemToServer(string productCode, string packBarcode, int rollNumber, string[] rollBarcode, float totalWeight, float totalLength)
         {
+        	string str=null;
+			byte[] send_buf;
 
+			//<产品代码>;<卷数>;<重量>;<长度>;<打包条码>;<卷条码1>;...;<卷条码N>
+			str += productCode + ";";
+			str += rollNumber + ";";
+			str += totalWeight + ";";
+			str += totalLength + ";";
+			str += packBarcode + ";";
+			foreach (string barcode in rollBarcode)
+				str += barcode + ";";
+
+			send_buf = System.Text.Encoding.Default.GetBytes(str);
+			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_SLIT_PROCESS_PACKAGE_BARCODE_UPLOAD, send_buf.Length);
+			int rsp = m_FilmSocket.RecvResponse(1000);
+			if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
+		}
+
+        private void SendItemToServer(int communicationType)
+        {
+        	string str;
+			byte[] send_buf;
+
+        	if (communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_MATERIAL_BARCODE_UPLOAD) {
+				//<大卷/印刷条码>
+				str = UserInput.InputBarcode;
+        	}
+			if (communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_PRODUCT_BARCODE_UPLOAD) {
+				//<小卷条码>;<卷重>;<接头数量>
+				str = UserInput.OutputBarcode + ";" + UserInput.Roll_Weight + ";" + UserInput.JointCount;
+			}
+
+			send_buf = System.Text.Encoding.Default.GetBytes(str);
+			m_FilmSocket.sendDataPacketToServer(send_buf, communicationType, send_buf.Length);
+			int rsp = m_FilmSocket.RecvResponse(1000);
+			if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
         }
 
         private void UpdatePlateNo(int plateNo)
@@ -1729,6 +1764,16 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
                     UserInput.InsertJIaoJieRecord();
                     //write jiao JIe Record to DB
 
+					//<工单编码>;<记录>
+					string str = m_dispatchCode + ";" + UserInput.JiaoJiRecord;
+					byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+					
+					m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_SLIT_PROCESS_END, send_buf.Length);
+					
+					int rsp = m_FilmSocket.RecvResponse(1000);
+					if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
+
+
                 }
             }
         }
@@ -1736,6 +1781,25 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
         private void tb_LittleRollWeight_TextChanged(object sender, EventArgs e)
         {
 
+        }
+		
+        //start work
+        //To Do: Add start work button in UI
+        private void button_StartWork_Click(object sender, EventArgs e)
+        {
+        	byte[] send_buf = System.Text.Encoding.Default.GetBytes(tb_worker.Text);
+			byte[] recv_buf;
+			string[] start_work;
+        
+        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_SLIT_PROCESS_START, tb_worker.Text.Length);
+
+			recv_buf = m_FilmSocket.RecvData(1000);
+			if (recv_buf != null) {
+				start_work = recv_buf.ToString().Split(';');
+				//To Do after communication
+				//<工单编号>;<产品编号>
+				m_dispatchCode = start_work[0];
+			}
         }
     }
 }
