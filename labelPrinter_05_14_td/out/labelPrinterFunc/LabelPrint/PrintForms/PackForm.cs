@@ -11,18 +11,34 @@ using LabelPrint.Data;
 using LabelPrint.Util;
 using LabelPrint.Receipt;
 using LabelPrint.PrintForms;
+using LabelPrint.NetWork;
+
 namespace LabelPrint
 {
     public partial class packForm : Form
     {
+		//打包工序		
+		private const int COMMUNICATION_TYPE_PACKING_PROCESS_PACKAGE_BARCODE_UPLOAD = 0xC7;
+		private FilmSocket m_FilmSocket;
+		FilmSocket.networkstatehandler m_networkstatehandler;
 
         PackUserinputData UserInput;
         BardCodeHooK BarCodeHook = new BardCodeHooK();
 
-        public packForm()
+        public packForm(FilmSocket filmsocket)
         {
             InitializeComponent();
+			m_FilmSocket = filmsocket;
         }
+		~packForm()
+        {
+        	m_FilmSocket.network_state_event -= m_networkstatehandler;
+		}
+
+		public void network_status_change(bool status)
+        {
+        	Console.WriteLine("network changed to {0}", status);
+		}
 
         private void PackForm_Load(object sender, EventArgs e)
         {
@@ -47,7 +63,9 @@ namespace LabelPrint
             tb_worker.Text = gVariable.userAccount;
             tb_worker.Enabled = false;
             tb_LittleRollNo.Text = "0";
-           
+			
+			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
+			m_FilmSocket.network_state_event += m_networkstatehandler;           
         }
         private void SetManufactureType(ManufactureType type)
         {
@@ -334,6 +352,18 @@ namespace LabelPrint
 
                 }
             }
+
+
+			//<打包条码>;<工号>
+			string str = UserInput.OutputBarcode + ";" + UserInput.WorkerNo;
+			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+
+			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_PACKING_PROCESS_PACKAGE_BARCODE_UPLOAD, send_buf.Length);
+
+			int rsp = m_FilmSocket.RecvResponse(1000);
+			if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
+
+			
 #if true
 #if false
             String barcode;

@@ -318,7 +318,7 @@ namespace LabelPrint
             //save the data to local database
             CreateLocalDataBaseItem();
             //Save the data to server
-            SendItemToServer();
+            //SendItemToServer();
             PostUpdateProductData();
         }
 
@@ -385,7 +385,7 @@ namespace LabelPrint
         }
         private void SendItemToServer(int communicationType)
         {
-        	string str;
+        	string str="";
 			byte[] send_buf;
 
         	if (communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD) {
@@ -509,7 +509,8 @@ namespace LabelPrint
         	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_PRINT_PROCESS_START, tb_worker.Text.Length);
 
 			recv_buf = m_FilmSocket.RecvData(1000);
-			start_work = recv_buf.ToString().Split(';');
+			if (recv_buf != null)
+				start_work = System.Text.Encoding.Default.GetString(recv_buf).Split(';');
 
 			//To Do after communication
 			//<工单编号>;<产品编号>
@@ -641,7 +642,8 @@ namespace LabelPrint
 
 			recv_buf = m_FilmSocket.RecvData(1000);
 			if (recv_buf != null) {
-				start_work = recv_buf.ToString().Split(';');
+				start_work = System.Text.Encoding.Default.GetString(recv_buf).Split(';');
+
 				//To Do after communication
 				//<工单编号>;<产品编号>
 				m_dispatchCode = start_work[0];

@@ -29,7 +29,7 @@ namespace MESSystem.common
 		private const int SACK_NUM_ONE_LAYER_INDEX = 6;
 		private const int LAYER_NUM_INDEX = 7;
 		private const int FULL_STACK_NUM_INDEX = 8;
-		private const int TOTAL_DATAGRAM_NUM = FULL_STACK_NUM_INDEX+1;
+		private const int TOTAL_DATAGRAM_NUM = FULL_STACK_NUM_INDEX;
 
 		private const string c_dbName = "basicinfo";
         private const string c_TableName = "material";
@@ -68,7 +68,7 @@ namespace MESSystem.common
 		public material_t? Deserialize(string strInput)
 		{
 			string[] input;
-			material_t st;
+			material_t st = new material_t();
 
 			input = strInput.Split(';');
 
@@ -92,12 +92,13 @@ namespace MESSystem.common
 			material_t? dd=null;
 			string[] recordArray;
 			string insertString,insertStringSplitted;
+			string[] stringSeparators = new string[] { ",@" };
 
 			getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
-			insertStringSplitted = insertString.Split(new char[2]{',','@'});
+			insertStringSplitted = insertString.Split(stringSeparators, StringSplitOptions.None);
 
 			string commandText = "select * from `" + c_TableName + "`";
-			commandText += "where `" + insertStringSplitted[MATERIAL_CODE_INDEX] + "`=" + materialCode;
+			commandText += "where `" + insertStringSplitted[MATERIAL_CODE_INDEX] + "`=" + "\'" + materialCode + "\'";
 			
 			recordArray = databaseCommonReadingUnsplitted(c_dbName, commandText);
 			if (recordArray!=null){
@@ -114,9 +115,12 @@ namespace MESSystem.common
             string[] itemName;
 			string insertString=null;
 			string connectionString;
+			string[] inputArray;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+
+			inputArray = Format(st);
 
             try
             {
@@ -131,14 +135,17 @@ namespace MESSystem.common
                 myCommand.CommandText = "insert into `" + c_TableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.materialCode);
+				for (index=1;index<=TOTAL_DATAGRAM_NUM;index++)
+					myCommand.Parameters.AddWithValue(itemName[index], inputArray[index-1]);
+
+                /*myCommand.Parameters.AddWithValue(itemName[index++], st.materialCode);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.stackSize);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.stackHeight);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.sackWeight);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.stackWeight);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.sackNumOneLayer);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.layerNum);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.fullStackNum);
+                myCommand.Parameters.AddWithValue(itemName[index++], st.fullStackNum);*/
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();

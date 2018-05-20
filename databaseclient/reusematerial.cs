@@ -65,7 +65,7 @@ namespace MESSystem.common
 			string str = null;
 
 			str += st.rebuildDate 	+ ";" + st.BOMCode 			+ ";" + st.barcodeForReuse	+ ";" + st.rebuildNum	+ ";";
-			str += st.workerID		+ ";" + st.barCode1 		+ ";" + st.barCode2 	+ ";";
+			str += st.workerID		+ ";" + st.barCode1 		+ ";" + st.barCode2 		+ ";";
 			str += st.barCode3		+ ";" + st.barCode4			+ ";" + st.barCode5 		+ ";" + st.barCode6 	+ ";";
 			str += st.barCode7		+ ";" + st.barCode8			+ ";" + st.barCode9 		+ ";" + st.barCode10;
 			return str;
@@ -84,7 +84,7 @@ namespace MESSystem.common
 		public reusematerial_t? Deserialize(string strInput)
 		{
 			string[] input;
-			reusematerial_t st;
+			reusematerial_t st = new reusematerial_t();
 
 			input = strInput.Split(';');
 
@@ -104,7 +104,7 @@ namespace MESSystem.common
 			st.barcodeForReuse = input[BARCODE_FOR_REUSE_INDEX];
 			st.BOMCode = input[BOM_CODE_INDEX];
 			st.rebuildDate = input[REBUILD_DATE_INDEX];
-			st.rebuildNum = Convert.ToUInt32(input[REBUILD_NUM_INDEX],10);
+			if (input[REBUILD_NUM_INDEX]!="")	st.rebuildNum = Convert.ToUInt32(input[REBUILD_NUM_INDEX],10);
 			st.workerID = input[WORKER_ID_INDEX];
 
 			return st;

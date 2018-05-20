@@ -80,7 +80,7 @@ namespace MESSystem.common
 		public productslit_t? Deserialize(string strInput)
 		{
 			string[] input;
-			productslit_t st;
+			productslit_t st = new productslit_t();
 
 			input = strInput.Split(';');
 
@@ -99,7 +99,7 @@ namespace MESSystem.common
 			st.customerIndex = input[CUSTOMER_INDEX_INDEX];
 			st.errorStatus = input[ERROR_STATUS_INDEX];
 			st.numOfJoins = input[NUM_OF_JOINS];
-			st.weight = Convert.ToSingle(input[WEIGHT_INDEX]);
+			if (input[WEIGHT_INDEX]!="")	st.weight = Convert.ToSingle(input[WEIGHT_INDEX]);
 
 			return st;
 		}
@@ -110,10 +110,11 @@ namespace MESSystem.common
 			string[] insertStringSplitted;
 			string connectionString;
 			string[] inputArray;
+			string[] stringSeparators = new string[] { ",@" };
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			getDatabaseInsertStringFromExcel(ref insertString, c_TableName);
-            insertStringSplitted = insertString.Split(new char[2] { ',', '@' });
+            insertStringSplitted = insertString.Split(stringSeparators, StringSplitOptions.None);
 
 			inputArray = Format(st);
 
@@ -128,15 +129,16 @@ namespace MESSystem.common
 				myCommand.CommandText += "`" + c_TableName + "` ";
 				myCommand.CommandText += "set ";
 
+				bool first = true;
 				for (int i=0;i<inputArray.Length;i++){
 					if (inputArray[i] == null || inputArray[i] == "")	continue;
+					if (!first)	myCommand.CommandText += ",";
+					first = false;
 
-					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + inputArray[i];
-					if (i != inputArray.Length )
-						myCommand.CommandText += ",";
+					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + "\'" + inputArray[i] + "\'";
 				}
 
-				myCommand.CommandText += "where `" + insertStringSplitted[MATERIAL_BARCODE_INDEX] + "`=" + barcode;
+				myCommand.CommandText += "where `" + insertStringSplitted[MATERIAL_BARCODE_INDEX] + "`=" + "\'" + barcode + "\'";
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
@@ -197,7 +199,7 @@ namespace MESSystem.common
                 myCommand.CommandText = "insert into `" + c_TableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
-				for(index=1;index<TOTAL_DATAGRAM_NUM;index++)
+				for(index=1;index<=TOTAL_DATAGRAM_NUM;index++)
 					myCommand.Parameters.AddWithValue(itemName[index], inputArray[index-1]);
 				
                 /*myCommand.Parameters.AddWithValue(itemName[index++], st_slit.machineID);

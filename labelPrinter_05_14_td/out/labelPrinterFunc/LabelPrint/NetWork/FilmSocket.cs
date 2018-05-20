@@ -196,6 +196,9 @@ namespace LabelPrint.NetWork
 
 				//Tcp connection disconnected
         	    if (len == 0)   return -1;
+
+				if(!toolClass.checkCrc32Code(buf, len))
+					return -1;
 				
 				return Convert.ToInt16(buf[PACKET_DATASTATUS_POS]);
 			}
@@ -225,8 +228,11 @@ namespace LabelPrint.NetWork
 
 				if (buf[PACKET_DATASTATUS_POS]==(byte)0xff)		return null;
 
-				data = new byte[len];
-				Array.ConstrainedCopy(buf, PACKET_DATASTATUS_POS, data, 0, len-PACKET_DATASTATUS_POS);
+				if(!toolClass.checkCrc32Code(buf, len))
+					return null;
+
+				data = new byte[len-MIN_PACKET_LEN_WITHOUT_DATA];
+				Array.Copy(buf, PACKET_DATASTATUS_POS, data, 0, len-MIN_PACKET_LEN_WITHOUT_DATA);
 				return data;
 			}
 			catch (SocketException e) {

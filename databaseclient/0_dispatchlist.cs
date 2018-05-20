@@ -155,7 +155,7 @@ namespace MESSystem.common
 		public dispatchlist_t? Deserialize(string strInput)
 		{
 			string[] input;
-			dispatchlist_t st;
+			dispatchlist_t st = new dispatchlist_t();
 
 			input = strInput.Split(';');
 
@@ -171,16 +171,16 @@ namespace MESSystem.common
 			st.operatorName = input[OPERATOR_NAME_INDEX];
 			st.forcastNum = input[FORCAST_NUM_INDEX];
 			st.receiveNum = input[RECEIVE_NUM_INDEX];
-			st.qualifyNumber = Convert.ToUInt32(input[QUALIFY_NUM_INDEX],10);
-			st.unqualifyNumber = Convert.ToUInt32(input[UNQUALIFY_NUM_INDEX],10);
+			if (input[QUALIFY_NUM_INDEX]!="")	st.qualifyNumber = Convert.ToUInt32(input[QUALIFY_NUM_INDEX],10);
+			if (input[UNQUALIFY_NUM_INDEX]!="")	st.unqualifyNumber = Convert.ToUInt32(input[UNQUALIFY_NUM_INDEX],10);
 			st.processName = input[PROCESS_NAME_INDEX];
 			st.startTime = input[START_TIME_INDEX];
 			st.completeTime = input[COMPLETE_TIME_INDEX];
 			st.prepareTimePoint = input[PREPARE_TIMEPOINT_INDEX];
 			st.status = input[STATUS_INDEX];
-			st.toolLifeTimes = Convert.ToUInt32(input[TOOL_LIFETIME_INDEX],10);
-			st.toolUsedTimes = Convert.ToUInt32(input[TOOL_USED_TIMES_INDEX],10);
-			st.outputRatio = Convert.ToUInt32(input[OUTPUT_RATIO_INDEX],10);
+			if (input[TOOL_LIFETIME_INDEX]!="")	st.toolLifeTimes = Convert.ToUInt32(input[TOOL_LIFETIME_INDEX],10);
+			if (input[TOOL_USED_TIMES_INDEX]!="")	st.toolUsedTimes = Convert.ToUInt32(input[TOOL_USED_TIMES_INDEX],10);
+			if (input[OUTPUT_RATIO_INDEX]!="")	st.outputRatio = Convert.ToUInt32(input[OUTPUT_RATIO_INDEX],10);
 			st.serialNumber = input[SERIAL_NUMBER_INDEX];
 			st.reportor = input[REPORTER_INDEX];
 			st.workshop = input[WORKSHOP_INDEX];
@@ -196,9 +196,9 @@ namespace MESSystem.common
 			st.batchNum = input[BATCH_NUMBER_INDEX];
 			st.productColor = input[PRODUCT_COLOR_INDEX];
 			st.rawMaterialCode = input[RAW_MATERIAL_CODE_INDEX];
-			st.productLength = Convert.ToSingle(input[PRODUCT_LENGTH_INDEX]);
-			st.productDiameter = Convert.ToSingle(input[PRODUCT_DIAMETER_INDEX]);
-			st.productWeight = Convert.ToSingle(input[PRODUCT_WEIGHT_INDEX]);
+			if (input[PRODUCT_LENGTH_INDEX]!="")	st.productLength = Convert.ToSingle(input[PRODUCT_LENGTH_INDEX]);
+			if (input[PRODUCT_DIAMETER_INDEX]!="")	st.productDiameter = Convert.ToSingle(input[PRODUCT_DIAMETER_INDEX]);
+			if (input[PRODUCT_WEIGHT_INDEX]!="")	st.productWeight = Convert.ToSingle(input[PRODUCT_WEIGHT_INDEX]);
 			st.slitWidth = input[SLIT_WIDTH_INDEX];
 			st.printSize = input[PRINT_SIDE_INDEX];
 			st.productCode4 = input[PRODUCT_CODE4_INDEX];
@@ -232,11 +232,13 @@ namespace MESSystem.common
 			string[] insertStringSplitted;
 			string connectionString;
 			string[] inputArray;
+            string[] stringSeparators = new string[] { ",@" };
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
 			//insertStringSplitted = insertString.Split(',@');
-            insertStringSplitted = insertString.Split(new char[2]{',','@'});
+            //insertStringSplitted = insertString.Split(new char[2]{',','@'});
+            insertStringSplitted = insertString.Split(stringSeparators, StringSplitOptions.None);
 
 			inputArray = Format(st);
 
@@ -251,15 +253,16 @@ namespace MESSystem.common
 				myCommand.CommandText += "`" + c_TableName + "` ";
 				myCommand.CommandText += "set ";
 
+                bool first = true;
 				for (int i=0;i<inputArray.Length;i++){
 					if (inputArray[i] == null || inputArray[i] == "")	continue;
-
-					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + inputArray[i];
-					if (i != inputArray.Length )
-						myCommand.CommandText += ",";
+                    if (!first)
+                        myCommand.CommandText += ",";
+                    first = false;
+					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + "\'" + inputArray[i] + "\'";
 				}
 
-				myCommand.CommandText += "where `" + insertStringSplitted[DISPATCH_CODE_INDEX] + "`=" + dispatchCode;
+				myCommand.CommandText += " where `" + insertStringSplitted[DISPATCH_CODE_INDEX] + "`=" + "\'" + dispatchCode + "\'";
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();

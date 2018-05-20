@@ -29,7 +29,7 @@ namespace MESSystem.common
 		private const int TARGET_MACHINE_INDEX = 6;
 		private const int TARGET_FEEDBIN_INDEX = 7;
 		private const int DELIVERY_WORKER_INDEX = 8;
-		private const int TOTAL_DATAGRAM_NUM = DELIVERY_WORKER_INDEX+1;
+		private const int TOTAL_DATAGRAM_NUM = DELIVERY_WORKER_INDEX;
 
 		private const string c_dbName = "globaldatabase";
         private const string c_TableName = "materialdeliverylist";
@@ -68,7 +68,7 @@ namespace MESSystem.common
 		public materialdelivery_t? Deserialize(string strInput)
 		{
 			string[] input;
-			materialdelivery_t st;
+			materialdelivery_t st = new materialdelivery_t();
 
 			input = strInput.Split(';');
 
@@ -95,9 +95,12 @@ namespace MESSystem.common
             string[] itemName;
 			string insertString=null;
 			string connectionString;
+			string[] inputArray;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+
+			inputArray = Format(st);
 
             try
             {
@@ -112,14 +115,17 @@ namespace MESSystem.common
                 myCommand.CommandText = "insert into `" + c_TableName + "`" + insertString;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.materialCode);
+				for (index=1;index<=TOTAL_DATAGRAM_NUM;index++)
+					myCommand.Parameters.AddWithValue(itemName[index], inputArray[index-1]);
+
+                /*myCommand.Parameters.AddWithValue(itemName[index++], st.materialCode);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.materialBatchNum);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.direction);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.inoutputTime);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.inoutputQuantity);
                 myCommand.Parameters.AddWithValue(itemName[index++], st.targetMachine);
 				myCommand.Parameters.AddWithValue(itemName[index++], st.targetFeedBinIndex);
-                myCommand.Parameters.AddWithValue(itemName[index++], st.deliveryWorker);
+                myCommand.Parameters.AddWithValue(itemName[index++], st.deliveryWorker);*/
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();

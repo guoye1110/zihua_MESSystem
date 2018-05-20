@@ -38,7 +38,7 @@ namespace MESSystem.common
 		private const int QUANTITY_USED_6_CURRENT = 15;
 		private const int BIN_LEFT_7_PREVIOUS = 16;
 		private const int QUANTITY_USED_7_CURRENT = 17;
-		private const int TOTAL_DATAGRAM_NUM = QUANTITY_USED_1_CURRENT;
+		private const int TOTAL_DATAGRAM_NUM = QUANTITY_USED_7_CURRENT;
 
 		private const string m_dbName = null;
         private const string c_TableName = "0_feedbininventory";
@@ -49,20 +49,20 @@ namespace MESSystem.common
             public string dispatchStatus;
             public string statusChangeTime;
 			
-            public float binLeft1;
-			public float quantityUsed1;
-            public float binLeft2;
-			public float quantityUsed2;
-            public float binLeft3;
-			public float quantityUsed3;
-            public float binLeft4;
-			public float quantityUsed4;
-            public float binLeft5;
-			public float quantityUsed5;
-            public float binLeft6;
-			public float quantityUsed6;
-            public float binLeft7;
-			public float quantityUsed7;
+            public float? binLeft1;
+			public float? quantityUsed1;
+            public float? binLeft2;
+			public float? quantityUsed2;
+            public float? binLeft3;
+			public float? quantityUsed3;
+            public float? binLeft4;
+			public float? quantityUsed4;
+            public float? binLeft5;
+			public float? quantityUsed5;
+            public float? binLeft6;
+			public float? quantityUsed6;
+            public float? binLeft7;
+			public float? quantityUsed7;
 		};
 
 		public feedbininventoryDB(int index)
@@ -95,7 +95,7 @@ namespace MESSystem.common
 		public feedbin_t? Deserialize(string strInput)
 		{
 			string[] input;
-			feedbin_t st;
+			feedbin_t st = new feedbin_t();
 
 			input = strInput.Split(';');
 
@@ -106,20 +106,20 @@ namespace MESSystem.common
 			st.dispatchStatus = input[DISPATCH_STATUS_INDEX];
 			st.statusChangeTime = input[STATUS_CHANGE_TIME_INDEX];
 			
-			st.binLeft1 = Convert.ToSingle(input[BIN_LEFT_1_PREVIOUS]);
-			st.quantityUsed1 = Convert.ToSingle(input[QUANTITY_USED_1_CURRENT]);
-			st.binLeft2 = Convert.ToSingle(input[BIN_LEFT_2_PREVIOUS]);
-			st.quantityUsed2 = Convert.ToSingle(input[QUANTITY_USED_2_CURRENT]);
-			st.binLeft3 = Convert.ToSingle(input[BIN_LEFT_3_PREVIOUS]);
-			st.quantityUsed3 = Convert.ToSingle(input[QUANTITY_USED_3_CURRENT]);
-			st.binLeft4 = Convert.ToSingle(input[BIN_LEFT_4_PREVIOUS]);
-			st.quantityUsed4 = Convert.ToSingle(input[QUANTITY_USED_4_CURRENT]);
-			st.binLeft5 = Convert.ToSingle(input[BIN_LEFT_5_PREVIOUS]);
-			st.quantityUsed5 = Convert.ToSingle(input[QUANTITY_USED_5_CURRENT]);
-			st.binLeft6 = Convert.ToSingle(input[BIN_LEFT_6_PREVIOUS]);
-			st.quantityUsed6 = Convert.ToSingle(input[QUANTITY_USED_6_CURRENT]);
-			st.binLeft7 = Convert.ToSingle(input[BIN_LEFT_7_PREVIOUS]);
-			st.quantityUsed7 = Convert.ToSingle(input[QUANTITY_USED_7_CURRENT]);
+			if (input[BIN_LEFT_1_PREVIOUS]!="")		st.binLeft1 = Convert.ToSingle(input[BIN_LEFT_1_PREVIOUS]);
+			if (input[QUANTITY_USED_1_CURRENT]!="")	st.quantityUsed1 = Convert.ToSingle(input[QUANTITY_USED_1_CURRENT]);
+			if (input[BIN_LEFT_2_PREVIOUS]!="")		st.binLeft2 = Convert.ToSingle(input[BIN_LEFT_2_PREVIOUS]);
+			if (input[QUANTITY_USED_2_CURRENT]!="")	st.quantityUsed2 = Convert.ToSingle(input[QUANTITY_USED_2_CURRENT]);
+			if (input[BIN_LEFT_3_PREVIOUS]!="")		st.binLeft3 = Convert.ToSingle(input[BIN_LEFT_3_PREVIOUS]);
+			if (input[QUANTITY_USED_3_CURRENT]!="")	st.quantityUsed3 = Convert.ToSingle(input[QUANTITY_USED_3_CURRENT]);
+			if (input[BIN_LEFT_4_PREVIOUS]!="")		st.binLeft4 = Convert.ToSingle(input[BIN_LEFT_4_PREVIOUS]);
+			if (input[QUANTITY_USED_4_CURRENT]!="")	st.quantityUsed4 = Convert.ToSingle(input[QUANTITY_USED_4_CURRENT]);
+			if (input[BIN_LEFT_5_PREVIOUS]!="")		st.binLeft5 = Convert.ToSingle(input[BIN_LEFT_5_PREVIOUS]);
+			if (input[QUANTITY_USED_5_CURRENT]!="")	st.quantityUsed5 = Convert.ToSingle(input[QUANTITY_USED_5_CURRENT]);
+			if (input[BIN_LEFT_6_PREVIOUS]!="")		st.binLeft6 = Convert.ToSingle(input[BIN_LEFT_6_PREVIOUS]);
+			if (input[QUANTITY_USED_6_CURRENT]!="")	st.quantityUsed6 = Convert.ToSingle(input[QUANTITY_USED_6_CURRENT]);
+			if (input[BIN_LEFT_7_PREVIOUS]!="")		st.binLeft7 = Convert.ToSingle(input[BIN_LEFT_7_PREVIOUS]);
+			if (input[QUANTITY_USED_7_CURRENT]!="")	st.quantityUsed7 = Convert.ToSingle(input[QUANTITY_USED_7_CURRENT]);
 
 			return st;
 		}
@@ -190,13 +190,15 @@ namespace MESSystem.common
 			feedbin_t? dd;
 			string[] recordArray;
 			feedbin_t[] st_feedbin=null;
-			string insertString,insertStringSplitted;
+			string insertString;
+			string[] insertStringSplitted;
+			string[] stringSeparators = new string[] { ",@" };
 
 			getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
-			insertStringSplitted = insertString.Split(new char[2]{',','@'});
+			insertStringSplitted = insertString.Split(stringSeparators, StringSplitOptions.None);
 
 			string commandText = "select * from `" + c_TableName + "`";
-			commandText += "where `" + insertStringSplitted[DISPATCH_CODE_INDEX] + "`=" + dispatchCode;
+			commandText += "where `" + insertStringSplitted[DISPATCH_CODE_INDEX] + "`=" + "\'" + dispatchCode + "\'";
 			
 			recordArray = databaseCommonReadingUnsplitted(m_dbName, commandText);
 			if (recordArray!=null){

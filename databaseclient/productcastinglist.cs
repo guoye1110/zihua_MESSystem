@@ -68,7 +68,7 @@ namespace MESSystem.common
 		public productcast_t? Deserialize(string strInput)
 		{
 			string[] input;
-			productcast_t st;
+			productcast_t st = new productcast_t();
 
 			input = strInput.Split(';');
 
@@ -81,7 +81,7 @@ namespace MESSystem.common
 			st.largeIndex = input[LARGE_INDEX_INDEX];
 			st.machineID = input[MACHINE_ID_INDEX];
 			st.scanTime = input[SCAN_TIME_INDEX];
-			st.weight = Convert.ToSingle(input[WEIGHT_INDEX]);
+			if (input[WEIGHT_INDEX]!="")	st.weight = Convert.ToSingle(input[WEIGHT_INDEX]);
 			st.errorStatus = input[ERROR_STATUS_INDEX];
 			
 			return st;

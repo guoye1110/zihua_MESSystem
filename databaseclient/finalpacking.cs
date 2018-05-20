@@ -73,7 +73,7 @@ namespace MESSystem.common
 		public finalpacking_t? Deserialize(string strInput)
 		{
 			string[] input;
-			finalpacking_t st;
+			finalpacking_t st = new finalpacking_t();
 
 			input = strInput.Split(';');
 
@@ -84,10 +84,10 @@ namespace MESSystem.common
 			st.machineID = input[MACHINE_ID_INDEX];
 			st.packageBarcode = input[PACKING_BARCODE_INDEX];
 			st.productCode = input[PRODUCT_CODE_INDEX];
-			st.rollNumber = Convert.ToUInt32(input[ROLL_NUMBER_INDEX],10);
+			if (input[ROLL_NUMBER_INDEX]!="")	st.rollNumber = Convert.ToUInt32(input[ROLL_NUMBER_INDEX],10);
 			st.scanTime = input[SCAN_TIME_INDEX];
-			st.totalLength = Convert.ToSingle(input[TOTAL_LENGTH_INDEX]);
-			st.totalWeight = Convert.ToSingle(input[TOTAL_WEIGHT_INDEX]);
+			if (input[TOTAL_LENGTH_INDEX]!="")	st.totalLength = Convert.ToSingle(input[TOTAL_LENGTH_INDEX]);
+			if (input[TOTAL_WEIGHT_INDEX]!="")	st.totalWeight = Convert.ToSingle(input[TOTAL_WEIGHT_INDEX]);
 			st.uploadTime = input[UPLOAD_TIME_INDEX];
 			st.workerID = input[WORKER_ID_INDEX];
 			
@@ -153,10 +153,11 @@ namespace MESSystem.common
 			string[] insertStringSplitted;
 			string connectionString;
 			string[] inputArray;
+			string[] stringSeparators=new string[] {",@"};
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			getDatabaseInsertStringFromExcel(ref insertString, c_TableName);
-			insertStringSplitted = insertString.Split(new char[2]{',','@'});
+			insertStringSplitted = insertString.Split(stringSeparators, StringSplitOptions.None);
 
 			inputArray = Format(st);
 
@@ -171,15 +172,16 @@ namespace MESSystem.common
 				myCommand.CommandText += "`" + c_TableName + "` ";
 				myCommand.CommandText += "set ";
 
+				bool first=true;
 				for (int i=0;i<inputArray.Length;i++){
 					if (inputArray[i] == null || inputArray[i] == "")	continue;
+					if (!first)		myCommand.CommandText += ",";
+					first = false;
 
-					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + inputArray[i];
-					if (i != inputArray.Length )
-						myCommand.CommandText += ",";
+					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + "\'" + inputArray[i] + "\'";
 				}
 
-				myCommand.CommandText += "where `" + insertStringSplitted[PACKING_BARCODE_INDEX] + "`=" + value;
+				myCommand.CommandText += "where `" + insertStringSplitted[PACKING_BARCODE_INDEX] + "`=" + "\'" + value + "\'";
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();

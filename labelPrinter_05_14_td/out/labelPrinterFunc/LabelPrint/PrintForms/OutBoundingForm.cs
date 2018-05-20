@@ -481,7 +481,7 @@ namespace LabelPrint
 
 			recv_buf = m_FilmSocket.RecvData(1000);
 			if (recv_buf != null){
-				start_work = recv_buf.ToString().Split(';');
+				start_work = System.Text.Encoding.Default.GetString(recv_buf).Split(';');
 
 				//To Do:
 				//7台设备，每台7个料仓，一共49组数据，每组数据格式如下：物料代码;物料数量;
@@ -506,21 +506,15 @@ namespace LabelPrint
         //material in
         private void button3_Click(object sender, EventArgs e)
         {
-        	//<原料代码>;<原料批次号>;<目标设备号>;<料仓号>;<重量>
-        	string str;
-			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
-	
-			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE, send_buf.Length);
-
-			int rsp = m_FilmSocket.RecvResponse(1000);
-			if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
+            RuKuForm f = new RuKuForm(m_FilmSocket);
+            f.ShowDialog();
         }
 
         //material out 
         private void button2_Click(object sender, EventArgs e)
         {
 			//<原料代码>;<原料批次号>;<目标设备号>;<料仓号>;<重量>
-			string str;
+			string str="";
 			int index;
 			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
 

@@ -670,6 +670,8 @@
             this.ResumeLayout(false);
             this.PerformLayout();
 
+			this.Load += new System.EventHandler(this.RuKuForm_Load);
+
         }
 
         #endregion

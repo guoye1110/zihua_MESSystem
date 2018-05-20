@@ -73,7 +73,7 @@ namespace MESSystem.common
 		public productprint_t? Deserialize(string strInput)
 		{
 			string[] input;
-			productprint_t st;
+			productprint_t st = new productprint_t();
 
 			input = strInput.Split(';');
 
@@ -88,7 +88,7 @@ namespace MESSystem.common
 			st.dispatchCode = input[DISPATCH_CODE_INDEX];
 			st.batchNum = input[BATCH_NUM_INDEX];
 			st.largeIndex = input[LARGE_INDEX_INDEX];
-			st.weight = Convert.ToSingle(input[WEIGHT_INDEX]);
+			if (input[WEIGHT_INDEX]!="")	st.weight = Convert.ToSingle(input[WEIGHT_INDEX]);
 			st.errorStatus = input[ERROR_STATUS_INDEX];
 
 			return st;
@@ -99,11 +99,12 @@ namespace MESSystem.common
 			string insertString=null;
 			string[] insertStringSplitted;
 			string connectionString;
-			string[] inputArray; 
+			string[] inputArray;
+			string[] stringSeparators = new string[] { ",@" };
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
 			getDatabaseInsertStringFromExcel(ref insertString, c_TableName);
-            insertStringSplitted = insertString.Split(new char[2]{',','@' });
+            insertStringSplitted = insertString.Split(stringSeparators, StringSplitOptions.None);
 
 			inputArray = Format(st);
 
@@ -118,15 +119,16 @@ namespace MESSystem.common
 				myCommand.CommandText += "`" + c_TableName + "` ";
 				myCommand.CommandText += "set ";
 
+				bool first = true;;
 				for (int i=0;i<inputArray.Length;i++){
 					if (inputArray[i] == null || inputArray[i] == "")	continue;
+					if (!first)	myCommand.CommandText += ",";
+					first = false;
 
-					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + inputArray[i];
-					if (i != inputArray.Length )
-						myCommand.CommandText += ",";
+					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + "\'" + inputArray[i] + "\'";
 				}
 
-				myCommand.CommandText += "where `" + insertStringSplitted[MATERIAL_BARCODE_INDEX] + "`=" + barcode;
+				myCommand.CommandText += "where `" + insertStringSplitted[MATERIAL_BARCODE_INDEX] + "`=" + "\'" + barcode + "\'";
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();

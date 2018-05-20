@@ -27,20 +27,20 @@ namespace MESSystem.common
 		private const int MACHINE_NAME_INDEX = 4;
 		private const int NUM_OF_TYPES_INDEX = 5;
 		private const int MATERIAL_CODE1_INDEX = 6;
-		private const int MATERIAL_REQUIRED1_INDEX = 8;
-		private const int MATERIAL_CODE2_INDEX = 9;
-		private const int MATERIAL_REQUIRED2_INDEX = 10;
-		private const int MATERIAL_CODE3_INDEX = 11;
-		private const int MATERIAL_REQUIRED3_INDEX = 12;
-		private const int MATERIAL_CODE4_INDEX = 13;
-		private const int MATERIAL_REQUIRED4_INDEX = 14;
-		private const int MATERIAL_CODE5_INDEX = 15;
-		private const int MATERIAL_REQUIRED5_INDEX = 16;
-		private const int MATERIAL_CODE6_INDEX = 17;
-		private const int MATERIAL_REQUIRED6_INDEX = 18;
-		private const int MATERIAL_CODE7_INDEX = 19;
-		private const int MATERIAL_REQUIRED7_INDEX = 20;
-		private const int TOTAL_DATAGRAM_NUM = MATERIAL_REQUIRED7_INDEX+1;
+		private const int MATERIAL_REQUIRED1_INDEX = 7;
+		private const int MATERIAL_CODE2_INDEX = 8;
+		private const int MATERIAL_REQUIRED2_INDEX = 9;
+		private const int MATERIAL_CODE3_INDEX = 10;
+		private const int MATERIAL_REQUIRED3_INDEX = 11;
+		private const int MATERIAL_CODE4_INDEX = 12;
+		private const int MATERIAL_REQUIRED4_INDEX = 13;
+		private const int MATERIAL_CODE5_INDEX = 14;
+		private const int MATERIAL_REQUIRED5_INDEX = 15;
+		private const int MATERIAL_CODE6_INDEX = 16;
+		private const int MATERIAL_REQUIRED6_INDEX = 17;
+		private const int MATERIAL_CODE7_INDEX = 18;
+		private const int MATERIAL_REQUIRED7_INDEX = 19;
+		private const int TOTAL_DATAGRAM_NUM = MATERIAL_REQUIRED7_INDEX;
 
 		private string m_dbName = null;
         private const string c_TableName = "0_materiallist";
@@ -99,7 +99,7 @@ namespace MESSystem.common
 		public material_t? Deserialize(string strInput)
 		{
 			string[] input;
-			material_t st;
+			material_t st = new material_t();
 
 			input = strInput.Split(';');
 
@@ -112,19 +112,19 @@ namespace MESSystem.common
 			st.machineName = input[MACHINE_NAME_INDEX];
             st.numOfTypes = input[NUM_OF_TYPES_INDEX];
 			st.materialCode1 = input[MATERIAL_CODE1_INDEX];
-			st.materialRequired1 = Convert.ToSingle(input[MATERIAL_REQUIRED1_INDEX]);
+			if (input[MATERIAL_REQUIRED1_INDEX]!="")	st.materialRequired1 =  Convert.ToSingle(input[MATERIAL_REQUIRED1_INDEX]);
 			st.materialCode2 = input[MATERIAL_CODE2_INDEX];
-			st.materialRequired2 = Convert.ToSingle(input[MATERIAL_REQUIRED2_INDEX]);
+			if (input[MATERIAL_REQUIRED2_INDEX]!="")	st.materialRequired2 = Convert.ToSingle(input[MATERIAL_REQUIRED2_INDEX]);
 			st.materialCode3 = input[MATERIAL_CODE3_INDEX];
-			st.materialRequired3 = Convert.ToSingle(input[MATERIAL_REQUIRED3_INDEX]);
+			if (input[MATERIAL_REQUIRED3_INDEX]!="")	st.materialRequired3 = Convert.ToSingle(input[MATERIAL_REQUIRED3_INDEX]);
 			st.materialCode4 = input[MATERIAL_CODE4_INDEX];
-			st.materialRequired4 = Convert.ToSingle(input[MATERIAL_REQUIRED4_INDEX]);
+			if (input[MATERIAL_REQUIRED4_INDEX]!="")	st.materialRequired4 = Convert.ToSingle(input[MATERIAL_REQUIRED4_INDEX]);
 			st.materialCode5 = input[MATERIAL_CODE5_INDEX];
-			st.materialRequired5 = Convert.ToSingle(input[MATERIAL_REQUIRED5_INDEX]);
+			if (input[MATERIAL_REQUIRED5_INDEX]!="")	st.materialRequired5 = Convert.ToSingle(input[MATERIAL_REQUIRED5_INDEX]);
 			st.materialCode6 = input[MATERIAL_CODE6_INDEX];
-			st.materialRequired6 = Convert.ToSingle(input[MATERIAL_REQUIRED6_INDEX]);
+			if (input[MATERIAL_REQUIRED6_INDEX]!="")	st.materialRequired6 = Convert.ToSingle(input[MATERIAL_REQUIRED6_INDEX]);
 			st.materialCode7 = input[MATERIAL_CODE7_INDEX];
-			st.materialRequired7 = Convert.ToSingle(input[MATERIAL_REQUIRED7_INDEX]);
+			if (input[MATERIAL_REQUIRED7_INDEX]!="")	st.materialRequired7 = Convert.ToSingle(input[MATERIAL_REQUIRED7_INDEX]);
 
 			return st;
 		}
@@ -197,12 +197,13 @@ namespace MESSystem.common
 			string[] recordArray;
             string insertString = null;
             string[] insertStringSplitted;
+			string[] stringSeparators = new string[] { ",@" };
 
 			getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
-			insertStringSplitted = insertString.Split(new char[2]{',','@'});
+			insertStringSplitted = insertString.Split(stringSeparators, StringSplitOptions.None);
 
 			string commandText = "select * from `" + c_TableName + "`";
-			commandText += "where `" + insertStringSplitted[DISPATCH_CODE_INDEX] + "`=" + dispatchCode;
+			commandText += "where `" + insertStringSplitted[DISPATCH_CODE_INDEX] + "`=" + "\'" + dispatchCode + "\'";
 			
 			recordArray = databaseCommonReadingUnsplitted(m_dbName, commandText);
 			if (recordArray!=null){

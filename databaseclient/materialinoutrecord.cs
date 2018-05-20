@@ -60,7 +60,7 @@ namespace MESSystem.common
 		public materialinoutrecord_t? parseinput(string strInput)
 		{
 			string[] input;
-			materialinoutrecord_t st_material;
+			materialinoutrecord_t st_material = new materialinoutrecord_t();
 
 			input = strInput.Split(';');
 

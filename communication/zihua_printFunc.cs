@@ -138,28 +138,28 @@ namespace MESSystem.communication
                                     break;
                                 ingredient = dispatchs[j].BOMCode;
 
-								materialCodeOfEachStack[i,1] = materials.Value.materialCode1;
-								materialCodeOfEachStack[i,2] = materials.Value.materialCode2;
-								materialCodeOfEachStack[i,3] = materials.Value.materialCode3;
-								materialCodeOfEachStack[i,4] = materials.Value.materialCode4;
-								materialCodeOfEachStack[i,5] = materials.Value.materialCode5;
-								materialCodeOfEachStack[i,6] = materials.Value.materialCode6;
-								materialCodeOfEachStack[i,7] = materials.Value.materialCode7;
+								materialCodeOfEachStack[i,0] = materials.Value.materialCode1;
+								materialCodeOfEachStack[i,1] = materials.Value.materialCode2;
+								materialCodeOfEachStack[i,2] = materials.Value.materialCode3;
+								materialCodeOfEachStack[i,3] = materials.Value.materialCode4;
+								materialCodeOfEachStack[i,4] = materials.Value.materialCode5;
+								materialCodeOfEachStack[i,5] = materials.Value.materialCode6;
+								materialCodeOfEachStack[i,6] = materials.Value.materialCode7;
 
-								weightRequiredOfEachStack[i,1] += materials.Value.materialRequired1;
-								weightRequiredOfEachStack[i,2] += materials.Value.materialRequired2;
-								weightRequiredOfEachStack[i,3] += materials.Value.materialRequired3;
-								weightRequiredOfEachStack[i,4] += materials.Value.materialRequired4;
-								weightRequiredOfEachStack[i,5] += materials.Value.materialRequired5;
-								weightRequiredOfEachStack[i,6] += materials.Value.materialRequired6;
-								weightRequiredOfEachStack[i,7] += materials.Value.materialRequired7;
+								weightRequiredOfEachStack[i,0] += materials.Value.materialRequired1;
+								weightRequiredOfEachStack[i,1] += materials.Value.materialRequired2;
+								weightRequiredOfEachStack[i,2] += materials.Value.materialRequired3;
+								weightRequiredOfEachStack[i,3] += materials.Value.materialRequired4;
+								weightRequiredOfEachStack[i,4] += materials.Value.materialRequired5;
+								weightRequiredOfEachStack[i,5] += materials.Value.materialRequired6;
+								weightRequiredOfEachStack[i,6] += materials.Value.materialRequired7;
                             }
                         }
 				
 						string str;
 						str = null;
-						for (i = 1; i < NUM_OF_FEEDING_MACHINE+1; i++)
-							for (j = 1; j < STACK_NUM_ONE_MACHINE+1; j++)
+						for (i = 0; i < NUM_OF_FEEDING_MACHINE; i++)
+							for (j = 0; j < STACK_NUM_ONE_MACHINE; j++)
 								str += materialCodeOfEachStack[i, j] + ";" + weightRequiredOfEachStack[i, j].ToString() + ";";
 						
 						m_ClientThread.sendStringToClient(str, COMMUNICATION_TYPE_WAREHOUE_OUT_START);
@@ -295,7 +295,23 @@ namespace MESSystem.communication
 
                     if (communicationType == COMMUNICATION_TYPE_CAST_PROCESS_START || communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_START || communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_START)
                     {
-                        dispatchlistDB dispatchlist_db = new dispatchlistDB(m_machineIDForPrint-CAST_PROCESS_PC1+gVariable.castingProcess[0]);
+                        dispatchlistDB dispatchlist_db;
+
+						switch (communicationType )
+						{
+						case COMMUNICATION_TYPE_CAST_PROCESS_START:
+							dispatchlist_db = new dispatchlistDB(m_machineIDForPrint-CAST_PROCESS_PC1+gVariable.castingProcess[0]);
+							break;
+						case COMMUNICATION_TYPE_PRINT_PROCESS_START:
+							dispatchlist_db = new dispatchlistDB(m_machineIDForPrint-PRINT_PROCESS_PC1+gVariable.printingProcess[0]);
+							break;
+						case COMMUNICATION_TYPE_SLIT_PROCESS_START:
+							dispatchlist_db = new dispatchlistDB(m_machineIDForPrint-SLIT_PROCESS_PC1+gVariable.slittingProcess[0]);
+							break;
+						default:
+							dispatchlist_db = new dispatchlistDB(0);
+							break;
+						}
 
 						m_Operator = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
 
@@ -350,7 +366,7 @@ namespace MESSystem.communication
                         st_cast.barCode = strInputArray[0];
                         st_cast.batchNum = st_cast.dispatchCode.Substring(0, 7);
                         st_cast.largeIndex = strInputArray[0].Substring(16, 3);
-                        st_cast.machineID = m_machineIDForPrint.ToString();
+                        st_cast.machineID = (m_machineIDForPrint-CAST_PROCESS_PC1+gVariable.castingProcess[0]).ToString();
                         //st_cast.scanTime = st_cast.dispatchCode.Substring(0,4) + st_cast.dispatchCode.Substring(7,2) + strInputArray[0].Substring(12,4);
                         st_cast.scanTime = System.DateTime.Now.ToString();
                         st_cast.weight = Convert.ToSingle(strInputArray[1]);
@@ -367,7 +383,7 @@ namespace MESSystem.communication
                         st_print.materialScanTime = System.DateTime.Now.ToString();
                         st_print.materialBarCode = strInputArray[0];
                         st_print.largeIndex = strInputArray[0].Substring(16, 3);
-                        st_print.machineID = m_machineIDForPrint.ToString();
+                        st_print.machineID = (m_machineIDForPrint-PRINT_PROCESS_PC1+gVariable.printingProcess[0]).ToString();
 
                         return db.writerecord(st_print);
                     }
@@ -393,7 +409,7 @@ namespace MESSystem.communication
                         st_slit.materialScanTime = System.DateTime.Now.ToString();
                         st_slit.materialBarCode = strInputArray[0];
                         st_slit.largeIndex = strInputArray[0].Substring(16, 3);
-                        st_slit.machineID = m_machineIDForPrint.ToString();
+                        st_slit.machineID = (m_machineIDForPrint-SLIT_PROCESS_PC1+gVariable.slittingProcess[0]).ToString();
 
                         return db.writerecord(st_slit);
                     }
@@ -475,8 +491,6 @@ namespace MESSystem.communication
                     string strInput;
                     string[] strInputArray;
 
-                    int printingSWPCID = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100 - CAST_PROCESS_PC1 + gVariable.castingProcess[0];
-
                     //MIN_PACKET_LEN include one byte of data, so we need to delete this byte
                     len = packetLen - communicate.MIN_PACKET_LEN_MINUS_ONE;
                     strInput = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
@@ -484,7 +498,22 @@ namespace MESSystem.communication
 
                     if (communicationType == COMMUNICATION_TYPE_CAST_PROCESS_END || communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_END || communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_END)
                     {
-                        dispatchlistDB db = new dispatchlistDB(printingSWPCID);
+                    	dispatchlistDB db;
+						switch (communicationType )
+						{
+						case COMMUNICATION_TYPE_CAST_PROCESS_END:
+							db = new dispatchlistDB(m_machineIDForPrint-CAST_PROCESS_PC1+gVariable.castingProcess[0]);
+							break;
+						case COMMUNICATION_TYPE_PRINT_PROCESS_END:
+							db = new dispatchlistDB(m_machineIDForPrint-PRINT_PROCESS_PC1+gVariable.printingProcess[0]);
+							break;
+						case COMMUNICATION_TYPE_SLIT_PROCESS_END:
+							db = new dispatchlistDB(m_machineIDForPrint-SLIT_PROCESS_PC1+gVariable.slittingProcess[0]);
+							break;
+						default:
+							db = new dispatchlistDB(0);
+							break;
+						}                    
                         dispatchlistDB.dispatchlist_t st_dispatch = new dispatchlistDB.dispatchlist_t();
 
                         st_dispatch.notes = strInputArray[1];
@@ -519,7 +548,7 @@ namespace MESSystem.communication
                         st_packing.totalLength = Convert.ToSingle(strInputArray[3]);
 						st_packing.rollNumber = Convert.ToUInt16(strInputArray[1]);
 						st_packing.uploadTime = System.DateTime.Now.ToString();
-						st_packing.machineID = m_machineIDForPrint.ToString();
+						st_packing.machineID = (m_machineIDForPrint-PRINT_PROCESS_PC1+gVariable.printingProcess[0]).ToString();
 						for (int i=0;i<st_packing.rollNumber;i++){
 							st_packing.barcode = strInputArray[5+i];
 							db.writerecord(st_packing);
@@ -542,7 +571,7 @@ namespace MESSystem.communication
                 {
                     int result;
                     string dispatchCode=null, productCode=null;
-                    int printingSWPCID = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100 - CAST_PROCESS_PC1 + gVariable.castingProcess[0];
+                    //int printingSWPCID = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100 - CAST_PROCESS_PC1 + gVariable.castingProcess[0];
 
                     try
                     {
