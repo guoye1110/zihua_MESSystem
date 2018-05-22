@@ -631,9 +631,11 @@ namespace tcpClient
             }
             strArray = str.Split(';');
 			show_value = "<=== ";
-			if (strArray.Length <= 2)
+			if (strArray.Length < 2)
 				show_value += "没有工单";
-			else
+            else if (communicationType == COMMUNICATION_TYPE_WAREHOUE_OUT_START)
+                show_value = str;
+            else
 				show_value += "工单编号：" + strArray[0] + "   产品代码：" + strArray[1];
 
 			listBox1.Items.Add(show_value);

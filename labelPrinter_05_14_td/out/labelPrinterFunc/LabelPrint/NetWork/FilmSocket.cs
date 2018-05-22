@@ -20,7 +20,7 @@ namespace LabelPrint.NetWork
 		//5秒
 		const int HEART_BEAT_INTERVAL = 5000;
 		//1秒
-		const int COMMUNICATION_TIMEOUT = 1000;
+		const int COMMUNICATION_TIMEOUT = 3000;
         const int RESPONSE_OK = 0;
         const int RESPONSE_FAIL = 1;
 
@@ -142,10 +142,10 @@ namespace LabelPrint.NetWork
 						inputDataHeader(buf, MIN_PACKET_LEN, COMMUNICATION_TYPE_HEART_BEAT, 0);
 						toolClass.addCrc32Code(buf, MIN_PACKET_LEN);
 
-						//m_sock.ReceiveTimeout = COMMUNICATION_TIMEOUT;
+						m_sock.ReceiveTimeout = COMMUNICATION_TIMEOUT;
 						m_sock.Send(buf, MIN_PACKET_LEN, 0);
 						recCount = m_sock.Receive(buf, RECV_BUFFER_SIZE, 0);
-						//m_sock.ReceiveTimeout = old_timeout;
+						m_sock.ReceiveTimeout = old_timeout;
 						if (recCount == 0) {
 							//length is 0, means TCP/IP disconnected, retry 3 times
 							network_state_event(m_sock.Connected);
@@ -225,8 +225,6 @@ namespace LabelPrint.NetWork
 
 				//Tcp connection disconnected
         	    if (len == 0)   return null;
-
-				if (buf[PACKET_DATASTATUS_POS]==(byte)0xff)		return null;
 
 				if(!toolClass.checkCrc32Code(buf, len))
 					return null;

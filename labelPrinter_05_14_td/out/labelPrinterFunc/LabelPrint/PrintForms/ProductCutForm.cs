@@ -1875,7 +1875,7 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
 		
         //start work
         //To Do: Add start work button in UI
-        private void button_StartWork_Click(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e)
         {
         	byte[] send_buf = System.Text.Encoding.Default.GetBytes(tb_worker.Text);
 			byte[] recv_buf;

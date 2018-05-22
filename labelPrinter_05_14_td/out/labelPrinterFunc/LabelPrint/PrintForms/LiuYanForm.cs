@@ -394,6 +394,10 @@ namespace LabelPrint
             UpdateUserInputQualityInfo();
         }
 
+		private void UpdateView()
+        {
+		}
+
         delegate void AsynBarCode_BarCodeEvent(BardCodeHooK.BarCodes barCode);
         void BarCode_BarCodeEvent(BardCodeHooK.BarCodes barCode)
         {
@@ -501,7 +505,7 @@ namespace LabelPrint
             //}
         }
 
-        private void bt_GongDanOk_Click(object sender, EventArgs e)
+        /*private void bt_GongDanOk_Click(object sender, EventArgs e)
         {
             String orderNo;
             String batchNo;
@@ -524,7 +528,7 @@ namespace LabelPrint
             cb_ProductCode.Text = UserInput.ProductCode;
             tb_ManHour.Text = "0";
             tb_Desc.Text = "";
-        }
+        }*/
 
         private void bt_Record_Click(object sender, EventArgs e)
         {
@@ -595,17 +599,25 @@ namespace LabelPrint
         private void button1_Click(object sender, EventArgs e)
         {
         	byte[] send_buf = System.Text.Encoding.Default.GetBytes(tb_worker.Text);
-			byte[] recv_buf;
+			byte[] data;
 			string[] start_work;
         
         	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_START, tb_worker.Text.Length);
 
-			recv_buf = m_FilmSocket.RecvData(1000);
-			if (recv_buf != null) {
-				start_work = System.Text.Encoding.Default.GetString(recv_buf).Split(';');
-				//To Do after communication
-				//<工单编号>;<产品编号>
-				m_dispatchCode = start_work[0];
+			data = m_FilmSocket.RecvData(10000);
+			if (data != null) {
+				if (data[0]==(byte)0xff)
+					System.Windows.Forms.MessageBox.Show("！！！发送失败");
+				else if (data[0]==(byte)0)	
+					System.Windows.Forms.MessageBox.Show("无工单");
+				else {
+					start_work = System.Text.Encoding.Default.GetString(data).Split(';');
+					//To Do after communication
+					//<工单编号>;<产品编号>
+					m_dispatchCode = start_work[0];
+					cb_ProductCode.Text = start_work[1];
+					cb_ProductCode_SelectionChangeCommitted(null,null);
+				}
 			}
         }
 

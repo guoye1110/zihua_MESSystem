@@ -667,7 +667,7 @@ namespace LabelPrint
 		
         //start work
         //To Do: Add start work button in UI
-        private void button_StartWork_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
         	byte[] send_buf = System.Text.Encoding.Default.GetBytes(tb_worker.Text);
 			byte[] recv_buf;

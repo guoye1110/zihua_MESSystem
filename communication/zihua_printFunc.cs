@@ -575,6 +575,11 @@ namespace MESSystem.communication
 
                     try
                     {
+                    	if (communicationType == COMMUNICATION_TYPE_START_HANDSHAKE_WITH_ID_TO_PC) {
+							Console.WriteLine("Machine " + m_machineIDForPrint + " HearBeat!");
+							m_ClientThread.sendResponseOKBack(0);
+                    	}
+						
                         result = HandleHandShake(communicationType, onePacket, packetLen);
                         if (result >= 0) m_ClientThread.sendResponseOKBack(result);
 
