@@ -219,7 +219,7 @@ namespace MESSystem.machine
             }
             catch (Exception ex)
             {
-                Console.Write("listView1_SelectedIndexChanged failed. ", ex);
+                Console.Write("listView1_SelectedIndexChanged failed. " + ex);
             }
         }
 

@@ -57,11 +57,17 @@ namespace MESSystem.mainUI
             this.button24 = new System.Windows.Forms.Button();
             this.button14 = new System.Windows.Forms.Button();
             this.button15 = new System.Windows.Forms.Button();
+            this.pictureBox4 = new System.Windows.Forms.PictureBox();
+            this.button18 = new System.Windows.Forms.Button();
+            this.button19 = new System.Windows.Forms.Button();
+            this.button27 = new System.Windows.Forms.Button();
+            this.button28 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -316,6 +322,7 @@ namespace MESSystem.mainUI
             this.button14.TabIndex = 98;
             this.button14.Text = "button14";
             this.button14.UseVisualStyleBackColor = true;
+            this.button14.Click += new System.EventHandler(this.button14_Click);
             // 
             // button15
             // 
@@ -326,13 +333,66 @@ namespace MESSystem.mainUI
             this.button15.Text = "button15";
             this.button15.UseVisualStyleBackColor = true;
             // 
+            // pictureBox4
+            // 
+            this.pictureBox4.Location = new System.Drawing.Point(54, 905);
+            this.pictureBox4.Name = "pictureBox4";
+            this.pictureBox4.Size = new System.Drawing.Size(923, 99);
+            this.pictureBox4.TabIndex = 102;
+            this.pictureBox4.TabStop = false;
+            // 
+            // button18
+            // 
+            this.button18.Location = new System.Drawing.Point(411, 865);
+            this.button18.Name = "button18";
+            this.button18.Size = new System.Drawing.Size(132, 37);
+            this.button18.TabIndex = 101;
+            this.button18.Text = "button18";
+            this.button18.UseVisualStyleBackColor = true;
+            this.button18.Click += new System.EventHandler(this.button18_Click);
+            // 
+            // button19
+            // 
+            this.button19.Location = new System.Drawing.Point(53, 865);
+            this.button19.Name = "button19";
+            this.button19.Size = new System.Drawing.Size(132, 37);
+            this.button19.TabIndex = 100;
+            this.button19.Text = "button19";
+            this.button19.UseVisualStyleBackColor = true;
+            this.button19.Click += new System.EventHandler(this.button19_Click);
+            // 
+            // button27
+            // 
+            this.button27.Location = new System.Drawing.Point(412, 1019);
+            this.button27.Name = "button27";
+            this.button27.Size = new System.Drawing.Size(132, 37);
+            this.button27.TabIndex = 106;
+            this.button27.Text = "button27";
+            this.button27.UseVisualStyleBackColor = true;
+            this.button27.Click += new System.EventHandler(this.button27_Click);
+            // 
+            // button28
+            // 
+            this.button28.Location = new System.Drawing.Point(54, 1019);
+            this.button28.Name = "button28";
+            this.button28.Size = new System.Drawing.Size(132, 37);
+            this.button28.TabIndex = 105;
+            this.button28.Text = "button28";
+            this.button28.UseVisualStyleBackColor = true;
+            this.button28.Click += new System.EventHandler(this.button28_Click);
+            // 
             // workshopZihua
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(1532, 864);
+            this.ClientSize = new System.Drawing.Size(1532, 1062);
+            this.Controls.Add(this.button27);
+            this.Controls.Add(this.button28);
+            this.Controls.Add(this.pictureBox4);
+            this.Controls.Add(this.button18);
+            this.Controls.Add(this.button19);
             this.Controls.Add(this.button15);
             this.Controls.Add(this.button14);
             this.Controls.Add(this.button24);
@@ -370,6 +430,7 @@ namespace MESSystem.mainUI
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -403,5 +464,10 @@ namespace MESSystem.mainUI
         private Button button24;
         private Button button14;
         private Button button15;
+        private PictureBox pictureBox4;
+        private Button button18;
+        private Button button19;
+        private Button button27;
+        private Button button28;
     }
 }

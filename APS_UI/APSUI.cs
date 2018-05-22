@@ -14,10 +14,10 @@ namespace MESSystem.APS_UI
 {
     public partial class APSUI : Form
     {
-        //if there are more than this number of sales order, we will only process the recent this number
+        //if there are more than this number of product batch order, we will only process the recent this number
         const int SALES_ORDER_NUM_MAX = 10000;
 
-        string[] salesOrderPriorityRule = { "不指定", "交货日期优先", "重要客户优先", "产量大者优先" };
+        string[] productBatchPriorityRule = { "不指定", "交货日期优先", "重要客户优先", "产量大者优先" };
         string[] machinePriorityRule = { "不指定", "设备产量优先", "良品率优先" };
 
         const int PROIRITY_ORDER_NOT_SELECTED = 0;
@@ -25,22 +25,22 @@ namespace MESSystem.APS_UI
         const int PROIRITY_ORDER_CUSTOMER_IMPORTANCE = 2;
         const int PROIRITY_ORDER_OUTPUT_QUANTITY = 3;
 
-        int machineSelected1;
-        int machineSelected2;
-        int machineSelected3;
-        int salesOrderPrioritySelected;
+        int productBatchPrioritySelected;
         int machinePrioritySelected;
 
-        int salesOrderSelected;
+        int productBatchSelected;
+        int MAX_NUM_SELECTED_SALES_ORDER_APS;
 
         float screenRatioX, screenRatioY;
 
         public static APSUI APSUIClass = null; //it is used to reference this windows
-        //public static int [] salesOrderIndexArray = new int[SALES_ORDER_NUM_MAX];
-        string[,] salesTableArray;
+        //public static int [] productBatchIndexArray = new int[SALES_ORDER_NUM_MAX];
+        string[,] batchTableArray; //record all the batch orders in list view
         gVariable.dispatchSheetStruct[] dispatchListArray;
 
         System.Windows.Forms.Timer aTimer;
+
+        public static APSRules.APSRulesDef [] APSRulesArray = new APSRules.APSRulesDef[gVariable.MAX_NUM_SELECTED_SALES_ORDER_APS];
 
         public APSUI()
         {
@@ -56,46 +56,42 @@ namespace MESSystem.APS_UI
             this.Icon = new Icon(gVariable.logoInTitleArray[gVariable.CompanyIndex]);
 
             gVariable.APSScreenRefresh = 1;
+            MAX_NUM_SELECTED_SALES_ORDER_APS = gVariable.MAX_NUM_SELECTED_SALES_ORDER_APS;
 
             label1.Text = gVariable.enterpriseTitle + "生产计划排程系统";
             this.Text = gVariable.enterpriseTitle + "生产计划排程系统";
 
-            machineSelected1 = 0;
-            machineSelected2 = 0;
-            machineSelected3 = 0;
+            productBatchSelected = -1;
+            gVariable.numOfBatchDefinedAPSRule = 0;
+            gVariable.indexOfBatchDefinedAPSRule = 0;
 
-            salesOrderSelected = -1;
-
-            /*
-            for (i = 0; i < machineName1.Length; i++)
+            for (i = 0; i < productBatchPriorityRule.Length; i++)
             {
-                comboBox1.Items.Add(machineName1[i]);
+                comboBox3.Items.Add(productBatchPriorityRule[i]);
             }
-            comboBox1.SelectedIndex = machineSelected1;
-
-            for (i = 0; i < machineName2.Length; i++)
-            {
-                comboBox2.Items.Add(machineName2[i]);
-            }
-            comboBox2.SelectedIndex = machineSelected2;
-
-            for (i = 0; i < machineName3.Length; i++)
-            {
-                comboBox5.Items.Add(machineName3[i]);
-            }
-            comboBox5.SelectedIndex = machineSelected3;
-            */
-            for (i = 0; i < salesOrderPriorityRule.Length; i++)
-            {
-                comboBox3.Items.Add(salesOrderPriorityRule[i]);
-            }
-            comboBox3.SelectedIndex = salesOrderPrioritySelected;
+            comboBox3.SelectedIndex = productBatchPrioritySelected;
             
             for (i = 0; i < machinePriorityRule.Length; i++)
             {
                 comboBox6.Items.Add(machinePriorityRule[i]);
             }
             comboBox6.SelectedIndex = machinePrioritySelected;
+
+            //we can set APS rule for 50 batch orders for onw time
+            for(i = 0; i < gVariable.MAX_NUM_SELECTED_SALES_ORDER_APS; i++)
+            {
+                APSRulesArray[i] = new APSRules.APSRulesDef();
+                //APSRulesArray[i].ruleAlreadyDefined = 0;
+                APSRulesArray[i].listviewIndex = -1;
+                APSRulesArray[i].assignedStartTime = -1;
+                APSRulesArray[i].assignedEndTime = -1;
+                APSRulesArray[i].assignedMachineID1 = 0;
+                APSRulesArray[i].assignedMachineID2 = 0;
+                APSRulesArray[i].assignedMachineID3 = 0;
+                APSRulesArray[i].BOMName = null;
+                APSRulesArray[i].materialCode = new string[gVariable.maxMaterialTypeNum];
+                APSRulesArray[i].materialSelected = new int[gVariable.maxMaterialTypeNum];
+            }
         }
 
         void resizeScreen()
@@ -103,12 +99,12 @@ namespace MESSystem.APS_UI
             int i;
             int x, y, w, h;
             float fontSize;
-            GroupBox[] groupBoxArray = { groupBox1, groupBox2, groupBox3, groupBox4 };
+            GroupBox[] groupBoxArray = { groupBox1, groupBox3, groupBox4 };
             Label[] labelArray = { label6, label7, label8, label9, label10, label11, label12};
             TextBox[] textBoxArray = { textBox1, textBox2 };
             Button[] buttonArray = { button1, button2, button3, button4, button5, button6, button7, button8, button9, button10 };
             ComboBox[] comboBoxArray = { comboBox3, comboBox4, comboBox6 };
-            CheckBox[] checkBoxArray = { checkBox3 };
+            //CheckBox[] checkBoxArray = { checkBox3 };
             DateTimePicker[] timePickerArray = { dateTimePicker3, dateTimePicker4 };
             float[,] commonFontSize = { 
                                         { 7F,  8F,  9F,  10F, 11F,  12F}, 
@@ -173,6 +169,7 @@ namespace MESSystem.APS_UI
                 buttonArray[i].Location = new System.Drawing.Point(x, y);
             }
 
+            /*
             for (i = 0; i < checkBoxArray.Length; i++)
             {
                 w = (int)(checkBoxArray[i].Size.Width * screenRatioX);
@@ -182,6 +179,7 @@ namespace MESSystem.APS_UI
                 y = (int)(checkBoxArray[i].Location.Y * screenRatioY);
                 checkBoxArray[i].Location = new System.Drawing.Point(x, y);
             }
+             * */
 
             for (i = 0; i < comboBoxArray.Length; i++)
             {
@@ -225,28 +223,10 @@ namespace MESSystem.APS_UI
             gVariable.APSScreenRefresh = 0;
         }
 
-        //cast machine assigned
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //machineSelected1 = comboBox1.SelectedIndex;
-        }
-
-        //print machine assigned
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //machineSelected2 = comboBox2.SelectedIndex;
-        }
-
-        //slit machine asigned
-        private void comboBox5_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //machineSelected3 = comboBox5.SelectedIndex;
-        }
-
-        //sales order priority selection
+        //product batch order priority selection
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
-            salesOrderPrioritySelected = comboBox3.SelectedIndex;
+            productBatchPrioritySelected = comboBox3.SelectedIndex;
         }
 
         //machine priority selection
@@ -257,7 +237,7 @@ namespace MESSystem.APS_UI
 
         private void loadScreen()
         {
-            int i, j;
+            int i, j, k;
             //int ret;
             int length;
             int num;
@@ -268,12 +248,12 @@ namespace MESSystem.APS_UI
             int selectionChanged;
             string commandText;
             ListViewItem OptionItem;
-            //string[] salesOrderCodeArray = new string[SALES_ORDER_NUM_MAX];
-            //gVariable.salesOrderStruct salesOrderImpl = new gVariable.salesOrderStruct();
-            int[] salesOrderLenArray = { 45, 45, 100, 100, 90, 90, 120, 120, 120, 120, 75 };
-            string[] salesOrderListHeader = 
+            //string[] salesOrderBatchCodeArray = new string[SALES_ORDER_NUM_MAX];
+            //gVariable.productBatchStruct productBatchImpl = new gVariable.productBatchStruct();
+            int[] productBatchLenArray = { 40, 45, 85, 100, 100, 90, 80, 110, 120, 120, 120, 75 };
+            string[] productBatchListHeader = 
             {
-                "全选", "序号", "订单号", "产品编码", "交货日期", "需求数量", "客户名", "排产时间", "计划开工", "计划完工", "订单状态"
+                "全选", "序号", "生产批次号", "订单批次号", "产品编码", "交货日期", "需求数量", "客户名", "排产时间", "计划开工", "计划完工", "订单状态"
             };
             int[] dispatchLenArray = { 1, 45, 105, 130, 105, 80, 100, 70, 100, 120, 120, 100 };
             string[] dispatchListHeader = 
@@ -292,11 +272,11 @@ namespace MESSystem.APS_UI
                 selectionChanged = 0;
                 if (listView1.SelectedItems.Count != 0)
                 {
-                    //Console.WriteLine("salesOrderSelected = " + salesOrderSelected + "; index = " + listView1.SelectedItems[0].Index);
+                    //Console.WriteLine("productBatchSelected = " + productBatchSelected + "; index = " + listView1.SelectedItems[0].Index);
 
-                    if (salesOrderSelected != listView1.SelectedItems[0].Index)
+                    if (productBatchSelected != listView1.SelectedItems[0].Index)
                     {
-                        salesOrderSelected = listView1.SelectedItems[0].Index;
+                        productBatchSelected = listView1.SelectedItems[0].Index;
                         selectionChanged = 1;
                     }
                 }
@@ -307,102 +287,102 @@ namespace MESSystem.APS_UI
                 if (listView1.TopItem != null)
                     index1 = listView1.TopItem.Index;
 
-                if (listView2.TopItem != null)
-                    index2 = listView2.TopItem.Index;
+                //if (listView2.TopItem != null)
+                //    index2 = listView2.TopItem.Index;
 
                 num = mySQLClass.getRecordNumInTable(gVariable.globalDatabaseName, gVariable.productBatchTableName);
                 if (num > SALES_ORDER_NUM_MAX)
                     num = SALES_ORDER_NUM_MAX;
 
                 commandText = "select * from `" + gVariable.productBatchTableName + "` order by id desc";
-                salesTableArray = mySQLClass.databaseCommonReading(gVariable.globalDatabaseName, commandText);
-                if (salesTableArray == null)
+                batchTableArray = mySQLClass.databaseCommonReading(gVariable.globalDatabaseName, commandText);
+                if (batchTableArray == null)
                     num = 0;
 
                 //for (i = 0, j = 0; i < num; i++, j++)
                 {
-                    //salesOrderIndexArray[i] = Convert.ToInt32(salesTableArray[i, mySQLClass.ID_VALUE_IN_SALESORDER_DATABASE]) - 1;
-                    //salesOrderCodeArray[i] = salesTableArray[i, mySQLClass.ORDER_CODE_IN_SALESORDER_DATABASE];
+                    //productBatchIndexArray[i] = Convert.ToInt32(batchTableArray[i, mySQLClass.ID_VALUE_IN_BATCHNUM_DATABASE]) - 1;
+                    //salesOrderBatchCodeArray[i] = batchTableArray[i, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE];
                 }
 
                 if (gVariable.APSScreenRefresh == 1)
                 {
                     listView1.Clear();
 
-                    this.listView1.BeginUpdate();
+                    listView1.BeginUpdate();
 
                     listView1.GridLines = true;
                     listView1.Dock = DockStyle.Fill;
 
-                    for (i = 0; i < salesOrderLenArray.Length; i++)
-                        listView1.Columns.Add(salesOrderListHeader[i], (int)(salesOrderLenArray[i] * screenRatioX), HorizontalAlignment.Center);
+                    for (i = 0; i < productBatchLenArray.Length; i++)
+                        listView1.Columns.Add(productBatchListHeader[i], (int)(productBatchLenArray[i] * screenRatioX), HorizontalAlignment.Center);
 
                     for (i = 0, j = 0; i < num; i++, j++)
                     {
                         OptionItem = new ListViewItem();
 
                         OptionItem.SubItems.Add((i + 1).ToString());
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.ORDER_CODE_IN_SALESORDER_DATABASE]);
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.PRODUCT_CODE_IN_SALESORDER_DATABASE]);
-                        //OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.PRODUCT_NAME_IN_SALESORDER_DATABASE]);
-                        //OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.ERP_TIME_IN_SALESORDER_DATABASE]);
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.DELIVERY_TIME_IN_SALESORDER_DATABASE]);
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.REQUIRED_NUM_IN_SALESORDER_DATABASE] + " " + salesTableArray[i, mySQLClass.UNIT_IN_SALESORDER_DATABASE]);
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.CUSTOMER_IN_SALESORDER_DATABASE]);
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.APS_TIME_IN_SALESORDER_DATABASE]);
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.PLANNED_START_TIME_IN_SALESORDER_DATABASE]);
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.PLANNED_COMPLETE_TIME_IN_SALESORDER_DATABASE]);
+                        OptionItem.SubItems.Add(batchTableArray[i, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE]);
+                        OptionItem.SubItems.Add(batchTableArray[i, mySQLClass.BATCH_CODE_IN_BATCHNUM_DATABASE]);
+                        OptionItem.SubItems.Add(batchTableArray[i, mySQLClass.PRODUCT_CODE_IN_BATCHNUM_DATABASE]);
+                        //OptionItem.SubItems.Add(batchTableArray[i, mySQLClass.PRODUCT_NAME_IN_BATCHNUM_DATABASE]);
+                        //OptionItem.SubItems.Add(batchTableArray[i, mySQLClass.ERP_TIME_IN_BATCHNUM_DATABASE]);
+                        OptionItem.SubItems.Add(batchTableArray[i, mySQLClass.DELIVERY_TIME_IN_BATCHNUM_DATABASE]);
+                        OptionItem.SubItems.Add(batchTableArray[i, mySQLClass.REQUIRED_NUM_IN_BATCHNUM_DATABASE] + " kg");
+                        OptionItem.SubItems.Add(batchTableArray[i, mySQLClass.CUSTOMER_IN_BATCHNUM_DATABASE]);
+                        OptionItem.SubItems.Add(batchTableArray[i, mySQLClass.APS_TIME_IN_BATCHNUM_DATABASE]);
+                        OptionItem.SubItems.Add(batchTableArray[i, mySQLClass.PLANNED_START_TIME_IN_BATCHNUM_DATABASE]);
+                        OptionItem.SubItems.Add(batchTableArray[i, mySQLClass.PLANNED_COMPLETE_TIME_IN_BATCHNUM_DATABASE]);
 
-                        status = Convert.ToInt16(salesTableArray[i, mySQLClass.STATUS_IN_SALESORDER_DATABASE]);
-                        switch (status)
-                        {
-                            case gVariable.SALES_ORDER_STATUS_ERP_PUBLISHED:
-                                OptionItem.SubItems.Add("已导入");
-                                break;
-                            case gVariable.SALES_ORDER_STATUS_SEPARATE_OK:
-                                OptionItem.SubItems.Add("已拆分");
-                                break;
-                            case gVariable.SALES_ORDER_STATUS_APS_OK:
-                                OptionItem.SubItems.Add("已排程");
-                                break;
-                            case gVariable.SALES_ORDER_STATUS_CONFIRMED:
-                                OptionItem.SubItems.Add("已确认");
-                                break;
-                            case gVariable.SALES_ORDER_STATUS_APPLIED:
-                                OptionItem.SubItems.Add("已下发");
-                                break;
-                            case gVariable.SALES_ORDER_STATUS_STARTED:
-                                OptionItem.SubItems.Add("已开工");
-                                break;
-                            case gVariable.SALES_ORDER_STATUS_COMPLETED:
-                                OptionItem.SubItems.Add("已完工");
-                                break;
-                            case gVariable.SALES_ORDER_STATUS_CANCELLED:
-                                OptionItem.SubItems.Add("已取消");
-                                break;
-                            default:
-                                break;
-                        }
+                        status = Convert.ToInt16(batchTableArray[i, mySQLClass.STATUS_IN_BATCHNUM_DATABASE]);
 
+                        if (status >= gVariable.SALES_ORDER_STATUS_CONFIRMED)
+                            OptionItem.SubItems.Add("已发布");
+                        else
+                            OptionItem.SubItems.Add(gVariable.salesorderStatus[status]);
                         listView1.Items.Add(OptionItem);
                     }
 
-                    if (salesOrderSelected >= 0)
-                        this.listView1.Items[salesOrderSelected].Selected = true;
+                    if (productBatchSelected >= 0)
+                        this.listView1.Items[productBatchSelected].Selected = true;
 
                     if (listView1.TopItem != null && listView1.Items.Count > index1 + listviewLineNum1[gVariable.dpiValue, gVariable.resolutionLevel] - 1)
                         listView1.EnsureVisible(index1 + listviewLineNum1[gVariable.dpiValue, gVariable.resolutionLevel] - 1);
 
-                    this.listView1.EndUpdate();
+                    listView1.EndUpdate();
                 }
 
+                listView1.BeginUpdate();
+                for (i = 0; i < num; i++)
+                {
+                    if (gVariable.numOfBatchDefinedAPSRule != 0)
+                    {
+                        for (k = 0; k < gVariable.numOfBatchDefinedAPSRule; k++)
+                        {
+                            if (APSUI.APSRulesArray[k].listviewIndex == i)
+                            {
+                                listView1.Items[i].BackColor = Color.Yellow;
+                                break;
+                            }
+                        }
+                    }
+
+                    status = Convert.ToInt16(batchTableArray[i, mySQLClass.STATUS_IN_BATCHNUM_DATABASE]);
+                    if (status >= gVariable.SALES_ORDER_STATUS_APS_OK)
+                    {
+                        listView1.Items[i].BackColor = Color.LightGreen;
+                    }
+                }
+                listView1.EndUpdate();
+
+                /*
                 listView2.Clear();
                 listView2.BeginUpdate();
 
                 dispatchListArray = null;
-                if (salesOrderSelected >= 0)
+                if (productBatchSelected >= 0)
                 {
-                    commandText = " where salesOrderCode = " + "'" + salesTableArray[salesOrderSelected, mySQLClass.ORDER_CODE_IN_SALESORDER_DATABASE] + "'";
+                    commandText = " where batchNum = " + "'" + batchTableArray[productBatchSelected, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE] + "'";
                     //find unpublished dispatch, which includes generated and confirmed
                     dispatchListArray = mySQLClass.getDispatchListByCommand(gVariable.globalDatabaseName, gVariable.globalDispatchTableName, commandText);
                 }
@@ -422,7 +402,7 @@ namespace MESSystem.APS_UI
                 {
                     OptionItem = new ListViewItem();
                     OptionItem.SubItems.Add((i + 1).ToString());
-                    OptionItem.SubItems.Add(dispatchListArray[i].salesOrderCode);
+                    OptionItem.SubItems.Add(dispatchListArray[i].batchNum);
                     OptionItem.SubItems.Add(dispatchListArray[i].dispatchCode);
                     OptionItem.SubItems.Add(dispatchListArray[i].productCode);
                     //OptionItem.SubItems.Add(dispatchListArray[i].productName);
@@ -463,12 +443,16 @@ namespace MESSystem.APS_UI
                 }
 
                 if (listView2.TopItem != null && listView2.Items.Count > index2 + listviewLineNum2[gVariable.resolutionLevel] - 2 && selectionChanged == 0)
+                {
                     listView2.EnsureVisible(index2 + listviewLineNum2[gVariable.resolutionLevel] - 2);
+                }
                 else
                 {
                 }
 
                 listView2.EndUpdate();
+                 */
+
             }
             catch (Exception ex)
             {
@@ -502,9 +486,9 @@ namespace MESSystem.APS_UI
         {
             int index;
 
-            //if we selected a sales order then add a new one, new sales order will have the content of the selected sales order, then the user can modify the content
+            //if we selected a product batch order then add a new one, new batch order will have the content of the selected batch order, then the user can modify the content
             if (this.listView1.SelectedItems.Count != 0)
-                index = Convert.ToInt32(salesTableArray[listView1.SelectedItems[0].Index, mySQLClass.ID_VALUE_IN_SALESORDER_DATABASE]);
+                index = Convert.ToInt32(batchTableArray[listView1.SelectedItems[0].Index, mySQLClass.ID_VALUE_IN_SALESORDER_DATABASE]);
             else
                 index = -1;
 
@@ -518,16 +502,18 @@ namespace MESSystem.APS_UI
         //formal APS
         private void button3_Click(object sender, EventArgs e)
         {
-            int i;
+            int i, j;
             int index;
             int startTimeStamp;
             int endTimeStamp;
             //int[] dispatchIndexList = new int[SALES_ORDER_NUM_MAX];
             int[] assignedMachineByUserArray = new int[3];
-            int[] indexArray;
             string commandText;
             string companyName;
-            string[] strArray;
+
+            int[] indexArray;  //all the selected batch order index in batchTableArray[], all the batch orders in listview
+            int[] batchOrderIDArray;  //all the selected batch order iD in batch order database table
+            string[] conditionArray;  //APS priority conditions, could be delivery time prioritized or customer importance prioritized, we use this condition to sort for a reasonable indexArray
             string[,] tableArray;
             APSProcess APSProcessImpl = new APSProcess();
 
@@ -536,6 +522,7 @@ namespace MESSystem.APS_UI
                 if (listView1.CheckedItems.Count == 0)
                 {
                     index = -1;
+
                     //if (listView1.SelectedItems.Count != 0)
                     //    index = listView1.SelectedItems[0].Index;
                     MessageBox.Show("请先在工单列表左侧的复选框中选中需要排程的订单，然后再点选'勾选订单排程'按钮开始排程。", "提示信息", MessageBoxButtons.OK);
@@ -550,10 +537,16 @@ namespace MESSystem.APS_UI
                     return;
                 }
 
+                if (listView1.CheckedItems.Count > MAX_NUM_SELECTED_SALES_ORDER_APS)
+                {
+                    MessageBox.Show("抱歉，本系统最多支持一次选择 " + MAX_NUM_SELECTED_SALES_ORDER_APS + " 个订单进行排产。", "提示信息", MessageBoxButtons.OK);
+                    return;
+                }
+
                 for (i = 0; i < listView1.CheckedItems.Count; i++)
                 {
                     index = listView1.CheckedItems[i].Index;
-                    if (salesTableArray[index, mySQLClass.STATUS_IN_SALESORDER_DATABASE] != gVariable.SALES_ORDER_STATUS_SEPARATE_OK.ToString())
+                    if (batchTableArray[index, mySQLClass.STATUS_IN_BATCHNUM_DATABASE] != gVariable.SALES_ORDER_STATUS_SEPARATE_OK.ToString())
                     {
                         MessageBox.Show("请确认所选择的订单处于已导入状态，因为已排程的订单不能再次排程。若确实需要重新排程，请先取消该订单的排程结果后再尝试。", "提示信息", MessageBoxButtons.OK);
                         //  listView1.SelectedItems = index;
@@ -562,23 +555,24 @@ namespace MESSystem.APS_UI
                 }
 
                 indexArray = new int[listView1.CheckedItems.Count];
-                strArray = new string[listView1.CheckedItems.Count];
+                conditionArray = new string[listView1.CheckedItems.Count];
+                batchOrderIDArray = new int[listView1.CheckedItems.Count];
 
-                //get sales order list for APS
-                switch (salesOrderPrioritySelected)
+                //get product batch order list for APS
+                switch (productBatchPrioritySelected)
                 {
-                    case PROIRITY_ORDER_NOT_SELECTED: //do APS by sales order receive order
+                    case PROIRITY_ORDER_NOT_SELECTED: //do APS by receive order
                         for (i = 0; i < listView1.CheckedItems.Count; i++)
                         {
                             indexArray[i] = listView1.CheckedItems[i].Index;
                         }
                         break;
                     case PROIRITY_ORDER_CUSTOMER_IMPORTANCE:  //do APS by the order of the importance of the customer company
-                        //put sales order info in array and then do sorting by the importance of customer company
+                        //put batch order info in array and then do sorting by the importance of customer company
                         for (i = 0; i < listView1.CheckedItems.Count; i++)
                         {
                             index = listView1.CheckedItems[i].Index;
-                            companyName = salesTableArray[index, mySQLClass.CUSTOMER_IN_SALESORDER_DATABASE];
+                            companyName = batchTableArray[index, mySQLClass.CUSTOMER_IN_BATCHNUM_DATABASE];
 
                             commandText = "select * from `" + gVariable.customerListTableName + "` where customerName = '" + companyName + "'";
                             tableArray = mySQLClass.databaseCommonReading(gVariable.basicInfoDatabaseName, commandText);
@@ -587,59 +581,77 @@ namespace MESSystem.APS_UI
                                 MessageBox.Show("基础数据中无法找到客户名称：" + companyName + "，请确认订单信息", "提示信息", MessageBoxButtons.OK);
                                 return;
                             }
-                            strArray[i] = tableArray[0, 3];
-                            indexArray[i] = Convert.ToInt32(salesTableArray[index, mySQLClass.ID_VALUE_IN_SALESORDER_DATABASE]);
+                            conditionArray[i] = tableArray[0, 3];
+                            indexArray[i] = Convert.ToInt32(batchTableArray[index, mySQLClass.ID_VALUE_IN_BATCHNUM_DATABASE]);
                         }
-                        toolClass.stringSortingRecordIndex(strArray, indexArray);
+                        toolClass.stringSortingRecordIndex(conditionArray, indexArray);
                         break;
                     case PROIRITY_ORDER_OUTPUT_QUANTITY:  //do APS by the order of the output quantity, function not support at this time
                     case PROIRITY_ORDER_DELIVERY_TIME: //do APS by delivery time order
                     default:
-                        //put sales order info in array and then do sorting by delivery time
+                        //put batch order info in array and then do sorting by delivery time
                         for (i = 0; i < listView1.CheckedItems.Count; i++)
                         {
                             index = listView1.CheckedItems[i].Index;
-                            strArray[i] = salesTableArray[index, mySQLClass.DELIVERY_TIME_IN_SALESORDER_DATABASE];
-                            indexArray[i] = Convert.ToInt32(salesTableArray[index, mySQLClass.ID_VALUE_IN_SALESORDER_DATABASE]);
+                            conditionArray[i] = batchTableArray[index, mySQLClass.DELIVERY_TIME_IN_BATCHNUM_DATABASE];
+                            indexArray[i] = Convert.ToInt32(batchTableArray[index, mySQLClass.ID_VALUE_IN_BATCHNUM_DATABASE]);
                         }
-                        toolClass.stringSortingRecordIndex(strArray, indexArray);
+                        toolClass.stringSortingRecordIndex(conditionArray, indexArray);
                         break;
                 }
 
                 if (listView1.CheckedItems.Count != 0)
                 {
-                    assignedMachineByUserArray[0] = machineSelected1 - 1;
-                    assignedMachineByUserArray[1] = machineSelected2 - 1;
-                    assignedMachineByUserArray[2] = machineSelected3 - 1;
-
-                    //start time assigned
-                    //if (checkBox2.Checked == true)
-                    {
-                        //startTimeStamp = toolClass.ConvertDateTimeInt(dateTimePicker1.Value);
-                        startTimeStamp = toolClass.ConvertDateTimeInt(DateTime.Now);
-                    }
-                    //else
-                    {
-                        //if we use reversed APS, start time should not be considered, the user will make a judgment whether this APS result is acceptable
-                    //    startTimeStamp = -1;
-                    }
-
-                    //complete time assigned
-                    //if (checkBox1.Checked == true)
-                    {
-                        //we need to use reversed APS by this end time
-                    //    endTimeStamp = toolClass.ConvertDateTimeInt(dateTimePicker2.Value);
-                    }
-                    //else
-                    {
-                        //if we use forwarding APS, end time should not be considered, the user will make a judgment whether this APS result is acceptable
-                        endTimeStamp = -1;
-                    }
-
                     //Console.WriteLine("start +" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                     for (i = 0; i < indexArray.Length; i++)
                     {
-                        APSProcessImpl.runAPSProcess(Convert.ToInt32(salesTableArray[indexArray[i], mySQLClass.ID_VALUE_IN_SALESORDER_DATABASE]), assignedMachineByUserArray, startTimeStamp, endTimeStamp);
+                        for(j = 0; j < gVariable.numOfBatchDefinedAPSRule; j++)
+                        {
+                            if(indexArray[i] == APSUI.APSRulesArray[j].listviewIndex)
+                                break;
+                        }
+
+                        //get batch order index in rules table
+                        if(j != 0 && j >= gVariable.numOfBatchDefinedAPSRule)
+                        {
+                            Console.WriteLine("Formal APS. failed to get correct batch order index");
+                            return;
+                        }
+
+                        if (APSRulesArray[j].assignedStartTime == -1 && APSRulesArray[j].assignedEndTime == -1)
+                        {
+                            startTimeStamp = toolClass.ConvertDateTimeInt(DateTime.Now);
+                            endTimeStamp = -1;
+                        }
+                        else //if (APSRulesArray.assignedStartTime == -1)
+                        {
+                            startTimeStamp = APSRulesArray[j].assignedStartTime;
+                            endTimeStamp = APSRulesArray[j].assignedEndTime;
+                        }
+
+                        //APSRulesArray[j].assignedMachineID1 is 0 means not assigned, so the assignedMachineByUserArray[] value should be -1 
+                        if (APSRulesArray[j].assignedMachineID1 == 0)
+                            assignedMachineByUserArray[0] = -1;
+                        else
+                        {
+                            assignedMachineByUserArray[0] = APSRulesArray[j].assignedMachineID1 - 1 + gVariable.castingProcess[0];
+                        }
+
+                        if (APSRulesArray[j].assignedMachineID2 == 0)
+                            assignedMachineByUserArray[1] = -1;
+                        else
+                        {
+                            assignedMachineByUserArray[1] = APSRulesArray[j].assignedMachineID2 - 1 + gVariable.printingProcess[0];
+                        }
+
+                        if (APSRulesArray[j].assignedMachineID3 == 0)
+                            assignedMachineByUserArray[2] = -1;
+                        else
+                        {
+                            assignedMachineByUserArray[2] = APSRulesArray[j].assignedMachineID3 - 1 + gVariable.slittingProcess[0];
+                        }
+
+                        APSProcessImpl.runAPSProcess(Convert.ToInt32(batchTableArray[indexArray[i], mySQLClass.ID_VALUE_IN_BATCHNUM_DATABASE]), assignedMachineByUserArray, startTimeStamp, endTimeStamp);
                     }
                     //Console.WriteLine("end -" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
 
@@ -663,14 +675,19 @@ namespace MESSystem.APS_UI
             string commandText;
             DialogResult result;
 
-            result = MessageBox.Show("确认当前排程结果吗？", "提示信息", MessageBoxButtons.OKCancel);
+            result = MessageBox.Show("确认把当前已排程的任务单下发到生产部门吗？", "提示信息", MessageBoxButtons.OKCancel);
             if (result != DialogResult.OK)
             {
                 return;
             }
 
             commandText = "update `" + gVariable.globalDispatchTableName + "` set status = '-2' where status = '-3'";
+            mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
 
+            commandText = "update `" + gVariable.productBatchTableName + "` set orderStatus = '" + gVariable.SALES_ORDER_STATUS_CONFIRMED + "' where orderStatus = '" + gVariable.SALES_ORDER_STATUS_APS_OK + "'";
+            mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
+
+            commandText = "update `" + gVariable.salesOrderTableName + "` set orderStatus = '" + gVariable.SALES_ORDER_STATUS_CONFIRMED + "' where orderStatus = '" + gVariable.SALES_ORDER_STATUS_APS_OK + "'";
             mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
 
             gVariable.APSScreenRefresh = 1;
@@ -683,7 +700,7 @@ namespace MESSystem.APS_UI
             APSExhibit.APSExhibitClass.Show();
         }
 
-        //search for sales order
+        //search for batch order
         private void button6_Click(object sender, EventArgs e)
         {
         }
@@ -705,7 +722,7 @@ namespace MESSystem.APS_UI
                     for (i = 0; i < listView1.CheckedItems.Count; i++)
                     {
                         index = listView1.CheckedItems[i].Index;
-                        if (salesTableArray[index, mySQLClass.STATUS_IN_SALESORDER_DATABASE] == gVariable.SALES_ORDER_STATUS_ERP_PUBLISHED.ToString())
+                        if (batchTableArray[index, mySQLClass.STATUS_IN_BATCHNUM_DATABASE] == gVariable.SALES_ORDER_STATUS_ERP_PUBLISHED.ToString())
                         {
                             MessageBox.Show("请确认所选择的订单处于已排程状态，只有该状态的订单才可以取消排程。", "提示信息", MessageBoxButtons.OK);
                             return;
@@ -722,10 +739,10 @@ namespace MESSystem.APS_UI
                     for (i = 0; i < listView1.CheckedItems.Count; i++)
                     {
                         index = listView1.CheckedItems[i].Index;
-                        APSProcessImpl.cancelAPSProcess(Convert.ToInt32(salesTableArray[index, mySQLClass.ID_VALUE_IN_SALESORDER_DATABASE]));
+                        APSProcessImpl.cancelAPSProcess(Convert.ToInt32(batchTableArray[index, mySQLClass.ID_VALUE_IN_BATCHNUM_DATABASE]));
 
-                        ID = Convert.ToInt32(salesTableArray[index, mySQLClass.ID_VALUE_IN_SALESORDER_DATABASE]);
-                        updateStr = "update `" + gVariable.productBatchTableName + "` set orderStatus = '" + gVariable.SALES_ORDER_STATUS_ERP_PUBLISHED + "', planTime1 = null, planTime2 = null, APSTime = null where id = '" + ID + "'";
+                        ID = Convert.ToInt32(batchTableArray[index, mySQLClass.ID_VALUE_IN_BATCHNUM_DATABASE]);
+                        updateStr = "update `" + gVariable.productBatchTableName + "` set orderStatus = '" + gVariable.SALES_ORDER_STATUS_SEPARATE_OK + "', planTime1 = null, planTime2 = null, APSTime = null where id = '" + ID + "'";
 
                         mySQLClass.updateTableItems(gVariable.globalDatabaseName, updateStr);
                     }
@@ -801,14 +818,14 @@ namespace MESSystem.APS_UI
             //gVariable.APSScreenRefresh = 1;
         }
 
-        //generate material requirement table file 
+        //insert an order 
         private void button9_Click(object sender, EventArgs e)
         {
 
         }
 
 
-        //compare different APS result
+        //review machine loading
         private void button8_Click(object sender, EventArgs e)
         {
             adjustLoading adjustLoadingImpl = new adjustLoading();
@@ -817,13 +834,44 @@ namespace MESSystem.APS_UI
 
         private void button2_Click_1(object sender, EventArgs e)
         {
-
+            this.Close();
         }
 
+        //APS rule define for a batch order
         private void button10_Click(object sender, EventArgs e)
         {
-            APSRules APSRulesImpl = new APSRules();
+            int i;
+            int selectedBatchOrderID;
+
+            if (this.listView1.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("请先反白选中一个订单批次号，然后再点选'排产规则设定'按钮开始针对该订单的排程规则设定。", "提示信息", MessageBoxButtons.OK);
+                return;
+            }
+
+            for (i = 0; i < gVariable.numOfBatchDefinedAPSRule; i++)
+            {
+                if (listView1.SelectedItems[0].Index == APSUI.APSRulesArray[i].listviewIndex)
+                {
+                    gVariable.indexOfBatchDefinedAPSRule = i;
+                    break;
+                }
+            }
+
+            if (i >= gVariable.numOfBatchDefinedAPSRule)
+                gVariable.indexOfBatchDefinedAPSRule = gVariable.numOfBatchDefinedAPSRule;
+
+            selectedBatchOrderID = Convert.ToInt32(batchTableArray[listView1.SelectedItems[0].Index, 0]);
+            APSRules APSRulesImpl = new APSRules(selectedBatchOrderID, listView1.SelectedItems[0].Index);
             APSRulesImpl.Show();
+            gVariable.APSScreenRefresh = 1;
+        }
+
+        //multi-product setting
+        private void button9_Click_1(object sender, EventArgs e)
+        {
+
+
         }
 
     }

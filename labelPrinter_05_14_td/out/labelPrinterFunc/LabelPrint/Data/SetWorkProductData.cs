@@ -41,6 +41,7 @@ namespace LabelPrint.Data
         public TextBox tb_BatchNo;
         public TextBox tb_Recipe;
         public TextBox tb_PlateNo;
+        public TextBox tb_ProductLenth;
         private const int LittleRollMax = 14;
         private const int Max = 999;
 
@@ -134,16 +135,16 @@ namespace LabelPrint.Data
             tb_PlateRollPerLay.Text = PlateRollPerLay;
             tb_PlateLayer.Text = PlateLayer;
             tb_PlateRollNum.Text = PlateRollNum;
-
+            tb_ProductLenth.Text = productLength;
         //public TextBox ;
         //public TextBox tb_Recipe;
         //public TextBox tb_PlateNo;
-    }
+        }
     };
 
     public class SetWorkProductData
     {
-        private const int ProductTypeCount = 3;
+        public  const  int ProductTypeCount = 4;
 
         MiscCutProductData[] MiscProductList = new MiscCutProductData[ProductTypeCount];
         int TotalProductInMisc = 0;
@@ -378,6 +379,7 @@ namespace LabelPrint.Data
                          MiscProductList[i].tb_CustomerName.BackColor = Color.White;
                         MiscProductList[i].tb_Recipe.BackColor = Color.White;
                         MiscProductList[i].tb_RawMaterialCode.BackColor = Color.White;
+                        MiscProductList[i].tb_ProductLenth.BackColor = Color.White;
                         MiscProductList[i] = null;
                         TotalProductInMisc--;
                     }
@@ -448,7 +450,7 @@ namespace LabelPrint.Data
         }
 
 
-        public void UpdateUI(TextBox[] CustomerNames, TextBox[]BatchNo, TextBox[]Recipe, TextBox []PlateNo,TextBox[] RawMaterialCode,TextBox[]PlateRollPerLay, TextBox[] PlateLayer, TextBox[] PlateRollNum)
+        public void UpdateUI(TextBox[] CustomerNames, TextBox[]BatchNo, TextBox[]Recipe, TextBox []PlateNo,TextBox[] RawMaterialCode,TextBox[]PlateRollPerLay, TextBox[] PlateLayer, TextBox[] PlateRollNum,TextBox[] ProductLenth)
         {
             sortMiscCutProductData();
             for (int i = 0; i < ProductTypeCount; i++)
@@ -465,7 +467,8 @@ namespace LabelPrint.Data
                     MiscProductList[i].tb_PlateRollPerLay = PlateRollPerLay[i];
                     MiscProductList[i].tb_PlateLayer = PlateLayer[i];
                     MiscProductList[i].tb_PlateRollNum = PlateRollNum[i];
-
+                    MiscProductList[i].tb_ProductLenth = ProductLenth[i];
+    
                     //tb_BatchNos[i].Text = null;
                     //tb_PlateNos[i].Text = null;
                     //tb_Recipes[i]
@@ -482,6 +485,7 @@ namespace LabelPrint.Data
                     PlateRollPerLay[i].Text = null;
                     PlateLayer[i].Text = null;
                     PlateRollNum[i].Text = null;
+                    ProductLenth[i].Text = null;
                 }
             }
         }

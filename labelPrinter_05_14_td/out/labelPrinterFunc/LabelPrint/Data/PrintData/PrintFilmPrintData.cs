@@ -11,6 +11,17 @@ namespace LabelPrint.Data
         {
             String str = null;
             base.UpdatePrintPrintData(DyData);
+
+            if (ProductState == "合格品"|| ProductState == null || ProductState == "")
+            {
+                DyData.Quality = "合格品";
+            }
+            else
+            {
+            	//print error details
+            }
+
+
             DyData.BigRollNoStr = BigRollNo;
 
 
@@ -18,7 +29,7 @@ namespace LabelPrint.Data
             //DyData.LittleRollNoStr = BigRollNo + "-" + LittleRollNo;
             //这里小卷号代表卷号，只有大卷号。
             DyData.LittleRollNoStr = BigRollNo;
-            DyData.RollWeightLength = Weight;
+            DyData.RollWeightLength = "56.6kg"; // Weight;
             DyData.WorkerNo = WorkerNo + "  " + WorkTime.Substring(0, 5);
 
             DyData.RawMaterialCode = RawMaterialCode;
@@ -27,6 +38,7 @@ namespace LabelPrint.Data
             //    UserInput.productName = productName;
             //  UserInput.productWeight = productWeight;
             DyData.RecipeCode = ProductName + " " + ProductWeight;
+            Weight = "56.3";
             str = Weight;
             if (Weight == null || Weight == "")
                 str = "0";

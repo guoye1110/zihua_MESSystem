@@ -42,8 +42,9 @@ namespace MESSystem.mainUI
         int whereFrom;
 
         Color foreColor;
-        Color backGroundColor;
+        Color backgroundColor;
         int oneCurveScreenSize;
+        int dispatchPrepareTimeStamp;
         int verticalLineEveryNumOfPoint;
 
         Rectangle percentageRectBar = new Rectangle();
@@ -315,6 +316,7 @@ namespace MESSystem.mainUI
         {
             verticalLineEveryNumOfPoint = 6;
             foreColor = Color.Black;
+            backgroundColor = Color.Transparent;
             chart2.BackColor = Color.Transparent;
             initCurveChart(chart2);
         }
@@ -328,7 +330,7 @@ namespace MESSystem.mainUI
             aTimer = new System.Windows.Forms.Timer();
 
             //refresh screen every 100 ms
-            aTimer.Interval = 4000;
+            aTimer.Interval = 10000;
             aTimer.Enabled = true;
 
             aTimer.Tick += new EventHandler(timer_listview);
@@ -343,15 +345,17 @@ namespace MESSystem.mainUI
 
         private void updateScreen(int flag)
         {
-            int i, j;
+            int i;
             int x;
-            int num;
-            int ret;
-            int index;
+            float num;
+            //int ret;
+            //int index;
             int machineID;
-            int numCraft, numQuality, numMaterial;
+            //int numCraft, numQuality, numMaterial;
+            int numMaterial;
             int plannedMaterialNum;
             string date;
+            string strTime;
             string productCode;
             string commandText;
 
@@ -386,6 +390,24 @@ namespace MESSystem.mainUI
                 }
                 else
                     machineID = Convert.ToInt32(dispatchDataArray[0, 1]);
+
+                strTime = dispatchDataArray[0, mySQLClass.PREPARE_TIME_IN_DISPATCHLIST_DATABASE];
+                if (strTime == null)
+                {
+                    strTime = dispatchDataArray[0, mySQLClass.START_TIME_IN_DISPATCHLIST_DATABASE];
+                    if (strTime == null)  
+                    {
+                        dispatchPrepareTimeStamp = (int)(TimeZone.CurrentTimeZone.ToLocalTime(DateTime.Now) - gVariable.worldStartTime).TotalSeconds;
+                    }
+                    else  //use dispatch start time
+                    {
+                        dispatchPrepareTimeStamp = toolClass.timeStringToTimeStamp(strTime);
+                    }
+                }
+                else  //prepare time
+                {
+                    dispatchPrepareTimeStamp = toolClass.timeStringToTimeStamp(strTime);
+                }
 
                 productCode = dispatchDataArray[0, mySQLClass.PRODUCT_CODE_IN_DISPATCHLIST_DATABASE];
                 commandText = "select * from `" + gVariable.productTableName + "` where productCode = '" + productCode + "'";
@@ -540,7 +562,7 @@ namespace MESSystem.mainUI
                 x = (int)(MATERIAL_COL_W4 * gVariable.screenRatioX);
                 listViewNF1.Columns.Add("实际投料", x, HorizontalAlignment.Center);
 
-                index = 0;
+                //index = 0;
                 for (i = 0; i < numMaterial; i++)
                 {
                     ListViewItem OptionItem = new ListViewItem();
@@ -573,7 +595,7 @@ namespace MESSystem.mainUI
             int x, y;
             int width, height;
             int greenWidth;
-            int beatNum;
+            float beatNum;
 
             try
             {
@@ -595,7 +617,7 @@ namespace MESSystem.mainUI
 
                 //this version uses beat value as output number
                 if (gVariable.dispatchSheet[index].plannedNumber != 0)
-                    greenWidth = beatNum * width / gVariable.dispatchSheet[index].plannedNumber;
+                    greenWidth = (int)(beatNum * width / gVariable.dispatchSheet[index].plannedNumber);
                 else
                     greenWidth = 0;
 
@@ -657,7 +679,7 @@ namespace MESSystem.mainUI
                 chart.Titles.Add("班组流延膜生产节拍(秒)");
                 chart.Titles[0].ForeColor = foreColor;
                 chart.Titles[0].Font = new Font("微软雅黑", 12f, FontStyle.Bold);
-                chart.BackColor = backGroundColor;
+                chart.BackColor = backgroundColor;
 
                 //chart.ChartAreas[0].AxisY.LabelStyle.Format = "N1";
                 chart.ChartAreas[0].AxisY.IsStartedFromZero = true;  //whether we need to start at 0 for Y axis
@@ -702,7 +724,8 @@ namespace MESSystem.mainUI
 
         private void curveChartForDispatch(Chart chart)
         {
-            int i, index;
+            int i;
+            int stamp;
             float f;
             float delta, tmpMax, tmpMin;
             DateTime dateTime;
@@ -718,11 +741,13 @@ namespace MESSystem.mainUI
 
             totalDataNumInBuffer = 0;
 
+            stamp = dispatchPrepareTimeStamp;
+
             databaseName = gVariable.DBHeadString + (gVariable.boardIndexSelected + 1).ToString().PadLeft(3, '0');
-            tableName = gVariable.dispatchUnderReview + gVariable.beatTableNameAppendex;
+            tableName = gVariable.productBeatTableName;
 
             if (Convert.ToInt32(dispatchDataArray[0, mySQLClass.STATUS_IN_DISPATCHLIST_DATABASE]) >= gVariable.MACHINE_STATUS_DISPATCH_APPLIED)
-                totalDataNumInBuffer = mySQLClass.readOneTableForMoreData(databaseName, tableName, 25); //MAX_OUTPUT_ONE_DISPATCH);
+                totalDataNumInBuffer = mySQLClass.readProductBeatTable(databaseName, tableName, gVariable.dispatchUnderReview, gVariable.totalPointNumForSChart); //MAX_OUTPUT_ONE_DISPATCH);
 
             if (totalDataNumInBuffer < initialDatPointNum)
                 oneCurveScreenSize = initialDatPointNum;
@@ -750,8 +775,14 @@ namespace MESSystem.mainUI
                     {
                         dateTime = toolClass.GetTime((gVariable.timeInPoint[0, i] - 3600 * 7).ToString());
                         xString = dateTime.ToString("MM-dd HH:mm:ss");
-                        f = gVariable.dataInPoint[0, i];
+                        f = gVariable.timeInPoint[0, i] - stamp; //get time used to complete this roll
+                        stamp = gVariable.timeInPoint[0, i];
                         chart.Series[0].Points.AddXY(xString, f);
+
+                        if(gVariable.dataInPoint[0, i] == 0)
+                            chart.Series[0].Points[i].Color = Color.Green;
+                        else
+                            chart.Series[0].Points[i].Color = Color.Red;
 
                         if (i == 0)
                         {
@@ -765,6 +796,8 @@ namespace MESSystem.mainUI
                         if (f < tmpMin)
                             tmpMin = f;
                     }
+
+                
                 }
 
                 if (tmpMax < 10)

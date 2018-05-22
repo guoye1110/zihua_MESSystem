@@ -41,7 +41,7 @@ namespace MESSystem.communication
 
         public partial class ClientThread
         {
-            int machineIDForPrint;
+            //int machineIDForPrint;
             //material code for stacks(码垛对应的原料编号)
             string[,] materialCodeForStack = new string[NUM_OF_FEEDING_MACHINE, STACK_NUM_ONE_MACHINE]; 
             //total sack num for this dispatch, got from dispatch info（工单中原料需求的袋数）
@@ -85,7 +85,7 @@ namespace MESSystem.communication
 
             public void processLabelPrintingFunc(int communicationType, int packetLen)
             {
-                //int i;
+                /*
                 int len;
                 int printingSWPCID;
                 string str;
@@ -93,6 +93,7 @@ namespace MESSystem.communication
                 //string commandText;
                 //string[,] tableArray;
 
+                
                 try
                 {
                     switch (communicationType)
@@ -203,6 +204,7 @@ namespace MESSystem.communication
                 {
                     Console.WriteLine("processLabelPrintingFunc(" + communicationType + "," + packetLen + ") for printingMachineID = " + machineIDForPrint + "failed, " + ex);
                 }
+                */
             }
 
             //send material info for all feeding machine one by one
@@ -220,7 +222,7 @@ namespace MESSystem.communication
                     }
                 }
 
-                sendStringToClient(str, COMMUNICATION_TYPE_WAREHOUE_OUT_START);
+                //sendStringToClient(str, COMMUNICATION_TYPE_WAREHOUE_OUT_START);
             }
 
 

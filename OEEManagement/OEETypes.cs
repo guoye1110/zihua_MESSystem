@@ -41,9 +41,9 @@ namespace MESSystem.OEEManagement
         public struct MachineStatus
         {
             //public string name;
-            public int outputPlanned;   //计划产量
-            public int outputQualified; //合格产量
-            public int outputReal;      //实际产量
+            public float outputPlanned;   //计划产量
+            public float outputQualified; //合格产量
+            public float outputReal;      //实际产量
             public int maintainanceHours; //保养时间
             public int prepareHours;    //调整时间
             public List<StatusPoint> statusPoints;

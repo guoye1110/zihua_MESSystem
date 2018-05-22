@@ -110,6 +110,8 @@ namespace LabelPrint
 
             tb_WorkerNo.Text = gVariable.userAccount;
             tb_WorkerNo.Enabled = false;
+
+            tb_ProductLength.Text = UserInput.ProductLength;
         }
         void InitProductStateComboBox(ComboBox productStates)
         {
@@ -191,6 +193,8 @@ namespace LabelPrint
             int.TryParse(tb_PlateRollPerLay1.Text, out UserInput.CurPlatInfo.LittleRollPerlayer);
             int.TryParse(tb_PlateLayer1.Text, out UserInput.CurPlatInfo.Layer);
 
+
+             UserInput.ProductLength = tb_ProductLength.Text;
         }
 
         private void UpdateProductData()

@@ -55,7 +55,7 @@ namespace MESSystem.alarmFun
 
         public gVariable.alarmTableStruct alarmTableStructImpl;
 
-        private Thread thread1;
+        //private Thread thread1;
 
         public static SetAlarmClass[] activeAlarmInstanceArray = new SetAlarmClass[gVariable.maxActiveAlarmNum];
 
@@ -85,8 +85,8 @@ namespace MESSystem.alarmFun
         //one second passed, we need to update mail list, then check whether an hour had passed and we need to close it
         private void closeAlarmTick(object sender, EventArgs e)
         {
-            int i;
-            string[] addrArray;
+            //int i;
+            //string[] addrArray;
 
             disapearIndex++;
 

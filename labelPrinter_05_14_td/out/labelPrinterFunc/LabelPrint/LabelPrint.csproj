@@ -35,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.6.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -49,16 +49,16 @@
       <HintPath>lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NPOI">
-      <HintPath>..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\NPOI.dll</HintPath>
+      <HintPath>..\..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\NPOI.dll</HintPath>
     </Reference>
     <Reference Include="NPOI.OOXML">
-      <HintPath>..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\NPOI.OOXML.dll</HintPath>
+      <HintPath>..\..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\NPOI.OOXML.dll</HintPath>
     </Reference>
     <Reference Include="NPOI.OpenXml4Net">
-      <HintPath>..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\NPOI.OpenXml4Net.dll</HintPath>
+      <HintPath>..\..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\NPOI.OpenXml4Net.dll</HintPath>
     </Reference>
     <Reference Include="NPOI.OpenXmlFormats">
-      <HintPath>..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\NPOI.OpenXmlFormats.dll</HintPath>
+      <HintPath>..\..\..\..\..\NPOI-excel-tools\examples\examples\xwpf\libs\NPOI.OpenXmlFormats.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -161,7 +161,17 @@
     <Compile Include="LoginForm.Designer.cs">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="NetWork\CutSockets.cs" />
     <Compile Include="NetWork\FilmSocket.cs" />
+    <Compile Include="NetWork\HandShakeSockets.cs" />
+    <Compile Include="NetWork\HeartBeatSockets.cs" />
+    <Compile Include="NetWork\LiuYanSockets.cs" />
+    <Compile Include="NetWork\OutBoundingSockets.cs" />
+    <Compile Include="NetWork\PackSockets.cs" />
+    <Compile Include="NetWork\PrintSockets.cs" />
+    <Compile Include="NetWork\QASockets.cs" />
+    <Compile Include="NetWork\RecoverySockets.cs" />
+    <Compile Include="NetWork\RuKuSockets.cs" />
     <Compile Include="PrintForms\excelOutput.cs" />
     <Compile Include="PrintForms\JiaoJieBanForm.cs">
       <SubType>Form</SubType>

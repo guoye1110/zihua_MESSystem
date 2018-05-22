@@ -84,17 +84,19 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label22 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label24 = new System.Windows.Forms.Label();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.label25 = new System.Windows.Forms.Label();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label22 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label55 = new System.Windows.Forms.Label();
+            this.tb_ProductLength = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -123,7 +125,7 @@
             this.label36.Location = new System.Drawing.Point(527, 136);
             this.label36.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(78, 17);
+            this.label36.Size = new System.Drawing.Size(71, 17);
             this.label36.TabIndex = 178;
             this.label36.Text = "铲板号码：";
             // 
@@ -178,7 +180,7 @@
             this.lb_PalteRoll.Location = new System.Drawing.Point(63, 216);
             this.lb_PalteRoll.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lb_PalteRoll.Name = "lb_PalteRoll";
-            this.lb_PalteRoll.Size = new System.Drawing.Size(78, 17);
+            this.lb_PalteRoll.Size = new System.Drawing.Size(71, 17);
             this.lb_PalteRoll.TabIndex = 162;
             this.lb_PalteRoll.Text = "铲板卷数：";
             // 
@@ -242,7 +244,7 @@
             this.lb_ProductQulity.Location = new System.Drawing.Point(272, 136);
             this.lb_ProductQulity.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lb_ProductQulity.Name = "lb_ProductQulity";
-            this.lb_ProductQulity.Size = new System.Drawing.Size(78, 17);
+            this.lb_ProductQulity.Size = new System.Drawing.Size(71, 17);
             this.lb_ProductQulity.TabIndex = 135;
             this.lb_ProductQulity.Text = "产品质量：";
             // 
@@ -331,7 +333,7 @@
             this.label26.Location = new System.Drawing.Point(62, 131);
             this.label26.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(78, 17);
+            this.label26.Size = new System.Drawing.Size(71, 17);
             this.label26.TabIndex = 116;
             this.label26.Text = "客户名称：";
             // 
@@ -341,7 +343,7 @@
             this.label21.Location = new System.Drawing.Point(527, 92);
             this.label21.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(78, 17);
+            this.label21.Size = new System.Drawing.Size(71, 17);
             this.label21.TabIndex = 112;
             this.label21.Text = "接头数量：";
             // 
@@ -351,7 +353,7 @@
             this.label20.Location = new System.Drawing.Point(527, 48);
             this.label20.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(78, 17);
+            this.label20.Size = new System.Drawing.Size(71, 17);
             this.label20.TabIndex = 111;
             this.label20.Text = "分切机号：";
             // 
@@ -361,7 +363,7 @@
             this.label19.Location = new System.Drawing.Point(271, 92);
             this.label19.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(78, 17);
+            this.label19.Size = new System.Drawing.Size(71, 17);
             this.label19.TabIndex = 110;
             this.label19.Text = "员工编号：";
             // 
@@ -371,7 +373,7 @@
             this.label18.Location = new System.Drawing.Point(50, 185);
             this.label18.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(50, 17);
+            this.label18.Size = new System.Drawing.Size(43, 17);
             this.label18.TabIndex = 109;
             this.label18.Text = "备注：";
             // 
@@ -381,7 +383,7 @@
             this.label17.Location = new System.Drawing.Point(25, 136);
             this.label17.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(78, 17);
+            this.label17.Size = new System.Drawing.Size(71, 17);
             this.label17.TabIndex = 108;
             this.label17.Text = "产品状态：";
             // 
@@ -391,7 +393,7 @@
             this.label16.Location = new System.Drawing.Point(25, 92);
             this.label16.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(78, 17);
+            this.label16.Size = new System.Drawing.Size(71, 17);
             this.label16.TabIndex = 107;
             this.label16.Text = "生产工时：";
             // 
@@ -401,7 +403,7 @@
             this.label15.Location = new System.Drawing.Point(40, 48);
             this.label15.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(64, 17);
+            this.label15.Size = new System.Drawing.Size(57, 17);
             this.label15.TabIndex = 106;
             this.label15.Text = "工单号：";
             // 
@@ -411,7 +413,7 @@
             this.label14.Location = new System.Drawing.Point(20, 352);
             this.label14.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(134, 17);
+            this.label14.Size = new System.Drawing.Size(127, 17);
             this.label14.TabIndex = 105;
             this.label14.Text = "标签显示实际重量：";
             // 
@@ -422,7 +424,7 @@
             this.label13.Location = new System.Drawing.Point(24, 309);
             this.label13.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(78, 17);
+            this.label13.Size = new System.Drawing.Size(71, 17);
             this.label13.TabIndex = 104;
             this.label13.Text = "大卷编号：";
             // 
@@ -433,7 +435,7 @@
             this.label12.Location = new System.Drawing.Point(272, 307);
             this.label12.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(78, 17);
+            this.label12.Size = new System.Drawing.Size(71, 17);
             this.label12.TabIndex = 103;
             this.label12.Text = "小卷编号：";
             // 
@@ -443,7 +445,7 @@
             this.label11.Location = new System.Drawing.Point(275, 353);
             this.label11.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(103, 17);
+            this.label11.Size = new System.Drawing.Size(96, 17);
             this.label11.TabIndex = 102;
             this.label11.Text = "小卷重量(kg)：";
             // 
@@ -453,7 +455,7 @@
             this.label2.Location = new System.Drawing.Point(463, 90);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(78, 17);
+            this.label2.Size = new System.Drawing.Size(71, 17);
             this.label2.TabIndex = 100;
             this.label2.Text = "分切宽度：";
             // 
@@ -463,7 +465,7 @@
             this.label1.Location = new System.Drawing.Point(61, 90);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(78, 17);
+            this.label1.Size = new System.Drawing.Size(71, 17);
             this.label1.TabIndex = 99;
             this.label1.Text = "产品代号：";
             // 
@@ -503,7 +505,7 @@
             this.label3.Location = new System.Drawing.Point(62, 49);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(78, 17);
+            this.label3.Size = new System.Drawing.Size(71, 17);
             this.label3.TabIndex = 187;
             this.label3.Text = "生产日期：";
             // 
@@ -523,7 +525,7 @@
             this.label5.Location = new System.Drawing.Point(536, 307);
             this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(70, 17);
+            this.label5.Size = new System.Drawing.Size(63, 17);
             this.label5.TabIndex = 190;
             this.label5.Text = "班     次：";
             // 
@@ -543,7 +545,7 @@
             this.label6.Location = new System.Drawing.Point(536, 353);
             this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(70, 17);
+            this.label6.Size = new System.Drawing.Size(63, 17);
             this.label6.TabIndex = 192;
             this.label6.Text = "班     別：";
             // 
@@ -587,7 +589,7 @@
             this.label27.Location = new System.Drawing.Point(462, 49);
             this.label27.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(78, 17);
+            this.label27.Size = new System.Drawing.Size(71, 17);
             this.label27.TabIndex = 199;
             this.label27.Text = "生产批号：";
             // 
@@ -605,7 +607,7 @@
             this.label8.Location = new System.Drawing.Point(463, 131);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(78, 17);
+            this.label8.Size = new System.Drawing.Size(71, 17);
             this.label8.TabIndex = 201;
             this.label8.Text = "配方编号：";
             // 
@@ -621,7 +623,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label55);
             this.groupBox1.Controls.Add(this.label23);
+            this.groupBox1.Controls.Add(this.tb_ProductLength);
             this.groupBox1.Controls.Add(this.textBox3);
             this.groupBox1.Controls.Add(this.textBox4);
             this.groupBox1.Controls.Add(this.label24);
@@ -657,84 +661,6 @@
             this.groupBox1.TabIndex = 206;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "基础信息";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.textBox1);
-            this.groupBox2.Controls.Add(this.label7);
-            this.groupBox2.Controls.Add(this.tb_WorkNo);
-            this.groupBox2.Controls.Add(this.label11);
-            this.groupBox2.Controls.Add(this.label12);
-            this.groupBox2.Controls.Add(this.cb_WorkClass);
-            this.groupBox2.Controls.Add(this.label13);
-            this.groupBox2.Controls.Add(this.label6);
-            this.groupBox2.Controls.Add(this.label14);
-            this.groupBox2.Controls.Add(this.cb_WorkTime);
-            this.groupBox2.Controls.Add(this.label15);
-            this.groupBox2.Controls.Add(this.label5);
-            this.groupBox2.Controls.Add(this.label16);
-            this.groupBox2.Controls.Add(this.label17);
-            this.groupBox2.Controls.Add(this.label18);
-            this.groupBox2.Controls.Add(this.tb_PlateNo1);
-            this.groupBox2.Controls.Add(this.label19);
-            this.groupBox2.Controls.Add(this.label36);
-            this.groupBox2.Controls.Add(this.label20);
-            this.groupBox2.Controls.Add(this.tb_CutMachineNo);
-            this.groupBox2.Controls.Add(this.label21);
-            this.groupBox2.Controls.Add(this.tb_ManHour);
-            this.groupBox2.Controls.Add(this.tb_JointCount);
-            this.groupBox2.Controls.Add(this.tb_WorkerNo);
-            this.groupBox2.Controls.Add(this.cb_ProductQuality);
-            this.groupBox2.Controls.Add(this.tb_Desc);
-            this.groupBox2.Controls.Add(this.lb_ProductQulity);
-            this.groupBox2.Controls.Add(this.tb_BigRollNo);
-            this.groupBox2.Controls.Add(this.tb_LittleRollWeight);
-            this.groupBox2.Controls.Add(this.tb_LittleRollNo);
-            this.groupBox2.Controls.Add(this.cb_ShowRealWight);
-            this.groupBox2.Controls.Add(this.cb_ProductState);
-            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.groupBox2.Location = new System.Drawing.Point(573, 393);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(799, 402);
-            this.groupBox2.TabIndex = 207;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "生产信息";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(284, 48);
-            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(64, 17);
-            this.label7.TabIndex = 193;
-            this.label7.Text = "订单号：";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(350, 45);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(152, 23);
-            this.textBox1.TabIndex = 194;
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(543, 169);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(119, 23);
-            this.textBox2.TabIndex = 202;
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(449, 172);
-            this.label22.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(92, 17);
-            this.label22.TabIndex = 203;
-            this.label22.Text = "原材料代码：";
             // 
             // label23
             // 
@@ -787,9 +713,105 @@
             this.label25.Location = new System.Drawing.Point(61, 175);
             this.label25.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(114, 17);
+            this.label25.Size = new System.Drawing.Size(107, 17);
             this.label25.TabIndex = 207;
             this.label25.Text = "基重/卷径/长度：";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(543, 169);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(119, 23);
+            this.textBox2.TabIndex = 202;
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(449, 172);
+            this.label22.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(85, 17);
+            this.label22.TabIndex = 203;
+            this.label22.Text = "原材料代码：";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.textBox1);
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.tb_WorkNo);
+            this.groupBox2.Controls.Add(this.label11);
+            this.groupBox2.Controls.Add(this.label12);
+            this.groupBox2.Controls.Add(this.cb_WorkClass);
+            this.groupBox2.Controls.Add(this.label13);
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.label14);
+            this.groupBox2.Controls.Add(this.cb_WorkTime);
+            this.groupBox2.Controls.Add(this.label15);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Controls.Add(this.label16);
+            this.groupBox2.Controls.Add(this.label17);
+            this.groupBox2.Controls.Add(this.label18);
+            this.groupBox2.Controls.Add(this.tb_PlateNo1);
+            this.groupBox2.Controls.Add(this.label19);
+            this.groupBox2.Controls.Add(this.label36);
+            this.groupBox2.Controls.Add(this.label20);
+            this.groupBox2.Controls.Add(this.tb_CutMachineNo);
+            this.groupBox2.Controls.Add(this.label21);
+            this.groupBox2.Controls.Add(this.tb_ManHour);
+            this.groupBox2.Controls.Add(this.tb_JointCount);
+            this.groupBox2.Controls.Add(this.tb_WorkerNo);
+            this.groupBox2.Controls.Add(this.cb_ProductQuality);
+            this.groupBox2.Controls.Add(this.tb_Desc);
+            this.groupBox2.Controls.Add(this.lb_ProductQulity);
+            this.groupBox2.Controls.Add(this.tb_BigRollNo);
+            this.groupBox2.Controls.Add(this.tb_LittleRollWeight);
+            this.groupBox2.Controls.Add(this.tb_LittleRollNo);
+            this.groupBox2.Controls.Add(this.cb_ShowRealWight);
+            this.groupBox2.Controls.Add(this.cb_ProductState);
+            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.groupBox2.Location = new System.Drawing.Point(573, 393);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(799, 402);
+            this.groupBox2.TabIndex = 207;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "生产信息";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(350, 45);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(152, 23);
+            this.textBox1.TabIndex = 194;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(284, 48);
+            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(57, 17);
+            this.label7.TabIndex = 193;
+            this.label7.Text = "订单号：";
+            // 
+            // label55
+            // 
+            this.label55.AutoSize = true;
+            this.label55.Location = new System.Drawing.Point(490, 216);
+            this.label55.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label55.Name = "label55";
+            this.label55.Size = new System.Drawing.Size(43, 17);
+            this.label55.TabIndex = 208;
+            this.label55.Text = "卷长：";
+            // 
+            // tb_ProductLength
+            // 
+            this.tb_ProductLength.Location = new System.Drawing.Point(541, 213);
+            this.tb_ProductLength.Margin = new System.Windows.Forms.Padding(2);
+            this.tb_ProductLength.Name = "tb_ProductLength";
+            this.tb_ProductLength.Size = new System.Drawing.Size(121, 23);
+            this.tb_ProductLength.TabIndex = 209;
             // 
             // CutEditorForm
             // 
@@ -885,5 +907,7 @@
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label55;
+        private System.Windows.Forms.TextBox tb_ProductLength;
     }
 }

@@ -68,10 +68,10 @@ namespace MESSystem.APS_UI
         {
             int i;
             int x, y, w, h;
-            int x1, x2, x3, x4, x5, x6;
-            int y1, y2;
-            int gapX, gapX2, gapY;
-            int textBoxW1, textBoxW2, textBoxH;
+            //int x1, x2, x3, x4, x5, x6;
+            //int y1, y2;
+            //int gapX, gapX2, gapY;
+            //int textBoxW1, textBoxW2, textBoxH;
             float fontSize;
             GroupBox[] groupBoxArray = { groupBox1, groupBox2, groupBox3, groupBox4 };
             Label[] labelArray = { label8, label9 };
@@ -89,22 +89,22 @@ namespace MESSystem.APS_UI
 
             int[] titleFontSize = { 20, 22, 23, 24, 25, 28 };
 
-            x1 = 8;
-            x2 = 179;
-            x3 = 349;
-            x4 = 8;
-            x5 = 151;
-            x6 = 295;
+            //x1 = 8;
+            //x2 = 179;
+            //x3 = 349;
+            //x4 = 8;
+            //x5 = 151;
+            //x6 = 295;
 
-            y1 = 40;
-            gapX = 60;
-            gapX2 = 68;
-            gapY = 41;
-            y2 = 38;
+            //y1 = 40;
+            //gapX = 60;
+            //gapX2 = 68;
+            //gapY = 41;
+            //y2 = 38;
 
-            textBoxW1 = 92;
-            textBoxW2 = 73;
-            textBoxH = 20;
+            //textBoxW1 = 92;
+            //textBoxW2 = 73;
+            //textBoxH = 20;
 
             fontSize = commonFontSize[gVariable.dpiValue, gVariable.resolutionLevel];
 
@@ -193,8 +193,8 @@ namespace MESSystem.APS_UI
             int i, j, k;
             int length;
             string commandText;
-            string tableName;
-            string databaseName;
+            //string tableName;
+            //string databaseName;
             int[] dispatchIndex = new int[100];
             int[] outputQuantity = new int[100];
             string[] batchNumArray = new string[100];

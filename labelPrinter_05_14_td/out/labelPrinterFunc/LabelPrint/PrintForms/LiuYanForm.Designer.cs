@@ -70,6 +70,8 @@
             this.tb_RollWeight = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.lb_ProductQulity = new System.Windows.Forms.Label();
+            this.cb_ProductQuality = new System.Windows.Forms.ComboBox();
             this.cb_ProductState = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -229,14 +231,14 @@
             // 
             // tb_BigRollNo
             // 
-            this.tb_BigRollNo.Location = new System.Drawing.Point(112, 170);
+            this.tb_BigRollNo.Location = new System.Drawing.Point(107, 170);
             this.tb_BigRollNo.Name = "tb_BigRollNo";
             this.tb_BigRollNo.Size = new System.Drawing.Size(226, 24);
             this.tb_BigRollNo.TabIndex = 129;
             // 
             // tb_Desc
             // 
-            this.tb_Desc.Location = new System.Drawing.Point(112, 258);
+            this.tb_Desc.Location = new System.Drawing.Point(105, 279);
             this.tb_Desc.Multiline = true;
             this.tb_Desc.Name = "tb_Desc";
             this.tb_Desc.Size = new System.Drawing.Size(624, 73);
@@ -294,7 +296,7 @@
             this.label27.AutoSize = true;
             this.label27.Location = new System.Drawing.Point(1076, 145);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(83, 18);
+            this.label27.Size = new System.Drawing.Size(76, 18);
             this.label27.TabIndex = 116;
             this.label27.Text = "生产批号：";
             // 
@@ -303,7 +305,7 @@
             this.label26.AutoSize = true;
             this.label26.Location = new System.Drawing.Point(1076, 60);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(83, 18);
+            this.label26.Size = new System.Drawing.Size(76, 18);
             this.label26.TabIndex = 115;
             this.label26.Text = "客户名称：";
             // 
@@ -312,7 +314,7 @@
             this.label22.AutoSize = true;
             this.label22.Location = new System.Drawing.Point(30, 141);
             this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(68, 18);
+            this.label22.Size = new System.Drawing.Size(61, 18);
             this.label22.TabIndex = 112;
             this.label22.Text = "配方号：";
             // 
@@ -461,6 +463,8 @@
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.lb_ProductQulity);
+            this.groupBox6.Controls.Add(this.cb_ProductQuality);
             this.groupBox6.Controls.Add(this.cb_ProductState);
             this.groupBox6.Controls.Add(this.label5);
             this.groupBox6.Controls.Add(this.tb_Desc);
@@ -468,19 +472,41 @@
             this.groupBox6.Controls.Add(this.tb_BigRollNo);
             this.groupBox6.Location = new System.Drawing.Point(356, 494);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(754, 385);
+            this.groupBox6.Size = new System.Drawing.Size(780, 385);
             this.groupBox6.TabIndex = 232;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "生产信息";
+            // 
+            // lb_ProductQulity
+            // 
+            this.lb_ProductQulity.AutoSize = true;
+            this.lb_ProductQulity.Location = new System.Drawing.Point(429, 227);
+            this.lb_ProductQulity.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lb_ProductQulity.Name = "lb_ProductQulity";
+            this.lb_ProductQulity.Size = new System.Drawing.Size(76, 18);
+            this.lb_ProductQulity.TabIndex = 193;
+            this.lb_ProductQulity.Text = "产品质量：";
+            // 
+            // cb_ProductQuality
+            // 
+            this.cb_ProductQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_ProductQuality.FormattingEnabled = true;
+            this.cb_ProductQuality.Location = new System.Drawing.Point(509, 224);
+            this.cb_ProductQuality.Margin = new System.Windows.Forms.Padding(2);
+            this.cb_ProductQuality.Name = "cb_ProductQuality";
+            this.cb_ProductQuality.Size = new System.Drawing.Size(220, 26);
+            this.cb_ProductQuality.TabIndex = 194;
+            this.cb_ProductQuality.SelectedIndexChanged += new System.EventHandler(this.cb_ProductQuality_SelectedIndexChanged);
             // 
             // cb_ProductState
             // 
             this.cb_ProductState.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_ProductState.FormattingEnabled = true;
-            this.cb_ProductState.Location = new System.Drawing.Point(112, 220);
+            this.cb_ProductState.Location = new System.Drawing.Point(107, 220);
             this.cb_ProductState.Name = "cb_ProductState";
             this.cb_ProductState.Size = new System.Drawing.Size(223, 26);
             this.cb_ProductState.TabIndex = 192;
+            this.cb_ProductState.SelectedIndexChanged += new System.EventHandler(this.cb_ProductState_SelectedIndexChanged);
             // 
             // label5
             // 
@@ -516,7 +542,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1924, 1058);
+            this.ClientSize = new System.Drawing.Size(1916, 1053);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.tb_RollWeight);
@@ -609,5 +635,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label lb_ProductQulity;
+        private System.Windows.Forms.ComboBox cb_ProductQuality;
     }
 }

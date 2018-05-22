@@ -51,106 +51,114 @@ namespace LabelPrint
         /// <param name="g"></param>
         public void Print(Graphics g)
         {
-            if (this.PrintInfos != null && this.PrintInfos.Count > 0)
+            try
             {
-                foreach (PrintInfo p in this.PrintInfos)
+                if (this.PrintInfos != null && this.PrintInfos.Count > 0)
                 {
-                    switch (p.PrtType)
+                    foreach (PrintInfo p in this.PrintInfos)
                     {
-                        case PrintType.PRINT_CUSTOM:
-                        case PrintType.PRINT_TEXT:
-                            if (p.Content != null && p.Content != "")
-                            {
-                                Font tFont = new Font("宋体", p.Size, p.FontStyle);
-                                Brush b = new SolidBrush(p.PrtColor);
-                                g.DrawString(p.Content, tFont, b, p.Start.X, p.Start.Y);
-                            }
-                            break;
-                        case PrintType.PRINT_TABLE:
-                            float distance_h = (p.End.Y - p.Start.Y) * 1.0f / p.Row;//横线之间的间距
-                            float distance_w = (p.End.X - p.Start.X) * 1.0f / p.Column;//竖线之间的间距
-                            Pen lineColor = new Pen(p.PrtColor, 0.2f);
-                            for (int i = 0; i < p.Row + 1; i++)
-                            {
-                                //画横线
-                                float y = p.Start.Y + (i) * distance_h;
-                                g.DrawLine(lineColor, new PointF(p.Start.X, y), new PointF(p.End.X, y));
-                            }
-                            for (int i = 0; i < p.Column + 1; i++)
-                            {
-                                //画竖线
-                                float x = p.Start.X + (i) * distance_w;
-                                g.DrawLine(lineColor, new PointF(x, p.Start.Y), new PointF(x, p.End.Y));
-                            }
-                            break;
-                        case PrintType.PRINT_LINE:
-                            Pen pen1 = new Pen(p.PrtColor, p.PenWidth);
-                            g.DrawLine(pen1, p.Start.X, p.Start.Y, p.End.X, p.End.Y);
-                            break;
-                        case PrintType.PRINT_RECT:
-                            g.DrawRectangle(new Pen(p.PrtColor, 1), p.Start.X, p.Start.Y, (p.End.X - p.Start.X), (p.End.Y - p.Start.Y));
-                            break;
-
-                        case PrintType.PRINT_BAR:
-                            {
-                                try { 
-                                    if (p.Content == null || p.Content == "")
-                                        continue;
-                                    //Bitmap bm = ReceiptPrintPattern.GetCod39ZXingNet(p.Content, (int)ReceiptPrintPattern.MM2Pixel(p.End.X - p.Start.X), (int)ReceiptPrintPattern.MM2Pixel(p.End.Y - p.Start.Y));
-                                    Bitmap bm = ReceiptPrintPattern.GetCod128ZXingNet(p.Content, (int)ReceiptPrintPattern.MM2Pixel(p.End.X - p.Start.X), (int)ReceiptPrintPattern.MM2Pixel(p.End.Y - p.Start.Y));
-                                    if (bm == null)
-                                        continue;
-
-                                    //e.DrawImage(bm, new Point(10, (int)(y1 + 4 * h + 12 + 10)));
-                                    //Bitmap bm = GetQRCodeByZXingNet("Hello world.Hahahaha!", this.NodeWith, this.NodeHeight);
-                                    g.DrawImage(bm, new PointF(p.Start.X, p.Start.Y));
-
-                                    bm.Dispose();
+                        switch (p.PrtType)
+                        {
+                            case PrintType.PRINT_CUSTOM:
+                            case PrintType.PRINT_TEXT:
+                                if (p.Content != null && p.Content != "")
+                                {
+                                    Font tFont = new Font("宋体", p.Size, p.FontStyle);
+                                    Brush b = new SolidBrush(p.PrtColor);
+                                    g.DrawString(p.Content, tFont, b, p.Start.X, p.Start.Y);
                                 }
-                                catch (Exception e)
+                                break;
+                            case PrintType.PRINT_TABLE:
+                                float distance_h = (p.End.Y - p.Start.Y) * 1.0f / p.Row;//横线之间的间距
+                                float distance_w = (p.End.X - p.Start.X) * 1.0f / p.Column;//竖线之间的间距
+                                Pen lineColor = new Pen(p.PrtColor, 0.2f);
+                                for (int i = 0; i < p.Row + 1; i++)
+                                {
+                                    //画横线
+                                    float y = p.Start.Y + (i) * distance_h;
+                                    g.DrawLine(lineColor, new PointF(p.Start.X, y), new PointF(p.End.X, y));
+                                }
+                                for (int i = 0; i < p.Column + 1; i++)
+                                {
+                                    //画竖线
+                                    float x = p.Start.X + (i) * distance_w;
+                                    g.DrawLine(lineColor, new PointF(x, p.Start.Y), new PointF(x, p.End.Y));
+                                }
+                                break;
+                            case PrintType.PRINT_LINE:
+                                Pen pen1 = new Pen(p.PrtColor, p.PenWidth);
+                                g.DrawLine(pen1, p.Start.X, p.Start.Y, p.End.X, p.End.Y);
+                                break;
+                            case PrintType.PRINT_RECT:
+                                g.DrawRectangle(new Pen(p.PrtColor, 1), p.Start.X, p.Start.Y, (p.End.X - p.Start.X), (p.End.Y - p.Start.Y));
+                                break;
+
+                            case PrintType.PRINT_BAR:
+                                {
+                                    try
+                                    {
+                                        if (p.Content == null || p.Content == "")
+                                            continue;
+                                        //Bitmap bm = ReceiptPrintPattern.GetCod39ZXingNet(p.Content, (int)ReceiptPrintPattern.MM2Pixel(p.End.X - p.Start.X), (int)ReceiptPrintPattern.MM2Pixel(p.End.Y - p.Start.Y));
+                                        Bitmap bm = ReceiptPrintPattern.GetCod128ZXingNet(p.Content, (int)ReceiptPrintPattern.MM2Pixel(p.End.X - p.Start.X), (int)ReceiptPrintPattern.MM2Pixel(p.End.Y - p.Start.Y));
+                                        if (bm == null)
+                                            continue;
+
+                                        //e.DrawImage(bm, new Point(10, (int)(y1 + 4 * h + 12 + 10)));
+                                        //Bitmap bm = GetQRCodeByZXingNet("Hello world.Hahahaha!", this.NodeWith, this.NodeHeight);
+                                        g.DrawImage(bm, new PointF(p.Start.X, p.Start.Y));
+
+                                        bm.Dispose();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine("Print graphic failed in barcode printing!" + ex);
+                                    }
+                                }
+                                break;
+                            case PrintType.PRINT_2DBAR:
+                                {
+                                    try
+                                    {
+                                        if (p.Content == null || p.Content == "")
+                                            continue;
+
+                                        Bitmap bm = ReceiptPrintPattern.GetQRCodeByZXingNet(p.Content, (int)ReceiptPrintPattern.MM2Pixel(p.End.X - p.Start.X), (int)ReceiptPrintPattern.MM2Pixel(p.End.Y - p.Start.Y));
+
+                                        if (bm == null)
+                                            continue;
+                                        //e.DrawImage(bm, new Point(10, (int)(y1 + 4 * h + 12 + 10)));
+                                        //Bitmap bm = GetQRCodeByZXingNet("Hello world.Hahahaha!", this.NodeWith, this.NodeHeight);
+                                        g.DrawImage(bm, new PointF(p.Start.X, p.Start.Y));
+                                        g.DrawRectangle(new Pen(p.PrtColor, ReceiptPrintPattern.Pixel2MM(1)), p.Start.X, p.Start.Y, (p.End.X - p.Start.X), (p.End.Y - p.Start.Y));
+
+                                        bm.Dispose();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine("Print graphic failed in 2D mode!" + ex);
+                                    }
+                                }
+                                break;
+                            case PrintType.PRINT_IMAGE:
                                 {
 
                                 }
-                            }
-                            break;
-                        case PrintType.PRINT_2DBAR:
-                            {
-                                try
+                                break;
+                            case PrintType.PRINT_BLOCK:
                                 {
-                                    if (p.Content == null || p.Content == "")
-                                        continue;
-
-                                Bitmap bm = ReceiptPrintPattern.GetQRCodeByZXingNet(p.Content, (int)ReceiptPrintPattern.MM2Pixel(p.End.X - p.Start.X), (int)ReceiptPrintPattern.MM2Pixel(p.End.Y - p.Start.Y));
-
-                                if (bm == null)
-                                        continue;
-                                //e.DrawImage(bm, new Point(10, (int)(y1 + 4 * h + 12 + 10)));
-                                //Bitmap bm = GetQRCodeByZXingNet("Hello world.Hahahaha!", this.NodeWith, this.NodeHeight);
-                                g.DrawImage(bm, new PointF(p.Start.X, p.Start.Y));
-                                g.DrawRectangle(new Pen(p.PrtColor, ReceiptPrintPattern.Pixel2MM(1)), p.Start.X, p.Start.Y, (p.End.X - p.Start.X), (p.End.Y - p.Start.Y));
-
-                                bm.Dispose();
+                                    g.FillRectangle(new SolidBrush(p.PrtColor), p.Start.X, p.Start.Y, (p.End.X - p.Start.X), (p.End.Y - p.Start.Y));
                                 }
-                                catch (Exception e)
-                                {
-
-                                }
-                            }
-                            break;
-                        case PrintType.PRINT_IMAGE:
-                            {
-
-                            }
-                            break;
-                        case PrintType.PRINT_BLOCK:
-                            {
-                                g.FillRectangle(new SolidBrush(p.PrtColor), p.Start.X, p.Start.Y, (p.End.X - p.Start.X), (p.End.Y - p.Start.Y));
-                            }
-                            break;
-                        default:
-                            break;
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Print graphic failed!" + ex);
             }
         }
     }
@@ -437,7 +445,7 @@ namespace LabelPrint
         int mLabelWidth = (int)(100 / 25.4 * 100 + 0.5);
         int mLabelHeight = (int)(60 / 25.4 * 100 + 0.5);
 
-        Boolean ShowPreview = true;
+      //  Boolean ShowPreview = true;
         public void PrintReceipt()
         {
             PrintDocument pd = new PrintDocument();
@@ -447,7 +455,7 @@ namespace LabelPrint
 
             pd.PrintPage += new PrintPageEventHandler(pd_PrintPage);
 
-            if (ShowPreview)
+            if (gVariable.bShowPreview)
             {
                 PrintPreviewDialog cppd = new PrintPreviewDialog();
                 cppd.Document = pd;

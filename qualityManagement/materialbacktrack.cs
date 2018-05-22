@@ -315,32 +315,7 @@ namespace MESSystem.quality
                     OptionItem.SubItems.Add(salesTableArray[salesIndexArray[i], mySQLClass.PLANNED_COMPLETE_TIME_IN_SALESORDER_DATABASE]);
 
                     status = Convert.ToInt16(salesTableArray[salesIndexArray[i], mySQLClass.STATUS_IN_SALESORDER_DATABASE]);
-                    switch (status)
-                    {
-                        case gVariable.SALES_ORDER_STATUS_ERP_PUBLISHED:
-                            OptionItem.SubItems.Add("已导入");
-                            break;
-                        case gVariable.SALES_ORDER_STATUS_APS_OK:
-                            OptionItem.SubItems.Add("已排程");
-                            break;
-                        case gVariable.SALES_ORDER_STATUS_CONFIRMED:
-                            OptionItem.SubItems.Add("已确认");
-                            break;
-                        case gVariable.SALES_ORDER_STATUS_APPLIED:
-                            OptionItem.SubItems.Add("已下发");
-                            break;
-                        case gVariable.SALES_ORDER_STATUS_STARTED:
-                            OptionItem.SubItems.Add("已开工");
-                            break;
-                        case gVariable.SALES_ORDER_STATUS_COMPLETED:
-                            OptionItem.SubItems.Add("已完工");
-                            break;
-                        case gVariable.SALES_ORDER_STATUS_CANCELLED:
-                            OptionItem.SubItems.Add("已取消");
-                            break;
-                        default:
-                            break;
-                    }
+                    OptionItem.SubItems.Add(gVariable.salesorderStatus[status]);
 
                     listView1.Items.Add(OptionItem);
                 }

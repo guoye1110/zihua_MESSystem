@@ -15,12 +15,22 @@ namespace LabelPrint.Data
             String str = null;
             base.UpdatePrintPrintData(DyData);
             DyData.BigRollNoStr = BigRollNo;
-            //  DyData.RollWeightLength = Weight;
+              DyData.RollWeightLength = "234.7";
             //  DyData.QRBarCode = ;
-            DyData.BigRollNoStr = BigRollNo;
-            //     DyData.LittleRollNoStr = BigRollNo + "-" + LittleRollNo;
+              DyData.BigRollNoStr = "012"; // BigRollNo;
+              DyData.LittleRollNoStr = "013"; // BigRollNo + "-" + LittleRollNo;
             DyData.RollWeightLength = Weight;
+            DyData.MaterialName = MaterialName;
             DyData.WorkerNo = WorkerNo + "  " + WorkTime.Substring(0, 5);
+
+            if (ProductState == "合格品"|| ProductState == null || ProductState == "")
+            {
+                DyData.Quality = "合格品";
+            }
+            else
+            {
+            	//print error details
+            }
 
             DyData.RawMaterialCode = RawMaterialCode;
             // UserInput.customerCode = customerCode;
@@ -31,7 +41,7 @@ namespace LabelPrint.Data
             str = Weight;
             if (Weight == null || Weight == "")
                 str = "0";
-            DyData.RollWeightLength = str + " kg " + ProductLength;
+            DyData.RollWeightLength = "234.3kg " + ProductLength;
 
 
             //  DyData.RollWeightLength = Weight;

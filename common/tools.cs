@@ -16,6 +16,7 @@ using System.Security.Cryptography;
 using System.Runtime.InteropServices;
 using System.Threading;
 using MESSystem.alarmFun;
+using MESSystem.communication;
 
 namespace MESSystem.common
 {
@@ -605,6 +606,9 @@ namespace MESSystem.common
         {
             try
             {
+                if (timeStr == null || timeStr == "")
+                    return 0;
+
                 System.DateTime dt = DateTime.Parse(timeStr);
                 return ConvertDateTimeInt(dt);
             }
@@ -1233,7 +1237,7 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine("getDispatchListFromDatabase failed! ", ex);
+                Console.WriteLine("getDispatchListFromDatabase failed! "+ ex);
                 return null;
             }
         }
@@ -2025,6 +2029,47 @@ namespace MESSystem.common
                 Console.WriteLine("getMachineInfoFromDatabase() failed!" + ex);
             }
         }
-    
+
+        //if there is no dispatch running, we get the next dispatch, otherwise, get the currently running dispatch
+        public static int getCurrentDispatch(int machineID)
+        {
+            int myBoardIndex;
+            string dName;
+            string tName;
+            string commandText;
+            string[,] tableArray;
+
+            myBoardIndex = machineID - 1;
+            dName = gVariable.internalMachineName[myBoardIndex];
+            tName = gVariable.dispatchListTableName;
+
+            //find oldest dispatch that are applied/started, and set it as our target dispatch 
+            commandText = "select * from `" + tName + "` where status > 0 order by planTime1";
+
+            tableArray = mySQLClass.databaseCommonReading(dName, commandText);
+            if (tableArray != null)
+            {
+                //tableArray[0, 0] means the ID of the first dispatch by commandText 
+                gVariable.dispatchSheet[myBoardIndex] = mySQLClass.getDispatchByID(dName, tName, Convert.ToInt32(tableArray[0, 0]));
+            }
+            else  //find new dispatches
+            {
+                commandText = "select * from `" + tName + "` where status = 0 order by planTime1";
+                    
+                tableArray = mySQLClass.databaseCommonReading(dName, commandText);
+                if (tableArray != null)
+                {
+                    //tableArray[0, 0] means the ID of the first dispatch by commandText 
+                    gVariable.dispatchSheet[myBoardIndex] = mySQLClass.getDispatchByID(dName, tName, Convert.ToInt32(tableArray[0, 0]));
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+
+            return 0;
+        }
+
     }
 }

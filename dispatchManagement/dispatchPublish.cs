@@ -25,16 +25,24 @@ namespace MESSystem.dispatchManagement
         string[] machineList;
         int[] dispatchStatusIDList = { 5, -3, -2, 0, 2, 3, 1 };
         string[] dispatchStatusList = { "全部状态", "预排程完毕", "排程已确认", "工单已发布", "工单已申请", "工单已开工", "工单已完工" };
+       
         string[] workerIDList;
         string[] workerNameList;
 
         string startDateSearch, endDateSearch;
         string startDatePlanned, endDatePlanned;
 
+        string[,] batchTableArray;
+
+        public static int publishScreenRefresh;
+        public static string cancelReason;
+
+        System.Windows.Forms.Timer aTimer;
+
         public static dispatchPublish dispatchPublishClass = null; //用来引用主窗口
 
         gVariable.dispatchSheetStruct[] dispatchListArray; //all the dispatches in listview following the search condition
-        adjustDispatch adjustDispatchImpl;
+        adjustDispatch adjustDispatchImpl;  //assign worker/asistant worker to this dispatch, not used any more
 
         public dispatchPublish()
         {
@@ -48,10 +56,11 @@ namespace MESSystem.dispatchManagement
         {
             this.Icon = new Icon(gVariable.logoInTitleArray[gVariable.CompanyIndex]);
 
-            label1.Text = gVariable.enterpriseTitle + "工单下发系统";
+            label1.Text = gVariable.enterpriseTitle + "任务单下发系统";
 
             customerSelected = 0;
             machineSelected = 0;
+            publishScreenRefresh = 0;
 
             customerList = toolClass.getCustomerList(1);  //1 means add item of "all customer"
             machineList = toolClass.getMachineList(1); //1 means add item of "all machines"
@@ -66,12 +75,12 @@ namespace MESSystem.dispatchManagement
             float fontSize;
             float screenRatioX;
             float screenRatioY;
-            GroupBox[] groupBoxArray = { groupBox1, groupBox2, groupBox4 };
-            Label[] labelArray = { label2, label4, label5, label6, label7, label8, label9, label10, label11, label12, label13, label14 };
-            TextBox[] textBoxArray = { textBox1, textBox2, textBox3, textBox4 };
-            Button[] buttonArray = { button1, button2, button3, button4, button6 };
-            ComboBox[] comboBoxArray = { comboBox1, comboBox2, comboBox4, comboBox5, comboBox6, comboBox7 };
-            CheckBox[] checkBoxArray = { checkBox1, checkBox3 };
+            GroupBox[] groupBoxArray = { groupBox1, groupBox4 };
+            Label[] labelArray = { label2, label6, label8, label9, label11, label12 };
+            TextBox[] textBoxArray = { textBox1,  };
+            Button[] buttonArray = { button1, button2, button3, button5, button6 };
+            ComboBox[] comboBoxArray = { comboBox1, comboBox2, comboBox4 };
+            //CheckBox[] checkBoxArray = { checkBox1, checkBox3 };
             DateTimePicker[] timePickerArray = { dateTimePicker3, dateTimePicker4 };
             float[,] commonFontSize = { 
                                         { 7F,  8F,  9F,  10F, 11F,  12F}, 
@@ -135,6 +144,7 @@ namespace MESSystem.dispatchManagement
                 buttonArray[i].Location = new System.Drawing.Point(x, y);
             }
 
+            /*
             for (i = 0; i < checkBoxArray.Length; i++)
             {
                 w = (int)(checkBoxArray[i].Size.Width * screenRatioX);
@@ -143,7 +153,7 @@ namespace MESSystem.dispatchManagement
                 x = (int)(checkBoxArray[i].Location.X * screenRatioX);
                 y = (int)(checkBoxArray[i].Location.Y * screenRatioY);
                 checkBoxArray[i].Location = new System.Drawing.Point(x, y);
-            }
+            }*/
 
             for (i = 0; i < comboBoxArray.Length; i++)
             {
@@ -190,40 +200,44 @@ namespace MESSystem.dispatchManagement
             }
             comboBox4.SelectedIndex = customerSelected;
 
-            for (i = 0; i < workerNameList.Length; i++)
-            {
-                comboBox5.Items.Add(workerNameList[i]);
-            }
-            comboBox5.SelectedIndex = customerSelected;
-
-            for (i = 0; i < workerNameList.Length; i++)
-            {
-                comboBox6.Items.Add(workerNameList[i]);
-            }
-            comboBox6.SelectedIndex = customerSelected;
-
-            for (i = 0; i < workerNameList.Length; i++)
-            {
-                comboBox7.Items.Add(workerNameList[i]);
-            }
-            comboBox7.SelectedIndex = customerSelected;
-
             displayDispatchList();
+
+            aTimer = new System.Windows.Forms.Timer();
+
+            //refresh screen every 2 seconds
+            aTimer.Interval = 2000;
+            aTimer.Enabled = true;
+
+            aTimer.Tick += new EventHandler(timer_updateForm);
         }
-    
+
+        private void timer_updateForm(Object source, EventArgs e)
+        {
+            if (publishScreenRefresh != 0)
+                displayDispatchList();
+            publishScreenRefresh = 0;
+        }
+
         void displayDispatchList()
         {
             int i;
+            int status;
             int nameIndex;
-            int[] dispatchLenArray = { 22, 45, 70, 70, 100, 80, 100, 80, 90, 70, 70, 70, 60, 110, 110, 60 };
+            int[] dispatchLenArray = { 22, 45, 80, 90, 80, 100, 90, 70, 90, 110, 110, 65, 65, 110, 120 };
             string[] dispatchColumnArray = 
             {
-                "", "序号", "设备名称", "批次号", "工单编号", "产品编码", "产品名称", "工单状态", "客户", "线长", "辅助1", "辅助2", "班次", "预计开工", "预计完工", "计划数", 
+                "", "序号", "生产批次号", "订单编号", "产品编码", "产品名称", "交货日期", "生产状态", "客户", "预计开工", "预计完工", "计划数", "取消人", "取消时间", "取消原因"
             };
 
             try
             {
-                getDispatchListByCondition();
+                getBatchListByCondition();
+
+                //cancel publish class just confirmed cancelation of the selected batch orders
+                if (publishScreenRefresh == 2)
+                {
+                    cancelSelectedDispatches();
+                }
 
                 listView1.Clear();
 
@@ -231,7 +245,7 @@ namespace MESSystem.dispatchManagement
                 listView1.GridLines = true;
                 listView1.Dock = DockStyle.Fill;
 
-                if (dispatchListArray != null)
+                if (batchTableArray != null)
                 {
                     for (i = 0; i < dispatchLenArray.Length; i++)
                     {
@@ -241,61 +255,52 @@ namespace MESSystem.dispatchManagement
                             listView1.Columns.Add(dispatchColumnArray[i], (int)(dispatchLenArray[i] * gVariable.screenRatioX), HorizontalAlignment.Center);
                     }
 
-                    for (i = 0; i < dispatchListArray.Length; i++)
+                    for (i = 0; i < batchTableArray.GetLength(0); i++)
                     {
-                        if (dispatchListArray[i].dispatchCode == null)
-                            break;
-
-                        if (dispatchListArray[i].dispatchCode == "dummy")
-                            continue;
-
                         ListViewItem OptionItem = new ListViewItem();
 
-                        nameIndex = Convert.ToInt16(dispatchListArray[i].machineID) - 1;
+                        nameIndex = 0;
                         if (nameIndex > gVariable.machineNameArrayAPS.Length)
                             nameIndex = 0;
-                        OptionItem.SubItems.Add((i + 1).ToString());
-                        OptionItem.SubItems.Add(gVariable.machineNameArrayAPS[nameIndex]);
-                        OptionItem.SubItems.Add(dispatchListArray[i].batchNum);
-                        OptionItem.SubItems.Add(dispatchListArray[i].dispatchCode);
-                        OptionItem.SubItems.Add(dispatchListArray[i].productCode);
-                        OptionItem.SubItems.Add(dispatchListArray[i].productName);
-                        switch (dispatchListArray[i].status)
+                        OptionItem.SubItems.Add((i + 1).ToString());  //ID
+                        //OptionItem.SubItems.Add(""); //gVariable.machineNameArrayAPS[nameIndex]);
+                        if (batchTableArray[i, 19] != "")
+                            OptionItem.SubItems.Add(batchTableArray[i, 19]);  //batchNum
+                        else
+                            OptionItem.SubItems.Add("");  //batchNum
+                        OptionItem.SubItems.Add(batchTableArray[i, 1]);  //batch order 
+                        OptionItem.SubItems.Add(batchTableArray[i, 4]);  //product code
+                        OptionItem.SubItems.Add(batchTableArray[i, 5]);  //product name
+                        OptionItem.SubItems.Add(batchTableArray[i, 3]);  //delivery date
+                         
+                        status = Convert.ToInt32(batchTableArray[i, 17]);  //status 
+ 
+                        if(status > gVariable.SALES_ORDER_STATUS_CANCELLED)
                         {
-                            case gVariable.MACHINE_STATUS_DISPATCH_GENERATED:
-                                OptionItem.SubItems.Add(dispatchStatusList[1]);
-                                break;
-                            case gVariable.MACHINE_STATUS_DISPATCH_CONFIRMED:
-                                OptionItem.BackColor = Color.LightGreen;
-                                OptionItem.SubItems.Add(dispatchStatusList[2]);
-                                break;
-                            case gVariable.MACHINE_STATUS_DISPATCH_UNPUBLISHED:
-                                OptionItem.SubItems.Add(dispatchStatusList[2]);
-                                break;
-                            case gVariable.MACHINE_STATUS_DISPATCH_PUBLISHED:
-                                OptionItem.SubItems.Add(dispatchStatusList[3]);
-                                break;
-                            case gVariable.MACHINE_STATUS_DISPATCH_APPLIED:
-                                OptionItem.SubItems.Add(dispatchStatusList[4]);
-                                break;
-                            case gVariable.MACHINE_STATUS_DISPATCH_STARTED:
-                                OptionItem.SubItems.Add(dispatchStatusList[5]);
-                                break;
-                            case gVariable.MACHINE_STATUS_DISPATCH_COMPLETED:
-                                OptionItem.SubItems.Add(dispatchStatusList[6]);
-                                break;
-                            default:
-                                OptionItem.SubItems.Add("工单状态有误");
-                                break;
+                            OptionItem.SubItems.Add("批次单状态有误");
                         }
-                        OptionItem.SubItems.Add(dispatchListArray[i].customer);
-                        OptionItem.SubItems.Add(toolClass.getNameByIDAndIDByName(dispatchListArray[i].operatorName, null));
-                        OptionItem.SubItems.Add(toolClass.getNameByIDAndIDByName(dispatchListArray[i].operatorName2, null));
-                        OptionItem.SubItems.Add(toolClass.getNameByIDAndIDByName(dispatchListArray[i].operatorName3, null));
-                        OptionItem.SubItems.Add(dispatchListArray[i].workshift);
-                        OptionItem.SubItems.Add(dispatchListArray[i].planTime1);
-                        OptionItem.SubItems.Add(dispatchListArray[i].planTime2);
-                        OptionItem.SubItems.Add(dispatchListArray[i].plannedNumber.ToString());
+                        else
+                        {
+                            if (status == gVariable.SALES_ORDER_STATUS_CANCEL_APPLIED)
+                                OptionItem.BackColor = Color.Red;
+                            else if (status == gVariable.SALES_ORDER_STATUS_CANCELLED)
+                                OptionItem.BackColor = Color.Gray;
+                            else if (status > gVariable.SALES_ORDER_STATUS_CONFIRMED)
+                                OptionItem.BackColor = Color.LightGreen;
+
+                            if (status <= gVariable.SALES_ORDER_STATUS_CONFIRMED)
+                                OptionItem.SubItems.Add("未下发");
+                            else
+                                OptionItem.SubItems.Add(gVariable.salesorderStatus[status]);
+                        }
+
+                        OptionItem.SubItems.Add(batchTableArray[i, 8]); //customer
+                        OptionItem.SubItems.Add(batchTableArray[i, 13]);  //planned start
+                        OptionItem.SubItems.Add(batchTableArray[i, 14]);  //planned finish
+                        OptionItem.SubItems.Add(batchTableArray[i, 6] + "kg");  //planned quantity 
+                        OptionItem.SubItems.Add(batchTableArray[i, 20]);  //canceller 
+                        OptionItem.SubItems.Add(batchTableArray[i, 22]);  //cancel time 
+                        OptionItem.SubItems.Add(batchTableArray[i, 21]);  //cancel reason 
 
                         listView1.Items.Add(OptionItem);
                     }
@@ -306,7 +311,7 @@ namespace MESSystem.dispatchManagement
             }
             catch (Exception ex)
             {
-                Console.WriteLine("dispatchPublish listView_load failed! ", ex);
+                Console.WriteLine("dispatchPublish listView_load failed! " + ex);
             }
         }
 
@@ -321,8 +326,8 @@ namespace MESSystem.dispatchManagement
             {
                 if (this.listView1.SelectedItems.Count > 0)
                 {
-                    adjustDispatchImpl = new adjustDispatch(this.listView1.SelectedItems[0].SubItems[4].Text);
-                    adjustDispatchImpl.Show();
+                    //adjustDispatchImpl = new adjustDispatch(this.listView1.SelectedItems[0].SubItems[4].Text);
+                    //adjustDispatchImpl.Show();
                     //refreshFlag = 1;
                 }
             }
@@ -336,16 +341,18 @@ namespace MESSystem.dispatchManagement
         //publish dispatches
         private void button3_Click(object sender, EventArgs e)
         {
-            int i;
+            int i, j;
             //int delta;
             int ret;
             int index;
+            int machineID;
             //string str;
             string columnsDispatch;
             string columnsMaterial;
             string databaseName;
             string commandText;
             string[] strArray;
+            string[,] tableArray;
 
             try
             {
@@ -358,9 +365,9 @@ namespace MESSystem.dispatchManagement
                 for (i = 0; i < listView1.CheckedItems.Count; i++)
                 {
                     index = listView1.CheckedItems[i].Index;
-                    if (dispatchListArray[index].status != gVariable.MACHINE_STATUS_DISPATCH_CONFIRMED)
+                    if (Convert.ToInt32(batchTableArray[index, 17]) != gVariable.SALES_ORDER_STATUS_CONFIRMED)
                     {
-                        MessageBox.Show("请确认所有选中的工单都处于排程已确认状态（该状态的工单都会以绿色背景显示），其它状态的工单无法发布。", "提示信息", MessageBoxButtons.OK);
+                        MessageBox.Show("请确认所有选中的工单都处于排程已确认状态（该状态的工单都会以白色背景显示），其它状态的工单无法发布。", "提示信息", MessageBoxButtons.OK);
                         return;
                     }
                 }
@@ -409,45 +416,59 @@ namespace MESSystem.dispatchManagement
                     //get index in dispatch list
                     index = listView1.CheckedItems[i].Index;
 
-                    //first update this dispatch to the status published
-                    commandText = "update `" + gVariable.globalDispatchTableName + "` set status = '0' where dispatchCode = '" + dispatchListArray[index].dispatchCode + "'";
+                    //if (batchTableArray[index, 17] != gVariable.SALES_ORDER_STATUS_CONFIRMED)
+                    //    continue;
+
+                    commandText = "update `" + gVariable.productBatchTableName + "` set orderStatus = '" + gVariable.SALES_ORDER_STATUS_PUBLISHED + "' where id = '" + batchTableArray[index, 0] + "'";
                     mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
 
-                    databaseName = gVariable.DBHeadString + dispatchListArray[index].machineID.PadLeft(3, '0');
-                    //then copy this dispatch to database for the specific machine
-                    commandText = "insert into " + databaseName + "." + gVariable.dispatchListTableName + "(" + columnsDispatch + ") select " + columnsDispatch + " from " + gVariable.globalDatabaseName + "." +
-                                   gVariable.globalDispatchTableName + " where dispatchCode = '" + dispatchListArray[index].dispatchCode + "'";
-                    mySQLClass.pureDatabaseNonQueryAction(databaseName, commandText);
+                    //if only some of the batch order inside a sales order changed its status, we should not modify status for the whole sales order, so remove this function below
+                    //commandText = "update `" + gVariable.salesOrderTableName + "` set orderStatus = '" + gVariable.SALES_ORDER_STATUS_PUBLISHED + "' where salesOrdercode = '" + batchTableArray[index, 2] + "'";
+                    //mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
 
-                    //for feeding/casting process, we need to put material list from global database to machine database together with dispatch
-                    if (index <= gVariable.castingProcess.Length)
+                    //first update this dispatch to the status published
+                    commandText = "update `" + gVariable.globalDispatchTableName + "` set status = '" + gVariable.MACHINE_STATUS_DISPATCH_PUBLISHED + "' where salesOrderBatchCode = '" + batchTableArray[index, 1] + "'";
+                    mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
+
+                    commandText = "select * from `" + gVariable.globalDispatchTableName + "` where salesOrderBatchCode = '" + batchTableArray[index, 1] + "'";
+                    tableArray = mySQLClass.databaseCommonReading(gVariable.globalDatabaseName, commandText);
+                    if (tableArray == null)
                     {
-                        //update this dispatch related material to the status of published -->> material will have no status, will go with dispatch 
-                        //commandText = "update `" + gVariable.globalMaterialTableName + "` set status = '1' where dispatchCode = '" + dispatchListArray[index].dispatchCode + "'";
-                        //mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
+                        Console.WriteLine("filed to find dispatch with this code！");
+                        return;
+                    }
 
-                        //save in feed machine database
-                        //commandText = "insert into " + databaseName + "." + gVariable.materialListTableName + "(" + columnsMaterial + ") select " + columnsMaterial + " from " + gVariable.globalDatabaseName + "." +
-                        //               gVariable.globalMaterialTableName + " where dispatchCode = '" + dispatchListArray[index].dispatchCode + "'";
-                        //mySQLClass.pureDatabaseNonQueryAction(databaseName, commandText);
-
-                        //cast machine ID 
-                        //delta = gVariable.castingProcess[0] - gVariable.feedingProcess[0];
-                        databaseName = gVariable.DBHeadString + Convert.ToInt32(dispatchListArray[index].machineID).ToString().PadLeft(3, '0');
-
-                        //save in cast machine database
-                        commandText = "insert into " + databaseName + "." + gVariable.materialListTableName + "(" + columnsMaterial + ") select " + columnsMaterial + " from " + gVariable.globalDatabaseName + "." +
-                                       gVariable.globalMaterialTableName + " where dispatchCode = '" + dispatchListArray[index].dispatchCode + "'";
+                    for (j = 0; j < tableArray.GetLength(0); j++)
+                    {
+                        machineID = Convert.ToInt32(tableArray[j, 1]); // Convert.ToInt32(dispatchListArray[index].machineID);
+                        databaseName = gVariable.DBHeadString + machineID.ToString().PadLeft(3, '0');
+                        //then copy this dispatch to database for the specific machine
+                        commandText = "insert into " + databaseName + "." + gVariable.dispatchListTableName + "(" + columnsDispatch + ") select " + columnsDispatch + " from " + gVariable.globalDatabaseName + "." +
+                                       gVariable.globalDispatchTableName + " where dispatchCode = '" + tableArray[j, 2] + "'";
                         mySQLClass.pureDatabaseNonQueryAction(databaseName, commandText);
-                        //change dispatch code name to cast machine dispatch code
-                        //str = dispatchListArray[index].dispatchCode.Replace("T", "L");
-                        //commandText = "update `" + gVariable.materialListTableName + "` set dispatchCode = '" + str + "' where dispatchCode = '" + dispatchListArray[index].dispatchCode + "'";
-                        //mySQLClass.pureDatabaseNonQueryAction(databaseName, commandText);
+
+                        //for casting process, we need to put material list from global database to machine database together with dispatch
+                        if (machineID <= gVariable.castingProcess.Length)
+                        {
+                            //cast machine ID 
+                            //delta = gVariable.castingProcess[0] - gVariable.feedingProcess[0];
+                            databaseName = gVariable.DBHeadString + machineID.ToString().PadLeft(3, '0');
+
+                            //save in cast machine database
+                            commandText = "insert into " + databaseName + "." + gVariable.materialListTableName + "(" + columnsMaterial + ") select " + columnsMaterial + " from " + gVariable.globalDatabaseName + "." +
+                                           gVariable.globalMaterialTableName + " where dispatchCode = '" + tableArray[j, 2] + "'";
+                            mySQLClass.pureDatabaseNonQueryAction(databaseName, commandText);
+                            //change dispatch code name to cast machine dispatch code
+                            //str = dispatchListArray[index].dispatchCode.Replace("T", "L");
+                            //commandText = "update `" + gVariable.materialListTableName + "` set dispatchCode = '" + str + "' where dispatchCode = '" + dispatchListArray[index].dispatchCode + "'";
+                            //mySQLClass.pureDatabaseNonQueryAction(databaseName, commandText);
+                        }
                     }
                 }
 
                 toolClass.systemDelay(1000);
-                displayDispatchList();
+
+                //displayDispatchList();
             }
             catch (Exception ex)
             {
@@ -463,7 +484,7 @@ namespace MESSystem.dispatchManagement
 
 
 
-        void getDispatchListByCondition()
+        void getBatchListByCondition()
         {
             int num;
             int sthUpdated;
@@ -471,8 +492,9 @@ namespace MESSystem.dispatchManagement
             string tableName;
             string databaseName;
             string str1, str2, str3, str4, str5;
+
             databaseName = gVariable.globalDatabaseName;
-            tableName = gVariable.globalDispatchTableName;
+            tableName = gVariable.productBatchTableName;
 
             sthUpdated = 0;
             str1 = null;
@@ -496,6 +518,7 @@ namespace MESSystem.dispatchManagement
             }
 
             str3 = null;
+            /*
             if(machineSelected != 0)
             {
                 if (sthUpdated == 0)
@@ -505,7 +528,7 @@ namespace MESSystem.dispatchManagement
 
                 sthUpdated = 1;
             }
-
+            */
             str4 = null;
             if(dispatchStatusSelected != 0)
             {
@@ -517,12 +540,11 @@ namespace MESSystem.dispatchManagement
             else
             {
                 if (sthUpdated == 0)
-                    str4 = " status != '" + gVariable.MACHINE_STATUS_DISPATCH_GENERATED + "'";
+                    str4 = " orderStatus > '" + gVariable.SALES_ORDER_STATUS_APS_OK + "'";
                 else
-                    str4 = " and status != '" + gVariable.MACHINE_STATUS_DISPATCH_GENERATED + "'";
+                    str4 = " and orderStatus > '" + gVariable.SALES_ORDER_STATUS_APS_OK + "'";
             }
             sthUpdated = 1;
-
 
             str5 = null;
             if(startDateSearch != null)
@@ -540,24 +562,101 @@ namespace MESSystem.dispatchManagement
             }
 
             if (sthUpdated == 0)
+                commandText = "select * from `" + tableName + "`";
+            else
+                commandText = "select * from `" + tableName + "`" + " where" + str1 + str2 + str3 + str4 + str5;
+
+            batchTableArray = mySQLClass.databaseCommonReading(databaseName, commandText);
+            if (batchTableArray == null)
+            {
+                Console.WriteLine("getBatchListByCondition filed！");
+                return;
+            }
+
+            /*
+            if (sthUpdated == 0)
                 commandText = "select count(*) from `" + tableName + "`";
             else
                 commandText = "select count(*) from `" + tableName + "`" + " where" + str1 + str2 + str3 + str4 + str5;
 
             num = mySQLClass.getNumOfRecordByCondition(databaseName, commandText);
-
-            if (sthUpdated == 0)
-                commandText = "select * from `" + tableName + "`";
-            else
-                commandText = "select * from `" + tableName + "`" + " where" + str1 + str2 + str3 + str4 + str5;
-
+            
             dispatchListArray = mySQLClass.getDispatchListInternal(databaseName, tableName, commandText, num);
+             */
         }
 
         //output to excel file
         private void button6_Click(object sender, EventArgs e)
         {
 
+        }
+
+        //cancel publish, restore the the selected dispatches to confirmed mode(unpublished)
+        public void cancelSelectedDispatches()
+        {
+            int i, j;
+            int index;
+            int machineID;
+            string databaseName;
+            string commandText;
+            string[,] tableArray;
+
+            try
+            {
+                //deal with all machines one by one using machine ID
+                for (i = 0; i < listView1.CheckedItems.Count; i++)
+                {
+                    index = listView1.CheckedItems[i].Index;
+
+                    commandText = "update `" + gVariable.productBatchTableName + "` set orderStatus = '" + gVariable.SALES_ORDER_STATUS_CANCEL_APPLIED + 
+                                  "', canceller = '" + gVariable.userAccount + "', cancelReason = '" + dispatchPublish.cancelReason + "', cancelTime = '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm") +
+                                  "' where id = '" + batchTableArray[index, 0] + "'";
+                    mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
+
+                    //commandText = "update `" + gVariable.salesOrderTableName + "` set orderStatus = '" + gVariable.SALES_ORDER_STATUS_CONFIRMED + "' where orderStatus = '" + gVariable.SALES_ORDER_STATUS_PUBLISHED + "'";
+                    //mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
+
+                    //first update this dispatch to the status published
+                    commandText = "update `" + gVariable.globalDispatchTableName + "` set status = '0' where salesOrderBatchCode = '" + batchTableArray[index, 1] + "'";
+                    mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
+
+                    commandText = "update `" + gVariable.globalDispatchTableName + "` set status = '" + gVariable.MACHINE_STATUS_DISPATCH_CONFIRMED + "' where salesOrderBatchCode = '" + batchTableArray[index, 1] + "'";
+                    mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
+
+                    commandText = "select * from `" + gVariable.globalDispatchTableName + "` where salesOrderBatchCode = '" + batchTableArray[index, 1] + "'";
+                    tableArray = mySQLClass.databaseCommonReading(gVariable.globalDatabaseName, commandText);
+                    if (tableArray == null)
+                    {
+                        Console.WriteLine("filed to find dispatch with this code 2！");
+                        return;
+                    }
+
+                    for (j = 0; j < tableArray.GetLength(0); j++)
+                    {
+                        machineID = Convert.ToInt32(tableArray[j, 1]); // Convert.ToInt32(dispatchListArray[index].machineID);
+                        databaseName = gVariable.DBHeadString + machineID.ToString().PadLeft(3, '0');
+
+                        commandText = "delete from `" + gVariable.dispatchListTableName + "` where dispatchCode = '" + tableArray[j, 2] + "'";
+                        mySQLClass.pureDatabaseNonQueryAction(databaseName, commandText);
+                        mySQLClass.redoIDIncreamentAfterRecordDeleted(databaseName, gVariable.dispatchListTableName);
+
+                        //for casting process, we need to put material list from global database to machine database together with dispatch
+                        if (machineID <= gVariable.castingProcess.Length)
+                        {
+                            commandText = "delete from `" + gVariable.materialListTableName + "` where dispatchCode = '" + tableArray[j, 2] + "'";
+                            mySQLClass.pureDatabaseNonQueryAction(databaseName, commandText);
+                            mySQLClass.redoIDIncreamentAfterRecordDeleted(databaseName, gVariable.dispatchListTableName);
+                        }
+                    }
+                }
+                getBatchListByCondition();
+
+                publishScreenRefresh = 1;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("publish dispatch failed!" + ex);
+            }
         }
 
         //cancel publish, restore the the selected dispatches to confirmed mode(unpublished)
@@ -581,44 +680,17 @@ namespace MESSystem.dispatchManagement
                 for (i = 0; i < listView1.CheckedItems.Count; i++)
                 {
                     index = listView1.CheckedItems[i].Index;
-                    if (dispatchListArray[index].status != gVariable.MACHINE_STATUS_DISPATCH_PUBLISHED)
+                    if (Convert.ToInt32(batchTableArray[index, 17]) != gVariable.SALES_ORDER_STATUS_PUBLISHED)
                     {
                         MessageBox.Show("请确认所有选中的工单都处于已发布状态，其它状态的工单无法取消发布。", "提示信息", MessageBoxButtons.OK);
                         return;
                     }
                 }
 
-                //deal with all machines one by one using machine ID
-                for (i = 0; i < listView1.CheckedItems.Count; i++)
-                {
-                    //get index in dispatch list
-                    index = listView1.CheckedItems[i].Index;
-
-                    //first update this dispatch to the status confirmed but unpublished
-                    commandText = "update `" + gVariable.globalDispatchTableName + "` set status = '-2' where dispatchCode = '" + dispatchListArray[index].dispatchCode + "'";
-                    mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
-
-                    databaseName = gVariable.DBHeadString + dispatchListArray[index].machineID.ToString().PadLeft(3, '0');
-
-                    commandText = "delete from `" + gVariable.dispatchListTableName + "` where dispatchCode = '" + dispatchListArray[index].dispatchCode + "'";
-                    mySQLClass.pureDatabaseNonQueryAction(databaseName, commandText);
-                    mySQLClass.redoIDIncreamentAfterRecordDeleted(databaseName, gVariable.dispatchListTableName);
-
-                    //for feeding/casting process, we need to remove all material sheet from material list
-                    if (index <= gVariable.castingProcess.Length * 2)
-                    {
-                        //update this dispatch related material to the status of published 
-                        //commandText = "update `" + gVariable.globalMaterialTableName + "` set status = '0' where dispatchCode = '" + dispatchListArray[index].dispatchCode + "'";
-                        //mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
-
-                        commandText = "delete from `" + gVariable.materialListTableName + "` where dispatchCode = '" + dispatchListArray[index].dispatchCode + "'";
-                        mySQLClass.pureDatabaseNonQueryAction(databaseName, commandText);
-                        mySQLClass.redoIDIncreamentAfterRecordDeleted(databaseName, gVariable.dispatchListTableName);
-                    }
-                }
-
-                toolClass.systemDelay(1000);
-                displayDispatchList();
+                index = listView1.CheckedItems[0].Index;
+                cancelPublish cancelPublishImpl = new cancelPublish(batchTableArray, index);
+                cancelPublishImpl.Show();
+                //displayDispatchList();
             }
             catch (Exception ex)
             {
@@ -626,7 +698,9 @@ namespace MESSystem.dispatchManagement
             }
         }
 
+
         //time condition for dispatch searching
+        /*
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox3.Checked == true)
@@ -640,7 +714,7 @@ namespace MESSystem.dispatchManagement
                 endDateSearch = null;
             }
         }
-
+        
 
         //time condition to publish/unpublish selected dispatches
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -656,6 +730,7 @@ namespace MESSystem.dispatchManagement
                 endDatePlanned = null;
             }
         }
+        */
 
         //customer selection changed
         private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
@@ -678,19 +753,19 @@ namespace MESSystem.dispatchManagement
         //line owner selection changed
         private void comboBox5_SelectedIndexChanged(object sender, EventArgs e)
         {
-            lineOwnerSelected = comboBox5.SelectedIndex;
+        //    lineOwnerSelected = comboBox5.SelectedIndex;
         }
 
         //assistant 1 selected
         private void comboBox6_SelectedIndexChanged(object sender, EventArgs e)
         {
-            assistant1Selected = comboBox6.SelectedIndex;
+        //    assistant1Selected = comboBox6.SelectedIndex;
         }
 
         //assistant 2 selected
         private void comboBox7_SelectedIndexChanged(object sender, EventArgs e)
         {
-            assistant2Selected = comboBox7.SelectedIndex;
+        //    assistant2Selected = comboBox7.SelectedIndex;
         }
 
         //confirm the modification of the selected dispatch info
@@ -699,5 +774,44 @@ namespace MESSystem.dispatchManagement
 
         }
 
+        //cancel approve
+        private void button5_Click(object sender, EventArgs e)
+        {
+            int i;
+            int index;
+            string commandText;
+            DialogResult dr;
+
+            dr = MessageBox.Show("确认核准取消该任务单吗？", "需要确认", MessageBoxButtons.YesNo);
+            if (dr == DialogResult.No)
+            {
+                return;
+            }
+
+            for (i = 0; i < listView1.CheckedItems.Count; i++)
+            {
+                index = listView1.CheckedItems[i].Index;
+                if (Convert.ToInt32(batchTableArray[index, 17]) != gVariable.SALES_ORDER_STATUS_CANCEL_APPLIED)
+                {
+                    MessageBox.Show("请确认所有选中的任务单都处于申请取消状态，其他状态无法核准。", "提示信息", MessageBoxButtons.OK);
+                    return;
+                }
+            }
+
+            for (i = 0; i < listView1.CheckedItems.Count; i++)
+            {
+                index = listView1.CheckedItems[i].Index;
+                commandText = "update `" + gVariable.productBatchTableName + "` set orderStatus = '" + gVariable.SALES_ORDER_STATUS_CANCELLED + "' where id = '" + batchTableArray[index, 0] + "'";
+                mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
+            }
+
+            return;
+        }
+
+        //cancel reason
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }

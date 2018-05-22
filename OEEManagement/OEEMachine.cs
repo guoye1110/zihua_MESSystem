@@ -28,9 +28,9 @@ namespace MESSystem.OEEManagement
         private int _id;
         private OEETypes.MachineStatus _status;
 
-        private int plannedOutput;
-        private int qualifiedOutput;
-        private int realOutput;
+        private float plannedOutput;
+        private float qualifiedOutput;
+        private float realOutput;
         private int maintainanceHours;
         private int prepareHours;
 
@@ -203,7 +203,8 @@ namespace MESSystem.OEEManagement
             else
                 dispatches = null;
 
-            CalculateCapacity(dispatches);
+            if (dispatches != null)
+                CalculateCapacity(dispatches);
         }
 
         // Query machineStatusRecord
@@ -236,7 +237,7 @@ namespace MESSystem.OEEManagement
             string commandText = "select planTime1, planTime2 from " + "`" + gVariable.machineWorkingPlanTableName + "`" +
                     " where (typeID >= 2 and ((planTime1 < '" + queryStartTime + "' and planTime2 >= '" + queryStartTime + "')" +
                     " or (planTime1 <= '" + queryStartTime + "' and planTime2 <= '" + queryEndTime + "')" +
-                    " or (planTime2 <= '" + queryEndTime + "' and planTime2 > '" + queryEndTime + "'))";
+                    " or (planTime2 <= '" + queryEndTime + "' and planTime2 > '" + queryEndTime + "')))";
 
             maintainanceDataTable = mySQLClass.queryDataTableAction(dataBaseName, commandText, null);
             CalculateMaintainance(maintainanceDataTable, queryStartTime, queryEndTime);
@@ -250,7 +251,7 @@ namespace MESSystem.OEEManagement
             DataTable prepareDataTable = new DataTable();
 
             string commandText = "select startTime, prepareTimePoint from " + "`" + gVariable.dispatchListTableName + "`" +
-                    " where ((prepareTimePoint >= '" + queryStartTime + "' and startTime <= '" + queryEndTime + "')";
+                    " where (prepareTimePoint >= '" + queryStartTime + "' and startTime <= '" + queryEndTime + "')";
             prepareDataTable = mySQLClass.queryDataTableAction(dataBaseName, commandText, null);
             CalculatePrepareTime(prepareDataTable, queryStartTime, queryEndTime);
         }
@@ -275,9 +276,9 @@ namespace MESSystem.OEEManagement
                         dispatch.outputNumber, dispatch.qualifiedNumber);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Console.WriteLine("CalculateCapacity failed" + ex);
             }
         }
 
@@ -303,9 +304,9 @@ namespace MESSystem.OEEManagement
                     
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Console.WriteLine("CalculateStatus failed " + ex);
             }
         }
 
@@ -419,7 +420,8 @@ namespace MESSystem.OEEManagement
                     return null;
             }
 
-            dataBaseName = gVariable.DBHeadString + DATABASE_PREFIX + tableIndex.ToString();
+            //dataBaseName = gVariable.DBHeadString + DATABASE_PREFIX + tableIndex.ToString();
+            dataBaseName = gVariable.DBHeadString + (tableIndex + 1).ToString().PadLeft(3, '0');
             return dataBaseName;
         }
     }

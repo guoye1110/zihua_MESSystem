@@ -76,10 +76,16 @@ namespace LabelPrint.EditorForms
             tb_BigRollNo.Text = UserInput.BigRollNo;
             tb_Desc.Text = UserInput.Desc;
             cb_ProductState.Items.AddRange(LiuYanUserinputData.PrintProductStateStr);
-            cb_ProductState.Text = UserInput.Product_State;
+            cb_ProductState.Text = UserInput.ProductState;
+            InitProductQualityComboBox(cb_ProductQuality);
+            cb_ProductQuality.Text = UserInput.ProductQuality;
             tb_RollWeight.Text = UserInput.Roll_Weight;
         }
+        void InitProductQualityComboBox(ComboBox productQulity)
+        {
+            productQulity.Items.AddRange(ProcessData.ProductQualityStrForComBoList);
 
+        }
         private void UpdateUserInput()
         {
             UserInput.ProductCode = cb_ProductCode.Text;
@@ -97,7 +103,7 @@ namespace LabelPrint.EditorForms
             UserInput.LiuYanMachineNo = tb_LiuYanMachineNo.Text;
             UserInput.BigRollNo = tb_BigRollNo.Text;
             UserInput.Desc = tb_Desc.Text;
-            UserInput.Product_State = cb_ProductState.Text;
+            UserInput.ProductState = cb_ProductState.Text;
             UserInput.Roll_Weight = tb_RollWeight.Text;
         }
 

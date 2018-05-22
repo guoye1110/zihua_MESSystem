@@ -14,7 +14,7 @@ namespace LabelPrint.Data
     public partial class FilmPrintUserinputData : ProcessData
     {
 
-        public static String[] PrintProductStateStr = { "合格品", "不合格品","印刷退货","废品" };
+        public static String[] PrintProductStateStr = { "合格品", "不合格品","待处理品","废品" };
         public String BigRollNo;
        // public String ProductState;// = GetProductState();
        // public String ProductQuality;// = GetProductQuality();
@@ -70,6 +70,7 @@ namespace LabelPrint.Data
             "InputBarcode",
             "OutputBarcode",
             "Product_State",
+            "ProductQuality",
             "Roll_Weight",
             "RawMaterialCode",
             "ProductLength",
@@ -102,6 +103,7 @@ namespace LabelPrint.Data
             OutputBarcode,
             //   LittleRollNo,
             Product_State,
+            ProductQuality,
             Roll_Weight,
             RawMaterialCode,
             ProductLength,
@@ -140,7 +142,9 @@ namespace LabelPrint.Data
             values[(int)ColumnType.InputBarcode] = InputBarcode;
             values[(int)ColumnType.OutputBarcode] = OutputBarcode;
             
-            values[(int)ColumnType.Product_State] = Product_State;
+            values[(int)ColumnType.Product_State] = ProductState;
+            values[(int)ColumnType.ProductQuality] = ProductQuality;
+            
             values[(int)ColumnType.Roll_Weight] = Roll_Weight;
 
             values[(int)ColumnType.RawMaterialCode] = RawMaterialCode;
@@ -186,8 +190,10 @@ namespace LabelPrint.Data
 
             InputBarcode = dataRows[0][(int)ColumnType.InputBarcode + offset].ToString();
             OutputBarcode = dataRows[0][(int)ColumnType.OutputBarcode + offset].ToString();
+
+            ProductState = dataRows[0][(int)ColumnType.Product_State + offset].ToString();
+            ProductQuality = dataRows[0][(int)ColumnType.ProductQuality + offset].ToString();
             
-            Product_State = dataRows[0][(int)ColumnType.Product_State + offset].ToString();
             Roll_Weight = dataRows[0][(int)ColumnType.Roll_Weight + offset].ToString();
 
             RawMaterialCode = dataRows[0][(int)ColumnType.RawMaterialCode + offset].ToString();
@@ -238,7 +244,7 @@ namespace LabelPrint.Data
         String[] FilmPrintTitle = { "序号", "生产日期", "时间", "班别","班次","生产批号", "客户名称", "产品代号", "大卷编号", "工单编号", "卷重", "产品状态", "备注" };
         String[] dataBase = { "id", "Date", "Time", "WorkClassType", "WorkTimeType", "BatchNo", "CustomerName", "ProductCode", "BigRollNo", "WorkNo", "Roll_Weight", "Product_State", "ProductDesc" };
       //  String[] FilmPrintTitle = { "序号", "生产日期", "时间", "班别", "班次", "生产批号", "客户名称", "产品品号", "大卷编号", "工单编号", "卷重",  "备注" };
-       // String[] dataBase = { "id", "Date", "Time", "WorkClassType", "WorkTimeType", "BatchNo", "CustomerName", "ProductCode", "BigRollNo", "WorkNo", "Roll_Weight",  "ProductDesc" };
+      // String[] dataBase = { "id", "Date", "Time", "WorkClassType", "WorkTimeType", "BatchNo", "CustomerName", "ProductCode", "BigRollNo", "WorkNo", "Roll_Weight",  "ProductDesc" };
 
         public String BatchNo;
         public String ProductCode;

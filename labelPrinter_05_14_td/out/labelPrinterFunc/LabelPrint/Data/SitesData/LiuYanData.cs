@@ -64,6 +64,7 @@ namespace LabelPrint.Data
             "RecipeCode",
             "CustomerName",
             "MaterialName",
+            "RawMaterialCode",
             "BatchNo",
             "ManHour",
             "WorkNo",
@@ -73,7 +74,10 @@ namespace LabelPrint.Data
             "BigRollNo",
             "OutputBarcode",
             "Product_State",
+            "ProductQuality",
             "Roll_Weight",
+            "ProductName",
+            "ProductWeight"
         };
         enum ColumnType
         {
@@ -89,6 +93,7 @@ namespace LabelPrint.Data
             RecipeCode,
             CustomerName,
             MaterialName,
+            RawMaterialCode,
             BatchNo,
             ManHour,
             WorkNo,
@@ -98,7 +103,10 @@ namespace LabelPrint.Data
             BigRollNo,
             OutputBarcode,
             Product_State,
+            ProductQuality,
             Roll_Weight,
+            ProductName,
+            ProductWeight,
             MAX_COLUMN
         }
         public override String[] SetColumnDataArray()
@@ -113,12 +121,16 @@ namespace LabelPrint.Data
             values[(int)ColumnType.WorkClassType] = WorkClsType.ToString();
 
             values[(int)ColumnType.ProductCode] = ProductCode;
+
+            
             values[(int)ColumnType.Width] = Width;
             //values[(int)ColumnType.LittleRollCount] = LittleRollCount;
 
             values[(int)ColumnType.RecipeCode] = RecipeCode;
             values[(int)ColumnType.CustomerName] = CustomerName;
             values[(int)ColumnType.MaterialName] = MaterialName;
+            values[(int)ColumnType.RawMaterialCode] = RawMaterialCode;
+            
             values[(int)ColumnType.BatchNo] = BatchNo;
 
 
@@ -130,8 +142,13 @@ namespace LabelPrint.Data
             values[(int)ColumnType.BigRollNo] = BigRollNo;
             values[(int)ColumnType.OutputBarcode] = OutputBarcode;
 
-            values[(int)ColumnType.Product_State] = Product_State;
+            values[(int)ColumnType.Product_State] = ProductState;
+            values[(int)ColumnType.ProductQuality] = ProductQuality;
             values[(int)ColumnType.Roll_Weight] = Roll_Weight;
+
+            values[(int)ColumnType.ProductName] = ProductName;
+            values[(int)ColumnType.ProductWeight] = ProductWeight;
+            
             return values;
         }
 
@@ -158,6 +175,7 @@ namespace LabelPrint.Data
             RecipeCode = dataRows[0][(int)ColumnType.RecipeCode + offset].ToString();
             CustomerName = dataRows[0][(int)ColumnType.CustomerName + offset].ToString();
             MaterialName = dataRows[0][(int)ColumnType.MaterialName + offset].ToString();
+            RawMaterialCode = dataRows[0][(int)ColumnType.RawMaterialCode + offset].ToString();
 
             BatchNo = dataRows[0][(int)ColumnType.BatchNo + offset].ToString();
             WorkHour = dataRows[0][(int)ColumnType.ManHour + offset].ToString();
@@ -169,8 +187,14 @@ namespace LabelPrint.Data
             BigRollNo = dataRows[0][(int)ColumnType.BigRollNo + offset].ToString();
             OutputBarcode = dataRows[0][(int)ColumnType.OutputBarcode + offset].ToString();
 
-            Product_State = dataRows[0][(int)ColumnType.Product_State + offset].ToString();
+            ProductState = dataRows[0][(int)ColumnType.Product_State + offset].ToString();
+            ProductQuality = dataRows[0][(int)ColumnType.ProductQuality + offset].ToString();
             Roll_Weight = dataRows[0][(int)ColumnType.Roll_Weight + offset].ToString();
+
+
+            ProductName = dataRows[0][(int)ColumnType.ProductName + offset].ToString();
+            ProductWeight = dataRows[0][(int)ColumnType.ProductWeight + offset].ToString();
+
         }
 
         public override void PrintLabel()

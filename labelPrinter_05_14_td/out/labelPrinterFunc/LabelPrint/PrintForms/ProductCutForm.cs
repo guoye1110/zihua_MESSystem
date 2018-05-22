@@ -34,9 +34,9 @@ namespace LabelPrint
 		FilmSocket.networkstatehandler m_networkstatehandler;
 		private string m_dispatchCode;
 
-        String[] ProductStateStr = { "合格品", "不合格品","待处理","边角料","废料" };
-        String[] ProductQualityStr = { "A", "B", "C", "D", "DC", "E", "W" };
-        String[] ProductQualityStrForComBoList = { "A-晶点孔洞", "B-厚薄暴筋", "C-皱折", "D-端面错位(毛糙)", "DC-待处理", "E-油污", "W-蚊虫" };
+       // String[] ProductStateStr = { "合格品", "不合格品","待处理","边角料","废料" };
+       // String[] ProductQualityStr = { "A", "B", "C", "D", "DC", "E", "W" };
+       // String[] ProductQualityStrForComBoList = { "A-晶点孔洞", "B-厚薄暴筋", "C-皱折", "D-端面错位(毛糙)", "DC-待处理", "E-油污", "W-蚊虫" };
         String[] YesNoStr = { "是", "否" };
 #pragma warning disable CS0649 // Field 'ProductCutForm.ProdItem' is never assigned to, and will always have its default value null
         CutProductItem ProdItem;
@@ -44,7 +44,8 @@ namespace LabelPrint
 
         CutUserinputData UserInput;
 
-        SerialPort serialPort1;
+        SerialPort serialPort1;  //磅秤
+        SerialPort serialPort2;  //扫描枪
 
         //String CurProductState;// = GetProductState();
         //String CurProductQuality;// = GetProductQuality();
@@ -53,11 +54,11 @@ namespace LabelPrint
         //String CurBigRollNo;
         //String CurLittleRollNo;
         int BigRollNo = 1;
-        int LittleRoleNo = 1;
+        int LittleRollNo = 1;
         int TotalRoll = 0;
         //PlateInfo CurPlatInfo;
         //   String CurWorkNo;
-        const int ProductTypeCount = 3;
+        const int ProductTypeCount = 4;
         TextBox[] tb_CustomerNames = new TextBox[ProductTypeCount];
         TextBox[] tb_BatchNos = new TextBox[ProductTypeCount];
         TextBox[] tb_Recipes = new TextBox[ProductTypeCount];
@@ -66,6 +67,7 @@ namespace LabelPrint
         TextBox[] tb_PlateLayers = new TextBox[ProductTypeCount];
         TextBox[] tb_PlateRollNums = new TextBox[ProductTypeCount];
         TextBox[] tb_RawMaterialCodes = new TextBox[ProductTypeCount];
+        TextBox[] tb_ProductLengths = new TextBox[ProductTypeCount];
 
         Byte[] serialDataBuf = new Byte[128];
 
@@ -158,7 +160,12 @@ namespace LabelPrint
             tb_PlateLayer3.Text = plateInfo.Layer.ToString();
             tb_PlateRollNum3.Text = plateInfo.getMaxLittleRoll().ToString();
         }
-
+        void SetPlateRollComponent4(PlateInfo plateInfo)
+        {
+            tb_PlateRollPerLay4.Text = plateInfo.LittleRollPerlayer.ToString();
+            tb_PlateLayer4.Text = plateInfo.Layer.ToString();
+            tb_PlateRollNum4.Text = plateInfo.getMaxLittleRoll().ToString();
+        }
         void SetPlateNo1(PlateInfo plateInfo)
         {
             tb_PlateNo1.Text = plateInfo.PLateNo.ToString();
@@ -170,6 +177,10 @@ namespace LabelPrint
         void SetPlateNo3(PlateInfo plateInfo)
         {
             tb_PlateNo3.Text = plateInfo.PLateNo.ToString();
+        }
+        void SetPlateNo4(PlateInfo plateInfo)
+        {
+            tb_PlateNo4.Text = plateInfo.PLateNo.ToString();
         }
         void LimitPlateTextBox(int a, int b)
         {
@@ -275,9 +286,11 @@ namespace LabelPrint
             //  BigRollNo = 080;
             // LittleRoleNo = 0;
             //UpdateBigRollNo(BigRollNo);
-            tb_BigRollNo.Text = CommonFormHelper.UpdateBigRollNo(BigRollNo);
+            LittleRollNo = 1;
+            BigRollNo = 1;
+            tb_BigRollNo.Text = CommonFormHelper.GetBigRollNoStr(BigRollNo);
             //         UpdateLittleRollNo(BigRollNo, LittleRoleNo);
-            tb_LittleRollNo.Text = CommonFormHelper.UpdateLittleRollNo(BigRollNo, LittleRoleNo);
+            tb_LittleRollNo.Text = CommonFormHelper.GetLittleRollNoStr(BigRollNo, LittleRollNo);
             //tb_LittleRollNo.Text = Item.LittleRoleNo;
 
 
@@ -350,7 +363,7 @@ namespace LabelPrint
                 tb_PlateLayers[0].BackColor = Color.White;
                 tb_PlateRollPerLays[0].BackColor = Color.White;
                 tb_PlateRollNums[0].BackColor = Color.White;
-
+                tb_ProductLengths[0].BackColor = Color.White;
 
                 for (int i = 1; i < MaxMiscLittleRoll; i++)
                 {
@@ -442,25 +455,28 @@ namespace LabelPrint
             tb_CustomerNames[0] = tb_CustomerName1;
             tb_CustomerNames[1] = tb_CustomerName2;
             tb_CustomerNames[2] = tb_CustomerName3;
+            tb_CustomerNames[3] = tb_CustomerName4;
         }
         void InitBatchNoArray()
         {
             tb_BatchNos[0] = tb_BatchNo1;
             tb_BatchNos[1] = tb_BatchNo2;
             tb_BatchNos[2] = tb_BatchNo3;
+            tb_BatchNos[3] = tb_BatchNo4;
         }
         void InitRecipeArray()
         {
             tb_Recipes[0] = tb_RecipeCode1;
             tb_Recipes[1] = tb_RecipeCode2;
             tb_Recipes[2] = tb_RecipeCode3;
-
+            tb_Recipes[3] = tb_RecipeCode4;
         }
         void InitPlateNoArray()
         {
             tb_PlateNos[0] = tb_PlateNo1;
             tb_PlateNos[1] = tb_PlateNo2;
             tb_PlateNos[2] = tb_PlateNo3;
+            tb_PlateNos[3] = tb_PlateNo4;
         }
 
         void InitPlatoMatrixInfoArrays()
@@ -468,12 +484,15 @@ namespace LabelPrint
             tb_PlateRollPerLays[0] = tb_PlateRollPerLay1;
             tb_PlateRollPerLays[1] = tb_PlateRollPerLay2;
             tb_PlateRollPerLays[2] = tb_PlateRollPerLay3;
+            tb_PlateRollPerLays[3] = tb_PlateRollPerLay4;
             tb_PlateLayers[0] = tb_PlateLayer1;
             tb_PlateLayers[1] = tb_PlateLayer2;
             tb_PlateLayers[2] = tb_PlateLayer3;
+            tb_PlateLayers[3] = tb_PlateLayer4;
             tb_PlateRollNums[0] = tb_PlateRollNum1;
             tb_PlateRollNums[1] = tb_PlateRollNum2;
             tb_PlateRollNums[2] = tb_PlateRollNum3;
+            tb_PlateRollNums[3] = tb_PlateRollNum4;
         }
 
         void InitRawMaterialCodeArrays()
@@ -481,8 +500,16 @@ namespace LabelPrint
             tb_RawMaterialCodes[0] = tb_RawMaterialCode1;
             tb_RawMaterialCodes[1] = tb_RawMaterialCode2;
             tb_RawMaterialCodes[2] = tb_RawMaterialCode3;
+            tb_RawMaterialCodes[3] = tb_RawMaterialCode4;
         }
 
+        void InitProductLengthArrays()
+        {
+            tb_ProductLengths[0] = tb_ProductLength1;
+            tb_ProductLengths[1] = tb_ProductLength2;
+            tb_ProductLengths[2] = tb_ProductLength3;
+            tb_ProductLengths[3] = tb_ProductLength4;
+        }
         void InitComponentArray()
         {
             InitProductCodeArray();
@@ -493,6 +520,7 @@ namespace LabelPrint
             InitPlateNoArray();
             InitPlatoMatrixInfoArrays();
             InitRawMaterialCodeArrays();
+            InitProductLengthArrays();
         }
         //TextBox[] tb_CustomerNames = new TextBox[ProductTypeCount];
         //TextBox[] tb_BatchNos = new TextBox[ProductTypeCount];
@@ -561,6 +589,7 @@ namespace LabelPrint
         private void ProductCutForm_FormClosing(object sender, EventArgs e)
         {
             serialPort1.Close();
+            serialPort2.Close();
         }
         
         void initSerialPort()
@@ -572,7 +601,11 @@ namespace LabelPrint
             {
                 serialPort1 = new SerialPort(SysSetting.CurSettingInfo.ScaleSerialPort, 9600, Parity.None, 8, StopBits.One);
                 serialPort1.Open();
-                serialPort1.DataReceived += new SerialDataReceivedEventHandler(serialDataReceived);
+                serialPort1.DataReceived += new SerialDataReceivedEventHandler(serialDataReceived1);
+
+                serialPort2 = new SerialPort(SysSetting.CurSettingInfo.ScannerSerialPort, 9600, Parity.None, 8, StopBits.One);
+                serialPort2.Open();
+                serialPort2.DataReceived += new SerialDataReceivedEventHandler(serialDataReceived2);
             }
             catch (Exception ex)
             {
@@ -580,7 +613,7 @@ namespace LabelPrint
             }
         }
 
-        void serialDataReceived(object sender, SerialDataReceivedEventArgs e)
+        void serialDataReceived1(object sender, SerialDataReceivedEventArgs e)
         {
             int num;
             string weightStr;
@@ -660,6 +693,29 @@ namespace LabelPrint
                 return null;
 
             return ( System.Text.Encoding.ASCII.GetString(serialDataBuf, start, end - start));
+        }
+
+
+        void serialDataReceived2(object sender, SerialDataReceivedEventArgs e)
+        {
+            Byte[] serialDataBuf1 = new Byte[128];
+
+            try
+            {
+                Thread.Sleep(1000);
+
+                serialPort2.Read(serialDataBuf1, 0, serialPort2.BytesToRead);
+
+                this.Invoke((EventHandler)(delegate
+                {
+                    label51.Text = System.Text.Encoding.ASCII.GetString(serialDataBuf1);
+                }));
+               
+            }
+            catch (TimeoutException ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
 
@@ -969,6 +1025,7 @@ namespace LabelPrint
             UserInput.PlateRollNum = tb_PlateRollNums[idx].Text;
             UserInput.PlateRollPerLay = tb_PlateRollPerLays[idx].Text;
             UserInput.PlateLayer = tb_PlateLayers[idx].Text;
+            UserInput.ProductLength = tb_ProductLengths[idx].Text;
         }
         private void UpdateUserInputInSingleMode()
         {
@@ -978,7 +1035,19 @@ namespace LabelPrint
             int.TryParse(UserInput.PlateRollPerLay, out UserInput.CurPlatInfo.LittleRollPerlayer);
             int.TryParse(UserInput.PlateLayer, out UserInput.CurPlatInfo.Layer);
 
-            UserInput.LittleRollNo = GetCurLittleRollNo(tb_LittleRollNo);
+           // UserInput.LittleRollNo = GetCurLittleRollNo(tb_LittleRollNo);
+
+            int LitNo = 0;
+            Boolean value = int.TryParse(tb_LittleRollNo.Text, out LitNo);
+            if (value)
+            {
+                UserInput.LittleRollNo = tb_LittleRollNo.Text;
+                LittleRollNo = LitNo;
+            }
+            else
+                UserInput.LittleRollNo = string.Format("{0:D2}", LittleRollNo);
+
+
         }
         private void UpdateUserInputInMutipleMode()
         {
@@ -1236,8 +1305,8 @@ namespace LabelPrint
                     TotalRoll = 0;
                 }
 
-                LittleRoleNo++;
-                tb_LittleRollNo.Text = CommonFormHelper.UpdateLittleRollNo(BigRollNo, LittleRoleNo);
+                LittleRollNo++;
+                tb_LittleRollNo.Text = CommonFormHelper.GetLittleRollNoStr(BigRollNo, LittleRollNo);
 
             }
             return;
@@ -1276,7 +1345,7 @@ namespace LabelPrint
                     cb_ProductQuality.Visible = false;
                     lb_ProductQulity.Visible = false;
                     break;
-                case 1:
+                default :
                     //cb_ProductQuality.Enabled = true;
                     cb_ProductQuality.Visible = true;
                     lb_ProductQulity.Visible = true;
@@ -1286,7 +1355,7 @@ namespace LabelPrint
 
         private void cb_ProductQuality_SelectedIndexChanged(object sender, EventArgs e)
         {
-            String QulityStr = ProductQualityStr[cb_ProductQuality.SelectedIndex];
+            String QulityStr = ProcessData.ProductQualityStr[cb_ProductQuality.SelectedIndex];
             //  label26.Text = QulityStr;
         }
 
@@ -1475,15 +1544,23 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
             UserInput.ProductWeight = productWeight;
             UserInput.ParsePlateInfo(Fixture);
 
-            tb_RawMaterialCode1.Text = UserInput.RawMaterialCode;
-            tb_PlateRollNum1.Text = UserInput.PlateRollNum;
-            tb_PlateRollPerLay1.Text = UserInput.PlateRollPerLay;
-            tb_PlateLayer1.Text = UserInput.PlateLayer;
+            tb_RawMaterialCodes[0].Text = UserInput.RawMaterialCode;
+            tb_PlateRollNums[0].Text = UserInput.PlateRollNum;
+            tb_PlateRollPerLays[0].Text = UserInput.PlateRollPerLay;
+            tb_PlateLayers[0].Text = UserInput.PlateLayer;
+            tb_ProductLengths[0].Text = productLength;
 
 
-            tb_Width1.Text = Width;
-            tb_RecipeCode1.Text = RecipeCode;
-            tb_CustomerName1.Text = CustomerName;
+            tb_Widths[0].Text = Width;
+            tb_Recipes[0].Text = RecipeCode;
+            tb_CustomerNames[0].Text = CustomerName;
+
+            LittleRollNo = 1;
+            BigRollNo = 1;
+            tb_BigRollNo.Text = CommonFormHelper.GetBigRollNoStr(BigRollNo);
+            //         UpdateLittleRollNo(BigRollNo, LittleRoleNo);
+            tb_LittleRollNo.Text = CommonFormHelper.GetLittleRollNoStr(BigRollNo, LittleRollNo);
+
         }
 
         int searchComBoxIndex(object sender)
@@ -1504,7 +1581,7 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
                 cb_ProductCodes[i].Text = null;
                 tb_Widths[i].Text = null;
             }
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < SetWorkProductData.ProductTypeCount; i++)
             {
                 tb_RawMaterialCodes[i].Text = null;
                 tb_CustomerNames[i].Text = null;
@@ -1514,6 +1591,7 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
                 tb_PlateLayers[i].Text = null;
                 tb_PlateRollPerLays[i].Text = null;
                 tb_PlateRollNums[i].Text = null;
+                tb_ProductLengths[i].Text = null;
             }
         }
 
@@ -1530,6 +1608,7 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
                     tb_PlateRollPerLays[idx].BackColor = Color.Yellow;
                     tb_PlateLayers[idx].BackColor = Color.Yellow;
                     tb_PlateRollNums[idx].BackColor = Color.Yellow;
+                    tb_ProductLengths[idx].BackColor = Color.Yellow;
                 }
                 else
                 {
@@ -1542,6 +1621,7 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
                     tb_PlateLayers[i].BackColor = Color.White;
                     tb_PlateRollPerLays[i].BackColor = Color.White;
                     tb_PlateRollNums[i].BackColor = Color.White;
+                    tb_ProductLengths[i].BackColor = Color.White;
                 }
             }
 
@@ -1593,6 +1673,10 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
             if (!UserInput.SetWorkProductInfo.IsEmptyMiscCutProductDataAvailable() && (UserInput.SetWorkProductInfo.SearchMiscCutProductDataWithoutCreation(ProductCode) == null))
             {
                 MiscCutProductData miscData = UserInput.SetWorkProductInfo.FindInfoByComboIndex(comBoxIndex);
+                if (miscData == null) {
+                    cb_ProductCodes[comBoxIndex].Text = null;
+                    return;
+                }
                 if (miscData.UsedCount > 1) {
                     cb_ProductCodes[comBoxIndex].Text = miscData.ProductCode;
                     return;
@@ -1668,7 +1752,7 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
             //tb_BatchNos[i].Text = null;
             //tb_PlateNos[i].Text = null;
             //tb_Recipes[i]
-            UserInput.SetWorkProductInfo.UpdateUI(tb_CustomerNames, tb_BatchNos, tb_Recipes, tb_PlateNos, tb_RawMaterialCodes, tb_PlateRollPerLays,tb_PlateLayers, tb_PlateRollNums);
+            UserInput.SetWorkProductInfo.UpdateUI(tb_CustomerNames, tb_BatchNos, tb_Recipes, tb_PlateNos, tb_RawMaterialCodes, tb_PlateRollPerLays,tb_PlateLayers, tb_PlateRollNums,tb_ProductLengths);
 
 
 
@@ -1680,7 +1764,7 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
             SetCurProductInfoTextBox(0);
             SetFirstLittleRollFocused();
 
-
+            //获得一轮中，现在已选择的小卷总个数
             int littleRollCount = UserInput.SetWorkProductInfo.GetTotalLittleRollInOneRound();
             //产品种类没达到三个，则继续enable一个新的ProductCode+Width
             if (UserInput.SetWorkProductInfo.IsEmptyMiscCutProductDataAvailable())
@@ -1693,10 +1777,16 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
             }
             else//产品种类达到了三个，已经enable的，必须disable掉
             {
-                if (comBoxIndex< littleRollCount)
+                if (comBoxIndex < (littleRollCount-1))
                 {
                     cb_ProductCodes[littleRollCount].Enabled = false;
                     tb_Widths[littleRollCount].Enabled = false;
+                }
+                else if (littleRollCount < MaxMiscLittleRoll)
+                {
+                    cb_ProductCodes[littleRollCount].Enabled = true;
+                    tb_Widths[littleRollCount].Enabled = true;
+
                 }
 
             }
@@ -1802,5 +1892,16 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
 				m_dispatchCode = start_work[0];
 			}
         }
+        private void tb_BigRollNo_KeyPress(object sender, KeyPressEventArgs e)
+        {
+              tb_LittleRollNo.Text = CommonFormHelper.GetLittleRollNoStr(BigRollNo, 1);
+        }
+
+        private void ProductCutForm_Leave(object sender, EventArgs e)
+        {
+ 
+            BarCodeHook.Stop();
+        }
+
     }
 }

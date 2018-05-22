@@ -50,9 +50,7 @@ namespace MESSystem.APSDLL
 
         const int ONE_DISPATCH_WEIGHT = 20;   //normal output weight for a dispatch
 
-        //max nuber of output for a product batch, 20 tons
-        const int PRODUCT_BATCH_MAX_OUTPUT_NUM = 20000;
-        //const int salesOrderMax = 20;
+        //const int productBatchMax = 20;
 
         const int FORWARD_APS_PLAN = 0;
         const int REVERSED_APS_PLAN = 1;
@@ -65,7 +63,7 @@ namespace MESSystem.APSDLL
         const int GAP_BETWEEN_PRINT_SLIT = 3600;
 
         //const int BATCH_NUM_FOR_30_YEARS = 360;
-        //BATCH_INC_NUM number of dispatches will build up to a batch, many batches will build up to a sales order
+        //BATCH_INC_NUM number of dispatches will build up to a batch, many batches will build up to a batch order
         //const int BATCH_INC_NUM = 6;
 
         const int MACHINE_ORDER_WEIGHT_MORE = 0; //更加看重设备顺序，尽量满足产品规格书设备列表中顺序靠前的设备
@@ -78,18 +76,20 @@ namespace MESSystem.APSDLL
         //different machine has different output ability, this is output weight of kilogram in an hour
         int[] outputNumForOneDispatch = { 300, 320, 920, 320, 920, 800, 350, 90, 100, 100, 95, 87, 980, 980, 980, 980, 980 }; 
 
-        string[] processNameArray = { "上料工序", "流延工序", "印刷工序", "分切工序" };
+        string[] processNameArray = { "流延工序", "印刷工序", "分切工序" };
         string[] workshopNameArray = { "流延车间", "流延车间", "印刷车间", "流延车间" };
 
         const string BREATHABLE_FILM = "MPF";
         const string UNBREATHABLE_FILM = "CPE";
+
+        string[] supplementaryMaterial = { "铲板", "纸芯", "纸板", "牛皮纸", "瓦楞纸", "缠绕膜", "包装膜" }; 
 
         const int APS_TOTAL_PERIOD = (60 * 24);  //2 months' time
 
         const int MIN_HOUR_FOR_VACANCY = 4; //if we a machine has 4 hours of free time, it can be regarded as vacancy, we can insert a small dispatch in this period 
         const int MAX_NUM_VACANT_PERIOD = 500; //max number of vacant period in this 2 month of APS time
 
-        gVariable.salesOrderStruct salesOrderImpl;
+        gVariable.productBatchStruct productBatchImpl;
         gVariable.productStruct productImpl;
         gVariable.BOMListStruct BOMImpl;
         //gVariable.castCraftStruct castCraftImpl;
@@ -111,9 +111,9 @@ namespace MESSystem.APSDLL
         int calendarStartTimeStamp;
 
         //machine that would be used in APS
-        int[] castMachineList;
-        int[] printMachineList;
-        int[] slitMachineList;
+        int[] castMachineList = null;
+        int[] printMachineList = null;
+        int[] slitMachineList = null;
 
         //record start/end time for the cast/print/slit machine in the current plan
         int castStartTimeStamp;
@@ -148,7 +148,7 @@ namespace MESSystem.APSDLL
             }
         }
 
-        public void runAPSProcess(int salesOrderID, int[] assignedMachineByUserArray, int requiredStartTimeStamp, int requiredEndTimeStamp)
+        public void runAPSProcess(int productBatchID, int[] assignedMachineByUserArray, int requiredStartTimeStamp, int requiredEndTimeStamp)
         {
             int ret;
             int APSStartTimeStamp;
@@ -160,8 +160,8 @@ namespace MESSystem.APSDLL
             //we need to get the newest material info from ERP before APS, so we know whether we have enough material for APS and pop up warning message if not enough
             getMaterialInfoFromERP();
 
-            //get sales order info and product info
-            getOrderAndProductInfoForAPS(salesOrderID);
+            //get batch order info and product info
+            getOrderAndProductInfoForAPS(productBatchID);
 
             calendarStartTimeStamp = ConvertDateTimeInt(DateTime.Now.Date.AddDays(1)); // +8 * 3600;  //new work shift start from 8:00 the next day, so APS stats from 8:00 in the morning of the next day
 
@@ -177,24 +177,24 @@ namespace MESSystem.APSDLL
                 APSPlanDirection = REVERSED_APS_PLAN;
                 APSEndTimeStamp = requiredEndTimeStamp;
             }
-            else  //no APS complete time is assigned in APS UI, we use salesorder delivery time as APSEndTimeStamp
+            else  //no APS complete time is assigned in APS UI, we use batch order delivery time as APSEndTimeStamp
             {
                 APSPlanDirection = FORWARD_APS_PLAN;
-                APSEndTimeStamp = toolClass.timeStringToTimeStamp(salesOrderImpl.deliveryTime);
+                APSEndTimeStamp = toolClass.timeStringToTimeStamp(productBatchImpl.deliveryTime);
             }
 
             //get machine plan table data to machineWorkingPlanStatus[], to see when the machine is occupied and when it is free for APS
             getWorkingPlanForAllMachines(APSPlanDirection, APSStartTimeStamp, APSEndTimeStamp);
 
-            //check whether all material needed for this sale order are ready, if not pop up a message box for warning. We need to get an answer from the salesman when the material will be available,
+            //check whether all material needed for this sale order are ready, if not pop up a message box for warning. We need to get an answer from the batchman when the material will be available,
             //if we know when will the material will be available, we can input this date in our APS UI screen as APS start time
-            if (checkForMaterialReadiness(productImpl.BOMCode, (int)(Convert.ToDouble(salesOrderImpl.requiredNum) * 1000)) < 0)
+            if (checkForMaterialReadiness(productImpl.BOMCode, (int)(Convert.ToDouble(productBatchImpl.requiredNum))) < 0)
             {
                 //failed in material readiness, return directly
                 return;  
             }
 
-            ret = startAPSAction(APSPlanDirection, salesOrderID, APSStartTimeStamp, APSEndTimeStamp, assignedMachineByUserArray);
+            ret = startAPSAction(APSPlanDirection, productBatchID, APSStartTimeStamp, APSEndTimeStamp, assignedMachineByUserArray);
             if (ret == 0)
             {
             }
@@ -202,33 +202,31 @@ namespace MESSystem.APSDLL
             checkSecondCondition();  //
         }
 
-        public void cancelAPSProcess(int salesOrderID)
+        public void cancelAPSProcess(int productBatchID)
         {
             int i;
             int ret;
             string databaseName;
             string commandText;
 
-            commandText = "select * from `" + gVariable.productBatchTableName + "` where id = " + (salesOrderID);
-            mySQLClass.readSalesOrderInfo(ref salesOrderImpl, commandText);
+            commandText = "select * from `" + gVariable.productBatchTableName + "` where id = " + (productBatchID);
+            mySQLClass.readProductBatchInfo(ref productBatchImpl, commandText);
 
-            commandText = "delete from `" + gVariable.globalDispatchTableName + "` where salesOrderCode = '" + salesOrderImpl.salesOrderCode + "'";
+            commandText = "delete from `" + gVariable.globalDispatchTableName + "` where salesOrderBatchCode = '" + productBatchImpl.salesOrderBatchCode + "'";
             mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
+            mySQLClass.redoIDIncreamentAfterRecordDeleted(gVariable.globalDatabaseName, gVariable.globalDispatchTableName);
 
             //delete all dispatch table in dispatch list
             for (i = 0; i < APS_MACHINE_NUM; i++)
             {
                 databaseName = gVariable.DBHeadString + (i + 1).ToString().PadLeft(3, '0');
-                commandText = "delete from `" + gVariable.machineWorkingPlanTableName + "` where salesOrderCode = '" + salesOrderImpl.salesOrderCode + "'";
+                commandText = "delete from `" + gVariable.machineWorkingPlanTableName + "` where salesOrderBatchCode = '" + productBatchImpl.salesOrderBatchCode + "'";
                 ret = mySQLClass.pureDatabaseNonQueryAction(databaseName, commandText);
                 if(ret > 0)
                     mySQLClass.redoIDIncreamentAfterRecordDeleted(databaseName, gVariable.machineWorkingPlanTableName);
             }
-            commandText = "delete from `" + gVariable.globalDispatchTableName + "` where salesOrderCode = '" + salesOrderImpl.salesOrderCode + "'";
-            mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
-            mySQLClass.redoIDIncreamentAfterRecordDeleted(gVariable.globalDatabaseName, gVariable.globalDispatchTableName);
 
-            commandText = "delete from `" + gVariable.globalMaterialTableName + "` where salesOrderCode = '" + salesOrderImpl.salesOrderCode + "'";
+            commandText = "delete from `" + gVariable.globalMaterialTableName + "` where salesOrderBatchCode = '" + productBatchImpl.salesOrderBatchCode + "'";
             mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
 
             mySQLClass.redoIDIncreamentAfterRecordDeleted(gVariable.globalDatabaseName, gVariable.globalMaterialTableName);
@@ -241,7 +239,7 @@ namespace MESSystem.APSDLL
         }
 
         //put machine working status into buffer of machineWorkingPlanStatus, it inludes the status for all machines for 2 month starting from APSStartDateString 
-        //2 month are separated to 60 * 24 hours, -1 means vacant, >=0 means the ID in global sales order table
+        //2 month are separated to 60 * 24 hours, -1 means vacant, >=0 means the ID in global batch order table
         //APSStartDateString should be like "2018-12-24"
         void getWorkingPlanForAllMachines(int APSPlanDirection, int startTimeStamp, int completeTimeStamp)
         {
@@ -252,7 +250,7 @@ namespace MESSystem.APSDLL
             string commandText;
             string databaseName;
             string[,] tableArray;
-            //string[] salesOrderArray = new string[salesOrderMax];
+            //string[] productBatchArray = new string[productBatchMax];
 
             try
             {
@@ -293,58 +291,41 @@ namespace MESSystem.APSDLL
             }
         }
 
-        private void getOrderAndProductInfoForAPS(int salesOrderID)
+        private void getOrderAndProductInfoForAPS(int productBatchID)
         {
             string commandText;
 
             try
             {
-                commandText = "select * from `" + gVariable.productBatchTableName + "` where id = " + (salesOrderID);
-                mySQLClass.readSalesOrderInfo(ref salesOrderImpl, commandText);
+                //get product batch number index, 1805304, 04 is the current batch index for cast machine 3 
+                commandText = "select * from `" + gVariable.productBatchTableName + "` where id = " + (productBatchID);
+                mySQLClass.readProductBatchInfo(ref productBatchImpl, commandText);
 
-                commandText = "select * from `" + gVariable.productTableName + "` where productCode = '" + salesOrderImpl.productCode + "'";
+                commandText = "select * from `" + gVariable.productTableName + "` where productCode = '" + productBatchImpl.productCode + "'";
                 mySQLClass.readProductInfo(ref productImpl, commandText);
 
                 commandText = "select * from `" + gVariable.bomTableName + "` where BOMCode = '" + productImpl.BOMCode + "'";
                 mySQLClass.readBOMInfo(ref BOMImpl, commandText);
-
-                //commandText = "select * from `" + gVariable.castCraftTableName + "` where castCraft = '" + productImpl.castCraft + "'";
-                //mySQLClass.readCastCraftInfo(ref castCraftImpl, commandText);
-
-                //commandText = "select * from `" + gVariable.castQualityTableName + "` where castQuality = '" + productImpl.castQuality + "'";
-                //mySQLClass.readCastQualityInfo(ref castQualityImpl, commandText);
-
-                //commandText = "select * from `" + gVariable.printCraftTableName + "` where printcraft = '" + productImpl.printCraft + "'";
-                //mySQLClass.readPrintCraftInfo(ref printCraftImpl, commandText);
-
-                //commandText = "select * from `" + gVariable.printQualityTableName + "` where printQuality = '" + productImpl.printQuality + "'";
-                //mySQLClass.readPrintQualityInfo(ref printQualityImpl, commandText);
-
-                //commandText = "select * from `" + gVariable.slitCraftTableName + "` where slitCraft = '" + productImpl.slitCraft + "'";
-                //mySQLClass.readSlitCraftInfo(ref slitCraftImpl, commandText);
-
-                //commandText = "select * from `" + gVariable.slitQualityTableName + "` where slitquality = '" + productImpl.slitQuality + "'";
-                //mySQLClass.readSlitQualityInfo(ref slitQualityImpl, commandText);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("getOrderAndProductInfo failed! ", ex);
+                Console.WriteLine("getOrderAndProductInfo failed! " + ex);
             }
         }
 
         //how long (in hours) will this machine need to complete one dispatch
-        void getSalesOrderWorkingTime(int[] salesOrderWorkingTime)
+        void getSalesOrderWorkingTime(int[] productBatchWorkingTime)
         {
             int i;
 
             for (i = 0; i < APS_MACHINE_NUM; i++)
             {
-                salesOrderWorkingTime[i] = (int)((Convert.ToDouble(salesOrderImpl.requiredNum) * 1000) / outputNumForOneDispatch[i]);
+                productBatchWorkingTime[i] = (int)(Convert.ToDouble(productBatchImpl.requiredNum) / outputNumForOneDispatch[i]);
             }
         }
 
         //
-        private int startAPSAction(int APSPlanDirection, int salesOrderID, int APSStartTimeStamp, int APSEndTimeStamp, int[] assignedMachineByUserArray)
+        private int startAPSAction(int APSPlanDirection, int productBatchID, int APSStartTimeStamp, int APSEndTimeStamp, int[] assignedMachineByUserArray)
         {
             int i;
             int ret;
@@ -353,9 +334,9 @@ namespace MESSystem.APSDLL
             int castDuration;
             int workingTime;
             int workingTimeDeltaStamp;
-            int salesOrderStartTimeStamp; 
-            int salesOrderEndTimeStamp;
-            int productNumForOneBatch;  // this is a limitation for the current batch, normal limitation is 20 tons but if the sales order is 22, this limitaton becomes 11
+            int productBatchStartTimeStamp; 
+            int productBatchEndTimeStamp;
+            int productNumForOneBatch;  // this is a limitation for the current batch, normal limitation is 20 tons but if the batch order is 22, this limitaton becomes 11
             int monthIndex;
             int productBatchIndex;
             string planTime1;  //cast start time
@@ -367,7 +348,7 @@ namespace MESSystem.APSDLL
             //int[] numForStandardDispatch = new int[MAX_NUM_MACHINE_TYPE];
             //planned output for the current dispatch
             int[] numForThisDispatch = new int[MAX_NUM_MACHINE_TYPE];
-            //planned product still needed for a sales order
+            //planned product still needed for a batch order
             int[] numForSalesOrderleft = new int[MAX_NUM_MACHINE_TYPE];
             string updateStr;
 
@@ -381,11 +362,11 @@ namespace MESSystem.APSDLL
                 if (ret < 0)
                     return ret;
 
-                //we need to get output number for a batch, normally separate a sales order equally
-                total = (int)(Convert.ToDouble(salesOrderImpl.requiredNum) * 1000);
-                if (total > PRODUCT_BATCH_MAX_OUTPUT_NUM)
+                //we need to get output number for a batch, normally separate a batch order equally
+                total = (int)(Convert.ToDouble(productBatchImpl.requiredNum));
+                if (total > gVariable.PRODUCT_BATCH_MAX_OUTPUT_NUM)
                 {
-                    i = total / PRODUCT_BATCH_MAX_OUTPUT_NUM + 1;
+                    i = total / gVariable.PRODUCT_BATCH_MAX_OUTPUT_NUM + 1;
                     productNumForOneBatch = total / i;
                 }
                 else
@@ -416,14 +397,14 @@ namespace MESSystem.APSDLL
                         continue;
                     }
 
-                    //all required number we need to process for a sales order
-                    numForSalesOrderleft[i] = (int)(Convert.ToDouble(salesOrderImpl.requiredNum) * 1000);
+                    //all required number we need to process for a batch order
+                    numForSalesOrderleft[i] = (int)(Convert.ToDouble(productBatchImpl.requiredNum));
                     //how much we can process in 12 hours for each machine(these machines are already scheduled by APS)
                     //numForStandardDispatch[i] = outputNumForOneDispatch[machineIndexForAllType[i]] * 12;
                 }
 
-                salesOrderStartTimeStamp = castStartTimeStamp;
-                salesOrderEndTimeStamp = slitEndTimeStamp;
+                productBatchStartTimeStamp = castStartTimeStamp;
+                productBatchEndTimeStamp = slitEndTimeStamp;
 
                 productBatchString = null;
 
@@ -450,7 +431,7 @@ namespace MESSystem.APSDLL
 
                     for (i = 0; i < MAX_NUM_MACHINE_TYPE; i++)
                     {
-                        //one type of machine(probably print machine is not used in this sales order)
+                        //one type of machine(probably print machine is not used in this batch order)
                         if (machineIndexForAllType[i] < 0)
                             continue;
 
@@ -472,7 +453,7 @@ namespace MESSystem.APSDLL
                                 productBatchIndex = getCurrentProductBatchIndex(monthIndex, machineIndexForAllType[0] + 1);
                                 productBatchString = DateTime.Now.Date.ToString("yyMM") + (machineIndexForAllType[0] + 1) + productBatchIndex.ToString().PadLeft(2, '0');
                             }
-                            else if (productNumInCurrentBatch[0] > productNumForOneBatch && productNumInCurrentBatch[0] < PRODUCT_BATCH_MAX_OUTPUT_NUM)
+                            else if (productNumInCurrentBatch[0] > productNumForOneBatch && productNumInCurrentBatch[0] < gVariable.PRODUCT_BATCH_MAX_OUTPUT_NUM)
                             {
                                 //keep production in this batch, but need to increase batch index, so next time production will be in new batch
                                 productBatchIndex = getCurrentProductBatchIndex(monthIndex, machineIndexForAllType[0] + 1);
@@ -484,7 +465,7 @@ namespace MESSystem.APSDLL
                                 productBatchIndex = getCurrentProductBatchIndex(monthIndex, machineIndexForAllType[0] + 1);
                                 setCurrentProductBatchIndex(monthIndex, machineIndexForAllType[0] + 1, productBatchIndex + 1);
                             }
-                            else //if(productNumInCurrentBatch[0] > PRODUCT_BATCH_MAX_OUTPUT_NUM)
+                            else //if(productNumInCurrentBatch[0] > gvariable.PRODUCT_BATCH_MAX_OUTPUT_NUM)
                             {
                                 //product batch number increase by one, need to get new month value, maybe it's now new month 
                                 planTime1 = GetTimeFromInt(castStartTimeStamp).ToString("yyyy-MM-dd HH:mm");
@@ -506,7 +487,7 @@ namespace MESSystem.APSDLL
                     ret = 0;
                     for (i = 0; i < MAX_NUM_MACHINE_TYPE; i++)
                     {
-                        //one type of machine(probably print machine is not used in this sales order)
+                        //one type of machine(probably print machine is not used in this batch order)
                         if (machineIndexForAllType[i] < 0)
                             continue;
 
@@ -523,10 +504,10 @@ namespace MESSystem.APSDLL
                     slitStartTimeStamp += workingTimeDeltaStamp;
                 }
 
-                //APS success, set the status of this sales order to already scheduled
+                //APS success, set the status of this batch order to already scheduled
                 updateStr = "update `" + gVariable.productBatchTableName + "` set orderStatus = '" + gVariable.SALES_ORDER_STATUS_APS_OK + "', APSTime = '" + DateTime.Now.ToString("yy-MM-dd HH:mm" ) +
-                            "', planTime1 = '" + GetTimeFromInt(salesOrderStartTimeStamp).ToString("yyyy-MM-dd HH:mm") + "', planTime2 = '" +
-                            GetTimeFromInt(salesOrderEndTimeStamp).ToString("yyyy-MM-dd HH:mm") + "' where id = '" + salesOrderID + "'";
+                            "', planTime1 = '" + GetTimeFromInt(productBatchStartTimeStamp).ToString("yyyy-MM-dd HH:mm") + "', planTime2 = '" +
+                            GetTimeFromInt(productBatchEndTimeStamp).ToString("yyyy-MM-dd HH:mm") + "', batchNum = '" + productBatchString + "' where id = '" + productBatchID + "'";
 
                 mySQLClass.updateTableItems(gVariable.globalDatabaseName, updateStr);
 
@@ -535,7 +516,7 @@ namespace MESSystem.APSDLL
             }
             catch (Exception ex)
             {
-                Console.WriteLine("startAPSAction failed! ", ex);
+                Console.WriteLine("startAPSAction failed! " + ex);
                 return -1;
             }
         }
@@ -548,8 +529,8 @@ namespace MESSystem.APSDLL
             int APSSuccess;
             int startTimeStamp;
             int endTimeStamp;
-            //a sales order can be completed in cast/print/slit process in xxx hours seperately
-            int[] salesOrderWorkingTime = new int[APS_MACHINE_NUM];
+            //a batch order can be completed in cast/print/slit process in xxx hours seperately
+            int[] productBatchWorkingTime = new int[APS_MACHINE_NUM];
 
             try
             {
@@ -558,8 +539,8 @@ namespace MESSystem.APSDLL
                 //first get cast machine list
                 assignAllPossibleMachines(routeCode, assignedMachineByUserArray);
 
-                //total working time for one sales order by all machines
-                getSalesOrderWorkingTime(salesOrderWorkingTime);
+                //total working time for one batch order by all machines
+                getSalesOrderWorkingTime(productBatchWorkingTime);
 
                 for (i = 0; i < MAX_NUM_MACHINE_TYPE; i++)
                 {
@@ -572,7 +553,7 @@ namespace MESSystem.APSDLL
                 for (i = 0; i < castMachineList.Length; i++)
                 {
                     //APS started from APSStartTimeStamp
-                    tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_CAST, castMachineList[i], APSStartTimeStamp, APSEndTimeStamp, salesOrderWorkingTime);
+                    tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_CAST, castMachineList[i], APSStartTimeStamp, APSEndTimeStamp, productBatchWorkingTime);
                     if (tmpResult < 0)
                     {
                         continue;
@@ -590,13 +571,13 @@ namespace MESSystem.APSDLL
                                 slitMachineList = new int[1];
                                 slitMachineList[0] = assignedMachineByUserArray[MACHINE_TYPE_SLIT];
                             }
-                            else if (castMachineList[i] == CAST_MACHINE_3)
+                            else if (castMachineList[i] == CAST_MACHINE_3 && productImpl.slitOnline == "1")  //还需要判断该产品是否需要在线分切，假如在线分切
                             {
                                 //the cast machine #3 can only work with slit machine 3
                                 slitMachineList = new int[1];
                                 slitMachineList[0] = SLIT_MACHINE_3;
                             }
-                            else if (castMachineList[i] == CAST_MACHINE_5)
+                            else if (castMachineList[i] == CAST_MACHINE_5 && productImpl.slitOnline == "1")  //还需要判断该产品是否需要在线分切，假如在线分切
                             {
                                 //the cast machine #5 can only work with slit machine 5
                                 slitMachineList = new int[1];
@@ -605,7 +586,7 @@ namespace MESSystem.APSDLL
                             else
                             {
                                 //no assignment, we need to try every slit machine one by one
-                                slitMachineList = new int[6];
+                                slitMachineList = new int[5];
                                 slitMachineList[0] = SLIT_MACHINE_1;
                                 slitMachineList[1] = SLIT_MACHINE_2;
                                 slitMachineList[2] = SLIT_MACHINE_3;
@@ -613,7 +594,7 @@ namespace MESSystem.APSDLL
                                 slitMachineList[4] = SLIT_MACHINE_5;
                             }
 
-                            //there is no print process for this sales order, so go to slit process directly
+                            //there is no print process for this batch order, so go to slit process directly
                             for (j = 0; j < slitMachineList.Length; j++)
                             {
                                 //cast speed is faster than slit machine, slit can start after cast by GAP_BETWEEN_CAST_SLIT
@@ -625,14 +606,14 @@ namespace MESSystem.APSDLL
                                 }
                                 else  //cast speed is slower than slit machine
                                 {
-                                    //cast machine should complete sales order before slit machine by GAP_BETWEEN_CAST_SLIT
-                                    startTimeStamp = castEndTimeStamp + GAP_BETWEEN_CAST_SLIT - salesOrderWorkingTime[slitMachineList[j]] * 3600;
+                                    //cast machine should complete batch order before slit machine by GAP_BETWEEN_CAST_SLIT
+                                    startTimeStamp = castEndTimeStamp + GAP_BETWEEN_CAST_SLIT - productBatchWorkingTime[slitMachineList[j]] * 3600;
                                     //get printer final end time
                                     endTimeStamp = APSEndTimeStamp;
                                 }
 
-                                //slit machine need to run after cast machine, so the speed is the same as cast machine, we use salesOrderWorkingTime as a total working time of slit machine for this sales order
-                                tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_SLIT, slitMachineList[j], startTimeStamp, endTimeStamp, salesOrderWorkingTime);
+                                //slit machine need to run after cast machine, so the speed is the same as cast machine, we use productBatchWorkingTime as a total working time of slit machine for this batch order
+                                tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_SLIT, slitMachineList[j], startTimeStamp, endTimeStamp, productBatchWorkingTime);
                                 if (tmpResult < 0)
                                 {
                                     continue;
@@ -745,14 +726,14 @@ namespace MESSystem.APSDLL
                                 }
                                 else  //cast speed is slower than print machine
                                 {
-                                    //cast machine should complete sales order before print machine by GAP_BETWEEN_CAST_PRINT
-                                    startTimeStamp = castEndTimeStamp + GAP_BETWEEN_CAST_PRINT - salesOrderWorkingTime[printMachineList[j]] * 3600;
+                                    //cast machine should complete batch order before print machine by GAP_BETWEEN_CAST_PRINT
+                                    startTimeStamp = castEndTimeStamp + GAP_BETWEEN_CAST_PRINT - productBatchWorkingTime[printMachineList[j]] * 3600;
                                     //get printer final end time
                                     endTimeStamp = APSEndTimeStamp;
                                 }
 
-                                //slit machine need to run after cast machine, so the speed is the same as cast machine, we use salesOrderWorkingTime as a total working time of slit machine for this sales order
-                                tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_PRINT, printMachineList[j], startTimeStamp, endTimeStamp, salesOrderWorkingTime);
+                                //slit machine need to run after cast machine, so the speed is the same as cast machine, we use productBatchWorkingTime as a total working time of slit machine for this batch order
+                                tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_PRINT, printMachineList[j], startTimeStamp, endTimeStamp, productBatchWorkingTime);
                                 if (tmpResult < 0)
                                 {
                                     continue;
@@ -772,13 +753,13 @@ namespace MESSystem.APSDLL
                                         }
                                         else  //print speed is slower than slit machine
                                         {
-                                            //cast machine should complete sales order before print machine by GAP_BETWEEN_CAST_PRINT
-                                            startTimeStamp = printEndTimeStamp + GAP_BETWEEN_PRINT_SLIT - salesOrderWorkingTime[slitMachineList[k]] * 3600;
+                                            //cast machine should complete batch order before print machine by GAP_BETWEEN_CAST_PRINT
+                                            startTimeStamp = printEndTimeStamp + GAP_BETWEEN_PRINT_SLIT - productBatchWorkingTime[slitMachineList[k]] * 3600;
                                             //get printer final end time
                                             endTimeStamp = APSEndTimeStamp;
                                         }
-                                        //slit machine need to run after cast machine, so the speed is the same as cast machine, we use salesOrderWorkingTime as a total working time of slit machine for this sales order
-                                        tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_SLIT, slitMachineList[k], startTimeStamp, endTimeStamp, salesOrderWorkingTime);
+                                        //slit machine need to run after cast machine, so the speed is the same as cast machine, we use productBatchWorkingTime as a total working time of slit machine for this batch order
+                                        tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_SLIT, slitMachineList[k], startTimeStamp, endTimeStamp, productBatchWorkingTime);
                                         if (tmpResult < 0)
                                         {
                                             continue;
@@ -922,6 +903,7 @@ namespace MESSystem.APSDLL
             }
             else
             {
+                //get prepare time for breathable cast machine in strArray1
                 strArray1 = new string[breathableFilmCast.Length];
                 for(i = 0; i < breathableFilmCast.Length; i++)
                 {
@@ -929,6 +911,7 @@ namespace MESSystem.APSDLL
                 }
                 toolClass.stringSortingRecordIndex(strArray1, breathableFilmCast);
 
+                //get prepare time for unbreathable cast machine in strArray2
                 strArray2 = new string[unbreathableFilmCast.Length];
                 for(i = 0; i < unbreathableFilmCast.Length; i++)
                 {
@@ -937,58 +920,108 @@ namespace MESSystem.APSDLL
                 toolClass.stringSortingRecordIndex(strArray2, unbreathableFilmCast);
             }
 
-            //first get cast machine list
+            //if cast machine is assigned
             if (assignedMachineByUserArray[MACHINE_TYPE_CAST] != -1)
             {
                 castMachineList = new int[1];
                 castMachineList[0] = assignedMachineByUserArray[MACHINE_TYPE_CAST];
             }
-            else
+
+            //if print machine is assigned
+            if (assignedMachineByUserArray[MACHINE_TYPE_PRINT] != -1)
             {
-                //根据工艺路线确定流延设备
-                switch (routeCode)
-                {
-                    case "A00":  //透气膜 -- 2/4 流延机 + 2/4 分切机, 不印刷
+                printMachineList = new int[1];
+                printMachineList[0] = assignedMachineByUserArray[MACHINE_TYPE_PRINT];
+            }
+
+            //if slit machine is assigned
+            if (assignedMachineByUserArray[MACHINE_TYPE_SLIT] != -1)
+            {
+                slitMachineList = new int[1];
+                slitMachineList[0] = assignedMachineByUserArray[MACHINE_TYPE_SLIT];
+            }
+
+            //first set it to 0, if no print process needed, the following code will set it to -1
+            machineIndexForAllType[MACHINE_TYPE_PRINT] = 0;
+
+            //根据工艺路线确定流延设备
+            switch (routeCode)
+            {
+                case "A00":  //透气膜 -- 2/4 流延机 + 2/4 分切机, 不印刷
+                    if (castMachineList == null)  //cast machine is not assigned
+                    {
                         castMachineList = new int[unbreathableFilmCast.Length];
                         for (i = 0; i < unbreathableFilmCast.Length; i++)
                         {
                             castMachineList[i] = unbreathableFilmCast[i];
                         }
-                        machineIndexForAllType[MACHINE_TYPE_PRINT] = PRINT_MACHINE_X;
-                        break;
-                    case "A01":  //透气印刷膜 -- 2/4 流延机 + 1/2/3 印刷机 + 2/4 分切机
+                    }
+                    else
+                    {
+                        //keep the assigned cast machine
+                    }
+                    machineIndexForAllType[MACHINE_TYPE_PRINT] = PRINT_MACHINE_X;
+                    break;
+                case "A01":  //透气印刷膜 -- 2/4 流延机 + 1/2/3 印刷机 + 2/4 分切机
+                    if (castMachineList == null)  //cast machine is not assigned
+                    {
                         castMachineList = new int[unbreathableFilmCast.Length];
                         for (i = 0; i < unbreathableFilmCast.Length; i++)
                         {
                             castMachineList[i] = unbreathableFilmCast[i];
                         }
-                        break;
-                    case "A10":  //非透气膜 -- 1/3/5 流延机 + 1/3/5 分切机
+                    }
+                    else
+                    {
+                        //keep the assigned cast machine
+                    }
+                    break;
+                case "A10":  //非透气膜 -- 1/3/5 流延机 + 1/3/5 分切机
+                    if (castMachineList == null)  //cast machine is not assigned
+                    {
                         castMachineList = new int[breathableFilmCast.Length];
                         for (i = 0; i < breathableFilmCast.Length; i++)
                         {
                             castMachineList[i] = breathableFilmCast[i];
                         }
-                        machineIndexForAllType[MACHINE_TYPE_PRINT] = PRINT_MACHINE_X;
-                        break;
-                    case "A11":  //非透气印刷膜 -- 1/2/3 流延机 + 1/2/3 印刷机 + 1/2/3 分切机 
+                    }
+                    else
+                    {
+                        //keep the assigned cast machine
+                    }
+                    machineIndexForAllType[MACHINE_TYPE_PRINT] = PRINT_MACHINE_X;
+                    break;
+                case "A11":  //非透气印刷膜 -- 1/2/3 流延机 + 1/2/3 印刷机 + 1/2/3 分切机 
+                    if (castMachineList == null)  //cast machine is not assigned
+                    {
                         castMachineList = new int[breathableFilmCast.Length];
                         for (i = 0; i < breathableFilmCast.Length; i++)
                         {
                             castMachineList[i] = breathableFilmCast[i];
                         }
-                        break;
-                    default:
-                        Console.WriteLine("\r\n product route code error!\r\n");
+                    }
+                    else
+                    {
+                        //keep the assigned cast machine
+                    }
+                    break;
+                default:
+                    Console.WriteLine("\r\n product route code error!\r\n");
+                    if (castMachineList == null)  //cast machine is not assigned
+                    {
                         castMachineList = new int[2];
                         castMachineList[0] = CAST_MACHINE_4;
                         castMachineList[1] = CAST_MACHINE_2;
-                        machineIndexForAllType[MACHINE_TYPE_PRINT] = PRINT_MACHINE_X;
-                        break;
-                }
+                    }
+                    else
+                    {
+                        //keep the assigned cast machine
+                    }
+                    machineIndexForAllType[MACHINE_TYPE_PRINT] = PRINT_MACHINE_X;
+                    break;
             }
 
-            //if we are using forwad APS, we only need to confirm cast machine, print/slit machine can be assigned after cast machine is confirmed 
+            //if we are using forwad APS, we only need to confirm cast machine, print/slit machine should be assigned after cast machine is confirmed 
             if (APSPlanDirection == FORWARD_APS_PLAN)
                 return;
 
@@ -1015,12 +1048,21 @@ namespace MESSystem.APSDLL
                     else
                     {
                         //no assignment, we need to try every slit machine one by one
-                        slitMachineList = new int[6];
-                        slitMachineList[0] = SLIT_MACHINE_1;
-                        slitMachineList[1] = SLIT_MACHINE_2;
-                        slitMachineList[2] = SLIT_MACHINE_3;
-                        slitMachineList[3] = SLIT_MACHINE_4;
-                        slitMachineList[4] = SLIT_MACHINE_5;
+                        if (productImpl.slitOnline == "1")
+                        {
+                            slitMachineList = new int[2];
+                            slitMachineList[0] = SLIT_MACHINE_3;
+                            slitMachineList[1] = SLIT_MACHINE_5;
+                        }
+                        else
+                        {
+                            slitMachineList = new int[5];
+                            slitMachineList[0] = SLIT_MACHINE_1;
+                            slitMachineList[1] = SLIT_MACHINE_2;
+                            slitMachineList[2] = SLIT_MACHINE_3;
+                            slitMachineList[3] = SLIT_MACHINE_4;
+                            slitMachineList[4] = SLIT_MACHINE_5;
+                        }
                     }
                 }
                 else
@@ -1052,7 +1094,7 @@ namespace MESSystem.APSDLL
                     else
                     {
                         //no assignment, we need to try every slit machine one by one
-                        slitMachineList = new int[6];
+                        slitMachineList = new int[5];
                         slitMachineList[0] = SLIT_MACHINE_1;
                         slitMachineList[1] = SLIT_MACHINE_2;
                         slitMachineList[2] = SLIT_MACHINE_3;
@@ -1071,8 +1113,8 @@ namespace MESSystem.APSDLL
             int APSSuccess;
             int startTimeStamp;
             int endTimeStamp;
-            //a sales order can be completed in cast/print/slit process in xxx hours seperately
-            int[] salesOrderWorkingTime = new int[APS_MACHINE_NUM];
+            //a batch order can be completed in cast/print/slit process in xxx hours seperately
+            int[] productBatchWorkingTime = new int[APS_MACHINE_NUM];
 
             try
             {
@@ -1093,11 +1135,11 @@ namespace MESSystem.APSDLL
                     //add judgment here, if a slit machine is not supported, continue
                     //
 
-                    //total working time for one sales order by using this machine
-                    getSalesOrderWorkingTime(salesOrderWorkingTime);
+                    //total working time for one batch order by using this machine
+                    getSalesOrderWorkingTime(productBatchWorkingTime);
 
                     //APS started from dispatchStartTimeStamp
-                    tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_SLIT, slitMachineList[i], APSStartTimeStamp, APSEndTimeStamp, salesOrderWorkingTime);
+                    tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_SLIT, slitMachineList[i], APSStartTimeStamp, APSEndTimeStamp, productBatchWorkingTime);
                     
                     if (tmpResult < 0)
                     {
@@ -1108,7 +1150,7 @@ namespace MESSystem.APSDLL
                         //slit Machine got a plan, try print and cast machine
                         if (machineIndexForAllType[MACHINE_TYPE_PRINT] == PRINT_MACHINE_X)
                         {
-                            //there is no print process for this sales order, so go to cast process directly
+                            //there is no print process for this batch order, so go to cast process directly
                             for (j = 0; j < castMachineList.Length; j++)
                             {
                                 //cast speed is faster than slit machine
@@ -1120,19 +1162,19 @@ namespace MESSystem.APSDLL
                                         continue;  //there is not enough time for cast machine to start before slit machine, so this cast machine is not suitable for APS
 
                                     startTimeStamp = APSStartTimeStamp;
-                                    //get printer final end time, if exceed this value, slit machine will not have enough time to finish the sales order before slitEndTimeStamp 
-                                    endTimeStamp = slitStartTimeStamp + salesOrderWorkingTime[castMachineList[j]] * 3600;
+                                    //get printer final end time, if exceed this value, slit machine will not have enough time to finish the batch order before slitEndTimeStamp 
+                                    endTimeStamp = slitStartTimeStamp + productBatchWorkingTime[castMachineList[j]] * 3600;
                                 }
                                 else  //cast speed is slower than slit machine
                                 {
-                                    //cast machine should should complete sales order before slit machine by GAP_BETWEEN_CAST_SLIT
+                                    //cast machine should should complete batch order before slit machine by GAP_BETWEEN_CAST_SLIT
                                     startTimeStamp = APSStartTimeStamp;
-                                    //get printer final end time, if exceed this value, slit machine will not have enough time to finish the sales order before slitEndTimeStamp 
+                                    //get printer final end time, if exceed this value, slit machine will not have enough time to finish the batch order before slitEndTimeStamp 
                                     endTimeStamp = slitEndTimeStamp - GAP_BETWEEN_CAST_SLIT;
                                 }
 
                                 //cast machine need to run before slit machine, and the start time should be still APSStartTimeStamp, and end time should be a little it earlier than slit start time
-                                tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_CAST, castMachineList[j], startTimeStamp, endTimeStamp, salesOrderWorkingTime);
+                                tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_CAST, castMachineList[j], startTimeStamp, endTimeStamp, productBatchWorkingTime);
                                 if (tmpResult < 0)
                                 {
                                     continue;
@@ -1214,19 +1256,19 @@ namespace MESSystem.APSDLL
                                         continue;  //there is not enough time for printer to start before slit machine, so this printer is not suitable for APS
 
                                     startTimeStamp = APSStartTimeStamp;
-                                    //get printer final end time, if exceed this value, slit machine will not have enough time to finish the sales order before slitEndTimeStamp 
-                                    endTimeStamp = slitStartTimeStamp + salesOrderWorkingTime[printMachineList[j]] * 3600;  
+                                    //get printer final end time, if exceed this value, slit machine will not have enough time to finish the batch order before slitEndTimeStamp 
+                                    endTimeStamp = slitStartTimeStamp + productBatchWorkingTime[printMachineList[j]] * 3600;  
                                 }
                                 else  //print speed is slower than slit machine
                                 {
-                                    //print machine should should complete sales order before slit machine by GAP_BETWEEN_PRINT_SLIT
+                                    //print machine should should complete batch order before slit machine by GAP_BETWEEN_PRINT_SLIT
                                     startTimeStamp = APSStartTimeStamp;
-                                    //get printer final end time, if exceed this value, slit machine will not have enough time to finish the sales order before slitEndTimeStamp 
+                                    //get printer final end time, if exceed this value, slit machine will not have enough time to finish the batch order before slitEndTimeStamp 
                                     endTimeStamp = slitEndTimeStamp - GAP_BETWEEN_PRINT_SLIT;
                                 }
 
                                 //try to get a plan for this printer
-                                tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_PRINT, printMachineList[j], startTimeStamp, endTimeStamp, salesOrderWorkingTime);
+                                tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_PRINT, printMachineList[j], startTimeStamp, endTimeStamp, productBatchWorkingTime);
                                 if (tmpResult < 0)
                                 {
                                     continue;
@@ -1245,19 +1287,19 @@ namespace MESSystem.APSDLL
                                                 continue;  //there is not enough time for printer to start before slit machine, so this printer is not suitable for APS
 
                                             startTimeStamp = APSStartTimeStamp;
-                                            //get cast final end time, if exceed this value, print machine will not have enough time to finish the sales order before printEndTimeStamp 
-                                            endTimeStamp = printStartTimeStamp + salesOrderWorkingTime[castMachineList[k]] * 3600;
+                                            //get cast final end time, if exceed this value, print machine will not have enough time to finish the batch order before printEndTimeStamp 
+                                            endTimeStamp = printStartTimeStamp + productBatchWorkingTime[castMachineList[k]] * 3600;
                                         }
                                         else  //cast speed is slower than print machine
                                         {
-                                            //cast machine should complete sales order before print machine by GAP_BETWEEN_CAST_PRINT
+                                            //cast machine should complete batch order before print machine by GAP_BETWEEN_CAST_PRINT
                                             startTimeStamp = APSStartTimeStamp;
-                                            //get printer final end time, if exceed this value, slit machine will not have enough time to finish the sales order before slitEndTimeStamp 
+                                            //get printer final end time, if exceed this value, slit machine will not have enough time to finish the batch order before slitEndTimeStamp 
                                             endTimeStamp = printEndTimeStamp - GAP_BETWEEN_CAST_PRINT;
                                         }
 
-                                        //cast machine need to run after cast machine, so the speed is the same as cast machine, we use salesOrderWorkingTime as a total working time of slit machine for this sales order
-                                        tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_CAST, castMachineList[k], startTimeStamp, endTimeStamp, salesOrderWorkingTime);
+                                        //cast machine need to run after cast machine, so the speed is the same as cast machine, we use productBatchWorkingTime as a total working time of slit machine for this batch order
+                                        tmpResult = fillOutPlanForOneMachine(MACHINE_TYPE_CAST, castMachineList[k], startTimeStamp, endTimeStamp, productBatchWorkingTime);
                                         if (tmpResult < 0)
                                         {
                                             continue;
@@ -1383,7 +1425,7 @@ namespace MESSystem.APSDLL
             {
                 string str;
 
-                str = "订单" + salesOrderImpl.salesOrderCode + "排程失败，请检查交货时间等信息，谢谢！";
+                str = "订单" + productBatchImpl.salesOrderBatchCode + "排程失败，请检查交货时间等信息，谢谢！";
                 MessageBox.Show(str, "信息提示", MessageBoxButtons.OK);
 
             }
@@ -1401,31 +1443,31 @@ namespace MESSystem.APSDLL
             }
         }
 
-        //find free time for every machine, then put dispatch to suitable machines to make sure the sales order can be completed by delivery time 
+        //find free time for every machine, then put dispatch to suitable machines to make sure the batch order can be completed by delivery time 
         //machineindex: from 0 to 17, alogether 18 machines
         //APSStartTimeStamp: start time for APS
         //APSDeliveryTimeStamp: complete time for this APS plan
         //return: time stamp for the start time of the plan 
         //        -1 failed to find a plan
-        int fillOutPlanForOneMachine(int type, int machineIndex, int startTimeStamp, int endTimeStamp, int [] salesOrderWorkingTime)
+        int fillOutPlanForOneMachine(int type, int machineIndex, int startTimeStamp, int endTimeStamp, int [] productBatchWorkingTime)
         {
             int j, k;
             int flag;
             int len;
             int ret;
-            int salesOrderWorkingTimeForThisMachine;
+            int productBatchWorkingTimeForThisMachine;
             //int currentTimeStamp;
 
             ret = -1;
             try
             {
-                salesOrderWorkingTimeForThisMachine = salesOrderWorkingTime[machineIndex];
+                productBatchWorkingTimeForThisMachine = productBatchWorkingTime[machineIndex];
                 flag = 0;
 
                 if (APSPlanDirection == FORWARD_APS_PLAN)
                 {
                     k = 0;
-                    //APS_TOTAL_PERIOD is 2 month counted by hours, we need to finish a sales order within 2 month
+                    //APS_TOTAL_PERIOD is 2 month counted by hours, we need to finish a batch order within 2 month
                     //j is the offset of hours starting from APSStartTimeStamp
                     for (j = 0; j < APS_TOTAL_PERIOD; j++)
                     {
@@ -1441,7 +1483,7 @@ namespace MESSystem.APSDLL
                                 flag = 0;
                                 k = j;
                             }
-                            else if (flag >= salesOrderWorkingTimeForThisMachine)  //free time larger than required for this sales order
+                            else if (flag >= productBatchWorkingTimeForThisMachine)  //free time larger than required for this batch order
                             {
                                 if (calendarStartTimeStamp + j * 3600 < endTimeStamp)
                                 {
@@ -1485,7 +1527,7 @@ namespace MESSystem.APSDLL
                     //}
 
                     k = len;
-                    //APS_TOTAL_PERIOD is 2 month counted by hours, we need to finish a sales order within 2 month
+                    //APS_TOTAL_PERIOD is 2 month counted by hours, we need to finish a batch order within 2 month
                     //j is the offset of hours starting from APSStartTimeStamp
                     for (j = len; j >= 0; j--)
                     {
@@ -1501,7 +1543,7 @@ namespace MESSystem.APSDLL
                                 flag = 0;
                                 k = j;
                             }
-                            else if (flag >= salesOrderWorkingTimeForThisMachine)  //free time larger than required for this sales order
+                            else if (flag >= productBatchWorkingTimeForThisMachine)  //free time larger than required for this batch order
                             {
                                 switch (type)
                                 {
@@ -1653,23 +1695,27 @@ namespace MESSystem.APSDLL
             int processIndex;
             int timeStampDelta;
             int finshiTimeStamp;
-            int serialNumberIndex;
+            //int serialNumberIndex;
             //int feedMachineIndex;
             int castMachineIndex;
             int printMachineIndex;
             int slitMachineIndex;
             string planTime1;
+            string planTime2;
             string workShift;
             string databaseName;
 
             processIndex = 0;
-            serialNumberIndex = 1;
-
+            
             castMachineIndex = machineIndexForAllType[MACHINE_TYPE_CAST];
             printMachineIndex = machineIndexForAllType[MACHINE_TYPE_PRINT];
             slitMachineIndex = machineIndexForAllType[MACHINE_TYPE_SLIT];
 
-            planTime1 = GetTimeFromInt(castStartTimeStamp).ToString("yyyy-MM-dd HH:mm");
+            //current date
+            planTime1 = GetTimeFromInt(castStartTimeStamp).ToString("yyyy-MM-dd HH:mm:ss");
+
+            //previous date
+            planTime2 = GetTimeFromInt(castStartTimeStamp - 24 * 3600).ToString("yyyy-MM-dd");
 
             //get month index starting from 2018/01, we have a batch number table for every machine each month, the batch number will be increased by one and the recent value is stored in 
             //table of dispatchCurrentIndex in global database.
@@ -1679,8 +1725,9 @@ namespace MESSystem.APSDLL
             if (timeV < 8)
             {
                 workShift = "夜班";
-                timeStampDelta = 3600 * (8 - timeV);
-                timeStr = planTime1.Remove(0, 8).Remove(2) + "2";
+                timeStampDelta = 3600 * (8 - timeV); 
+                //early in the morning means this is the night shift of the previous date
+                timeStr = planTime2.Remove(0, 8) + "2";
             }
             else if(timeV < 20)
             {
@@ -1708,21 +1755,16 @@ namespace MESSystem.APSDLL
 
                 if (outNumForThisDispatch[MACHINE_TYPE_CAST] > 0)
                 {
-                    //material feeding process
-                    dispatchSheet.machineID = (castMachineIndex + 1).ToString();
-
                     //get current batch Index value(产品批次号) and increase this value by one in database
                     //productBatchIndex = getCurrentProductBatchIndex(monthIndex, castMachineIndex + 1);
                     //setCurrentProductBatchIndex(monthIndex, castMachineIndex + 1, productBatchIndex + 1);
                     //productBatchIndexStr = ((productBatchIndex - 1) / BATCH_INC_NUM + 1).ToString().PadLeft(2, '0');
 
-                    databaseName = gVariable.DBHeadString + dispatchSheet.machineID.ToString().PadLeft(3, '0');
-
                     //processIndex++;
                     //cast process
                     dispatchSheet.machineID = (castMachineIndex + 1).ToString();
                     dispatchSheet.batchNum = productBatchString;
-                    dispatchSheet.dispatchCode = productBatchString + timeStr + "L" + (castMachineIndex + 1);
+                    dispatchSheet.dispatchCode = productBatchString + timeStr + "L" + (castMachineIndex - gVariable.castingProcess[0] + 2);
                     //cast and feed process stat at the same time
                     dispatchSheet.planTime1 = GetTimeFromInt(castStartTimeStamp).ToString("yyyy-MM-dd HH:mm");
 
@@ -1751,9 +1793,10 @@ namespace MESSystem.APSDLL
                     dispatchSheet.reportor = "";
                     dispatchSheet.workshop = workshopNameArray[processIndex];
                     dispatchSheet.workshift = workShift;
-                    dispatchSheet.salesOrderCode = salesOrderImpl.salesOrderCode;
+                    dispatchSheet.salesOrderCode = productBatchImpl.originalSalesOrderCode;
+                    dispatchSheet.salesOrderBatchCode = productBatchImpl.salesOrderBatchCode;
                     dispatchSheet.BOMCode = productImpl.BOMCode;
-                    dispatchSheet.customer = salesOrderImpl.customer;
+                    dispatchSheet.customer = productBatchImpl.customer;
 
                     mySQLClass.writeDataToDispatchListTable(gVariable.globalDatabaseName, gVariable.globalDispatchTableName, dispatchSheet);
                     generateMaterialList(gVariable.globalDatabaseName, gVariable.globalMaterialTableName, dispatchSheet.dispatchCode, dispatchSheet.machineID, outNumForThisDispatch[MACHINE_TYPE_CAST], productImpl.BOMCode);
@@ -1773,8 +1816,8 @@ namespace MESSystem.APSDLL
                     //setCurrentProductBatchIndex(monthIndex, printMachineIndex + 1, productBatchIndex + 1);
                     //productBatchIndexStr = ((productBatchIndex - 1) / BATCH_INC_NUM + 1).ToString().PadLeft(2, '0');
 
-                    dispatchSheet.dispatchCode = productBatchString + timeStr + "Y" + (printMachineIndex - gVariable.printingProcess[0] + 1);
-                    //dispatchSheet.dispatchCode = salesOrderImpl.salesOrderCode + productBatchIndexStr + "Y" + (printMachineIndex - gVariable.printingProcess[0] + 2) + productBatchIndex.ToString().PadLeft(2, '0');
+                    dispatchSheet.dispatchCode = productBatchString + timeStr + "Y" + (printMachineIndex - gVariable.printingProcess[0] + 2);
+                    //dispatchSheet.dispatchCode = productBatchImpl.salesOrderBatchCode + productBatchIndexStr + "Y" + (printMachineIndex - gVariable.printingProcess[0] + 2) + productBatchIndex.ToString().PadLeft(2, '0');
                     dispatchSheet.planTime1 = GetTimeFromInt(printStartTimeStamp).ToString("yyyy-MM-dd HH:mm");
                     if (printEndTimeStamp > printStartTimeStamp && printEndTimeStamp - printStartTimeStamp < timeStampDelta)
                         finshiTimeStamp = printEndTimeStamp; //this is ythe last print dispatch, we use end time stamp
@@ -1800,11 +1843,15 @@ namespace MESSystem.APSDLL
                     dispatchSheet.reportor = "";
                     dispatchSheet.workshop = workshopNameArray[processIndex];
                     dispatchSheet.workshift = workShift;
-                    dispatchSheet.salesOrderCode = salesOrderImpl.salesOrderCode;
+                    dispatchSheet.salesOrderCode = productBatchImpl.originalSalesOrderCode;
+                    dispatchSheet.salesOrderBatchCode = productBatchImpl.salesOrderBatchCode;
+                    dispatchSheet.salesOrderCode = productBatchImpl.originalSalesOrderCode;
+                    dispatchSheet.salesOrderBatchCode = productBatchImpl.salesOrderBatchCode;
                     dispatchSheet.BOMCode = productImpl.BOMCode;
-                    dispatchSheet.customer = salesOrderImpl.customer;
+                    dispatchSheet.customer = productBatchImpl.customer;
 
                     mySQLClass.writeDataToDispatchListTable(gVariable.globalDatabaseName, gVariable.globalDispatchTableName, dispatchSheet);
+                    generatePrintInkList(gVariable.globalDatabaseName, gVariable.globalMaterialTableName, dispatchSheet.dispatchCode, dispatchSheet.machineID, outNumForThisDispatch[MACHINE_TYPE_CAST]);
                     databaseName = gVariable.DBHeadString + dispatchSheet.machineID.ToString().PadLeft(3, '0');
                     mySQLClass.writeDataToWorkingPlanTable(databaseName, gVariable.machineWorkingPlanTableName, dispatchSheet, printStartTimeStamp, timeStampDelta);
                 }
@@ -1818,8 +1865,8 @@ namespace MESSystem.APSDLL
                     //setCurrentProductBatchIndex(monthIndex, slitMachineIndex + 1, productBatchIndex + 1);
                     //productBatchIndexStr = ((productBatchIndex - 1) / BATCH_INC_NUM + 1).ToString().PadLeft(2, '0');
 
-                    dispatchSheet.dispatchCode = productBatchString + timeStr + "F" + (slitMachineIndex - gVariable.slittingProcess[0] + 1);
-                    //dispatchSheet.dispatchCode = salesOrderImpl.salesOrderCode + productBatchIndexStr + "F" + (slitMachineIndex - gVariable.slittingProcess[0] + 2) + productBatchIndex.ToString().PadLeft(2, '0');
+                    dispatchSheet.dispatchCode = productBatchString + timeStr + "F" + (slitMachineIndex - gVariable.slittingProcess[0] + 2);
+                    //dispatchSheet.dispatchCode = productBatchImpl.salesOrderBatchCode + productBatchIndexStr + "F" + (slitMachineIndex - gVariable.slittingProcess[0] + 2) + productBatchIndex.ToString().PadLeft(2, '0');
                     dispatchSheet.planTime1 = GetTimeFromInt(slitStartTimeStamp).ToString("yyyy-MM-dd HH:mm");
                     if (slitEndTimeStamp > slitStartTimeStamp && slitEndTimeStamp - slitStartTimeStamp < timeStampDelta)
                         finshiTimeStamp = slitEndTimeStamp; //this is ythe last slit dispatch, we use end time stamp
@@ -1842,22 +1889,24 @@ namespace MESSystem.APSDLL
                     dispatchSheet.toolLifeTimes = 0;
                     dispatchSheet.toolUsedTimes = 0;
                     dispatchSheet.outputRatio = 0;
-                    dispatchSheet.serialNumber = dispatchSheet.dispatchCode.Remove(0, 1) + "-" + serialNumberIndex.ToString().PadLeft(2, '0');
+                    dispatchSheet.serialNumber = "1";
                     dispatchSheet.reportor = "";
                     dispatchSheet.workshop = workshopNameArray[processIndex];
                     dispatchSheet.workshift = workShift;
-                    dispatchSheet.salesOrderCode = salesOrderImpl.salesOrderCode;
+                    dispatchSheet.salesOrderCode = productBatchImpl.originalSalesOrderCode;
+                    dispatchSheet.salesOrderBatchCode = productBatchImpl.salesOrderBatchCode;
                     dispatchSheet.BOMCode = productImpl.BOMCode;
-                    dispatchSheet.customer = salesOrderImpl.customer;
+                    dispatchSheet.customer = productBatchImpl.customer;
 
                     mySQLClass.writeDataToDispatchListTable(gVariable.globalDatabaseName, gVariable.globalDispatchTableName, dispatchSheet);
+                    generateSupplementaryList(gVariable.globalDatabaseName, gVariable.globalMaterialTableName, dispatchSheet.dispatchCode, dispatchSheet.machineID, outNumForThisDispatch[MACHINE_TYPE_CAST]);
                     databaseName = gVariable.DBHeadString + dispatchSheet.machineID.ToString().PadLeft(3, '0');
                     mySQLClass.writeDataToWorkingPlanTable(databaseName, gVariable.machineWorkingPlanTableName, dispatchSheet, slitStartTimeStamp, timeStampDelta);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("getDispatchFromSalesOrder failed! ", ex);
+                Console.WriteLine("getDispatchFromSalesOrder failed! " + ex);
             }
 
             return timeStampDelta;
@@ -1885,7 +1934,8 @@ namespace MESSystem.APSDLL
                 commandText = "select * from `" + gVariable.bomTableName + "` where BOMCode = '" + productImpl.BOMCode + "'";
                 mySQLClass.readBOMInfo(ref BOMImpl, commandText);
 
-                materialSheet.salesOrderCode = salesOrderImpl.salesOrderCode;
+                materialSheet.salesOrderBatchCode = productBatchImpl.salesOrderBatchCode;
+                materialSheet.salesOrderCode = productBatchImpl.originalSalesOrderCode;
                 materialSheet.dispatchCode = dispatchCode;  //
                 materialSheet.machineID = machineID;
                 materialSheet.machineCode = "00"; // gVariable.machineCodeArrayZihua[Convert.ToInt32(machineID) - 1];
@@ -1926,7 +1976,97 @@ namespace MESSystem.APSDLL
             }
             catch (Exception ex)
             {
-                Console.WriteLine("generateMaterialList failed! ", ex);
+                Console.WriteLine("generateMaterialList failed! " + ex);
+            }
+        }
+
+        void generatePrintInkList(string databaseName, string tableName, string dispatchCode, string machineID, int outputNum)
+        {
+            int i;
+            double quantity;
+            //string str;
+            //string num;
+            string commandText;
+            string[,] tableArray;
+            gVariable.materialListStruct materialSheet = new gVariable.materialListStruct();
+
+            try
+            {
+                materialSheet.materialCode = new string[gVariable.maxMaterialTypeNum];
+                materialSheet.materialRequired = new int[gVariable.maxMaterialTypeNum];
+
+                commandText = "select typeNum, oil1, num1, oil2, num2, oil3, num3, oil4, num4, oil5, num5, oil6, num6, oil7, num7 from `" + gVariable.inkBomTableName + "` where BOMName = '" + productImpl.inkRatio + "'";
+                tableArray = mySQLClass.databaseCommonReading(gVariable.basicInfoDatabaseName, commandText);
+                if (tableArray == null)
+                    return;
+
+                materialSheet.salesOrderBatchCode = productBatchImpl.salesOrderBatchCode;
+                materialSheet.salesOrderCode = productBatchImpl.originalSalesOrderCode;
+                materialSheet.dispatchCode = dispatchCode;  //
+                materialSheet.machineID = machineID;
+                materialSheet.machineCode = "00"; // gVariable.machineCodeArrayZihua[Convert.ToInt32(machineID) - 1];
+                materialSheet.machineName = gVariable.machineNameArrayAPS[Convert.ToInt32(machineID) - 1];
+                //materialSheet.status = "0";
+                materialSheet.numberOfTypes = Convert.ToInt32(tableArray[0, 0]);
+
+                for (i = 0; i < materialSheet.numberOfTypes; i++)
+                {
+                    quantity = Convert.ToDouble(tableArray[0, 2 + i * 2]);
+                    materialSheet.materialCode[i] = tableArray[0, 1 + i * 2];
+                    materialSheet.materialRequired[i] = (int)(quantity * outputNum / 1000);  //quantity is weight of kg for oil by 1000 kg of product
+                }
+
+                mySQLClass.writeDataToMaterialListTable(databaseName, tableName, materialSheet);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("generatePrintInkList failed! " + ex);
+            }
+        }
+
+        void generateSupplementaryList(string databaseName, string tableName, string dispatchCode, string machineID, int outputNum)
+        {
+            int i;
+            //string str;
+            //string num;
+            string commandText;
+            string[,] tableArray;
+            gVariable.materialListStruct materialSheet = new gVariable.materialListStruct();
+
+            try
+            {
+                materialSheet.materialCode = new string[gVariable.maxMaterialTypeNum];
+                materialSheet.materialRequired = new int[gVariable.maxMaterialTypeNum];
+
+                commandText = "select stackNumOneTon, paperCoreOneTon, paperBoardOneton, craftPaperOneTon, corrugatedPaperPerTon, wrappingFilmOneTon, packingFilmOneTon from `" + gVariable.productTableName + "` where productCode = '" + productImpl.productCode + "'";
+                tableArray = mySQLClass.databaseCommonReading(gVariable.basicInfoDatabaseName, commandText);
+                if (tableArray == null)
+                    return;
+
+                materialSheet.salesOrderBatchCode = productBatchImpl.salesOrderBatchCode;
+                materialSheet.salesOrderCode = productBatchImpl.originalSalesOrderCode;
+                materialSheet.dispatchCode = dispatchCode;  //
+                materialSheet.machineID = machineID;
+                materialSheet.machineCode = "00"; // gVariable.machineCodeArrayZihua[Convert.ToInt32(machineID) - 1];
+                materialSheet.machineName = gVariable.machineNameArrayAPS[Convert.ToInt32(machineID) - 1];
+                //materialSheet.status = "0";
+                materialSheet.numberOfTypes = 7;  //
+
+                for (i = 0; i < materialSheet.numberOfTypes; i++)
+                {
+                    materialSheet.materialCode[i] = supplementaryMaterial[i];
+
+                    if (tableArray[0, i] == null || tableArray[0, i] == "")
+                        materialSheet.materialRequired[i] = 0;
+                    else
+                        materialSheet.materialRequired[i] = (int)(Convert.ToDouble(tableArray[0, i]) * outputNum / 1000) + 1;  //quantity is weight of kg for oil by 1000 kg of product
+                }
+
+                mySQLClass.writeDataToMaterialListTable(databaseName, tableName, materialSheet);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("generateSupplementaryList failed! " + ex);
             }
         }
 
@@ -1935,7 +2075,7 @@ namespace MESSystem.APSDLL
         {
             try
             {
-                if (salesOrderImpl.productCode.Substring(0, 3) == BREATHABLE_FILM)  //
+                if (productBatchImpl.productCode.Substring(0, 3) == BREATHABLE_FILM)  //
                 {
                     //only casting machine 2/4 are capable of breathable film
                     //DateTime.Now.ToString("yymmdd");
@@ -1948,7 +2088,7 @@ namespace MESSystem.APSDLL
             }
             catch (Exception ex)
             {
-                Console.WriteLine("checkSecondCondition failed! ", ex);
+                Console.WriteLine("checkSecondCondition failed! " + ex);
             }
         }        
     }

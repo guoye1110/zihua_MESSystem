@@ -53,6 +53,7 @@
             this.HoursDataGridView = new System.Windows.Forms.DataGridView();
             this.TlpPieChart = new System.Windows.Forms.TableLayoutPanel();
             this.PnlPercentage = new System.Windows.Forms.Panel();
+            this.BtnExport = new System.Windows.Forms.Button();
             this.TlpOEE.SuspendLayout();
             this.FlpPeriodQuery.SuspendLayout();
             this.PnlMachineType.SuspendLayout();
@@ -89,6 +90,7 @@
             this.FlpPeriodQuery.AutoSize = true;
             this.FlpPeriodQuery.Controls.Add(this.PnlMachineType);
             this.FlpPeriodQuery.Controls.Add(this.PnlMachineQuery);
+            this.FlpPeriodQuery.Controls.Add(this.BtnExport);
             this.FlpPeriodQuery.Dock = System.Windows.Forms.DockStyle.Fill;
             this.FlpPeriodQuery.Location = new System.Drawing.Point(30, 30);
             this.FlpPeriodQuery.Margin = new System.Windows.Forms.Padding(0);
@@ -293,7 +295,7 @@
             this.PageOutputStatus.Controls.Add(this.TlpOutputStatus);
             this.PageOutputStatus.Location = new System.Drawing.Point(4, 22);
             this.PageOutputStatus.Name = "PageOutputStatus";
-            this.PageOutputStatus.Size = new System.Drawing.Size(1053, 468);
+            this.PageOutputStatus.Size = new System.Drawing.Size(1036, 488);
             this.PageOutputStatus.TabIndex = 1;
             this.PageOutputStatus.Text = "生产状态";
             // 
@@ -308,7 +310,7 @@
             this.TlpOutputStatus.RowCount = 2;
             this.TlpOutputStatus.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10.52632F));
             this.TlpOutputStatus.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 89.47369F));
-            this.TlpOutputStatus.Size = new System.Drawing.Size(1053, 468);
+            this.TlpOutputStatus.Size = new System.Drawing.Size(1036, 488);
             this.TlpOutputStatus.TabIndex = 0;
             // 
             // LblOutputStatus
@@ -317,7 +319,7 @@
             this.LblOutputStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LblOutputStatus.Location = new System.Drawing.Point(3, 0);
             this.LblOutputStatus.Name = "LblOutputStatus";
-            this.LblOutputStatus.Size = new System.Drawing.Size(1047, 49);
+            this.LblOutputStatus.Size = new System.Drawing.Size(1030, 51);
             this.LblOutputStatus.TabIndex = 2;
             this.LblOutputStatus.Text = "label1";
             this.LblOutputStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -328,7 +330,7 @@
             this.PageOuputHours.Location = new System.Drawing.Point(4, 22);
             this.PageOuputHours.Name = "PageOuputHours";
             this.PageOuputHours.Padding = new System.Windows.Forms.Padding(3);
-            this.PageOuputHours.Size = new System.Drawing.Size(1053, 468);
+            this.PageOuputHours.Size = new System.Drawing.Size(1036, 488);
             this.PageOuputHours.TabIndex = 2;
             this.PageOuputHours.Text = "设备工时";
             this.PageOuputHours.UseVisualStyleBackColor = true;
@@ -345,7 +347,7 @@
             this.TlpMachineHours.RowCount = 1;
             this.TlpMachineHours.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.TlpMachineHours.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 462F));
-            this.TlpMachineHours.Size = new System.Drawing.Size(1047, 462);
+            this.TlpMachineHours.Size = new System.Drawing.Size(1030, 482);
             this.TlpMachineHours.TabIndex = 0;
             // 
             // HoursDataGridView
@@ -355,7 +357,7 @@
             this.HoursDataGridView.Location = new System.Drawing.Point(3, 3);
             this.HoursDataGridView.Name = "HoursDataGridView";
             this.HoursDataGridView.RowTemplate.Height = 23;
-            this.HoursDataGridView.Size = new System.Drawing.Size(1041, 456);
+            this.HoursDataGridView.Size = new System.Drawing.Size(1024, 476);
             this.HoursDataGridView.TabIndex = 2;
             // 
             // TlpPieChart
@@ -380,6 +382,16 @@
             this.PnlPercentage.Name = "PnlPercentage";
             this.PnlPercentage.Size = new System.Drawing.Size(1041, 40);
             this.PnlPercentage.TabIndex = 0;
+            // 
+            // BtnExport
+            // 
+            this.BtnExport.Location = new System.Drawing.Point(631, 3);
+            this.BtnExport.Name = "BtnExport";
+            this.BtnExport.Size = new System.Drawing.Size(126, 28);
+            this.BtnExport.TabIndex = 24;
+            this.BtnExport.Text = "导出设备工时列表";
+            this.BtnExport.UseVisualStyleBackColor = true;
+            this.BtnExport.Click += new System.EventHandler(this.BtnExport_Click);
             // 
             // OEEMachineManager
             // 
@@ -440,5 +452,6 @@
         private System.Windows.Forms.Label LblOutputStatus;
         private System.Windows.Forms.TableLayoutPanel TlpOutputStatus;
         private System.Windows.Forms.DataGridView HoursDataGridView;
+        private System.Windows.Forms.Button BtnExport;
     }
 }

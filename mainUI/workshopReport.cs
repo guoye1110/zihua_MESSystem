@@ -80,7 +80,7 @@ namespace MESSystem.mainUI
         int[] machineStatusNumArray = { 5, 0, 0, 0, 0 };
 
         string[] outputArray = { "计划", "完工", "合格", "不合格" };
-        int[] outputNumArray = { 0, 0, 0, 0 };
+        float[] outputNumArray = { 0, 0, 0, 0 };
 
         int oneCurveScreenSize;
         int verticalLineEveryNumOfPoint;
@@ -595,7 +595,7 @@ namespace MESSystem.mainUI
             int delta;
             int width, height;
             int greenWidth;
-            int beatNum;
+            float beatNum;
             string databaseName;
             string tableName;
 
@@ -628,7 +628,7 @@ namespace MESSystem.mainUI
 
                         //this version uses beat value as output number
                         if (gVariable.dispatchSheet[index].plannedNumber != 0)
-                            greenWidth = beatNum * width / gVariable.dispatchSheet[index].plannedNumber;
+                            greenWidth = (int)(beatNum * width / gVariable.dispatchSheet[index].plannedNumber);
                         else
                             greenWidth = 0;
 
@@ -867,7 +867,7 @@ namespace MESSystem.mainUI
             totalDataNumInBuffer = 0;
             index = machineIndexInLine[workshopIndex, NUM_MACHINE_ONE_WORKSHOP - 1];
             if (gVariable.machineCurrentStatus[index] >= gVariable.MACHINE_STATUS_DISPATCH_APPLIED)
-                totalDataNumInBuffer = mySQLClass.readOneTableForMoreData(databaseName, tableName, 25); //MAX_OUTPUT_ONE_DISPATCH);
+                totalDataNumInBuffer = mySQLClass.readProductBeatTable(databaseName, tableName, gVariable.dispatchSheet[index].dispatchCode, 25); //MAX_OUTPUT_ONE_DISPATCH);
 
             if (totalDataNumInBuffer < initialDatPointNum)
                 oneCurveScreenSize = initialDatPointNum;

@@ -60,8 +60,6 @@
             this.lb_InputBarcode = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.lb_OutputBarcode = new System.Windows.Forms.Label();
-            this.bt_Scan = new System.Windows.Forms.Button();
-            this.bt_Record = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -343,26 +341,6 @@
             this.lb_OutputBarcode.Size = new System.Drawing.Size(0, 18);
             this.lb_OutputBarcode.TabIndex = 227;
             // 
-            // bt_Scan
-            // 
-            this.bt_Scan.Location = new System.Drawing.Point(1016, 878);
-            this.bt_Scan.Name = "bt_Scan";
-            this.bt_Scan.Size = new System.Drawing.Size(126, 46);
-            this.bt_Scan.TabIndex = 225;
-            this.bt_Scan.Text = "扫描";
-            this.bt_Scan.UseVisualStyleBackColor = true;
-            this.bt_Scan.Click += new System.EventHandler(this.bt_Scan_Click);
-            // 
-            // bt_Record
-            // 
-            this.bt_Record.Location = new System.Drawing.Point(1332, 878);
-            this.bt_Record.Name = "bt_Record";
-            this.bt_Record.Size = new System.Drawing.Size(126, 46);
-            this.bt_Record.TabIndex = 227;
-            this.bt_Record.Text = "记录";
-            this.bt_Record.UseVisualStyleBackColor = true;
-            this.bt_Record.Click += new System.EventHandler(this.bt_Record_Click);
-            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.cb_ProductCode);
@@ -415,8 +393,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1924, 1062);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.bt_Record);
-            this.Controls.Add(this.bt_Scan);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.bt_Printing);
@@ -479,10 +455,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.Button bt_Scan;
         private System.Windows.Forms.Label lb_InputBarcode;
         private System.Windows.Forms.Label lb_OutputBarcode;
-        private System.Windows.Forms.Button bt_Record;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Label label2;

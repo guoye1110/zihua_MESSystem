@@ -67,6 +67,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tb_RollWeight = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.cb_ProductQuality = new System.Windows.Forms.ComboBox();
+            this.lb_ProductQulity = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // bt_Save
@@ -337,7 +339,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(450, 359);
+            this.label19.Location = new System.Drawing.Point(444, 359);
             this.label19.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(55, 13);
@@ -443,11 +445,33 @@
             this.label8.TabIndex = 393;
             this.label8.Text = "卷重";
             // 
+            // cb_ProductQuality
+            // 
+            this.cb_ProductQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_ProductQuality.FormattingEnabled = true;
+            this.cb_ProductQuality.Location = new System.Drawing.Point(503, 392);
+            this.cb_ProductQuality.Margin = new System.Windows.Forms.Padding(2);
+            this.cb_ProductQuality.Name = "cb_ProductQuality";
+            this.cb_ProductQuality.Size = new System.Drawing.Size(152, 21);
+            this.cb_ProductQuality.TabIndex = 401;
+            // 
+            // lb_ProductQulity
+            // 
+            this.lb_ProductQulity.AutoSize = true;
+            this.lb_ProductQulity.Location = new System.Drawing.Point(445, 396);
+            this.lb_ProductQulity.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lb_ProductQulity.Name = "lb_ProductQulity";
+            this.lb_ProductQulity.Size = new System.Drawing.Size(55, 13);
+            this.lb_ProductQulity.TabIndex = 402;
+            this.lb_ProductQulity.Text = "产品质量";
+            // 
             // LiuYanEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1095, 630);
+            this.Controls.Add(this.cb_ProductQuality);
+            this.Controls.Add(this.lb_ProductQulity);
             this.Controls.Add(this.cb_ProductState);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.tb_RollWeight);
@@ -537,5 +561,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tb_RollWeight;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ComboBox cb_ProductQuality;
+        private System.Windows.Forms.Label lb_ProductQulity;
     }
 }

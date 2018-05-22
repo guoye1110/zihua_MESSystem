@@ -182,7 +182,7 @@ namespace MESSystem.commonControl
             }
             catch (Exception ex)
             {
-                Console.WriteLine("commonListview listView_load failed! ", ex);
+                Console.WriteLine("commonListview listView_load failed! "+ ex);
             }
         }
 

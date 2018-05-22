@@ -161,7 +161,7 @@ namespace MESSystem.machine
             }
             catch(Exception ex)
             {
-                Console.WriteLine("getMachineTaskFromDatabase failed ", ex);
+                Console.WriteLine("getMachineTaskFromDatabase failed " + ex);
                 return null;
             }
         }

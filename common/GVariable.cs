@@ -48,12 +48,15 @@ namespace MESSystem.common
 
         //how do we want workshop report function to be performed
         public static int workshopReport = 0;
- 
+
         public const int RESULT_OK = 0;
         public const int RESULT_ERR = 1;
 
         public const int MACHINE_POS_STATUS_FIXED = 0;
         public const int MACHINE_POS_STATUS_DESIGNED = 1;
+
+        public const int SMALL_BARCODE_LEN = 23;
+        public const int LARGE_BARCODE_LEN = 20;
 
         //board ID larger than that is an ID of an App that want a redo of handshake, but should not initialize parameters 
         //board ID less than that is an ID of normal data collect board, which has the function of dispatch apply/start/complete, and also craft/quality related functions
@@ -80,11 +83,10 @@ namespace MESSystem.common
                 };
 
         //these machines will connected with touchscreen or data collect board, so will have device alarm or material alarm, which includes feed/cast/print/slit
-        public static string[] machineNameArrayTouchScreen = new string[24]; 
+        public static string[] machineNameArrayTouchScreen = new string[24];
         //these machines will have its own database, will communicate with touchscreen/label printer
         public static string[] machineNameArrayDatabase;
         /*   { 
-             "1号投料机", "2号投料机", "3号投料机", "4号投料机", "5号投料机", "6号投料机", "7号投料机", 
              "1号流延机", "2号流延机", "3号流延机", "4号流延机", "5号流延机", "6号中试机", "7号吹膜机", 
              "1号印刷机", "2号印刷机", "3号印刷机", "4号印刷机", "5号柔印机", 
              "1号分切机", "3号分切机", "5号分切机", "6号分切机", "7号分切机",
@@ -98,9 +100,11 @@ namespace MESSystem.common
 
         //for these machines below, we will generate serial number for every piece of product
         //public static int[] feedingProcess = { 1, 2, 3, 4, 5 };
-        public static int[] castingProcess = { 1, 2, 3, 4, 5}; //, 6, 7};
-        public static int[] printingProcess = { 7, 8, 8, 9, 10}; //, 11, 12 };
-        public static int[] slittingProcess = { 11, 12, 13, 14, 15}; //, 16, 17};
+        public static int[] castingProcess = { 1, 2, 3, 4, 5, 6, 7 };
+        public static int[] printingProcess = { 8, 9, 10, 11, 12 };
+        public static int[] slittingProcess = { 13, 14, 15, 16, 17 };
+        public static int[] packingProcess = { 18, 19, 20, 21 };
+        public static int[] rebuildProcess = { 22, 23, 24, 25, 26 };
 
         // salesorder: "S171109"
         public const int salesOrderLength = 7;
@@ -130,7 +134,7 @@ namespace MESSystem.common
         // dispatchCode:"1801306121R218240050300" + time:1824(18:24) + large roll ID 005 + small roll ID 03 + multi-production ID 0 + quality inspection result 0(quality OK)  
         //"1801306121R218240050";
         public const int reuseBarcodeLength = 23;
- 
+
         //end of the definition for Zihua woring process *****************************
 
         public const int numOfWorkshop = 4;
@@ -145,7 +149,7 @@ namespace MESSystem.common
         public const int HISTORY_READING = 1;
         //whether we display the current dispatch and newest data in dispatchUI,, if it is 0, it means we are reviewing an old dispatch so wedon't need to refresh the screen 
         public static int contemporarydispatchUI;
-        public static string dispatchUnderReview; 
+        public static string dispatchUnderReview;
 
         public static string programTitle = "紫华企业智能生产信息管理系统";
         public static string enterpriseTitle = "紫华企业";
@@ -263,23 +267,19 @@ namespace MESSystem.common
         //s1711165012  --> 2017-11, 16->sales order index, 5 -> production line 5, 01 -> dispatch index(an order could be divided into multiple dispatches), 2 -> process index(casting machine)  
         public const int LENGTH_DISPATCH_CODE = 10;
 
-//        public int status; //0：ERP published; 1：APS OK; 2：production started(the first dispatch started); 3：sales order completed; 4：sales order cancelled  
+        //        public int status; //0：ERP published; 1：APS OK; 2：production started(the first dispatch started); 3：sales order completed; 4：sales order cancelled  
 
         //production  management
-        public const int SALES_ORDER_STATUS_ERP_PUBLISHED = 0;
-        public const int SALES_ORDER_STATUS_SEPARATE_OK = 1;
-        public const int SALES_ORDER_STATUS_APS_OK = 2;
-        public const int SALES_ORDER_STATUS_CONFIRMED = 3;
-        public const int SALES_ORDER_STATUS_APPLIED = 4;
-        public const int SALES_ORDER_STATUS_STARTED = 5;
-        public const int SALES_ORDER_STATUS_COMPLETED = 6;
-        public const int SALES_ORDER_STATUS_CANCELLED = 7;
 
-        public const int MATERIAL_SHEET_STATUS_GENERATED = 0;
-        public const int MATERIAL_SHEET_STATUS_APPLIED = 2;
-        public const int MATERIAL_SHEET_STATUS_CONFIRMED = 3;
-        public const int MATERIAL_SHEET_STATUS_ERROR = 4;
-        public const int MATERIAL_SHEET_STATUS_SHORTAGE = 5;
+        //max nuber of output for a product batch, 20 tons
+        public const int PRODUCT_BATCH_MAX_OUTPUT_NUM = 20000;
+        public const int MAX_NUM_SELECTED_SALES_ORDER_APS = 20;
+
+        //public const int MATERIAL_SHEET_STATUS_GENERATED = 0;
+        //public const int MATERIAL_SHEET_STATUS_APPLIED = 2;
+        //public const int MATERIAL_SHEET_STATUS_CONFIRMED = 3;
+        //public const int MATERIAL_SHEET_STATUS_ERROR = 4;
+        //public const int MATERIAL_SHEET_STATUS_SHORTAGE = 5;
         //end of production  management
 
         //material  management
@@ -313,6 +313,8 @@ namespace MESSystem.common
         public static int machineListFresh;
         //public static int SPCDataNotEnough;
         public static int APSScreenRefresh;
+        public static int numOfBatchDefinedAPSRule;  //total number of batch orders that have been defined for their APS rules
+        public static int indexOfBatchDefinedAPSRule;  //current batch order that is being defined for their APS rules
 
         public static string[,] machineTableFilename = 
         {
@@ -342,7 +344,7 @@ namespace MESSystem.common
 
         //end of the misellaneous defintion for screen, data type, etc *******************************************
 
-        public const int maxMachineNum = 33;
+        public const int maxMachineNum = 26;
 
         public const int maxCurveNum = 36;  //we now have altogether 36 kind of data that need to be draw by curve
 
@@ -394,6 +396,8 @@ namespace MESSystem.common
         public const string stackInventoryListFileName = "..\\..\\data\\machine\\stackInventory.xlsx";
         public const string feedBinInventoryListTableName = "0_feedBinInventory";
         public const string feedBinInventoryListFileName = "..\\..\\data\\machine\\feedBinInventory.xlsx";
+        public const string productBeatTableName = "0_productBeatTable";
+        public const string productBeatFileName = "..\\..\\data\\machine\\productBeat.xlsx";
 
         public const string dummyDispatchTableName = "dummy";
         public const string craftTableNameAppendex = "_craft";
@@ -442,6 +446,8 @@ namespace MESSystem.common
         public const string printQualityFileName = "..\\..\\data\\basicData\\printQuality.xlsx";
         public const string slitQualityTableName = "slitQuality";
         public const string slitQualityFileName = "..\\..\\data\\basicData\\slitQuality.xlsx";
+        public const string substitutesTableName = "substitutes";
+        public const string substitutesFileName = "..\\..\\data\\basicData\\substitutes.xlsx";
 
         //global database
         public const string globalAlarmListTableName = "AlarmList";
@@ -487,7 +493,7 @@ namespace MESSystem.common
         public const int appendRecord = 1;  //this is an append action, so we need to consider the index in database for the last appended record
         //end of database related definitions ********************************************************************
 
-        public static ServiceReference1.deviceFailureInfo[] errorDescList = null; 
+        public static ServiceReference1.deviceFailureInfo[] errorDescList = null;
         public static ServiceReference6.UserInfo[] employeeInfo = null;
 
         public static int totalFileTypeNum = 20;  //we now have altogether 21 kind of data that need to be recorded, 15 curves plus GPIO/RFID/Scanner/RF/Printer
@@ -509,6 +515,19 @@ namespace MESSystem.common
         public const int DISPATCH_TYPE_MAINTENANCE = 20;
         public const int DISPATCH_TYPE_REPAIR = 40;
 
+        public const int SALES_ORDER_STATUS_ERP_PUBLISHED = 0;
+        public const int SALES_ORDER_STATUS_SEPARATE_OK = 1;
+        public const int SALES_ORDER_STATUS_APS_OK = 2;
+        public const int SALES_ORDER_STATUS_CONFIRMED = 3;
+        public const int SALES_ORDER_STATUS_PUBLISHED = 4;
+        public const int SALES_ORDER_STATUS_APPLIED = 5;
+        public const int SALES_ORDER_STATUS_STARTED = 6;
+        public const int SALES_ORDER_STATUS_COMPLETED = 7;
+        public const int SALES_ORDER_STATUS_CANCEL_APPLIED = 8;
+        public const int SALES_ORDER_STATUS_CANCELLED = 9;
+
+        public static string[] salesorderStatus = { "已导入", "已分拆", "已排程", "已确认", "已发布", "已申请", "已开工", "已完工", "申请取消", "核准取消" };
+
         //the order of the definitions below should not be changed, will have big problem if the rule is broken
         //it is for status of the dispatch
         public const int MACHINE_STATUS_SHUTDOWN = -10;   //machine shut down
@@ -528,7 +547,7 @@ namespace MESSystem.common
         public const int MACHINE_STATUS_DOWN = 0;   //machine shut down
         public const int MACHINE_STATUS_IDLE = 1;   //machine in idle mode, no dispatch 
         public const int MACHINE_STATUS_STARTED = 2;  //working mode
-        public const int MACHINE_STATUS_DEVICE_ALARM = 3;  
+        public const int MACHINE_STATUS_DEVICE_ALARM = 3;
         public const int MACHINE_STATUS_MATERIAL_ALARM = 4;
         public const int MACHINE_STATUS_DATA_ALARM = 5;
 
@@ -558,7 +577,7 @@ namespace MESSystem.common
         public const int ALARM_TYPE_CURRENT_VALUE = 4;  //dispatch should be completed as planned, but fails to complete 
         public const int ALARM_TYPE_ALL_IN_DETAIL = 5;  // all kinds in 
         public const int ALARM_TYPE_TOTAL_NUM = 5;  //total number of alatm types  
-        public static string[] strAlarmTypeInDetail = { "设备安灯报警", "物料安灯报警", "质量数据报警", "工艺参数报警", "工单未完成报警"};
+        public static string[] strAlarmTypeInDetail = { "设备安灯报警", "物料安灯报警", "质量数据报警", "工艺参数报警", "工单未完成报警" };
 
         public const int ALARM_TYPE_DATA = 2;  //including quality/craft data alarm
         public static int ALARM_TYPE_ALL_FOR_SELECTION;
@@ -568,7 +587,7 @@ namespace MESSystem.common
 
         //whether there is a device alarm alive for this board/machine, 
         //if there is already an alarm of this kind displayed on server screen, we can not trigger another one for the same kind, unless we dismiss it from the current screen
-        public static int[,] typeAlarmAlreadyAlive = new int[ALARM_TYPE_TOTAL_NUM, maxMachineNum + 1];  
+        public static int[,] typeAlarmAlreadyAlive = new int[ALARM_TYPE_TOTAL_NUM, maxMachineNum + 1];
 
         //category data are used for alarm process method histroy review
         public const int ALARM_CATEGORY_NORMAL = 0;   //data have no problem
@@ -664,14 +683,14 @@ namespace MESSystem.common
         public const int CHART_TYPE_SPC_PN = 7;
         public const int CHART_TYPE_SPC_R = 8;
 
-//        public const int SPC_DATA_SPAN = 2000;  //we will get last SPC_DATA_SPAN pieces of data and calculate SPC
+        //        public const int SPC_DATA_SPAN = 2000;  //we will get last SPC_DATA_SPAN pieces of data and calculate SPC
         public const int numOfRecordsForPie = 10000;  //get latest number of points to draw PIE and column 
         public const int numOfRecordsInChart = 26;  //number of points for a chart in multiCurve and SPCCurve
 
         public const int pointNumInSChartGroup = 9;  //
         public const int numOfGroupsInSChart = 30;
         //number of points need to be read for a XBar-S chart, altogether 270
-        public const int totalPointNumForSChart = pointNumInSChartGroup * numOfGroupsInSChart;  
+        public const int totalPointNumForSChart = 700; // max number of large roll in a dispatch is 50, max num of small roll is 14, the result is 48 * 14 = 700; pointNumInSChartGroup* numOfGroupsInSChart;
 
         public const int pointNumInCChartGroup = 5;  //
         public const int numOfGroupsInCChart = 25;
@@ -682,18 +701,18 @@ namespace MESSystem.common
         public const int pointNumInNoSPCChartGroup = 5;  //
         public const int numOfGroupsInNoSPCChart = 25;
         //number of points need to be read for a no SPC chart, altogether 100 
-        public const int totalPointNumForNoSPCChart = pointNumInNoSPCChartGroup * numOfGroupsInNoSPCChart;  
+        public const int totalPointNumForNoSPCChart = pointNumInNoSPCChartGroup * numOfGroupsInNoSPCChart;
 
-//        public const int pointNumForCChart = 80; //for quality data, if we wanto to draw a C-chart, we need to ensure there are more than this number of quality data in table
+        //        public const int pointNumForCChart = 80; //for quality data, if we wanto to draw a C-chart, we need to ensure there are more than this number of quality data in table
         public const int minDataNumToTriggerAlarm = totalPointNumForNoSPCChart; //for craft data, we won't trigger any alarm until there are more than minDataNumToTriggerAlarm of data in craft table
         public const int minDataForOneScreen = 60;   //minimum number of points do we want to display in one screen in one-curve-mode
         public const int maxDataForOneScreen = 2000;  //maximum number of points do we want to display in one screen in one-curve-mode
-//        public static int oneCurveStartPointPos = 0;  //start point index for one curve display
+        //        public static int oneCurveStartPointPos = 0;  //start point index for one curve display
         //total number of points for current display, this value depends on scrollbar1, if moved to right, value decrease, if left end, equals to total number of data in database
         public static int oneCurvePointNumNeeded = 0;
 
         //used to record the index for beat data in curve table(normally the first several data in index table are ADC, then VOL/CUR, then quality, then beat)
-        public static int beatDataForCurveIndex; 
+        public static int beatDataForCurveIndex;
         public const int PERCENTAGE_VALUE_FOR_ONE_CURVE = 1000; //one curve chart is a 1000/1000 chart, we move the scroll bar for one step, the chart will move for 1/1000 left or right
 
         public static int[] numOfPointsForPie = new int[maxCurveNum];
@@ -731,7 +750,7 @@ namespace MESSystem.common
         //setting function, -1 means from touchpad, otherwise from PC/App
         public const int SETTING_DATA_FROM_TOUCHPAD = -1;
         //setting already sent to board, now we need to make it work in PC
-//        public const int SETTING_DATA_FROM_PC = 1000;
+        //        public const int SETTING_DATA_FROM_PC = 1000;
         public const int SETTING_DATA_FROM_APP = 2000;
 
         public const int NO_SETTING_DATA_TO_BOARD = 0;
@@ -755,16 +774,16 @@ namespace MESSystem.common
 
         //all the manipulation of the 3 variables below should be under the control of clientPCConnectionInfoUpdatedMutex
         public static int clientPCConnectionNumber;
-        public static string [] clientPCConnectionStatusArray = new string[maxClientPC];
-        public static string [] clientPCAccountListArray = new string[maxClientPC];
+        public static string[] clientPCConnectionStatusArray = new string[maxClientPC];
+        public static string[] clientPCAccountListArray = new string[maxClientPC];
         //end of host server PC and client PC
 
         //public static Semaphore semaphoreForAndonPush;
-//        public static Socket[] socketServer = new Socket[maxNumDiscussClient];
+        //        public static Socket[] socketServer = new Socket[maxNumDiscussClient];
         //we need to remember which room we came from, and need to go back to this room after exit
-//        public static int fromWhichRoom;
+        //        public static int fromWhichRoom;
         //we need to remember which form we came from, and need to go back to this form after exit
-//        public static int fromWhichForm;
+        //        public static int fromWhichForm;
 
         //tell multiCurve.cs, dispatch status has changed, we need to redo curve display
         public static int refreshMultiCurve;
@@ -773,17 +792,17 @@ namespace MESSystem.common
         public static float[] maxMachineCurrentValue = new float[maxMachineNum + 1];
 
         //this dispath code is only used for curve display, may not be the same as gVariable.dispatchSheet[myBoardIndex].dispatchCode
-//        public static string[] currentDispatchCode = new int[maxMachineNum + 1];
+        //        public static string[] currentDispatchCode = new int[maxMachineNum + 1];
 
         //this flag indicates what is the current status for a machine, shutdown/idle/dummy/dispatch applied/started/completed, if no dispatch started, quality/craft/andon data upload to PC are legal
         public static int[] machineCurrentStatus = new int[maxMachineNum + 1];
-        public static string [] scannedData = new string[maxMachineNum + 1];
+        public static string[] scannedData = new string[maxMachineNum + 1];
 
         //for data table that will be dislayed in curve, if we don't consider PC client
-//        public static string[] craftDataTableName = new string[maxMachineNum + 1];
-//        public static string[] volcurDataTableName = new string[maxMachineNum + 1];
-//        public static string[] qualityDataTableName = new string[maxMachineNum + 1];
-//        public static string[] beatDataTableName = new string[maxMachineNum + 1];
+        //        public static string[] craftDataTableName = new string[maxMachineNum + 1];
+        //        public static string[] volcurDataTableName = new string[maxMachineNum + 1];
+        //        public static string[] qualityDataTableName = new string[maxMachineNum + 1];
+        //        public static string[] beatDataTableName = new string[maxMachineNum + 1];
 
         public static int[] totalCurveNum = new int[maxMachineNum + 1];  //need to know how many curves we need to draw by check the port info
 
@@ -798,8 +817,8 @@ namespace MESSystem.common
         //record status for every minute for all devices
         public static int[,] dispatchAlarmIDForOneDay = new int[maxMachineNum + 1, 1440];
 
-        public static string [] today = new string[maxMachineNum + 1];
-        public static string [] today_old = new string[maxMachineNum + 1];
+        public static string[] today = new string[maxMachineNum + 1];
+        public static string[] today_old = new string[maxMachineNum + 1];
 
         //both data collect board and app can apply new dispatch, the following definitions define who should have the privilege to do so  
         //every machine can have one of the following comunication type below
@@ -814,7 +833,7 @@ namespace MESSystem.common
         public static Socket[] socketArray = new Socket[maxMachineNum + 1];
 
         public static string hostString;
-//        public static string communicationHostIP;
+        //        public static string communicationHostIP;
 
         public static int boardIndexSelected;
 
@@ -846,7 +865,7 @@ namespace MESSystem.common
         public const int ALARM_CONTENT_DATABASE_NAME = 0;
         public const int ALARM_CONTENT_TABLE_NAME = 1;
         public const int ALARM_CONTENT_ID_IN_TABLE = 2;
-//        public const int ALARM_CONTENT_ALARM_TYPE = 3;
+        //        public const int ALARM_CONTENT_ALARM_TYPE = 3;
 
         //clientSocket is used in client mode only, so only one socket exists, when the program is performed in client mode, we use this socket to close connection when client PC close program
         public static Socket clientSocket;
@@ -856,10 +875,10 @@ namespace MESSystem.common
 
         public static string databaseNameAlarm;
         public static string dispatchCodeAlarm;
-        public static string machineCodeAlarm; 
-        public static string errorDescAlarm; 
-        public static string alarmFailureCodeAlarm; 
-        public static string machineNameAlarm; 
+        public static string machineCodeAlarm;
+        public static string errorDescAlarm;
+        public static string alarmFailureCodeAlarm;
+        public static string machineNameAlarm;
         public static string operatorNameAlarm;
         public static string timeOfWarningAlarm;
         public static string timeOfAlarmSigned;
@@ -873,7 +892,7 @@ namespace MESSystem.common
 
         public static int maxNumMailList = 100;
         public static string basicmailListAlarm;  //original mail list in database, every one change change this
-        
+
         public const int intervalForX = 5;  //interval of points for date/time display
 
         public static int numOfGPIOs = 16;
@@ -915,7 +934,7 @@ namespace MESSystem.common
 
         public static string textRF, textScanner, textPrinter, textRFID;
 
-        public static string text1,  text2,  text3,  text4,  text5,  text6,  text7,  text8,  text9,  text10, text11, text12, text13, text14, text15;
+        public static string text1, text2, text3, text4, text5, text6, text7, text8, text9, text10, text11, text12, text13, text14, text15;
         public static string text16, text17, text18, text19, text20, text21, text22, text23, text24, text25, text26, text27, text28, text29, text30;
         public static string text31, text32, text33, text34, text35, text36;
 
@@ -942,18 +961,20 @@ namespace MESSystem.common
         public static string[] dispatchBasedCurveTableName = new string[maxCurveNum];  //table name of the port data in database, mainly used for curve display
 
         //for curve port only
-//        public static int[] curveIndexInItsOwnTable = new int[maxCurveNum];  //for a craft data, it means index in craft list, for quality data, it means index in quality list
+        //        public static int[] curveIndexInItsOwnTable = new int[maxCurveNum];  //for a craft data, it means index in craft list, for quality data, it means index in quality list
         public static int[] numOfCurveForOneType = new int[maxCurveTypes];  //number of curves for each of the 4 kinds of data (craft/volcur/quality/beat)
         public static string[] curveTitle = new string[maxCurveNum];  //title for curves
         public static int[] dataNumForCurve = new int[maxCurveNum];  //total record number for curves
         public static float[] curveUpperLimit = new float[maxCurveNum];
         public static float[] curveLowerLimit = new float[maxCurveNum];
-//        public static string[] curveUnit = new string[maxCurveNum];
+        //        public static string[] curveUnit = new string[maxCurveNum];
 
         public static int fileDataInWriting;  //indicating whether file writing is undergoing, if yes, avoid this action to be performed by other thread 
         public static byte[] fileDataBuf = new byte[fileDataLength];
+
         public static float[,] dataInPoint = new float[maxCurveNum, totalPointNumForSChart];   //data buffer for 36 curves
         public static int[,] timeInPoint = new int[maxCurveNum, totalPointNumForSChart];   //time buffer for 36 curves
+        //public static int[,] dataStatus = new int[maxCurveNum, totalPointNumForSChart];   //data status, qualified or unqualified data
 
         public static float[] oneCurveDataInPoint = new float[4100];   //data buffer for one curve
         public static int[] oneCurveTimeInPoint = new int[4100];   //time buffer for one curve
@@ -984,15 +1005,15 @@ namespace MESSystem.common
         public static BOMListStruct[] BOMList = new BOMListStruct[maxMachineNum];       //原料配比表
 
         public static dispatchSheetStruct[] dispatchSheet = new dispatchSheetStruct[maxMachineNum];  //工单表
-        public static machineStatusStruct [] machineStatus = new machineStatusStruct[maxMachineNum];  //设备状态表
-        public static craftListStruct [] craftList = new craftListStruct[maxMachineNum];	      //工艺参数表
+        public static machineStatusStruct[] machineStatus = new machineStatusStruct[maxMachineNum];  //设备状态表
+        public static craftListStruct[] craftList = new craftListStruct[maxMachineNum];	      //工艺参数表
         public static qualityListStruct[] qualityList = new qualityListStruct[maxMachineNum];	    //质量检测表
         public static materialListStruct[] materialList = new materialListStruct[maxMachineNum];       //物料配送单列表
 
-        public static beatPeriodStruct [] beatPeriodInfo = new beatPeriodStruct[maxMachineNum]; //beat setting value for currents
-        public static ADCChannelStruct [] ADCChannelInfo = new ADCChannelStruct[maxMachineNum]; // ADC settings
-        public static uartSettingStruct [] uartSettingInfo = new uartSettingStruct[maxMachineNum];
-        public static GPIOSettingStruct [] GPIOSettingInfo = new GPIOSettingStruct[maxMachineNum];
+        public static beatPeriodStruct[] beatPeriodInfo = new beatPeriodStruct[maxMachineNum]; //beat setting value for currents
+        public static ADCChannelStruct[] ADCChannelInfo = new ADCChannelStruct[maxMachineNum]; // ADC settings
+        public static uartSettingStruct[] uartSettingInfo = new uartSettingStruct[maxMachineNum];
+        public static GPIOSettingStruct[] GPIOSettingInfo = new GPIOSettingStruct[maxMachineNum];
 
         //故障编码表结构
         public struct errorCodeListStruct
@@ -1022,6 +1043,38 @@ namespace MESSystem.common
             public string realFinishTime;  //预计完工时间
             public string source; //0: 手工输入; 1: ERP 导入
             public string status; //0：ERP published; 1：APS OK; 2：production started(the first dispatch started); 3：sales order completed; 4：sales order   
+            public string cutTime; //分拆时间
+            public string cutResult; //分拆结果
+        };
+
+        //批次单表结构
+        public struct productBatchStruct
+        {
+            public string ID;  //ID in sales order table
+            public string salesOrderBatchCode;  //批次订单号，把订单划成批次单后，原订单号 + 下标
+            public string originalSalesOrderCode;  //原来的订单号
+            public string deliveryTime;  //交货期
+            public string productCode;	 //产品编码
+            public string productName;  //产品名称
+            public string requiredNum;	//计划生产数量
+            public string unit;  //数量的单位
+            public string customer; //客户名
+            public string publisher; //下发者
+            public string ERPTime; //ERP 下发时间
+            public string APSTime; //APS 排程确认时间(包括手工调整)
+            public string planTime1;	//预计开工时间
+            public string planTime2;  //预计完工时间
+            public string realStartTime;	//预计开工时间
+            public string realFinishTime;  //预计完工时间
+            public string source; //0: 手工输入; 1: ERP 导入
+            public string status; //0：ERP published; 1：APS OK; 2：production started(the first dispatch started); 3：sales order completed; 4：sales order   
+            public string cutTime; //分拆时间
+            public string batchNum;  //生产批次号
+            public string canceller; //批次单取消人
+            public string cancelReason;  //取消原因
+            public string cancelTime;   //取消时间
+            public string approver;   //核准人
+			
         };
 
         //产品表结构
@@ -1030,23 +1083,62 @@ namespace MESSystem.common
             public string customer;
             public string productCode;	 //产品编码
             public string productName;  //产品名称
-            public string BOMCode;
+            public string BOMCode;    //配方
             public string routeCode; //工艺路线
             public string productWeight;
-            public string productThickness;
-            public string baseColor;
-            public string patternType;
-            public string steelRollType;
-            public string rubberRollType;
-            public string castSpec;
-            public string printSpec;
-            public string slitSpec;
-            public string castCraft;
-            public string printCraft;
-            public string slitCraft;
-            public string castQuality;
-            public string printQuality;
-            public string slitQuality;
+            public string productDiameter;
+            public string productWidth;
+            public string productfixtureNum;
+            public string productLength;
+            public string baseColor;  //基色
+            public string patternType;  //压纹类型
+            public string RawMaterialCode;  //客户原材料代码
+            public string inkRatio;   //油墨配比
+            public string numOfMaterialType;  //原料钟数
+            public string materialcode1;
+            public string materialcode2;
+            public string materialcode3;
+            public string materialcode4;
+            public string materialcode5;
+            public string materialcode6;
+            public string materialcode7;
+
+            public string rollNumLayer;                 //底层卷数	                   
+            public string layerNum;                     //堆高层数	              
+            public string rollNumStack;                 //每托盘卷数	            
+            public string totalWeightStack;             //每铲板产品重量(kg)	    
+            public string stackType;                    //铲板类型	              
+            public string stackLength;                  //铲板长(mm)	            
+            public string stackwidth;                   //铲板宽(mm)	            
+            public string recycle;                      //是否回收                
+            public string stackLossRate;                //铲板损耗率1:            
+            public string stackNumOneTon;               //吨产品铲板用量(个)	    
+            public string paperCoreDiameter;            //纸芯内径(mm)	          
+            public string paperCoreThickness;           //纸芯壁厚(mm)	          
+            public string paperCoreLength;              //纸芯长度(mm)	          
+            public string paperCoreOneStack;            //铲板纸芯用量(m)	        
+            public string paperCorreLossRate;           //纸芯损耗率1:	          
+            public string paperCoreOneTon;              //吨产品纸芯用量(m)	      
+            public string paperBoardOneStack;           //铲板纸板用量(块)	      
+            public string paperBoardLossRate;           //纸板损耗率1:	          
+            public string paperBoardOneton;             //产品纸板用量(块) 	      
+            public string craftPaperOneStack;           //铲板牛皮纸用量(m2/托盘)	
+            public string craftPaperLossRate;           //牛皮纸损耗率1：         
+            public string craftPaperOneTon;             //吨产品牛皮纸用量(m2)    
+            public string corrugatedPaperOneStack;      //铲板瓦楞纸用量(m2/托盘) 
+            public string corrugatedPaperLossRate;      //瓦楞纸损耗率1：         
+            public string corrugatedPaperPerTon;        //吨产品瓦楞纸用量(m2)	  
+            public string wrappingFilmOneStack;         //铲板缠绕膜用量(kg/托盘)	
+            public string wrappingFilmOneTon;           //吨产品缠绕膜用量(kg)	  
+            public string others;                       //其他	                  
+            public string packingFilmOneStack;          //铲板包装用膜量(kg/托盘)	
+            public string packingFilmOneTon;            //吨产品包装用膜用量(kg)" 
+            public string craftSheetCode1;              //工艺单编号1
+            public string craftSheetCode2;              //工艺单编号2
+            public string craftSheetCode3;              //工艺单编号3
+            public string criteria;                     //检验标准
+            public string multiIngredient;              //是否多种配方
+            public string slitOnline;                   //是否在线分切
         };
 
         //设备空闲时间表 -- for APS
@@ -1085,10 +1177,10 @@ namespace MESSystem.common
             public string productCode;	 //产品编码
             public string productName;  //产品名称
             public string operatorName; //操作员
-            public int plannedNumber;	//计划生产数量
-            public int outputNumber;  //接收数量
-            public int qualifiedNumber;  //合格数量
-            public int unqualifiedNumber;  //不合格数量
+            public float plannedNumber;	//计划生产数量
+            public float outputNumber;  //接收数量
+            public float qualifiedNumber;  //合格数量
+            public float unqualifiedNumber;  //不合格数量
             public string processName; //工序（工艺路线中包含多个工序）
             public string realStartTime;	  //实际开始时间
             public string realFinishTime;	  //实际完工时间
@@ -1116,7 +1208,11 @@ namespace MESSystem.common
             public string productDiameter;  //卷径
             public string productWeight;  //卷重
             public string slitWidth;  //分切宽度 
-            public string printSide;  //印刷方向
+            public string salesOrderBatchCode;  //批次订单号
+            public string productCode4; //套做中的第四三种产品
+            public string operatorName4; //操作员4
+            public string notes;   //交接班记录
+            public string comments;  //领导批示
         };
 
         //设备状态表结构
@@ -1130,7 +1226,7 @@ namespace MESSystem.common
             public string startTime;	  //开机时间
             public string offTime;	  //关机时间
             public int totalWorkingTime;  //作业总时间
-            public int collectedNumber;  //设备采集件数
+            public float collectedNumber;  //设备采集件数
             public int productBeat;  //生产节拍
             public int workingTime;  //生产时间
             public int prepareTime;  //调整时间待机时间
@@ -1239,6 +1335,7 @@ namespace MESSystem.common
             //public string[] materialName;  //物料名称（包括计量单位）
             public string[] materialCode;  //物料编码
             public int[] materialRequired;  //物料需求数量
+            public string salesOrderBatchCode;
             //public int[] previousLeft;  //上一班结存
             //public int[] currentLeft;  //当班结存
             //public int[] currentUsed;  //当班用量
@@ -1472,6 +1569,47 @@ namespace MESSystem.common
 
         public static string[] deviceErrNoList = { "502010", "502020", "502030", "502040", "502050", "502060", "502070", "502080", "502090", "502100", "502110", "502120", "502130", "502140", "502150", "502160", "502170", "502180" };
         public static string[] deviceErrDescList = { "电气故障-数控系统", "电气故障-PLC控制", "电气故障-电柜元件", "电气故障-传感器", "电气故障-电机", "机械故障-上下料装置", "机械故障-工装夹具", "机械故障-刀辅具", "机械故障-主轴", "机械故障-进给轴", "机械故障-设备本体", "流体故障-液压", "流体故障-润滑", "流体故障-冷却", "流体故障-气动", "操作故障-编程", "操作故障-操作", "操作故障-零件定位夹紧" };
+
+
+
+        public static string[] castErrorList =
+        {
+            "加热温度异常", "吸料异常", "螺杆无动作", "水接头漏水", "机器跳停", "摇摆无动作", "轴承坏", "收卷切刀无动作", "温水机组漏水", "温水机组不加热", 
+            "冷冻机跳停", "循环水泵坏", "电晕不工作", "气管漏气", "气路有水", "模头水箱开锅", "其它",
+        };
+
+        public static string[] printErrorList =
+        {
+            "烘箱温度加不上", "轴承坏", "机器无动作", "前后速度不一致", "气路漏气", "其它",
+        };
+
+        public static string[] slitErrorList =
+        {
+            "收卷皮带断", "收卷轴漏气", "收卷有黑点", "设定数据不准", "其它",
+        };
+
+        public static string[] packingErrorList =
+        {
+            "没有升降", "平台不旋转", "设定圈数不准", "其它",
+        };
+
+        public static string[] rebuildErrorList =
+        {
+            "机器不动作", "切粒太粗", "机器有异声", "皮带断", "其它",
+        };
+
+        public static string[] commonErrorList =
+        {
+            "空压机停机", "压缩空气有水", "循环泵坏", "地坑泵坏", "跳电", "其它",
+        };
+
+        public static string[] inspectionErrorList =
+        {
+            "规格不符", "卷径不达标", "米数不足", "基重超标", "厚度不符", "电晕值不达标", "孔洞", "亮斑", "条纹", "杂质、晶点或鱼眼", "压纹不清", "皱折", 
+            "颜色太深", "颜色太浅", "年轮色差", "蚊虫", "异物", "水印", "溅墨", "刀丝、拖墨", "漏印", "露白", "图案缺失", "图案分离", "油墨牢度不够", 
+            "印刷颜色超出标准", "印刷色相不符", "印刷出头方向错误", "印刷面收卷方向错误", "电晕面收卷方向错误", "压纹收卷方向错误", "收卷过松", "收卷过紧", 
+            "暴筋", "厚薄不均", "端面错位", "切边断裂", "贴黑胶带或铝薄", "拉伸性能不达标", "PH超标", "WVTR不符", "摩擦系数不符", "耐水压不符",
+        };
 
         public static string[] errSPCDescList = { "数据超出控制限", "至少连续9个点位于中心线同一侧", "7个点连续上升或者下降", "15个点落在中心线附近", "5个连续点中至少4个距离中心线较远" };
         public const string errCraftDesc = "数据超出规格限";

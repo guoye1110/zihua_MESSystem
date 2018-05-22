@@ -119,6 +119,9 @@ namespace MESSystem.communication
                                 if (myBoardIDFromIPAddress != myBoardID)
                                     Console.WriteLine("board ID:" + myBoardID + " is different from IP ID of " + myBoardIDFromIPAddress);
                             }
+
+                            handshakeWithClientOK = 1;
+
                             databaseNameThis = gVariable.internalMachineName[myBoardIndex];
                             gVariable.machineStatus[myBoardIndex].machineID = (myBoardIndex + 1).ToString();
                             gVariable.machineStatus[myBoardIndex].machineCode = gVariable.machineCodeArrayDatabase[myBoardIndex]; //databaseNameThis;
@@ -164,7 +167,7 @@ namespace MESSystem.communication
                             len = MIN_PACKET_LEN_MINUS_ONE + LEN_OF_DATE_AND_TIME;
                             sendDataToClient(onePacket, len, COMMUNICATION_TYPE_SET_BOARD_TIME_TO_TOUCHPAD);
 
-                            gVariable.dispatchSheet[myBoardIndex].dispatchCode = gVariable.dummyDispatchTableName;  //no dispatch yet, we set it to dummy
+                            //gVariable.dispatchSheet[myBoardIndex].dispatchCode = gVariable.dummyDispatchTableName;  //no dispatch yet, we set it to dummy
 
                             //first set SPC status to uncontrollable, then calculate when will it becomes controllable
                             gVariable.dataForThisBoardIsUnderSPCControl[myBoardIndex] = gVariable.SPC_DATA_UNCONTROLLABLE;
@@ -196,9 +199,9 @@ namespace MESSystem.communication
                         //dummy dispatch until real dispatch comes(then switch to real dispatch)
                         case COMMUNICATION_TYPE_SEND_DUMMY_MACHINE_CODE_TO_PC:
                             //                                                    gVariable.currentDispatchCode = "dummy";  //only used for curve display, may not be the same as gVariable.dispatchSheet[myBoardIndex].dispatchCode
-                            toolClass.getDummyData(myBoardIndex);
+                            //toolClass.getDummyData(myBoardIndex);
                             //we got related data, put it in database in the following functiuon, including all data type and dispatch if they does not exist before
-                            readBoardInfoFromMachineDataStruct(1);
+                            //readBoardInfoFromMachineDataStruct(1);
 
                             toolClass.nonBlockingDelay(200);
 
@@ -767,6 +770,8 @@ namespace MESSystem.communication
                         case COMMUNICATION_TYPE_CYCLE_TIME_TO_PC:
                             if (gVariable.machineCurrentStatus[myBoardIndex] >= gVariable.MACHINE_STATUS_DISPATCH_STARTED)  //we can use quality/craft/andon data now
                             {
+                                saveUploadedRollInfoIntoDispatchRecord(myBoardIndex, "1804306121L320120030400;452.3");
+                                
                                 timeStampNow = TimeZone.CurrentTimeZone.ToLocalTime(DateTime.Now);
                                 j = (int)(timeStampNow - gVariable.worldStartTime).TotalSeconds;
 
@@ -792,8 +797,8 @@ namespace MESSystem.communication
                             len = MIN_PACKET_LEN;
                             sendDataToClient(onePacket, len, communicationType);
 
-                            if (gVariable.machineCurrentStatus[myBoardIndex] >= gVariable.MACHINE_STATUS_DISPATCH_STARTED)
-                                FileAppendFucntion(checkBytes);
+                            //if (gVariable.machineCurrentStatus[myBoardIndex] >= gVariable.MACHINE_STATUS_DISPATCH_STARTED)
+                            //    FileAppendFucntion(checkBytes);
                             break;
 
                         default:

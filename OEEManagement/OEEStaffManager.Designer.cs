@@ -53,6 +53,7 @@
             this.LblDetailsView = new System.Windows.Forms.Label();
             this.LvwMonthView = new System.Windows.Forms.ListView();
             this.LvwDetailView = new System.Windows.Forms.ListView();
+            this.BtnExport = new System.Windows.Forms.Button();
             this.TlpStaffManager.SuspendLayout();
             this.FlpQueryPanel.SuspendLayout();
             this.PnlStaffName.SuspendLayout();
@@ -82,6 +83,7 @@
             // 
             this.FlpQueryPanel.Controls.Add(this.PnlStaffName);
             this.FlpQueryPanel.Controls.Add(this.PnlStaffQuery);
+            this.FlpQueryPanel.Controls.Add(this.BtnExport);
             this.FlpQueryPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.FlpQueryPanel.Location = new System.Drawing.Point(33, 33);
             this.FlpQueryPanel.Name = "FlpQueryPanel";
@@ -150,10 +152,9 @@
             this.PnlStaffQuery.Controls.Add(this.LblDash);
             this.PnlStaffQuery.Controls.Add(this.LblDashEnd);
             this.PnlStaffQuery.Controls.Add(this.LblStaffQueryDate);
-            this.PnlStaffQuery.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PnlStaffQuery.Location = new System.Drawing.Point(347, 3);
             this.PnlStaffQuery.Name = "PnlStaffQuery";
-            this.PnlStaffQuery.Size = new System.Drawing.Size(602, 25);
+            this.PnlStaffQuery.Size = new System.Drawing.Size(444, 25);
             this.PnlStaffQuery.TabIndex = 1;
             // 
             // LblMonthEnd
@@ -326,6 +327,16 @@
             this.LvwDetailView.TabIndex = 3;
             this.LvwDetailView.UseCompatibleStateImageBehavior = false;
             // 
+            // BtnExport
+            // 
+            this.BtnExport.Location = new System.Drawing.Point(797, 3);
+            this.BtnExport.Name = "BtnExport";
+            this.BtnExport.Size = new System.Drawing.Size(75, 23);
+            this.BtnExport.TabIndex = 2;
+            this.BtnExport.Text = "导出列表";
+            this.BtnExport.UseVisualStyleBackColor = true;
+            this.BtnExport.Click += new System.EventHandler(this.BtnExport_Click);
+            // 
             // OEEStaffManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -374,5 +385,6 @@
         private System.Windows.Forms.Label LblDetailsView;
         private System.Windows.Forms.ListView LvwMonthView;
         private System.Windows.Forms.ListView LvwDetailView;
+        private System.Windows.Forms.Button BtnExport;
     }
 }

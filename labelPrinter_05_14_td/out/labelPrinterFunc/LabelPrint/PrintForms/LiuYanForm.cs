@@ -30,7 +30,9 @@ namespace LabelPrint
         LiuYanUserinputData UserInput;
         BardCodeHooK BarCodeHook = new BardCodeHooK();
 
-        SerialPort serialPort1;
+        SerialPort serialPort1;  //磅秤
+        SerialPort serialPort2;  //扫描枪
+
         Byte[] serialDataBuf = new Byte[128];
 
         public LiuYanForm(FilmSocket filmsocket)
@@ -73,7 +75,8 @@ namespace LabelPrint
             tb_worker.Enabled = false;
             cb_ProductState.Items.AddRange(LiuYanUserinputData.PrintProductStateStr);
             cb_ProductState.SelectedIndex = 0;
-
+            InitProductQualityComboBox(cb_ProductQuality);
+            cb_ProductQuality.SelectedIndex = 0;
             initSerialPort();
 
 			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
@@ -83,6 +86,7 @@ namespace LabelPrint
         private void ProductCutForm_FormClosing(object sender, EventArgs e)
         {
             serialPort1.Close();
+            serialPort2.Close();
         }
         
         void initSerialPort()
@@ -94,7 +98,11 @@ namespace LabelPrint
             {
                 serialPort1 = new SerialPort(SysSetting.CurSettingInfo.ScaleSerialPort, 9600, Parity.None, 8, StopBits.One);
                 serialPort1.Open();
-                serialPort1.DataReceived += new SerialDataReceivedEventHandler(serialDataReceived);
+                serialPort1.DataReceived += new SerialDataReceivedEventHandler(serialDataReceived1);
+
+                serialPort2 = new SerialPort(SysSetting.CurSettingInfo.ScannerSerialPort, 9600, Parity.None, 8, StopBits.One);
+                serialPort2.Open();
+                serialPort2.DataReceived += new SerialDataReceivedEventHandler(serialDataReceived2);
             }
             catch (Exception ex)
             {
@@ -102,7 +110,7 @@ namespace LabelPrint
             }
         }
 
-        void serialDataReceived(object sender, SerialDataReceivedEventArgs e)
+        void serialDataReceived1(object sender, SerialDataReceivedEventArgs e)
         {
             int num;
             string weightStr;
@@ -182,6 +190,28 @@ namespace LabelPrint
                 return null;
 
             return ( System.Text.Encoding.ASCII.GetString(serialDataBuf, start, end - start));
+        }
+
+        void serialDataReceived2(object sender, SerialDataReceivedEventArgs e)
+        {
+            Byte[] serialDataBuf1 = new Byte[128];
+
+            try
+            {
+                Thread.Sleep(1000);
+
+                serialPort2.Read(serialDataBuf1, 0, serialPort2.BytesToRead);
+
+                this.Invoke((EventHandler)(delegate
+                {
+                    label6.Text = System.Text.Encoding.ASCII.GetString(serialDataBuf1);
+                }));
+
+            }
+            catch (TimeoutException ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         
@@ -359,9 +389,9 @@ namespace LabelPrint
             UserInput.BigRollNo = GetCurBigRollNo(tb_BigRollNo);
             UserInput.WorkClsType = GetWorkClassType();
             UserInput.WorkTType = GetWorkTimeType();
-            UserInput.Product_State = cb_ProductState.Text;
+            UserInput.ProductState = cb_ProductState.Text;
             UserInput.Roll_Weight = tb_RollWeight.Text;
-
+            UpdateUserInputQualityInfo();
         }
 
         delegate void AsynBarCode_BarCodeEvent(BardCodeHooK.BarCodes barCode);
@@ -551,8 +581,8 @@ namespace LabelPrint
         {
             String fixture;
             UserInput.ProductCode = (String)cb_ProductCode.SelectedItem.ToString();
-            UserInput.GetInfoByProductCode(UserInput.ProductCode, out UserInput.Width, out UserInput.RecipeCode, out fixture, out UserInput.CustomerName);
-
+            //UserInput.GetInfoByProductCode(UserInput.ProductCode, out UserInput.Width, out UserInput.RecipeCode, out fixture, out UserInput.CustomerName);
+            UserInput.GetInfoByProductCodeExt(UserInput.ProductCode, out UserInput.Width, out UserInput.RecipeCode, out fixture, out UserInput.CustomerName, out UserInput.RawMaterialCode, out UserInput.ProductLength, out UserInput.ProductName, out UserInput.ProductWeight);
             tb_Width.Text = UserInput.Width;
             tb_RecipeCode.Text = UserInput.RecipeCode;
             tb_CustomerName.Text = UserInput.CustomerName;
@@ -578,5 +608,59 @@ namespace LabelPrint
 				m_dispatchCode = start_work[0];
 			}
         }
+
+        private String GetProductState(ComboBox productState_cb)
+        {
+            return productState_cb.SelectedItem.ToString();
+        }
+
+        private String GetProductQuality(ComboBox productQuality_cb)
+        {
+            return productQuality_cb.SelectedItem.ToString();
+        }
+        void InitProductQualityComboBox(ComboBox productQulity)
+        {
+            productQulity.Items.AddRange(ProcessData.ProductQualityStrForComBoList);
+
+        }
+        void UpdateUserInputQualityInfo()
+        {
+            UserInput.ProductState = GetProductState(cb_ProductState);
+            UserInput.ProductStateIndex = cb_ProductState.SelectedIndex;
+            if (cb_ProductState.SelectedIndex != 0)
+            {
+                UserInput.ProductQuality = GetProductQuality(cb_ProductQuality);
+                UserInput.ProductQualityIndex = cb_ProductQuality.SelectedIndex;
+            }
+            else
+            {
+                UserInput.ProductQuality = "";
+                UserInput.ProductQualityIndex = 0;
+            }
+        }
+
+        private void cb_ProductState_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (cb_ProductState.SelectedIndex)
+            {
+                case 0:
+                    //cb_ProductQuality.Enabled = false;
+                    cb_ProductQuality.Visible = false;
+                    lb_ProductQulity.Visible = false;
+
+                    break;
+                default:
+                    //cb_ProductQuality.Enabled = true;
+                    cb_ProductQuality.Visible = true;
+                    lb_ProductQulity.Visible = true;
+                    break;
+            }
+        }
+
+        private void cb_ProductQuality_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }

@@ -68,7 +68,7 @@ namespace MESSystem.common
         public const int CATEGORY_IN_ALARM_DATABASE = 13;
         public const int STATUS_IN_ALARM_DATABASE = 14;
         //in history means an alarm is put in experience list
-        public const int INHISTORY_IN_ALARM_DATABASE = 15;   
+        public const int INHISTORY_IN_ALARM_DATABASE = 15;
         //start ID means when we doing a SPC checking, we may need 225 point data to check for break of rules, if alarm occurs, we need to record the start ID of our checking, so we can redraw this chart easily
         public const int STARTID_IN_ALARM_DATABASE = 16;
         public const int INDEX_TABLE_IN_ALARM_DATABASE = 17;
@@ -95,7 +95,30 @@ namespace MESSystem.common
         public const int REAL_START_TIME_IN_SALESORDER_DATABASE = 14;
         public const int REAL_COMPLETE_TIME_IN_SALESORDER_DATABASE = 15;
         public const int STATUS_IN_SALESORDER_DATABASE = 16;
-        public const int RESULT_IN_SALESORDER_DATABASE = 17;
+        public const int CUT_TIME_IN_SALESORDER_DATABASE = 17;
+        public const int RESULT_IN_SALESORDER_DATABASE = 18;
+
+        //index in product batch order table
+        public const int ID_VALUE_IN_BATCHNUM_DATABASE = 0;
+        public const int BATCH_CODE_IN_BATCHNUM_DATABASE = 1;
+        public const int ORDER_CODE_IN_BATCHNUM_DATABASE = 2;
+        public const int DELIVERY_TIME_IN_BATCHNUM_DATABASE = 3;
+        public const int PRODUCT_CODE_IN_BATCHNUM_DATABASE = 4;
+        public const int PRODUCT_NAME_IN_BATCHNUM_DATABASE = 5;
+        public const int REQUIRED_NUM_IN_BATCHNUM_DATABASE = 6;
+        public const int UNIT_IN_BATCHNUM_DATABASE = 7;
+        public const int CUSTOMER_IN_BATCHNUM_DATABASE = 8;
+        public const int PUBLISHER_IN_BATCHNUM_DATABASE = 9;
+        public const int SOURCE_IN_BATCHNUM_DATABASE = 10;
+        public const int ERP_TIME_IN_BATCHNUM_DATABASE = 11;
+        public const int APS_TIME_IN_BATCHNUM_DATABASE = 12;
+        public const int PLANNED_START_TIME_IN_BATCHNUM_DATABASE = 13;
+        public const int PLANNED_COMPLETE_TIME_IN_BATCHNUM_DATABASE = 14;
+        public const int REAL_START_TIME_IN_BATCHNUM_DATABASE = 15;
+        public const int REAL_COMPLETE_TIME_IN_BATCHNUM_DATABASE = 16;
+        public const int STATUS_IN_BATCHNUM_DATABASE = 17;
+        public const int CUT_TIME_IN_BATCHNUM_DATABASE = 18;
+        public const int BATCH_NUM_IN_BATCHNUM_DATABASE = 19;
 
         //index in machine list table
         const int INTERNAL_CODE_IN_LIST = 1;
@@ -177,7 +200,7 @@ namespace MESSystem.common
         public const int BOM_ITEM_QUANTITY8 = 26;
 
         //index in cast craft
-        public const int CAST_CRAFT_CODE = 1; 
+        public const int CAST_CRAFT_CODE = 1;
         public const int CAST_CRAFT_C1 = 2;
         public const int CAST_CRAFT_C2 = 3;
         public const int CAST_CRAFT_C3 = 4;
@@ -185,7 +208,7 @@ namespace MESSystem.common
         public const int CAST_CRAFT_C5 = 6;
         public const int CAST_CRAFT_C6 = 7;
         public const int CAST_CRAFT_C7 = 8;
-            
+
         //index in cast quality
         public const int CAST_QUALITY_CODE = 1;
         public const int CAST_QUALITY_REEL_WEIGHT = 2;
@@ -288,6 +311,10 @@ namespace MESSystem.common
         public const int PRODUCT_WEIGHT_IN_DISPATCHLIST_DATABASE = 37;
         public const int SLIT_WIDTH_IN_DISPATCHLIST_DATABASE = 38;
         public const int PRINT_SIDE_IN_DISPATCHLIST_DATABASE = 39;
+        public const int PRODUCT_CODE4_IN_DISPATCHLIST_DATABASE = 40;
+        public const int OPERATOR4_NAME_IN_DISPATCHLIST_DATABASE = 41;
+        public const int NOTES_IN_DISPATCHLIST_DATABASE = 42;
+        public const int COMMENTS_IN_DISPATCHLIST_DATABASE = 43;
 
         public const int MATERIAL_LIST_CYCLE_SPAN = 4;
         //index in material list table, which listed all kinds of materials for a dispatch
@@ -375,17 +402,17 @@ namespace MESSystem.common
                                         "@salesOrderCode, @BOMCode)";
 
         //machine material list table
-        const string strBOMList1 = "(id int(1) AUTO_INCREMENT primary key, dispatchCode varchar(40), machineCode varchar(40), materialName varchar(40), materialCode varchar(40), " + 
+        const string strBOMList1 = "(id int(1) AUTO_INCREMENT primary key, dispatchCode varchar(40), machineCode varchar(40), materialName varchar(40), materialCode varchar(40), " +
                                         "materialQuantity int(1)) ENGINE = MYISAM CHARSET=utf8";
         const string strBOMList2 = " value(@id, @dispatchCode, @machineCode, @materialName, @materialCode, @materialQuantity)";
 
         //machine craft parameter list table
-        const string strCraftList1 = "(id int(1) AUTO_INCREMENT primary key, dispatchCode varchar(40), paramName varchar(40), paramLowerLimit float(1), paramUpperLimit float(1), paramDefaultValue float(1), " + 
+        const string strCraftList1 = "(id int(1) AUTO_INCREMENT primary key, dispatchCode varchar(40), paramName varchar(40), paramLowerLimit float(1), paramUpperLimit float(1), paramDefaultValue float(1), " +
                                       "paramUnit varchar(20), paramValue float(1), rangeLowerLimit float(1), rangeUpperLimit float(1)) ENGINE = MYISAM CHARSET=utf8";
         const string strCraftList2 = " value(@id, @dispatchCode, @paramName, @paramLowerLimit, @paramUpperLimit, @paramDefaultValue, @paramUnit, @paramValue, @rangeLowerLimit, @rangeUpperLimit)";
 
         //machine craft data table
-        const string strDataCraft1 = "(id int(1) AUTO_INCREMENT primary key, time int(1), value1 float(1), value2 float(1), value3 float(1), value4 float(1), value5 float(1), value6 float(1), value7 float(1), " + 
+        const string strDataCraft1 = "(id int(1) AUTO_INCREMENT primary key, time int(1), value1 float(1), value2 float(1), value3 float(1), value4 float(1), value5 float(1), value6 float(1), value7 float(1), " +
                                       "value8 float(1)) ENGINE = MYISAM CHARSET=utf8";
         const string strDataCraft2 = " value(@id, @time, @value1, @value2, @value3, @value4, @value5, @value6, @value7, @value8)";
 
@@ -400,14 +427,14 @@ namespace MESSystem.common
         //machine quality list table
         public const int QUALITY_LIST_ID_ITEM_NAME = 1;
         public const int QUALITY_LIST_ID_CHART_TYPE = 15;
-        const string strQualityList1 = "(id int(1) AUTO_INCREMENT primary key, dispatchCode varchar(40), checkItem varchar(40), checkRequirement varchar(40), controlCenterValue1 float(1), controlCenterValue2 float(1)," + 
-                                        "specLowerLimit float(1), controlLowerLimit1 float(1), controlLowerLimit2 float(1), specUpperLimit float(1), controlUpperLimit1 float(1), controlUpperLimit2 float(1), " + 
+        const string strQualityList1 = "(id int(1) AUTO_INCREMENT primary key, dispatchCode varchar(40), checkItem varchar(40), checkRequirement varchar(40), controlCenterValue1 float(1), controlCenterValue2 float(1)," +
+                                        "specLowerLimit float(1), controlLowerLimit1 float(1), controlLowerLimit2 float(1), specUpperLimit float(1), controlUpperLimit1 float(1), controlUpperLimit2 float(1), " +
                                         "sampleRatio int(1), checkResultData varchar(10), checkResult varchar(10), unit varchar(20), chartType int(1)) ENGINE = MYISAM CHARSET=utf8";
         const string strQualityList2 = " value(@id, @dispatchCode, @checkItem, @checkRequirement, @controlCenterValue1, @controlCenterValue2, @specLowerLimit, @controlLowerLimit1, @controlLowerLimit2, @specUpperLimit," +
                                         "@controlUpperLimit1, @controlUpperLimit2, @sampleRatio, @checkResultData, @checkResult, @unit, @chartType)";
 
         //machine quality data table
-        const string strDataQuality1 = "(id int(1) AUTO_INCREMENT primary key, time int(1), value1 float(1), value2 float(1), value3 float(1), value4 float(1), value5 float(1), value6 float(1), value7 float(1), " + 
+        const string strDataQuality1 = "(id int(1) AUTO_INCREMENT primary key, time int(1), value1 float(1), value2 float(1), value3 float(1), value4 float(1), value5 float(1), value6 float(1), value7 float(1), " +
                                         "value8 float(1), value9 float(1), value10 float(1), value11 float(1), value12 float(1), value13 float(1), value14 float(1), value15 float(1), value16 float(1), " +
                                         "sn varchar(30), status1 smallint(1), status2 smallint(1), status3 smallint(1), status4 smallint(1), status5 smallint(1), status6 smallint(1), status7 smallint(1), " +
                                         "status8 smallint(1), status9 smallint(1), status10 smallint(1), status11 smallint(1), status12 smallint(1), status13 smallint(1), status14 smallint(1), status15 smallint(1), " +
@@ -420,14 +447,14 @@ namespace MESSystem.common
         const string strDataBeat2 = " value(@id, @time, @value1, @value2, @value3, @value4)";
 
         //machine repair table -- dispatch here means:repairing didpatch
-        const string strrepairList1 = "(id int(1) AUTO_INCREMENT primary key, dispatchCode varchar(20), machineName varchar(40), time varchar(19), timeSpan int(1), affectedTime int(1), " + 
-                                      "descript varchar(400), analysis varchar(400), solution varchar(400), substitute varchar(100), asist varchar(100), owner varchar(40), notes varchar(400)) " + 
+        const string strrepairList1 = "(id int(1) AUTO_INCREMENT primary key, dispatchCode varchar(20), machineName varchar(40), time varchar(19), timeSpan int(1), affectedTime int(1), " +
+                                      "descript varchar(400), analysis varchar(400), solution varchar(400), substitute varchar(100), asist varchar(100), owner varchar(40), notes varchar(400)) " +
                                       "ENGINE = MYISAM CHARSET=utf8";
         const string strrepairList2 = " value(@id, @dispatchCode, @machineName, @time, @timeSpan, @affectedTime, @descript, @analysis, @solution, @substitute, @asist, @owner, @notes)";
 
         //machine maintenance table
         const string strmaintainList1 = "(id int(1) AUTO_INCREMENT primary key, dispatch varchar(20), maintenanceCode varchar(20), machineName varchar(40), parts varchar(40), content varchar(200), gap int(1), " +
-                                         " time1 varchar(19), time2 varchar(19), personNum int(1), duration int(1), substitute varchar(100), asist varchar(100), owner varchar(40), " + 
+                                         " time1 varchar(19), time2 varchar(19), personNum int(1), duration int(1), substitute varchar(100), asist varchar(100), owner varchar(40), " +
                                          "notes varchar(400)) ENGINE = MYISAM CHARSET=utf8";
         const string strmaintainList2 = " value(@id, @dispatch, @maintenanceCode, @machineName, @parts, @content, @gap, @time1, @time2, @personNum, @duration, @substitute, @asist, @owner, @notes)";
 
@@ -437,7 +464,7 @@ namespace MESSystem.common
         const string strDailyChecking2 = " value(@id, @dispatch, @checkCode, @machineName, @time, @shift, @chechPart, @checkPoints, @checker, @notes)";
 
         //machine add oil table
-        const string strDataOil1 = "(id int(1) AUTO_INCREMENT primary key, dispatch varchar(20), addOilCode varchar(20), machineName varchar(40), parts varchar(40), pointOfOil int(1), span int(1), " + 
+        const string strDataOil1 = "(id int(1) AUTO_INCREMENT primary key, dispatch varchar(20), addOilCode varchar(20), machineName varchar(40), parts varchar(40), pointOfOil int(1), span int(1), " +
                                         "oilType varchar(40), OKStandard varchar(40), time varchar(19), checker varchar(40), notes varchar(400)) ENGINE = MYISAM CHARSET=utf8";
         const string strDataOil2 = " value(@id, @dispatch, @addOilCode, @machineName, @parts, @pointOfOil, @span, @oilType, @OKStandard, @time, @checker, @notes)";
 
@@ -447,7 +474,7 @@ namespace MESSystem.common
         const string strDataWashup2 = " value(@id, @dispatch, @addOilCode, @machineName, @parts, @pointOfOil, @span, @oilType, @OKStandard, @time, @checker, @notes)";
 
         //setting1 -- ADC  
-        const string strDataSetting11 = "(id int(1) AUTO_INCREMENT primary key, dispatchCode varchar(40), channelEnabled int(1), channelTitle varchar(40), channelUnit varchar(20), lowerRange float(1), " + 
+        const string strDataSetting11 = "(id int(1) AUTO_INCREMENT primary key, dispatchCode varchar(40), channelEnabled int(1), channelTitle varchar(40), channelUnit varchar(20), lowerRange float(1), " +
                                          "upperRange float(1), lowerLimit float(1), upperLimit float(1), workingVoltage int(1)) ENGINE = MYISAM CHARSET=utf8";
         const string strDataSetting12 = " value(@id, @dispatchCode, @channelEnabled, @channelTitle, @channelUnit, @lowerRange, @upperRange, @lowerLimit, @upperLimit, @workingVoltage)";
 
@@ -460,21 +487,21 @@ namespace MESSystem.common
         const string strDataSetting32 = " value(@id, @dispatchCode)";
 
         //setting4 -- beat
-        const string strDataSetting41 = "(id int(1) AUTO_INCREMENT primary key, dispatchCode varchar(40), idleCurrentHigh float(1), idleCurrentLow float(1), workCurrentHigh float(1), workCurrentLow float(1), " + 
+        const string strDataSetting41 = "(id int(1) AUTO_INCREMENT primary key, dispatchCode varchar(40), idleCurrentHigh float(1), idleCurrentLow float(1), workCurrentHigh float(1), workCurrentLow float(1), " +
                                          "errorCurrentHigh float(1), errorCurrentLow float(1)) ENGINE = MYISAM CHARSET=utf8";
         const string strDataSetting42 = " value(@id, @dispatchCode, @idleCurrentHigh, @idleCurrentLow, @workCurrentHigh, @workCurrentLow, @errorCurrentHigh, @errorCurrentLow)";
 
         //global and machine alarm
         const string strAlarmDesc1 = "(id int(1) AUTO_INCREMENT primary key, errorDesc varchar(200), dispatchCode varchar(40), alarmFailureCode varchar(40), machineCode varchar(40), machineName varchar(40), " +
                                       "operatorName varchar(30), time varchar(20), signer varchar(30), time1 varchar(20), completer varchar(30), time2 varchar(20), type smallint(1), category smallint(1), " +
-                                      "status smallint(1), inHistory smallint(1), startID int(1), indexInTable int(1), workshop varchar(40), MailList varchar(1000), discuss varchar(4000), " + 
+                                      "status smallint(1), inHistory smallint(1), startID int(1), indexInTable int(1), workshop varchar(40), MailList varchar(1000), discuss varchar(4000), " +
                                       "solution varchar(4000)) ENGINE = MYISAM CHARSET=utf8";
         const string strAlarmDesc2 = " value(@id, @errorDesc, @dispatchCode, @alarmFailureCode, @machineCode, @machineName, @operatorName, @time, @signer, @time1, @completer, @time2, @type, @category, " +
                                       "@status, @inHistory, @startID, @indexInTable, @workshop, @MailList, @discuss, @solution)";
 
         //machine status
         const string strMachineStatus1 = "(id int(1) AUTO_INCREMENT primary key, dispatchCode varchar(40), totalWorkingTime int(1), collectedNumber int(1), productBeat int(1), workingTime int(1), " +
-                                          "prepareTime int(1), standbyTime int(1), power int(1), powerConsumed int(1), revolution int(1), maintenancePeriod int(1), lastMaintenance int(1), " + 
+                                          "prepareTime int(1), standbyTime int(1), power int(1), powerConsumed int(1), revolution int(1), maintenancePeriod int(1), lastMaintenance int(1), " +
                                           "toolLifeTimes int(1), toolUsedTimes int(1)) ENGINE = MYISAM CHARSET=utf8";
         const string strMachineStatus2 = " value(@id, @dispatchCode, @totalWorkingTime, @collectedNumber, @productBeat, @workingTime, @prepareTime, @standbyTime, @power, @powerConsumed, @revolution, " +
                                          "@maintenancePeriod, @lastMaintenance, @toolLifeTimes, @toolUsedTimes)";
@@ -567,14 +594,14 @@ namespace MESSystem.common
             gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, 
             gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, 
             gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, 
-            gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, 
+            gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, gVariable.basicInfoDatabaseName, 
         };
         public static string[] infoTableName2 = 
         { 
         	gVariable.employeeTableName, gVariable.materialTableName, gVariable.productTableName, gVariable.machineTableName, gVariable.workProcedureTableName, gVariable.bomTableName, 
             gVariable.castSpecTableName, gVariable.printSpecTableName, gVariable.slitSpecTableName, gVariable.castCraftTableName, gVariable.printCraftTableName, gVariable.inkBomTableName, 
             gVariable.slitCraftTableName, gVariable.castQualityTableName, gVariable.printQualityTableName, gVariable.slitQualityTableName, gVariable.customerListTableName, gVariable.vendorListTableName, 
-            gVariable.warehouseListTableName, gVariable.packingTableName, 
+            gVariable.warehouseListTableName, gVariable.packingTableName, gVariable.substitutesTableName, 
         };
 
         public static string[] infoTableFileName2 = 
@@ -582,7 +609,7 @@ namespace MESSystem.common
             gVariable.employeeFileName, gVariable.materialFileName, gVariable.productFileName, gVariable.machineFileName, gVariable.workProcedureFileName, gVariable.bomFileName, 
             gVariable.castSpecFileName, gVariable.printSpecFileName, gVariable.slitSpecFileName, gVariable.castCraftFileName, gVariable.printCraftFileName, gVariable.inkBomFileName, 
             gVariable.slitCraftFileName, gVariable.castQualityFileName, gVariable.printQualityFileName, gVariable.slitQualityFileName, gVariable.customerListFileName, gVariable.vendorListFileName, 
-            gVariable.warehouseListFileName, gVariable.packingFileName,
+            gVariable.warehouseListFileName, gVariable.packingFileName, gVariable.substitutesFileName,
         };
 
         public mySQLClass()
@@ -592,7 +619,7 @@ namespace MESSystem.common
             MySqlConnection myConnection;
 
             hostString = getDatabaseHost();
-//            gVariable.communicationHostIP = getCommunicationHostIP();
+            //            gVariable.communicationHostIP = getCommunicationHostIP();
             getCompanyIndex();
             str = getMESData();
 
@@ -612,7 +639,7 @@ namespace MESSystem.common
                 gVariable.thisIsHostPC = false;
                 gVariable.hostString = hostString;
                 connectionString = "data source = " + hostString + "; user id = zihua; PWD = auhiz; Charset=utf8";
-//                connectionString = "data source = " + hostString + "; user id = root; PWD = ; Charset=utf8";
+                //                connectionString = "data source = " + hostString + "; user id = root; PWD = ; Charset=utf8";
             }
 
             try
@@ -738,12 +765,12 @@ namespace MESSystem.common
 
                 MySqlCommand cmd = new MySqlCommand(queryString, myConnection);
 
-/*            $query = mysql_query($sql);
-            while($rs = mysql_fetch_array($query))
-            {
-                echo $rs[0]."<br/>";
-            }
-*/                
+                /*            $query = mysql_query($sql);
+                            while($rs = mysql_fetch_array($query))
+                            {
+                                echo $rs[0]."<br/>";
+                            }
+                */
                 myConnection.Open();
                 cmd.ExecuteNonQuery();
                 myConnection.Close();
@@ -775,10 +802,10 @@ namespace MESSystem.common
                     createDataTableFromExcel(dname, gVariable.machineStatusRecordTableName, gVariable.machineStatusRecordFileName, LEN_40, 0);
 
                     //a special case for H015, we need this dispatch for testing 
-                    if(i == 14)
-                        createDataTableFromExcel(dname, gVariable.dispatchListTableName, gVariable.dispatchListFileName, LEN_40, 1);
+                    if (i == 14)
+                        createDataTableFromExcel(dname, gVariable.dispatchListTableName, gVariable.dispatchListFileName, LEN_400, 1);
                     else
-                        createDataTableFromExcel(dname, gVariable.dispatchListTableName, gVariable.dispatchListFileName, LEN_40, 0);
+                        createDataTableFromExcel(dname, gVariable.dispatchListTableName, gVariable.dispatchListFileName, LEN_400, 0);
 
                     createDataTableFromExcel(dname, gVariable.machineStatusListTableName, gVariable.machineStatusListFileName, LEN_40, 0);
                     createDataTableFromExcel(dname, gVariable.craftListTableName, gVariable.craftListFileName, LEN_40, 0);
@@ -790,6 +817,7 @@ namespace MESSystem.common
                     createDataTableFromExcel(dname, gVariable.addOilListTableName, gVariable.addOilListFileName, LEN_100, 0);
                     createDataTableFromExcel(dname, gVariable.washupListTableName, gVariable.washupListFileName, LEN_100, 0);
                     createDataTableFromExcel(dname, gVariable.alarmListTableName, gVariable.alarmListFileName, LEN_400, 0);
+                    createDataTableFromExcel(dname, gVariable.productBeatTableName, gVariable.productBeatFileName, LEN_40, 0);
 
                     //a special case for H008, we need this dispatch for testing 
                     if (i == 7)
@@ -964,7 +992,7 @@ namespace MESSystem.common
             try
             {
                 int ret;
-//                string str;
+                //                string str;
                 object[] nameStr = new object[20];
 
                 //mySQL dose not support upper letter to be table name, so we set it to lower case before comparation
@@ -1170,7 +1198,7 @@ namespace MESSystem.common
                         dispatchList.slitWidth = myReader.GetString(SLIT_WIDTH_IN_DISPATCHLIST_DATABASE);
 
                     if (!myReader.IsDBNull(PRINT_SIDE_IN_DISPATCHLIST_DATABASE))
-                        dispatchList.printSide = myReader.GetString(PRINT_SIDE_IN_DISPATCHLIST_DATABASE);
+                        dispatchList.salesOrderBatchCode = myReader.GetString(PRINT_SIDE_IN_DISPATCHLIST_DATABASE);
                 }
                 myReader.Close();
                 myConnection.Close();
@@ -1220,7 +1248,7 @@ namespace MESSystem.common
             commandText = null;
             try
             {
-                if(dispatchStatus == gVariable.MACHINE_STATUS_DISPATCH_UNPUBLISHED)
+                if (dispatchStatus == gVariable.MACHINE_STATUS_DISPATCH_UNPUBLISHED)
                 {
                     statusStr = " and status <= '" + dispatchStatus + "'";
                 }
@@ -1320,7 +1348,7 @@ namespace MESSystem.common
                         }
                         else
                         {
-//                            dispatchList[index] = new gVariable.dispatchSheetStruct();
+                            //                            dispatchList[index] = new gVariable.dispatchSheetStruct();
 
                             //We don't need record id, so jump over id
                             if (!myReader.IsDBNull(MACHINE_ID_IN_DISPATCHLIST_DATABASE))
@@ -1438,7 +1466,19 @@ namespace MESSystem.common
                                 dispatchList[index].slitWidth = myReader.GetString(SLIT_WIDTH_IN_DISPATCHLIST_DATABASE);
 
                             if (!myReader.IsDBNull(PRINT_SIDE_IN_DISPATCHLIST_DATABASE))
-                                dispatchList[index].printSide = myReader.GetString(PRINT_SIDE_IN_DISPATCHLIST_DATABASE);
+                                dispatchList[index].salesOrderBatchCode = myReader.GetString(PRINT_SIDE_IN_DISPATCHLIST_DATABASE);
+
+                            if (!myReader.IsDBNull(PRODUCT_CODE4_IN_DISPATCHLIST_DATABASE))
+                                dispatchList[index].productCode4 = myReader.GetString(PRODUCT_CODE4_IN_DISPATCHLIST_DATABASE);
+
+                            if (!myReader.IsDBNull(OPERATOR4_NAME_IN_DISPATCHLIST_DATABASE))
+                                dispatchList[index].operatorName4 = myReader.GetString(OPERATOR4_NAME_IN_DISPATCHLIST_DATABASE);
+
+                            if (!myReader.IsDBNull(NOTES_IN_DISPATCHLIST_DATABASE))
+                                dispatchList[index].notes = myReader.GetString(NOTES_IN_DISPATCHLIST_DATABASE);
+
+                            if (!myReader.IsDBNull(COMMENTS_IN_DISPATCHLIST_DATABASE))
+                                dispatchList[index].comments = myReader.GetString(COMMENTS_IN_DISPATCHLIST_DATABASE);
 
                             index++;
 
@@ -1533,7 +1573,7 @@ namespace MESSystem.common
                 MySqlCommand myCommand = myConnection.CreateCommand();
 
                 //when table name has special characters like '-', we may fail in table processing, like a table name of aa-bb, we need to set it to `aa-bb' to deal with a table
-                myCommand.CommandText = "select * from `" + tableName + "` where time > " + time1 +" and time < " + time2;
+                myCommand.CommandText = "select * from `" + tableName + "` where time > " + time1 + " and time < " + time2;
 
                 MySqlDataReader myReader = myCommand.ExecuteReader();
 
@@ -1545,11 +1585,11 @@ namespace MESSystem.common
                     for (j = 0; j < i; j++)
                         gVariable.currentStatusForOneDay[j] = 0;
 
-//                    gVariable.currentStatusForOneDay[i++] = (float)(Convert.ToDouble(myReader.GetString(DATA_VALUE1_IN_DATA_DATABASE)));
+                    //                    gVariable.currentStatusForOneDay[i++] = (float)(Convert.ToDouble(myReader.GetString(DATA_VALUE1_IN_DATA_DATABASE)));
                 }
 
-//                while (myReader.Read())
-//                    gVariable.currentStatusForOneDay[i++] = (float)(Convert.ToDouble(myReader.GetString(DATA_VALUE1_IN_DATA_DATABASE)));
+                //                while (myReader.Read())
+                //                    gVariable.currentStatusForOneDay[i++] = (float)(Convert.ToDouble(myReader.GetString(DATA_VALUE1_IN_DATA_DATABASE)));
 
                 myReader.Close();
                 myConnection.Close();
@@ -1629,6 +1669,61 @@ namespace MESSystem.common
             catch (Exception ex)
             {
                 Console.WriteLine("writeOneFloatToTable database " + databaseName + tableName + " failed!" + ex);
+                return -1;
+            }
+        }
+
+        public static int writeProductBeatTable(String databaseName, String tableName, gVariable.dispatchSheetStruct dispatchSheet, float weight, string strStatus)
+        {
+            try
+            {
+                int index;
+                int itemNum;
+                int timeStamp;
+                string insertString;
+                string[] itemName;
+
+                lock (writeOneFloatLocker)
+                {
+                    insertString = null;
+
+                    timeStamp = (int)(TimeZone.CurrentTimeZone.ToLocalTime(DateTime.Now) - gVariable.worldStartTime).TotalSeconds;
+
+                    itemNum = getDatabaseInsertStringFromExcel(ref insertString, gVariable.productBeatFileName);
+                    if (itemNum < 0)
+                    {
+                        Console.WriteLine("writeAlarmTable failed, since excel file has problem!");
+                        return -1; //failed to get insert string
+                    }
+                    index = 0;
+                    itemName = insertString.Remove(0, 11).Split(',', ')');
+
+                    MySqlConnection myConnection = new MySqlConnection("database = " + databaseName + "; " + connectionString);
+                    myConnection.Open();
+
+                    MySqlCommand myCommand = myConnection.CreateCommand();
+
+                    myCommand.CommandText = "insert into `" + tableName.ToLower() + "`" + insertString;
+
+                    myCommand.Parameters.AddWithValue("@id", 0);
+                    myCommand.Parameters.AddWithValue(itemName[index++], dispatchSheet.machineID);
+                    myCommand.Parameters.AddWithValue(itemName[index++], dispatchSheet.dispatchCode);
+                    myCommand.Parameters.AddWithValue(itemName[index++], dispatchSheet.batchNum);
+                    myCommand.Parameters.AddWithValue(itemName[index++], "0000");
+                    myCommand.Parameters.AddWithValue(itemName[index++], strStatus);
+                    myCommand.Parameters.AddWithValue(itemName[index++], timeStamp);
+                    myCommand.Parameters.AddWithValue(itemName[index++], weight);
+
+                    myCommand.ExecuteNonQuery();
+
+                    myConnection.Close();
+
+                    return 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("writeOneIntTable database " + databaseName + tableName + " failed!" + ex);
                 return -1;
             }
         }
@@ -1885,7 +1980,7 @@ namespace MESSystem.common
                 MySqlCommand myCommand = myConnection.CreateCommand();
 
                 //when table name has special characters like '-', we may fail in table processing, like a table name of aa-bb, we need to set it to `aa-bb' to deal with a table
-                myCommand.CommandText = "select * from `" + tableName + "` where time <= '" + time2 + "' and time2 >= '" + time1 +"'";
+                myCommand.CommandText = "select * from `" + tableName + "` where time <= '" + time2 + "' and time2 >= '" + time1 + "'";
 
                 MySqlDataReader myReader = myCommand.ExecuteReader();
 
@@ -1905,8 +2000,8 @@ namespace MESSystem.common
                     if (time3 == null || time3 == "")
                     {
                         timeInt = toolClass.ConvertDateTimeInt(DateTime.Now);
-                        if(timeInt > time2Int)
-                            timeArray[num * 3 + 2] = (time2Int - time1Int) / ( 60 / gVariable.onePointstandForHowManyMinutes);
+                        if (timeInt > time2Int)
+                            timeArray[num * 3 + 2] = (time2Int - time1Int) / (60 / gVariable.onePointstandForHowManyMinutes);
                         else
                             timeArray[num * 3 + 2] = (timeInt - time1Int) / (60 / gVariable.onePointstandForHowManyMinutes);
                     }
@@ -1938,7 +2033,7 @@ namespace MESSystem.common
         //startID: for SPC errors, we need to check for totalPointNumForNoSPCChart(125) number of data, where is the start ID for these data in craft/quality table  
         //indexInTable: this alarm comes from which item in craft/quality tablelist
         //return: alarm table, if this alarm id doesnot exist, table.dispatchCode will be null
-        public static gVariable.alarmTableStruct getAlarmTableContent(string databaseName, string tableName, int id) 
+        public static gVariable.alarmTableStruct getAlarmTableContent(string databaseName, string tableName, int id)
         {
             gVariable.alarmTableStruct alarmTableStructImpl;
 
@@ -2020,7 +2115,7 @@ namespace MESSystem.common
 
                 MySqlDataReader myReader = myCommand.ExecuteReader();
 
-                while(myReader.Read())
+                while (myReader.Read())
                 {
                     alarmIDArray[i] = myReader.GetInt16(ID_VALUE_IN_ALARM_DATABASE);
                     if (!myReader.IsDBNull(ALARM_FAIL_NO_IN_ALARM_DATABASE))
@@ -2209,8 +2304,9 @@ namespace MESSystem.common
         public static void updateDispatchTable(String databaseName, String tableName, int myBoardIndex, int status, string dispatchCodeV)
         {
             string dispatchCode;
-            int qualified;
-            int unqualified;
+            float received;
+            float qualified;
+            float unqualified;
             string reportor;
             string prepareTime;
             string start;
@@ -2223,6 +2319,7 @@ namespace MESSystem.common
                 if (myBoardIndex >= 0)
                 {
                     dispatchCode = gVariable.dispatchSheet[myBoardIndex].dispatchCode;
+                    received = gVariable.dispatchSheet[myBoardIndex].outputNumber;
                     qualified = gVariable.dispatchSheet[myBoardIndex].qualifiedNumber;
                     unqualified = gVariable.dispatchSheet[myBoardIndex].unqualifiedNumber;
                     reportor = gVariable.dispatchSheet[myBoardIndex].reportor;
@@ -2231,7 +2328,7 @@ namespace MESSystem.common
                     finish = gVariable.dispatchSheet[myBoardIndex].realFinishTime;
                     usedTime = gVariable.dispatchSheet[myBoardIndex].toolUsedTimes;
 
-                    updateString = "update `" + tableName + "` set qualifyNum = " + qualified + ", unqualifyNum = " + unqualified + ", toolUsedTimes = " + usedTime + ", reportor = '" + reportor +
+                    updateString = "update `" + tableName + "` set receiveNum = " + received + ", qualifyNum = " + qualified + ", unqualifyNum = " + unqualified + ", toolUsedTimes = " + usedTime + ", reportor = '" + reportor +
                         "', startTime = '" + start + "', completeTime = '" + finish + "', status = '" + status + "', prepareTimePoint = '" + prepareTime + "' where dispatchcode = '" + dispatchCode + "'";
                 }
                 else  //myBoardIndex < 0 means this is a global dispatch, dispatchCode is critical 
@@ -2277,7 +2374,7 @@ namespace MESSystem.common
                 }
                 index = 0;
                 itemName = insertString.Remove(0, 11).Split(',', ')');
-                
+
                 MySqlConnection myConnection = new MySqlConnection("database = globaldatabase; " + connectionString);
                 myConnection.Open();
 
@@ -2304,6 +2401,8 @@ namespace MESSystem.common
                 myCommand.Parameters.AddWithValue(itemName[index++], salesOrderImpl.realStartTime);
                 myCommand.Parameters.AddWithValue(itemName[index++], salesOrderImpl.realFinishTime);
                 myCommand.Parameters.AddWithValue(itemName[index++], salesOrderImpl.status);
+                myCommand.Parameters.AddWithValue(itemName[index++], salesOrderImpl.cutTime);
+                myCommand.Parameters.AddWithValue(itemName[index++], salesOrderImpl.cutResult);
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
@@ -2347,7 +2446,76 @@ namespace MESSystem.common
             return null;
         }
 
-        public static string [,] databaseCommonReading(string databaseName, string commandText)
+        //return 1 means dispatch already exist
+        //       0 means dispatch not exist, now has been written to table successfully
+        //      -1 exception occurred
+        public static int writeDataToProductBatchTable(string tableName, string batchOrderFileName, gVariable.productBatchStruct batchOrderImpl)
+        {
+            int index;
+            int itemNum;
+            string str;
+            string insertString;
+            string[] itemName;
+
+            insertString = null;
+            try
+            {
+                itemNum = getDatabaseInsertStringFromExcel(ref insertString, batchOrderFileName);
+                if (itemNum < 0)
+                {
+                    Console.WriteLine("writeDataTobatchOrderTable failed, since excel file has problem!");
+                    return -1; //failed to get insert string
+                }
+                index = 0;
+                itemName = insertString.Remove(0, 11).Split(',', ')');
+
+                MySqlConnection myConnection = new MySqlConnection("database = globaldatabase; " + connectionString);
+                myConnection.Open();
+
+                MySqlCommand myCommand = myConnection.CreateCommand();
+
+                //when table name has special characters like '-', we may fail in table processing, like a table name of aa-bb, we need to set it to `aa-bb' to deal with a table
+                str = "insert into " + gVariable.productBatchTableName + insertString;
+                myCommand.CommandText = str;
+
+                myCommand.Parameters.AddWithValue("@id", 0);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.salesOrderBatchCode);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.originalSalesOrderCode);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.deliveryTime);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.productCode);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.productName);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.requiredNum);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.unit);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.customer);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.publisher);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.source);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.ERPTime);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.APSTime);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.planTime1);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.planTime2);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.realStartTime);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.realFinishTime);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.status);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.cutTime);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.batchNum);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.canceller);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.cancelReason);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.cancelTime);
+                myCommand.Parameters.AddWithValue(itemName[index++], batchOrderImpl.approver);
+
+                myCommand.ExecuteNonQuery();
+                myConnection.Close();
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("database globaldatabaseName add batchOrder to table batchOrderList write fail!" + ex);
+            }
+            return -1;
+        }
+
+        public static string[,] databaseCommonReading(string databaseName, string commandText)
         {
             int i, j;
             string[,] tableArray;
@@ -2381,33 +2549,73 @@ namespace MESSystem.common
 
         public static int readProductInfo(ref gVariable.productStruct productImpl, string commandText)
         {
+            int i;
             DataTable dTable;
 
             try
             {
+                i = 1;
                 dTable = queryDataTableAction(gVariable.basicInfoDatabaseName, commandText, null);
                 if (dTable != null && dTable.Rows.Count != 0)
                 {
-                    productImpl.customer = dTable.Rows[0].ItemArray[PRODUCT_ITEM_CUSTOMER].ToString();
-                    productImpl.productCode = dTable.Rows[0].ItemArray[PRODUCT_ITEM_PRODUCT_CODE].ToString();
-                    productImpl.productName = dTable.Rows[0].ItemArray[PRODUCT_ITEM_PRODUCT_NAME].ToString();
-                    productImpl.BOMCode = dTable.Rows[0].ItemArray[PRODUCT_ITEM_BOM].ToString();
-                    productImpl.routeCode = dTable.Rows[0].ItemArray[PRODUCT_ITEM_ROUTE_CODE].ToString();
-                    productImpl.productWeight = dTable.Rows[0].ItemArray[PRODUCT_ITEM_PRODUCT_WEIGHT].ToString();
-                    productImpl.productThickness = dTable.Rows[0].ItemArray[PRODUCT_ITEM_PRODUCT_THICKNESS].ToString();
-                    productImpl.baseColor = dTable.Rows[0].ItemArray[PRODUCT_ITEM_BASE_COLOR].ToString();
-                    productImpl.patternType = dTable.Rows[0].ItemArray[PRODUCT_ITEM_PATTERN_TYPE].ToString();
-                    productImpl.steelRollType = dTable.Rows[0].ItemArray[PRODUCT_ITEM_STEEL_ROLL].ToString();
-                    productImpl.rubberRollType = dTable.Rows[0].ItemArray[PRODUCT_ITEM_RUBBER_ROLL].ToString();
-                    productImpl.castSpec = dTable.Rows[0].ItemArray[PRODUCT_ITEM_CAST_SPEC].ToString();
-                    productImpl.printSpec = dTable.Rows[0].ItemArray[PRODUCT_ITEM_PRINT_SPEC].ToString();
-                    productImpl.slitSpec = dTable.Rows[0].ItemArray[PRODUCT_ITEM_SLIT_SPEC].ToString();
-                    productImpl.castCraft = dTable.Rows[0].ItemArray[PRODUCT_ITEM_CAST_CRAFT].ToString();
-                    productImpl.printCraft = dTable.Rows[0].ItemArray[PRODUCT_ITEM_PRINT_CRAFT].ToString();
-                    productImpl.slitCraft = dTable.Rows[0].ItemArray[PRODUCT_ITEM_SLIT_CRAFT].ToString();
-                    productImpl.castQuality = dTable.Rows[0].ItemArray[PRODUCT_ITEM_CAST_QUALITY].ToString();
-                    productImpl.printQuality = dTable.Rows[0].ItemArray[PRODUCT_ITEM_PRINT_QUALITY].ToString();
-                    productImpl.slitQuality = dTable.Rows[0].ItemArray[PRODUCT_ITEM_SLIT_QUALITY].ToString();
+                    productImpl.customer = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.productCode = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.productName = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.BOMCode = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.routeCode = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.productWeight = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.productDiameter = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.productWidth = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.productfixtureNum = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.productLength = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.baseColor = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.patternType = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.RawMaterialCode = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.inkRatio = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.numOfMaterialType = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.materialcode1 = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.materialcode2 = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.materialcode3 = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.materialcode4 = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.materialcode5 = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.materialcode6 = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.materialcode7 = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.rollNumLayer = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.layerNum = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.rollNumStack = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.totalWeightStack = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.stackType = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.stackLength = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.stackwidth = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.recycle = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.stackLossRate = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.stackNumOneTon = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.paperCoreDiameter = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.paperCoreThickness = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.paperCoreLength = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.paperCoreOneStack = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.paperCorreLossRate = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.paperCoreOneTon = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.paperBoardOneStack = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.paperBoardLossRate = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.paperBoardOneton = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.craftPaperOneStack = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.craftPaperLossRate = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.craftPaperOneTon = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.corrugatedPaperOneStack = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.corrugatedPaperLossRate = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.corrugatedPaperPerTon = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.wrappingFilmOneStack = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.wrappingFilmOneTon = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.others = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.packingFilmOneStack = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.packingFilmOneTon = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.craftSheetCode1 = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.craftSheetCode2 = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.craftSheetCode3 = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.criteria = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.multiIngredient = dTable.Rows[0].ItemArray[i++].ToString();
+                    productImpl.slitOnline = dTable.Rows[0].ItemArray[i++].ToString();
                 }
             }
             catch (Exception ex)
@@ -2419,7 +2627,7 @@ namespace MESSystem.common
             return 0;
         }
 
-        
+
         public static int readBOMInfo(ref gVariable.BOMListStruct BOMListImpl, string commandText)
         {
             int i;
@@ -2484,7 +2692,7 @@ namespace MESSystem.common
             return 0;
         }
 
-                                                                                                       
+
         public static int readCastQualityInfo(ref gVariable.castQualityStruct castQualityImpl, string commandText)
         {
             DataTable dTable;
@@ -2494,7 +2702,7 @@ namespace MESSystem.common
                 dTable = queryDataTableAction(gVariable.basicInfoDatabaseName, commandText, null);
                 if (dTable != null && dTable.Rows.Count != 0)
                 {
-                    castQualityImpl.castQualityCode = dTable.Rows[0].ItemArray[CAST_QUALITY_CODE].ToString();                   
+                    castQualityImpl.castQualityCode = dTable.Rows[0].ItemArray[CAST_QUALITY_CODE].ToString();
                     castQualityImpl.castQualityReelWeight = dTable.Rows[0].ItemArray[CAST_QUALITY_REEL_WEIGHT].ToString();
                     castQualityImpl.castQualityReelThickness = dTable.Rows[0].ItemArray[CAST_QUALITY_REEL_THINKNESS].ToString();
                     castQualityImpl.castQualityReelCorona = dTable.Rows[0].ItemArray[CAST_QUALITY_REEL_CORONA].ToString();
@@ -2511,8 +2719,8 @@ namespace MESSystem.common
 
             return 0;
         }
-                                                                                                            
-                                                                                                             
+
+
         public static int readPrintCraftInfo(ref gVariable.printCraftStruct printCraftImpl, string commandText)
         {
             DataTable dTable;
@@ -2572,7 +2780,7 @@ namespace MESSystem.common
 
             return 0;
         }
-                                                                                                               
+
         public static int readSlitCraftInfo(ref gVariable.slitCraftStruct slitCraftImpl, string commandText)
         {
             DataTable dTable;
@@ -2601,7 +2809,7 @@ namespace MESSystem.common
 
             return 0;
         }
-                                                                                                               
+
         public static int readSlitQualityInfo(ref gVariable.slitQualityStruct slitQualityImpl, string commandText)
         {
             DataTable dTable;
@@ -2631,7 +2839,7 @@ namespace MESSystem.common
 
             return 0;
         }
-                                                                                                       
+
         public static int readSalesOrderInfo(ref gVariable.salesOrderStruct salesOrderImpl, string commandText)
         {
             DataTable dTable;
@@ -2658,6 +2866,52 @@ namespace MESSystem.common
                     salesOrderImpl.realFinishTime = dTable.Rows[0].ItemArray[REAL_COMPLETE_TIME_IN_SALESORDER_DATABASE].ToString();
                     salesOrderImpl.source = dTable.Rows[0].ItemArray[SOURCE_IN_SALESORDER_DATABASE].ToString();
                     salesOrderImpl.status = dTable.Rows[0].ItemArray[STATUS_IN_SALESORDER_DATABASE].ToString();
+                    salesOrderImpl.cutTime = dTable.Rows[0].ItemArray[CUT_TIME_IN_SALESORDER_DATABASE].ToString();
+                    salesOrderImpl.cutResult = dTable.Rows[0].ItemArray[RESULT_IN_SALESORDER_DATABASE].ToString();
+
+                    return 0;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("readDataFromSalesOrderTable failed!" + ex);
+            }
+            return -1;
+        }
+
+        public static int readProductBatchInfo(ref gVariable.productBatchStruct productBatchImpl, string commandText)
+        {
+            DataTable dTable;
+
+            try
+            {
+                dTable = queryDataTableAction(gVariable.globalDatabaseName, commandText, null);
+                if (dTable != null && dTable.Rows.Count != 0)
+                {
+                    productBatchImpl.ID = dTable.Rows[0].ItemArray[ID_VALUE_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.salesOrderBatchCode = dTable.Rows[0].ItemArray[BATCH_CODE_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.originalSalesOrderCode = dTable.Rows[0].ItemArray[ORDER_CODE_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.deliveryTime = dTable.Rows[0].ItemArray[DELIVERY_TIME_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.productCode = dTable.Rows[0].ItemArray[PRODUCT_CODE_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.productName = dTable.Rows[0].ItemArray[PRODUCT_NAME_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.requiredNum = dTable.Rows[0].ItemArray[REQUIRED_NUM_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.unit = dTable.Rows[0].ItemArray[UNIT_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.customer = dTable.Rows[0].ItemArray[CUSTOMER_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.publisher = dTable.Rows[0].ItemArray[PUBLISHER_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.ERPTime = dTable.Rows[0].ItemArray[ERP_TIME_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.APSTime = dTable.Rows[0].ItemArray[APS_TIME_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.planTime1 = dTable.Rows[0].ItemArray[PLANNED_START_TIME_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.planTime2 = dTable.Rows[0].ItemArray[PLANNED_COMPLETE_TIME_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.realStartTime = dTable.Rows[0].ItemArray[REAL_START_TIME_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.realFinishTime = dTable.Rows[0].ItemArray[REAL_COMPLETE_TIME_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.source = dTable.Rows[0].ItemArray[SOURCE_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.status = dTable.Rows[0].ItemArray[STATUS_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.cutTime = dTable.Rows[0].ItemArray[CUT_TIME_IN_BATCHNUM_DATABASE].ToString();
+                    productBatchImpl.batchNum = dTable.Rows[0].ItemArray[BATCH_NUM_IN_BATCHNUM_DATABASE].ToString();
 
                     return 0;
                 }
@@ -2677,9 +2931,9 @@ namespace MESSystem.common
         {
             const int MAX_MACHINE_NUM = 400;  //we only display 400 machines at most
             int i;
-//            int num;
+            //            int num;
             DataTable dTable;
-            gVariable.machineListStruct [] machineList;
+            gVariable.machineListStruct[] machineList;
 
             try
             {
@@ -2837,7 +3091,11 @@ namespace MESSystem.common
                 myCommand.Parameters.AddWithValue(itemName[index++], dispatchImpl.productDiameter);
                 myCommand.Parameters.AddWithValue(itemName[index++], dispatchImpl.productWeight);
                 myCommand.Parameters.AddWithValue(itemName[index++], dispatchImpl.slitWidth);
-                myCommand.Parameters.AddWithValue(itemName[index++], dispatchImpl.printSide);
+                myCommand.Parameters.AddWithValue(itemName[index++], dispatchImpl.salesOrderBatchCode);
+                myCommand.Parameters.AddWithValue(itemName[index++], dispatchImpl.productCode4);
+                myCommand.Parameters.AddWithValue(itemName[index++], dispatchImpl.operatorName4);
+                myCommand.Parameters.AddWithValue(itemName[index++], dispatchImpl.notes);
+                myCommand.Parameters.AddWithValue(itemName[index++], dispatchImpl.comments);
 
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
@@ -2892,7 +3150,7 @@ namespace MESSystem.common
                 myCommand.CommandText = "insert into `" + tableName + "`" + insertStringForWorkingPlan;
 
                 myCommand.Parameters.AddWithValue("@id", 0);
-                if (attribute == "Repaired") 
+                if (attribute == "Repaired")
                     myCommand.Parameters.AddWithValue(itemName[index++], "0");
                 else if (attribute == "Scheduled")
                     myCommand.Parameters.AddWithValue(itemName[index++], "1");
@@ -2906,6 +3164,7 @@ namespace MESSystem.common
                 myCommand.Parameters.AddWithValue(itemName[index++], (duration / 3600).ToString());
                 myCommand.Parameters.AddWithValue(itemName[index++], end);
                 myCommand.Parameters.AddWithValue(itemName[index++], timeStamp2);
+                myCommand.Parameters.AddWithValue(itemName[index++], "");
                 myCommand.Parameters.AddWithValue(itemName[index++], "");
                 myCommand.Parameters.AddWithValue(itemName[index++], "");
                 myCommand.Parameters.AddWithValue(itemName[index++], "");
@@ -2939,8 +3198,8 @@ namespace MESSystem.common
                 //itemNum = getDatabaseInsertStringFromExcel(ref insertString, gVariable.machineWorkingPlanFileName);
                 //if (itemNum < 0)
                 {
-                //    Console.WriteLine("database " + databaseName + "table " + tableName + " write failed, excel read error!");
-                //    return -1;
+                    //    Console.WriteLine("database " + databaseName + "table " + tableName + " write failed, excel read error!");
+                    //    return -1;
                 }
 
                 index = 0;
@@ -2967,6 +3226,7 @@ namespace MESSystem.common
                 myCommand.Parameters.AddWithValue(itemName[index++], dispatchImpl.plannedNumber);
                 myCommand.Parameters.AddWithValue(itemName[index++], dispatchImpl.customer);
                 myCommand.Parameters.AddWithValue(itemName[index++], dispatchImpl.workshift);
+                myCommand.Parameters.AddWithValue(itemName[index++], dispatchImpl.salesOrderBatchCode);
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
 
@@ -3046,8 +3306,8 @@ namespace MESSystem.common
                 //itemNum = getDatabaseInsertStringFromExcel(ref insertString, gVariable.materialListFileName);
                 //if(itemNum < 0)
                 {
-                 //   Console.WriteLine("database " + databaseName + "table " + tableName + " write failed, excel read error!");
-                 //   return;
+                    //   Console.WriteLine("database " + databaseName + "table " + tableName + " write failed, excel read error!");
+                    //   return;
                 }
 
                 MySqlConnection myConnection = new MySqlConnection("database = " + databaseName + "; " + connectionString);
@@ -3082,6 +3342,7 @@ namespace MESSystem.common
                     //myCommand.Parameters.AddWithValue(itemName[index++], materialListImpl.currentUsed);
                     //myCommand.Parameters.AddWithValue(itemName[index++], materialListImpl.fullPackNum[i]);
                 }
+                myCommand.Parameters.AddWithValue(itemName[index++], materialListImpl.salesOrderBatchCode);
                 myCommand.ExecuteNonQuery();
                 myConnection.Close();
             }
@@ -3138,7 +3399,7 @@ namespace MESSystem.common
                     index = 0;
                 }
                 myConnection.Close();
-               
+
             }
             catch (Exception ex)
             {
@@ -3209,107 +3470,107 @@ namespace MESSystem.common
             }
         }
 
-/*
-        public static void writeDataToSettingADC(String databaseName, String tableName, string dispatchCode, string channelEnabled, string channelTitle, string channelUnit, float lowerRange, float upperRange, float lowerLimit, float upperLimit, int workingVoltage)
-        {
-            String str;
+        /*
+                public static void writeDataToSettingADC(String databaseName, String tableName, string dispatchCode, string channelEnabled, string channelTitle, string channelUnit, float lowerRange, float upperRange, float lowerLimit, float upperLimit, int workingVoltage)
+                {
+                    String str;
 
-            try
-            {
-                MySqlConnection myConnection = new MySqlConnection("database = " + databaseName + "; " + connectionString);
-                myConnection.Open();
+                    try
+                    {
+                        MySqlConnection myConnection = new MySqlConnection("database = " + databaseName + "; " + connectionString);
+                        myConnection.Open();
 
-                MySqlCommand myCommand = myConnection.CreateCommand();
+                        MySqlCommand myCommand = myConnection.CreateCommand();
 
-                //when table name has special characters like '-', we may fail in table processing, like a table name of aa-bb, we need to set it to `aa-bb' to deal with a table
-                str = "insert into `" + tableName + "`" + strDataSetting12;
-                myCommand.CommandText = str;
+                        //when table name has special characters like '-', we may fail in table processing, like a table name of aa-bb, we need to set it to `aa-bb' to deal with a table
+                        str = "insert into `" + tableName + "`" + strDataSetting12;
+                        myCommand.CommandText = str;
 
-                myCommand.Parameters.AddWithValue("@id", 0);
-                myCommand.Parameters.AddWithValue("@dispatchCode", dispatchCode);
-                myCommand.Parameters.AddWithValue("@channelEnabled", channelEnabled);
-                myCommand.Parameters.AddWithValue("@channelTitle", channelTitle);
-                myCommand.Parameters.AddWithValue("@channelUnit", channelUnit);
-                myCommand.Parameters.AddWithValue("@lowerRange", lowerRange);
-                myCommand.Parameters.AddWithValue("@upperRange", upperRange);
-                myCommand.Parameters.AddWithValue("@lowerLimit", lowerLimit);
-                myCommand.Parameters.AddWithValue("@upperLimit", upperLimit);
-                myCommand.Parameters.AddWithValue("@workingVoltage", workingVoltage);
+                        myCommand.Parameters.AddWithValue("@id", 0);
+                        myCommand.Parameters.AddWithValue("@dispatchCode", dispatchCode);
+                        myCommand.Parameters.AddWithValue("@channelEnabled", channelEnabled);
+                        myCommand.Parameters.AddWithValue("@channelTitle", channelTitle);
+                        myCommand.Parameters.AddWithValue("@channelUnit", channelUnit);
+                        myCommand.Parameters.AddWithValue("@lowerRange", lowerRange);
+                        myCommand.Parameters.AddWithValue("@upperRange", upperRange);
+                        myCommand.Parameters.AddWithValue("@lowerLimit", lowerLimit);
+                        myCommand.Parameters.AddWithValue("@upperLimit", upperLimit);
+                        myCommand.Parameters.AddWithValue("@workingVoltage", workingVoltage);
 
-                myCommand.ExecuteNonQuery();
-                myConnection.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("database " + databaseName + "table " + tableName + " write fail!" + ex);
-            }
-        }
+                        myCommand.ExecuteNonQuery();
+                        myConnection.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("database " + databaseName + "table " + tableName + " write fail!" + ex);
+                    }
+                }
 
-        public static void writeDataToSettingUART(String databaseName, String tableName, string dispatchCode, int uartDeviceType, int uartBaudrate)
-        {
-            String str;
+                public static void writeDataToSettingUART(String databaseName, String tableName, string dispatchCode, int uartDeviceType, int uartBaudrate)
+                {
+                    String str;
 
-            try
-            {
-                MySqlConnection myConnection = new MySqlConnection("database = " + databaseName + "; " + connectionString);
-                myConnection.Open();
+                    try
+                    {
+                        MySqlConnection myConnection = new MySqlConnection("database = " + databaseName + "; " + connectionString);
+                        myConnection.Open();
 
-                MySqlCommand myCommand = myConnection.CreateCommand();
+                        MySqlCommand myCommand = myConnection.CreateCommand();
 
-                //when table name has special characters like '-', we may fail in table processing, like a table name of aa-bb, we need to set it to `aa-bb' to deal with a table
-                str = "insert into `" + tableName + "`" + strDataSetting22;
-                myCommand.CommandText = str;
+                        //when table name has special characters like '-', we may fail in table processing, like a table name of aa-bb, we need to set it to `aa-bb' to deal with a table
+                        str = "insert into `" + tableName + "`" + strDataSetting22;
+                        myCommand.CommandText = str;
 
-                myCommand.Parameters.AddWithValue("@id", 0);
-                myCommand.Parameters.AddWithValue("@dispatchCode", dispatchCode);
-                myCommand.Parameters.AddWithValue("@uartDeviceType", uartDeviceType);
-                myCommand.Parameters.AddWithValue("@uartBaudrate", uartBaudrate);
+                        myCommand.Parameters.AddWithValue("@id", 0);
+                        myCommand.Parameters.AddWithValue("@dispatchCode", dispatchCode);
+                        myCommand.Parameters.AddWithValue("@uartDeviceType", uartDeviceType);
+                        myCommand.Parameters.AddWithValue("@uartBaudrate", uartBaudrate);
 
-                myCommand.ExecuteNonQuery();
-                myConnection.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("database " + databaseName + "table " + tableName + " write fail!" + ex);
-            }
-        }
+                        myCommand.ExecuteNonQuery();
+                        myConnection.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("database " + databaseName + "table " + tableName + " write fail!" + ex);
+                    }
+                }
 
-        public static void writeDataToSettingBEAT(String databaseName, String tableName, string dispatchCode, float idleCurrentHigh, float idleCurrentLow, float workCurrentHigh, float workCurrentLow, float errorCurrentHigh, float errorCurrentLow)
-        {
-            String str;
+                public static void writeDataToSettingBEAT(String databaseName, String tableName, string dispatchCode, float idleCurrentHigh, float idleCurrentLow, float workCurrentHigh, float workCurrentLow, float errorCurrentHigh, float errorCurrentLow)
+                {
+                    String str;
 
-            try
-            {
-                MySqlConnection myConnection = new MySqlConnection("database = " + databaseName + "; " + connectionString);
-                myConnection.Open();
+                    try
+                    {
+                        MySqlConnection myConnection = new MySqlConnection("database = " + databaseName + "; " + connectionString);
+                        myConnection.Open();
 
-                MySqlCommand myCommand = myConnection.CreateCommand();
+                        MySqlCommand myCommand = myConnection.CreateCommand();
 
-                //when table name has special characters like '-', we may fail in table processing, like a table name of aa-bb, we need to set it to `aa-bb' to deal with a table
-                str = "insert into `" + tableName + "`" + strDataSetting42;
-                myCommand.CommandText = str;
+                        //when table name has special characters like '-', we may fail in table processing, like a table name of aa-bb, we need to set it to `aa-bb' to deal with a table
+                        str = "insert into `" + tableName + "`" + strDataSetting42;
+                        myCommand.CommandText = str;
 
-                myCommand.Parameters.AddWithValue("@id", 0);
-                myCommand.Parameters.AddWithValue("@dispatchCode", dispatchCode);
-                myCommand.Parameters.AddWithValue("@idleCurrentHigh", idleCurrentHigh);
-                myCommand.Parameters.AddWithValue("@idleCurrentLow", idleCurrentLow);
-                myCommand.Parameters.AddWithValue("@workCurrentHigh", workCurrentHigh);
-                myCommand.Parameters.AddWithValue("@workCurrentLow", workCurrentHigh);
-                myCommand.Parameters.AddWithValue("@errorCurrentHigh", errorCurrentHigh);
-                myCommand.Parameters.AddWithValue("@errorCurrentLow", errorCurrentLow);
+                        myCommand.Parameters.AddWithValue("@id", 0);
+                        myCommand.Parameters.AddWithValue("@dispatchCode", dispatchCode);
+                        myCommand.Parameters.AddWithValue("@idleCurrentHigh", idleCurrentHigh);
+                        myCommand.Parameters.AddWithValue("@idleCurrentLow", idleCurrentLow);
+                        myCommand.Parameters.AddWithValue("@workCurrentHigh", workCurrentHigh);
+                        myCommand.Parameters.AddWithValue("@workCurrentLow", workCurrentHigh);
+                        myCommand.Parameters.AddWithValue("@errorCurrentHigh", errorCurrentHigh);
+                        myCommand.Parameters.AddWithValue("@errorCurrentLow", errorCurrentLow);
 
-                myCommand.ExecuteNonQuery();
-                myConnection.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("database " + databaseName + "table " + tableName + " write fail!" + ex);
-            }
-        }
-       */
+                        myCommand.ExecuteNonQuery();
+                        myConnection.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("database " + databaseName + "table " + tableName + " write fail!" + ex);
+                    }
+                }
+               */
 
         //read data from one table to global parameters gVariable.timeInPoint and gVariable.dataInPoint
-        public static int readOneTableForMoreData(string databaseName, string tableName, int numOfPointsNeeded)
+        public static int readProductBeatTable(string databaseName, string tableName, string dispatchCode, int numOfPointsNeeded)
         {
             string str;
             object o;
@@ -3332,7 +3593,7 @@ namespace MESSystem.common
 
                     MySqlCommand myCommand = myConnection.CreateCommand();
 
-                    str = "select count(*) from `" + tableName + "`";
+                    str = "select count(*) from `" + tableName + "` where dispatchCode = '" + dispatchCode + "'";
                     myCommand.CommandText = str;
 
                     o = myCommand.ExecuteScalar();
@@ -3353,15 +3614,15 @@ namespace MESSystem.common
                         startRecordIndex = 0;
                     }
 
-                    str = "select * from `" + tableName + "` where id >= " + startRecordIndex;
+                    str = "select time, errorStatus from `" + tableName + "` where id >= " + startRecordIndex + " and dispatchCode = '" + dispatchCode + "'";
                     myCommand.CommandText = str;
 
                     myReader = myCommand.ExecuteReader();
                     //index means the first curve index for this kind of data
                     while (myReader.Read())
                     {
-                        gVariable.timeInPoint[0, i] = myReader.GetInt32(TIME_VALUE_IN_DATABASE);
-                        gVariable.dataInPoint[0, i] = myReader.GetFloat(DATA_VALUE_IN_DATABASE);
+                        gVariable.timeInPoint[0, i] = Convert.ToInt32(myReader.GetString(0));
+                        gVariable.dataInPoint[0, i] = Convert.ToInt32(myReader.GetString(1));
 
                         i++;
 
@@ -3376,7 +3637,7 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                gVariable.infoWriter.WriteLine(databaseName + ":" + tableName + "readOneTableForMoreData fail!" + ex);
+                gVariable.infoWriter.WriteLine(databaseName + ":" + tableName + "readProductBeatTable fail!" + ex);
             }
 
             return i;
@@ -3582,7 +3843,7 @@ namespace MESSystem.common
                             if (gVariable.lowerLimitValueForPie[index] > dataInPoint[index, i])
                                 gVariable.lowerLimitValueForPie[index] = dataInPoint[index, i];
 
-                            if(statusInPoint != null)  //for quality data, we need to get its data stauts
+                            if (statusInPoint != null)  //for quality data, we need to get its data stauts
                                 statusInPoint[index, i] = (int)myReader.GetFloat(DATA_STATUS_IN_DATABASE + k);
 
                             //curve index increase by one
@@ -3670,7 +3931,7 @@ namespace MESSystem.common
 
             try
             {
-                timeStampToday = (int)(TimeZone.CurrentTimeZone.ToLocalTime(DateTime.Now) - gVariable.worldStartTime).TotalSeconds;;
+                timeStampToday = (int)(TimeZone.CurrentTimeZone.ToLocalTime(DateTime.Now) - gVariable.worldStartTime).TotalSeconds; ;
 
                 MySqlConnection myConnection = new MySqlConnection("database = " + databaseName + "; " + connectionString);
                 myConnection.Open();
@@ -3918,8 +4179,8 @@ namespace MESSystem.common
 
         public static void deleteDatabase(String databaseName)
         {
-//            just for testing this function
-//            readDatabaseToExcel(); 
+            //            just for testing this function
+            //            readDatabaseToExcel(); 
             try
             {
                 String createString = "drop database if exists " + databaseName;
@@ -3945,7 +4206,7 @@ namespace MESSystem.common
             try
             {
                 //delete and truncate are similar, but after delete function, new ID will still follow the original ID, while after truncate, ID will start from 1  
-//                str = "delete from `" + tableName + "`";
+                //                str = "delete from `" + tableName + "`";
                 str = "truncate table `" + tableName + "`";
                 myConnection = new MySqlConnection("database = " + databaseName + "; " + connectionString);
                 cmd = new MySqlCommand(str, myConnection);
@@ -3982,7 +4243,7 @@ namespace MESSystem.common
         //firstLineChinese: 0 get the second line of an excel file, normally English column name 
         //                  1 get the first line of an excel file, normally Chinese characters in our project  
         //return: number of items in this table
-        public static int getListTitleFromExcel(string fileName, ref string [] titleArray, int firstLineOrSecond)
+        public static int getListTitleFromExcel(string fileName, ref string[] titleArray, int firstLineOrSecond)
         {
             int i;
             DataTable excelTable;
@@ -4277,7 +4538,7 @@ namespace MESSystem.common
                             str = dr[i - firstByte].ToString();
                             value = 0;
                             flag = toolClass.isDigitalNum(str);
-                            if(flag == 1)
+                            if (flag == 1)
                             {
                                 value = Convert.ToInt32(dr[i - firstByte].ToString().Trim());
                             }
@@ -4604,7 +4865,7 @@ namespace MESSystem.common
         //return: column contents
         public static string getOneRecordFromDatabaseByIndex(String databaseName, string tableName, string columnName, int index)
         {
-//            int ret;
+            //            int ret;
             int i;
             string str;
             string returnStr;
@@ -4670,10 +4931,10 @@ namespace MESSystem.common
                 recordNum = Convert.ToInt32(myCommand.ExecuteScalar());
 
                 if (recordNum == 0)
-				{
-	                myConnection.Close();
+                {
+                    myConnection.Close();
                     return -1;
-				}
+                }
 
                 str = "select * from " + tableName + " where id > " + index + " and " + columnName + " = " + "\'" + columnContent + "\'";
                 myCommand.CommandText = str;

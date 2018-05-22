@@ -117,45 +117,10 @@ namespace MESSystem.communication
                     boardIDNotSetFlag = 0;
                     qualityDataSN = 0;
 
-                    //previousCommunicationType = -1;
-
                     while (gVariable.willClose == 0)
                     {
                         try
                         {
-                            //if there are setting from PC, and it is for this board, we need to deal with this info 
-                            //whereComesTheSettingData < 0 means setting data is in default mode(from touchpad), just move on
-                            //whereComesTheSettingData == myBoardIndex means setting data are for this board
-                            //this function only works when no dispatch is undergoing
-                            if (gVariable.whereComesTheSettingData >= 0 && gVariable.whereComesTheSettingData == myBoardIndex && gVariable.machineCurrentStatus[myBoardIndex] <= gVariable.MACHINE_STATUS_DISPATCH_COMPLETED && myBoardIndex != -1)
-                            {
-                                if (gVariable.whatSettingDataModified > gVariable.NO_SETTING_DATA_TO_BOARD && gVariable.whatSettingDataModified <= gVariable.BEAT_SETTING_DATA_TO_BOARD)
-                                {
-                                    writeSettingsToBoard(gVariable.whatSettingDataModified);
-
-                                    //if ADC setting data changed, we need to redo curve data initialization
-                                    if (gVariable.whatSettingDataModified == gVariable.ADC_SETTING_DATA_TO_BOARD)
-                                    {
-                                        gVariable.whatSettingDataModified = gVariable.NO_SETTING_DATA_TO_BOARD;
-
-                                        //new setting s are already sent to board, now we need PC to implement these settings
-                                        toolClass.getDummyData(myBoardIndex);
-                                        getSettingCurveData();
-
-                                        mySQLClass.removeDummyDatabaseTable(databaseNameThis);
-
-                                        //we got related data, put it in database in the following functiuon, including all data type and dispatch if they does not exist before
-                                        readBoardInfoFromMachineDataStruct(1);
-
-                                        //this flag will be used by multiCurve
-                                        gVariable.refreshMultiCurve = 1; //if multiCurve is now on the top screen, refresh it with to default data communication
-                                    }
-                                    gVariable.whatSettingDataModified = gVariable.NO_SETTING_DATA_TO_BOARD;
-                                }
-
-                                gVariable.whereComesTheSettingData = gVariable.SETTING_DATA_FROM_TOUCHPAD;
-                            }
-
                             if (checkLeftCount < MAX_RECEIVE_DATA_LEN - 2 * MAX_PACKET_LEN)
                                 recCount = clientSocketInServer.Receive(receiveBytes, receiveBytes.Length - 100, 0);
                             else
@@ -180,12 +145,12 @@ namespace MESSystem.communication
                             break;
                         }
 
-                        //gVariable.dataLogWriter[fileIndex].WriteLine("get " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff"));
                         if (retry > 0)    //checkpoint should set here, we got data from the board! Flag2!
                             retry--;
 
-                        //                       str = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff");
-                        //                       Console.WriteLine(str + ": new data received");
+                        //str = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff");
+                        //Console.WriteLine(str + ": new data received");
+
                         if (recCount != 0)
                         {
                             if (checkLeftCount + recCount >= MAX_RECEIVE_DATA_LEN)
@@ -264,8 +229,7 @@ namespace MESSystem.communication
                                         communicationType = onePacket[PROTOCOL_COMMUNICATION_TYPE_POS];
 
                                         //If handshake is not completed, and this is not a data packet that is for handshake, we ask data collect board to do handshake
-                                        if (handshakeWithClientOK == 0 && communicationType != COMMUNICATION_TYPE_START_HANDSHAKE_WITH_ID_TO_PC && communicationType != COMMUNICATION_TYPE_SEND_DUMMY_MACHINE_CODE_TO_PC
-                                            && communicationType != COMMUNICATION_TYPE_EMAIL_HEART_BEAT && communicationType != COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID)
+                                        if (false) //handshakeWithClientOK == 0 && communicationType != COMMUNICATION_TYPE_START_HANDSHAKE_WITH_ID_TO_PC) // && communicationType != COMMUNICATION_TYPE_EMAIL_HEART_BEAT)
                                         {
                                             notReadyForCommunication();
                                             len = checkBytes[PROTOCOL_LEN_POS] + checkBytes[PROTOCOL_LEN_POS + 1] * 0x100;
@@ -283,33 +247,35 @@ namespace MESSystem.communication
                                         {
                                             try
                                             {
-                                                //if (communicationType >= COMMUNICATION_TYPE_EMAIL_HEART_BEAT)
+                                                if (communicationType >= COMMUNICATION_TYPE_EMAIL_HEART_BEAT)
                                                 {
                                                     //communication with email forwarder
                                                     processClientInstruction(communicationType, packetLen);
                                                 }
-                                                //else if (communicationType >= COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID)
+                                                else if (communicationType >= COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID || communicationType == COMMUNICATION_TYPE_START_HANDSHAKE_WITH_ID_TO_PC)
                                                 {
                                                     //communication with label printing PC
                                                     //processLabelPrintingFunc(communicationType, packetLen);
                                                     m_printClient.processLabelPrintingFunc(communicationType, onePacket,packetLen);
+                                                    //processLabelPrintingFunc(communicationType, packetLen);
                                                 }
-                                                //else if (communicationType >= COMMUNICATION_TYPE_CLIENT_PC)
-                                                {
-                                                    //communication with client PC
-                                                    processClientInstruction(communicationType, packetLen);
-                                                }
-                                                //else if (communicationType >= COMMUNICATION_TYPE_APP_WORKING_BOARD_ID_TO_PC && communicationType <= COMMUNICATION_TYPE_APP_DEVICE_NAME)
-                                                {
-                                                    //communication with mobile devices
-                                                    if (appHandshakeCompleted == 1)
-                                                        processClientMobileApp(communicationType, packetLen);
-                                                }
-                                                //else
+                                                else //if (communicationType >= COMMUNICATION_TYPE_CLIENT_TOUCHPAD)
                                                 {
                                                     //communication with data collect board
                                                     processClientDataCollectBoard(communicationType, packetLen);
                                                 }
+                                                /*
+                                                else if (communicationType >= COMMUNICATION_TYPE_CLIENT_PC)
+                                                {
+                                                    //communication with client PC
+                                                    processClientInstruction(communicationType, packetLen);
+                                                }
+                                                else if (communicationType >= COMMUNICATION_TYPE_APP_WORKING_BOARD_ID_TO_PC && communicationType <= COMMUNICATION_TYPE_APP_DEVICE_NAME)
+                                                {
+                                                    //communication with mobile devices
+                                                    if (appHandshakeCompleted == 1)
+                                                        processClientMobileApp(communicationType, packetLen);
+                                                }*/
                                             }
                                             catch (Exception ex)
                                             {

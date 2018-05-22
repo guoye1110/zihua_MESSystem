@@ -68,8 +68,6 @@
             this.lb_InputBarcode = new System.Windows.Forms.Label();
             this.tb_DateTime = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.tb_WorkNoOK = new System.Windows.Forms.Button();
-            this.bt_Scan = new System.Windows.Forms.Button();
             this.bt_Record = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -77,8 +75,11 @@
             this.cb_ProductState = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.lb_ProductQulity = new System.Windows.Forms.Label();
+            this.cb_ProductQuality = new System.Windows.Forms.ComboBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -127,7 +128,7 @@
             // 
             // bt_Printing
             // 
-            this.bt_Printing.Location = new System.Drawing.Point(1305, 731);
+            this.bt_Printing.Location = new System.Drawing.Point(1321, 731);
             this.bt_Printing.Name = "bt_Printing";
             this.bt_Printing.Size = new System.Drawing.Size(141, 44);
             this.bt_Printing.TabIndex = 215;
@@ -252,14 +253,14 @@
             // 
             // tb_BigRollNo
             // 
-            this.tb_BigRollNo.Location = new System.Drawing.Point(259, 576);
+            this.tb_BigRollNo.Location = new System.Drawing.Point(327, 581);
             this.tb_BigRollNo.Name = "tb_BigRollNo";
             this.tb_BigRollNo.Size = new System.Drawing.Size(226, 24);
             this.tb_BigRollNo.TabIndex = 205;
             // 
             // tb_Desc
             // 
-            this.tb_Desc.Location = new System.Drawing.Point(259, 674);
+            this.tb_Desc.Location = new System.Drawing.Point(327, 688);
             this.tb_Desc.Multiline = true;
             this.tb_Desc.Name = "tb_Desc";
             this.tb_Desc.Size = new System.Drawing.Size(600, 73);
@@ -281,7 +282,7 @@
             // 
             // tb_ManHour
             // 
-            this.tb_ManHour.Location = new System.Drawing.Point(259, 530);
+            this.tb_ManHour.Location = new System.Drawing.Point(327, 530);
             this.tb_ManHour.Name = "tb_ManHour";
             this.tb_ManHour.Size = new System.Drawing.Size(226, 24);
             this.tb_ManHour.TabIndex = 200;
@@ -289,7 +290,7 @@
             // 
             // tb_WorkNo
             // 
-            this.tb_WorkNo.Location = new System.Drawing.Point(259, 478);
+            this.tb_WorkNo.Location = new System.Drawing.Point(327, 478);
             this.tb_WorkNo.Name = "tb_WorkNo";
             this.tb_WorkNo.Size = new System.Drawing.Size(226, 24);
             this.tb_WorkNo.TabIndex = 199;
@@ -317,7 +318,7 @@
             this.label27.AutoSize = true;
             this.label27.Location = new System.Drawing.Point(1006, 40);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(83, 18);
+            this.label27.Size = new System.Drawing.Size(76, 18);
             this.label27.TabIndex = 196;
             this.label27.Text = "生产批号：";
             // 
@@ -326,7 +327,7 @@
             this.label26.AutoSize = true;
             this.label26.Location = new System.Drawing.Point(1006, 86);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(83, 18);
+            this.label26.Size = new System.Drawing.Size(76, 18);
             this.label26.TabIndex = 195;
             this.label26.Text = "客户名称：";
             // 
@@ -335,7 +336,7 @@
             this.label22.AutoSize = true;
             this.label22.Location = new System.Drawing.Point(15, 93);
             this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(68, 18);
+            this.label22.Size = new System.Drawing.Size(61, 18);
             this.label22.TabIndex = 192;
             this.label22.Text = "配方号：";
             // 
@@ -351,7 +352,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(161, 674);
+            this.label18.Location = new System.Drawing.Point(229, 688);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(38, 18);
             this.label18.TabIndex = 189;
@@ -360,7 +361,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(160, 530);
+            this.label16.Location = new System.Drawing.Point(228, 530);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(68, 18);
             this.label16.TabIndex = 188;
@@ -369,7 +370,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(157, 482);
+            this.label15.Location = new System.Drawing.Point(225, 482);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(53, 18);
             this.label15.TabIndex = 187;
@@ -378,7 +379,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(160, 576);
+            this.label13.Location = new System.Drawing.Point(228, 581);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(68, 18);
             this.label13.TabIndex = 186;
@@ -445,26 +446,6 @@
             this.label3.TabIndex = 219;
             this.label3.Text = "打印时间";
             // 
-            // tb_WorkNoOK
-            // 
-            this.tb_WorkNoOK.Location = new System.Drawing.Point(491, 475);
-            this.tb_WorkNoOK.Name = "tb_WorkNoOK";
-            this.tb_WorkNoOK.Size = new System.Drawing.Size(84, 26);
-            this.tb_WorkNoOK.TabIndex = 223;
-            this.tb_WorkNoOK.Text = "确定";
-            this.tb_WorkNoOK.UseVisualStyleBackColor = true;
-            this.tb_WorkNoOK.Click += new System.EventHandler(this.tb_WorkNoOK_Click);
-            // 
-            // bt_Scan
-            // 
-            this.bt_Scan.Location = new System.Drawing.Point(1135, 731);
-            this.bt_Scan.Name = "bt_Scan";
-            this.bt_Scan.Size = new System.Drawing.Size(126, 46);
-            this.bt_Scan.TabIndex = 224;
-            this.bt_Scan.Text = "扫描";
-            this.bt_Scan.UseVisualStyleBackColor = true;
-            this.bt_Scan.Click += new System.EventHandler(this.bt_Scan_Click);
-            // 
             // bt_Record
             // 
             this.bt_Record.Location = new System.Drawing.Point(1513, 730);
@@ -488,7 +469,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(567, 130);
+            this.label4.Location = new System.Drawing.Point(567, 136);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(38, 18);
             this.label4.TabIndex = 227;
@@ -496,7 +477,7 @@
             // 
             // tb_RollWeight
             // 
-            this.tb_RollWeight.Location = new System.Drawing.Point(651, 126);
+            this.tb_RollWeight.Location = new System.Drawing.Point(651, 133);
             this.tb_RollWeight.Name = "tb_RollWeight";
             this.tb_RollWeight.Size = new System.Drawing.Size(184, 24);
             this.tb_RollWeight.TabIndex = 228;
@@ -505,15 +486,16 @@
             // 
             this.cb_ProductState.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_ProductState.FormattingEnabled = true;
-            this.cb_ProductState.Location = new System.Drawing.Point(259, 622);
+            this.cb_ProductState.Location = new System.Drawing.Point(327, 631);
             this.cb_ProductState.Name = "cb_ProductState";
             this.cb_ProductState.Size = new System.Drawing.Size(224, 26);
             this.cb_ProductState.TabIndex = 230;
+            this.cb_ProductState.SelectedIndexChanged += new System.EventHandler(this.cb_ProductState_SelectedIndexChanged);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(153, 626);
+            this.label5.Location = new System.Drawing.Point(221, 635);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(68, 18);
             this.label5.TabIndex = 229;
@@ -521,7 +503,9 @@
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.lb_ProductQulity);
             this.groupBox6.Controls.Add(this.tb_worker);
+            this.groupBox6.Controls.Add(this.cb_ProductQuality);
             this.groupBox6.Controls.Add(this.label19);
             this.groupBox6.Controls.Add(this.label4);
             this.groupBox6.Controls.Add(this.label3);
@@ -529,10 +513,30 @@
             this.groupBox6.Controls.Add(this.tb_DateTime);
             this.groupBox6.Location = new System.Drawing.Point(157, 444);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(915, 332);
+            this.groupBox6.Size = new System.Drawing.Size(915, 367);
             this.groupBox6.TabIndex = 231;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "生产信息";
+            // 
+            // lb_ProductQulity
+            // 
+            this.lb_ProductQulity.AutoSize = true;
+            this.lb_ProductQulity.Location = new System.Drawing.Point(567, 190);
+            this.lb_ProductQulity.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lb_ProductQulity.Name = "lb_ProductQulity";
+            this.lb_ProductQulity.Size = new System.Drawing.Size(76, 18);
+            this.lb_ProductQulity.TabIndex = 235;
+            this.lb_ProductQulity.Text = "产品质量：";
+            // 
+            // cb_ProductQuality
+            // 
+            this.cb_ProductQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_ProductQuality.FormattingEnabled = true;
+            this.cb_ProductQuality.Location = new System.Drawing.Point(651, 187);
+            this.cb_ProductQuality.Margin = new System.Windows.Forms.Padding(2);
+            this.cb_ProductQuality.Name = "cb_ProductQuality";
+            this.cb_ProductQuality.Size = new System.Drawing.Size(184, 26);
+            this.cb_ProductQuality.TabIndex = 236;
             // 
             // groupBox7
             // 
@@ -563,18 +567,27 @@
             this.label6.TabIndex = 233;
             this.label6.Text = "紫华企业印刷工序操作单";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(1118, 731);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(141, 44);
+            this.button1.TabIndex = 234;
+            this.button1.Text = "印刷开工";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // PrintForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1924, 1062);
+            this.ClientSize = new System.Drawing.Size(1916, 1053);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.cb_ProductState);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.bt_Record);
-            this.Controls.Add(this.bt_Scan);
-            this.Controls.Add(this.tb_WorkNoOK);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.bt_Printing);
@@ -654,8 +667,6 @@
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.TextBox tb_DateTime;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button tb_WorkNoOK;
-        private System.Windows.Forms.Button bt_Scan;
         private System.Windows.Forms.Label lb_InputBarcode;
         private System.Windows.Forms.Label lb_OutputBarCode;
         private System.Windows.Forms.Label lb_outBarcode;
@@ -669,5 +680,8 @@
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label lb_ProductQulity;
+        private System.Windows.Forms.ComboBox cb_ProductQuality;
     }
 }

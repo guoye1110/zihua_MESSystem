@@ -21,6 +21,7 @@ namespace LabelPrint.Data
         public String RawMaterialGrade;
         public String RawMaterialBatchNo;
 
+        public String materialCode;
         // public String WorkProcess;
         //public String Recipe;
         //public String Color;
@@ -93,11 +94,13 @@ namespace LabelPrint.Data
 
         public String[] targets =
             {
-            "目标设备1",
-            "目标设备2",
-            "目标设备3",
-            "目标设备4",
-            "目标设备5",
+            "一号流延机",
+            "二号流延机",
+            "三号流延机",
+            "四号流延机",
+            "五号流延机",
+            "六号中试机",
+            "七号吹膜机",
             };
 
         //再造料标签：

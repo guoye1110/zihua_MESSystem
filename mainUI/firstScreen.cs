@@ -19,6 +19,7 @@ using MESSystem.OEEManagement;
 using MESSystem.communication;
 using MESSystem.dispatchManagement;
 using MESSystem.materialManagement;
+//using exceptionTest;
 
 namespace MESSystem.mainUI
 {
@@ -96,68 +97,76 @@ namespace MESSystem.mainUI
             float[] menuFontSize = { 12F, 10F, 8F };
             int[] menuSizeY = { 33, 27, 23 };
 
-            Rectangle rect = new Rectangle();
+            //try
+            {
+                Rectangle rect = new Rectangle();
 
-            rect = Screen.GetWorkingArea(this);
-            gVariable.screenRatioX = (float)rect.Width / gVariable.SMALLEST_SCREEN_X;
-            gVariable.screenRatioY = (float)rect.Height / gVariable.SMALLEST_SCREEN_Y;
+                rect = Screen.GetWorkingArea(this);
+                gVariable.screenRatioX = (float)rect.Width / gVariable.SMALLEST_SCREEN_X;
+                gVariable.screenRatioY = (float)rect.Height / gVariable.SMALLEST_SCREEN_Y;
 
-            tmpDPI = toolClass.getScalingFactorForScreen();
+                tmpDPI = toolClass.getScalingFactorForScreen();
 
-            switch(tmpDPI)
+                switch (tmpDPI)
+                {
+                    case gVariable.SMALLER_DPI:
+                        gVariable.dpiValue = 0;
+                        gVariable.dpiRatioX = (float)rect.Width / gVariable.SMALLEST_SCREEN_X;
+                        gVariable.dpiRatioY = (float)rect.Height / gVariable.SMALLEST_SCREEN_Y;
+                        Console.WriteLine("screen font scale is small DPI, effective screen resolution is " + rect.Width + " * " + rect.Height);
+                        break;
+                    case gVariable.MEDIUM_DPI:
+                        gVariable.dpiValue = 1;
+                        gVariable.dpiRatioX = (float)rect.Width / gVariable.SMALLEST_SCREEN_X / 1.25F;
+                        gVariable.dpiRatioY = (float)rect.Height / gVariable.SMALLEST_SCREEN_Y / 1.25F;
+                        Console.WriteLine("screen font scale is medium DPI, effective screen resolution is " + rect.Width + " * " + rect.Height);
+                        break;
+                    case gVariable.LARGER_DPI:
+                        gVariable.dpiValue = 2;
+                        gVariable.dpiRatioX = (float)rect.Width / gVariable.SMALLEST_SCREEN_X / 1.5F;
+                        gVariable.dpiRatioY = (float)rect.Height / gVariable.SMALLEST_SCREEN_Y / 1.5F;
+                        Console.WriteLine("screen font scale is large DPI, effective screen resolution is " + rect.Width + " * " + rect.Height);
+                        break;
+                }
+
+                myMenu1.Font = new System.Drawing.Font("Segoe UI", menuFontSize[gVariable.dpiValue]);
+                myMenu1.Size = new System.Drawing.Size(1426, menuSizeY[gVariable.dpiValue]);
+
+                gVariable.onePointstandForHowManyMinutes = 2;
+                if (rect.Width < gVariable.resolutionLevelValue1) // < 1024 * 768 not really supported
+                {
+                    gVariable.resolutionLevel = gVariable.resolution_1024;
+                }
+                else if (rect.Width < gVariable.resolutionLevelValue2)  //1280 * 800
+                {
+                    gVariable.resolutionLevel = gVariable.resolution_1280;
+                }
+                else if (rect.Width < gVariable.resolutionLevelValue3)  //1366 * 768
+                {
+                    gVariable.resolutionLevel = gVariable.resolution_1366;
+                }
+                else if (rect.Width < gVariable.resolutionLevelValue4)  //1440 * 900
+                {
+                    gVariable.resolutionLevel = gVariable.resolution_1440;
+                }
+                else if (rect.Width < gVariable.resolutionLevelValue5)  //1600 * 900
+                {
+                    gVariable.resolutionLevel = gVariable.resolution_1600;
+                }
+                else //if (rect.Width >= gVariable.resolutionLevelValue5)  //1920 * 1080
+                {
+                    gVariable.resolutionLevel = gVariable.resolution_1920;
+                    gVariable.onePointstandForHowManyMinutes = 1;
+                }
+
+                floatFont = fontArray[gVariable.dpiValue, gVariable.resolutionLevel];
+                this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", floatFont, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            }
+            //catch (Exception ex)
             {
-                case gVariable.SMALLER_DPI:
-                    gVariable.dpiValue = 0;
-                    gVariable.dpiRatioX = (float)rect.Width / gVariable.SMALLEST_SCREEN_X;
-                    gVariable.dpiRatioY = (float)rect.Height / gVariable.SMALLEST_SCREEN_Y;
-                    Console.WriteLine("screen font scale is small DPI, effective screen resolution is " + rect.Width + " * " + rect.Height);
-                    break;
-                case gVariable.MEDIUM_DPI:
-                    gVariable.dpiValue = 1;
-                    gVariable.dpiRatioX = (float)rect.Width / gVariable.SMALLEST_SCREEN_X / 1.25F;
-                    gVariable.dpiRatioY = (float)rect.Height / gVariable.SMALLEST_SCREEN_Y / 1.25F;
-                    Console.WriteLine("screen font scale is medium DPI, effective screen resolution is " + rect.Width + " * " + rect.Height);
-                    break;
-                case gVariable.LARGER_DPI:
-                    gVariable.dpiValue = 2;
-                    gVariable.dpiRatioX = (float)rect.Width / gVariable.SMALLEST_SCREEN_X / 1.5F;
-                    gVariable.dpiRatioY = (float)rect.Height / gVariable.SMALLEST_SCREEN_Y / 1.5F;
-                    Console.WriteLine("screen font scale is large DPI, effective screen resolution is " + rect.Width + " * " + rect.Height);
-                    break;
+                //Console.WriteLine("system init failed! " + ex);
             }
 
-            myMenu1.Font = new System.Drawing.Font("Segoe UI", menuFontSize[gVariable.dpiValue]);
-            myMenu1.Size = new System.Drawing.Size(1426, menuSizeY[gVariable.dpiValue]);
-
-            gVariable.onePointstandForHowManyMinutes = 2;
-            if (rect.Width < gVariable.resolutionLevelValue1) // < 1024 * 768 not really supported
-            {
-                gVariable.resolutionLevel = gVariable.resolution_1024;
-            }
-            else if (rect.Width < gVariable.resolutionLevelValue2)  //1280 * 800
-            {
-                gVariable.resolutionLevel = gVariable.resolution_1280;
-            }
-            else if (rect.Width < gVariable.resolutionLevelValue3)  //1366 * 768
-            {
-                gVariable.resolutionLevel = gVariable.resolution_1366;
-            }
-            else if (rect.Width < gVariable.resolutionLevelValue4)  //1440 * 900
-            {
-                gVariable.resolutionLevel = gVariable.resolution_1440;
-            }
-            else if (rect.Width < gVariable.resolutionLevelValue5)  //1600 * 900
-            {
-                gVariable.resolutionLevel = gVariable.resolution_1600;
-            }
-            else //if (rect.Width >= gVariable.resolutionLevelValue5)  //1920 * 1080
-            {
-                gVariable.resolutionLevel = gVariable.resolution_1920;
-                gVariable.onePointstandForHowManyMinutes = 1;
-            }
-
-            floatFont = fontArray[gVariable.dpiValue, gVariable.resolutionLevel];
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", floatFont, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
         }
 
         private void InitializeVariables()

@@ -23,7 +23,7 @@ namespace MESSystem.mainUI
 {
     public partial class workshopZihua : Form
     {
-        const int BUTTON_NUM = 18;
+        const int BUTTON_NUM = 24;
 
         const int PIC_WIDTH = 32;
         const int PIC_HEIGHT = 32;
@@ -54,7 +54,11 @@ namespace MESSystem.mainUI
         SolidBrush colorGreenBrush = new SolidBrush(Color.Lime);
         SolidBrush colorGrayBrush = new SolidBrush(Color.DarkGray);  //not working
 
-        //public string[] machineNameArray = { "1号上料机", "2号上料机", "3号上料机", "4号上料机", "5号上料机", "1号流延机", "2号流延机", "3号流延机", "4号流延机", "5号流延机", "2号印刷机", "3号印刷机", "4号印刷机", "1号分切机", "2号分切机", "3号分切机", "4号分切机", "5号分切机", "所有设备" };
+        //public string[] gVariable.machineNameArrayDatabase = { "1号上料机", "2号上料机", "3号上料机", "4号上料机", "5号上料机", "6号上料机", "7号上料机", 
+        //                                     "1号流延机", "2号流延机", "3号流延机", "4号流延机", "5号流延机", "6号中试机", "7号吹模机", 
+        //                                     "1号印刷机", "2号印刷机", "3号印刷机", "4号印刷机", "5号柔印机", 
+        //                                     "1号分切机", "2号分切机", "3号分切机", "4号分切机", "5号分切机"
+        //                                   };
 
         public static workshopZihua workshopZihuaClass = null; //it is used to reference this windows
 
@@ -240,25 +244,27 @@ namespace MESSystem.mainUI
                 { 7F, 7F, 7F, 7F, 8F,  10F },
                 { 6F, 6F, 6F, 7F, 7F,  8F },
             };
-            int[] resIndexTableX = { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3,  };
-            int[] resIndexTableY = { 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2,  };
+            int[] resIndexTableX = { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3 };
+            int[] resIndexTableY = { 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4 };
 
             int[] labelY = { 28, 30, 30, 35, 37, 42 };
 
             int[] offsetY = { 10, 10, 8, 8, 10, 0};
             //buttons stand for machines
-            Button[] bArray = {button1,  button2,   button3, button4,  button5,  button6,  button7,  button8,  button9,  button10, 
-                               button11, button14, button13, button15, button21, button22, button23, button24, };
+            Button[] bArray = {button1,  button2,   button3, button4,  button5,  button19, button28, 
+                               button6,  button7,  button8,  button9,  button10, button18, button27,
+                               button11, button14, button13, button15, button21, 
+                               button22, button23, button24, button12, button20};
 
             //pictures stand for prodction lines
-            PictureBox[] picArray1 = { pictureBox1, pictureBox2, pictureBox3, pictureBox5, pictureBox8 };
+            PictureBox[] picArray1 = { pictureBox1, pictureBox2, pictureBox3, pictureBox5, pictureBox8, pictureBox4 };
 
             Rectangle rect = new Rectangle();
 
             numOfProcess = 4;
-            numOfLines = 5;
-            notVisible1 = 11;
-            notVisible2 = 13;
+            numOfLines = 6;
+            notVisible1 = 15;
+            notVisible2 = 17;
 
             rect = Screen.GetWorkingArea(this);
             width = rect.Width;
@@ -275,8 +281,8 @@ namespace MESSystem.mainUI
             {
                 if (i == notVisible1 || i == notVisible2)  //these 2 machine dosenot exist
                 {
-                    j--;
-                    bArray[i].Visible = false;
+                //    j--;
+                //    bArray[i].Visible = false;
                 }
 
                 x = x0 + resIndexTableX[i] * gapX + 5;
@@ -311,8 +317,8 @@ namespace MESSystem.mainUI
             pic2GapX = (pic1Width[resIndex] / numOfProcess - buttonWidth[resIndex] - pic2Width[resIndex]) / 5;
             for (i = 0; i < percentageRectArray.Length; i++)
             {
-                if (i == notVisible1 || i == notVisible2)
-                    continue;
+                //if (i == notVisible1 || i == notVisible2)
+               //     continue;
 
                 percentageRectArray[i].X = x0 + resIndexTableX[i] * gapX + pic2GapX + buttonWidth[resIndex] + 5;
                 percentageRectArray[i].Y = y0 + resIndexTableY[i] * gapY + buttonHeight[resIndex] - pic2Height[resIndex] - 4;
@@ -336,8 +342,8 @@ namespace MESSystem.mainUI
 
             for (i = 0; i < percentageRectArray.Length; i++)
             {
-                if (i == notVisible1 || i == notVisible2)
-                    continue;
+                //if (i == notVisible1 || i == notVisible2)
+                //    continue;
 
                 percentageRectArray[i].Y = backupRectangleY[i] + AutoScrollPosition.Y;
             }
@@ -418,8 +424,8 @@ namespace MESSystem.mainUI
             {
                 resIndex = gVariable.resolutionLevel;
 
-                //5 production lines
-                for (i = 0; i < gVariable.castingProcess.Length; i++)
+                //7 production lines
+                for (i = 0; i < gVariable.castingProcess.Length - 1; i++)
                 {
                     //production line with no printer
                     if (i == (DEFAULT_NO_PRINTER1 - 1) || i == (DEFAULT_NO_PRINTER2 - 1))
@@ -457,8 +463,8 @@ namespace MESSystem.mainUI
                 {
                     if (i == notVisible1 || i == notVisible2)  //these 2 machine dosenot exist
                     {
-                        j--;
-                        continue;
+                    //    j--;
+                    //    continue;
                     }
                     index = j + 1; // gVariable.allMachineIDForZihua[j];
                     //if (index == 0)  // 0 means this button doesnot have a machine connected
@@ -606,7 +612,7 @@ namespace MESSystem.mainUI
                             {
                                 gVariable.dispatchSheet[i].qualifiedNumber = gVariable.dispatchSheet[i].plannedNumber;
                             }
-                            percentage = gVariable.dispatchSheet[i].qualifiedNumber * width / gVariable.dispatchSheet[i].plannedNumber;
+                            percentage = (int)(gVariable.dispatchSheet[i].qualifiedNumber * width / gVariable.dispatchSheet[i].plannedNumber);
                         }
                         //if (percentage == percentageArray[i])
                         //    continue;  //there is no change, 
@@ -677,8 +683,8 @@ namespace MESSystem.mainUI
 
         private void room_Selected(int i)
         {
-            string commandText;
-            string[,] dispatchDataArray;
+            //string commandText;
+            //string[,] dispatchDataArray;
 
             if (gVariable.mainFunctionIndex == gVariable.PRODUCT_CURRENT_STATUS)
             {
@@ -688,7 +694,8 @@ namespace MESSystem.mainUI
                         return;
 
                     gVariable.currentCurveDatabaseName = gVariable.DBHeadString + i.ToString().PadLeft(3, '0');
-                     
+                    
+                    /*
                     commandText = "select * from `" + gVariable.dispatchListTableName + "` order by id DESC";
                     dispatchDataArray = mySQLClass.databaseCommonReading(gVariable.currentCurveDatabaseName, commandText);
                     if(dispatchDataArray == null)
@@ -697,9 +704,14 @@ namespace MESSystem.mainUI
                     gVariable.boardIndexSelected = Convert.ToInt32(gVariable.currentCurveDatabaseName.Remove(0, 1)) - 1;
 
                     gVariable.dispatchSheet[gVariable.boardIndexSelected] = mySQLClass.getDispatchByID(gVariable.currentCurveDatabaseName, gVariable.dispatchListTableName, Convert.ToInt32(dispatchDataArray[0, 0]));
+                     * */
+
+                    gVariable.boardIndexSelected = Convert.ToInt32(gVariable.currentCurveDatabaseName.Remove(0, 1)) - 1;
+
+                    toolClass.getCurrentDispatch(i);
                     if (gVariable.dispatchSheet[gVariable.boardIndexSelected].dispatchCode == null)
                     {
-                        Console.WriteLine("Read dispatch failed!!! " + gVariable.currentCurveDatabaseName + ":" + dispatchDataArray[0, 2]);
+                        Console.WriteLine("Read dispatch failed!!! " + gVariable.currentCurveDatabaseName);
                     }
 
                     gVariable.dispatchUnderReview = gVariable.dispatchSheet[gVariable.boardIndexSelected].dispatchCode;
@@ -852,42 +864,42 @@ namespace MESSystem.mainUI
 
         private void button6_Click(object sender, EventArgs e)
         {
-            room_Selected(6);
+            room_Selected(8);
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
-            room_Selected(7);
+            room_Selected(9);
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            room_Selected(8);
+            room_Selected(10);
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
-            room_Selected(9);
+            room_Selected(11);
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
-            room_Selected(10);
+            room_Selected(12);
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
-            room_Selected(11);
+            room_Selected(15);
         }
 
         private void button12_Click(object sender, EventArgs e)
         {
-            room_Selected(12);
+            room_Selected(16);
         }
 
         private void button13_Click(object sender, EventArgs e)
         {
-            room_Selected(13);
+            room_Selected(17);
         }
 
 
@@ -918,64 +930,91 @@ namespace MESSystem.mainUI
 
         private void room_MouseHover6(object sender, EventArgs e)
         {
-            setTooltipData(5);
+            setTooltipData(7);
         }
 
         private void room_MouseHover7(object sender, EventArgs e)
         {
-            setTooltipData(6);
+            setTooltipData(8);
         }
 
         private void room_MouseHover8(object sender, EventArgs e)
         {
-            setTooltipData(7);
+            setTooltipData(9);
         }
 
         private void room_MouseHover9(object sender, EventArgs e)
         {
-            setTooltipData(8);
+            setTooltipData(10);
         }
 
         private void room_MouseHover10(object sender, EventArgs e)
         {
-            setTooltipData(9);
+            setTooltipData(11);
         }
 
         private void room_MouseHover11(object sender, EventArgs e)
         {
-            setTooltipData(10);
+            setTooltipData(14);
         }
 
         private void room_MouseHover12(object sender, EventArgs e)
         {
-            setTooltipData(16);
+            setTooltipData(15);
         }
 
         private void room_MouseHover13(object sender, EventArgs e)
         {
-            setTooltipData(11);
+            setTooltipData(16);
         }
 
         private void room_MouseHover20(object sender, EventArgs e)
         {
-            setTooltipData(17);
+            setTooltipData(21);
         }
         private void room_MouseHover21(object sender, EventArgs e)
         {
-            setTooltipData(12);
+            setTooltipData(22);
         }
         private void room_MouseHover22(object sender, EventArgs e)
         {
-            setTooltipData(13);
+            setTooltipData(23);
         }
         private void room_MouseHover23(object sender, EventArgs e)
         {
-            setTooltipData(14);
+            setTooltipData(24);
         }
 
         private void room_MouseHover24(object sender, EventArgs e)
         {
-            setTooltipData(15);
+            setTooltipData(25);
+        }
+
+        private void button19_Click(object sender, EventArgs e)
+        {
+            room_Selected(5);
+        }
+
+        private void button18_Click(object sender, EventArgs e)
+        {
+            room_Selected(12);
+
+        }
+
+        private void button28_Click(object sender, EventArgs e)
+        {
+            room_Selected(6);
+
+        }
+
+        private void button27_Click(object sender, EventArgs e)
+        {
+            room_Selected(13);
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

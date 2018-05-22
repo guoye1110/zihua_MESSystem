@@ -34,10 +34,7 @@ namespace LabelPrint.Data
     {
         public String desc;
         public String BigRollNo;
-        public String ProductState;// = GetProductState();
-        public int ProductStateIndex = 0;
-        public String ProductQuality;// = GetProductQuality();
-        public int ProductQualityIndex = 0;
+
         public String ShowRealWeight;// = GetShowRealWeight();
         public String Desc;
         public String Weight;

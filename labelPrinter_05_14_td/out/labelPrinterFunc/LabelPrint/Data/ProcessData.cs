@@ -37,7 +37,7 @@ namespace LabelPrint.Data
         public String InputBarcode;
         public String OutputBarcode;
         public String MState;
-        public String Product_State;
+       // public String Product_State;
         public String Roll_Weight;
 
 
@@ -46,6 +46,12 @@ namespace LabelPrint.Data
         public String ProductName = null;
         public String ProductWeight = null;
 
+
+
+        public String ProductState;// = GetProductState();
+        public int ProductStateIndex = 0;
+        public String ProductQuality;// = GetProductQuality();
+        public int ProductQualityIndex = 0;
         /// <summary>
         /// 
         /// </summary>

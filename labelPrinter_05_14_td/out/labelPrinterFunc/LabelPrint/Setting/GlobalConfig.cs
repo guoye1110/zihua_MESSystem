@@ -42,5 +42,6 @@ namespace LabelPrint
      };
 
         public static String orderNo;
+        public static Boolean bShowPreview = true;
     }
 }

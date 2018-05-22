@@ -142,7 +142,7 @@ namespace MESSystem.mainUI
             }
             catch (Exception ex)
             {
-                Console.WriteLine("showDispatchList listView_load failed! ", ex);
+                Console.WriteLine("showDispatchList listView_load failed! " + ex);
             }
         }
 

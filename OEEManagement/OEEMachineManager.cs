@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.IO;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+
 using WinCharting = System.Windows.Forms.DataVisualization.Charting;
 
 using MESSystem.common;
@@ -50,6 +52,7 @@ namespace MESSystem.OEEManagement
         private const int PIE_ROWS = 2;
         private Color[] LENGENDS_COLOR = { Color.Gray, Color.SlateGray, Color.Lime, Color.Red };
 
+        private const string EXCEL_TEMPLATE_NAME = "MachineHours.xlsx";
         /********************************************** Type *****************************************/
         private struct HoursSpan
         {
@@ -98,6 +101,8 @@ namespace MESSystem.OEEManagement
         private string[] MACHINEHOUR_LIST_HEADER = new string[] { "计划", "关机", "待机", "工作", "报警", "有效工时" };
         private string[] MACHINEHOUR_LIST_ADDITION = new string[] { "序号", "日期" };
         private string[] DISPATCH_LIST_HEADER = new string[] { "工单号", "产品名称", "客户名", "需求量", "产量", "合格品", "操作员" };
+
+        private bool tableGenerated = false;
         /****************************************** Function ****************************************/
         public OEEMachineManager(OEEFactory factory)
         {
@@ -264,7 +269,7 @@ namespace MESSystem.OEEManagement
             gridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
             gridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
 
-            gridView.BorderStyle = BorderStyle.FixedSingle;
+            gridView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             gridView.CellBorderStyle = DataGridViewCellBorderStyle.Single;
 
             gridView.RowHeadersVisible = false;
@@ -321,10 +326,9 @@ namespace MESSystem.OEEManagement
                 col < MACHINEHOUR_LIST_ADDITION.Length + MACHINEHOUR_LIST_HEADER.Length; col++)
                 sectionWidth += gridView.Columns[col].Width;
 
-
-
-
             gridView.CellPainting += new DataGridViewCellPaintingEventHandler(HoursDataGridView_CellPainting);
+
+            this.BtnExport.Enabled = false;
         }
 
 
@@ -333,6 +337,7 @@ namespace MESSystem.OEEManagement
             this.HoursDataGridView.Rows.Add(header1);
             this.HoursDataGridView.Rows.Add(header2);
         }
+
         private void InitialOutputCapacityChartInfo()
         {
             this.LblChartQueryPeriod.Font = new Font(OEETypes.FONT, 10F, System.Drawing.FontStyle.Regular);
@@ -574,6 +579,12 @@ namespace MESSystem.OEEManagement
 
                     break;
                 case "PageOuputHours":
+                    if (tableGenerated == false)
+                    {
+                        this.BtnExport.Enabled = true;
+                        tableGenerated = true;
+                    }
+                        
                     ShowMachineHoursList();
                     break;
                 default:
@@ -872,6 +883,60 @@ namespace MESSystem.OEEManagement
                 index++;
                 gridView.Rows.Add(value);
             }
+        }
+
+        private void BtnExport_Click(object sender, EventArgs e)
+        {
+            DataGridView gridView = this.HoursDataGridView;
+
+            if (gridView.RowCount <= 2) return;
+
+            string templatePath = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) 
+                + "\\template\\" + EXCEL_TEMPLATE_NAME;
+            FileStream template = new FileStream(templatePath, FileMode.Open, FileAccess.Read);
+
+            XSSFWorkbook machineHourBook = new XSSFWorkbook(template);
+
+            ISheet sheet1 = machineHourBook.GetSheet("Sheet1");
+            ICellStyle cellStyle = machineHourBook.CreateCellStyle();
+            cellStyle.VerticalAlignment = NPOI.SS.UserModel.VerticalAlignment.Center;
+            cellStyle.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+            cellStyle.BorderBottom = NPOI.SS.UserModel.BorderStyle.Thin;
+            cellStyle.BorderLeft = NPOI.SS.UserModel.BorderStyle.Thin;
+            cellStyle.BorderTop = NPOI.SS.UserModel.BorderStyle.Thin;
+            cellStyle.BorderRight = NPOI.SS.UserModel.BorderStyle.Thin;
+
+
+
+            for (int row = 2; row < gridView.RowCount - 1; row++)
+            {
+                IRow currentRow = sheet1.CreateRow(row);
+                for (int col = 0; col < gridView.ColumnCount; col++)
+                {
+                    ICell currentCell = currentRow.CreateCell(col);
+                    currentCell.CellStyle = cellStyle;
+                    currentCell.SetCellType(CellType.String);
+                    currentCell.SetCellValue(gridView[col, row].Value.ToString());
+                    sheet1.AutoSizeColumn(col);
+                }
+              
+            }
+
+            //string tempDir = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string tempDir = System.Environment.GetEnvironmentVariable("TEMP");
+            string fileName = EXCEL_TEMPLATE_NAME.Split('.')[0] + "_" + DateTime.Now.ToString("hhss");
+            string extenstion = EXCEL_TEMPLATE_NAME.Split('.')[1];
+            fileName = fileName + "." + extenstion;
+            System.Console.WriteLine("filename {0}", tempDir + "\\" + fileName);
+        
+            FileStream file = new FileStream(tempDir + "\\" + fileName, FileMode.Create);
+
+            machineHourBook.Write(file);
+
+            file.Close();
+            template.Close();
+            toolClass.nonBlockingDelay(2000);
+            System.Diagnostics.Process.Start(tempDir + "\\" + fileName);
         }
 
         private void CalculateHours(DateTime startPoint, DateTime endPoint, int startStatus, ref HoursSpan hoursSpan)

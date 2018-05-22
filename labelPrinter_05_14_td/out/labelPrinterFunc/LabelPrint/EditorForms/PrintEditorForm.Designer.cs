@@ -67,12 +67,14 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tb_RollWeight = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.cb_ProductQuality = new System.Windows.Forms.ComboBox();
+            this.lb_ProductQulity = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // bt_Save
             // 
             this.bt_Save.Location = new System.Drawing.Point(732, 599);
-            this.bt_Save.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.bt_Save.Margin = new System.Windows.Forms.Padding(2);
             this.bt_Save.Name = "bt_Save";
             this.bt_Save.Size = new System.Drawing.Size(56, 31);
             this.bt_Save.TabIndex = 189;
@@ -83,7 +85,7 @@
             // bt_Cancel
             // 
             this.bt_Cancel.Location = new System.Drawing.Point(641, 599);
-            this.bt_Cancel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.bt_Cancel.Margin = new System.Windows.Forms.Padding(2);
             this.bt_Cancel.Name = "bt_Cancel";
             this.bt_Cancel.Size = new System.Drawing.Size(56, 31);
             this.bt_Cancel.TabIndex = 188;
@@ -94,7 +96,7 @@
             // bt_Printing
             // 
             this.bt_Printing.Location = new System.Drawing.Point(547, 599);
-            this.bt_Printing.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.bt_Printing.Margin = new System.Windows.Forms.Padding(2);
             this.bt_Printing.Name = "bt_Printing";
             this.bt_Printing.Size = new System.Drawing.Size(56, 31);
             this.bt_Printing.TabIndex = 187;
@@ -105,7 +107,7 @@
             // tb_BatchNo1
             // 
             this.tb_BatchNo1.Location = new System.Drawing.Point(712, 45);
-            this.tb_BatchNo1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_BatchNo1.Margin = new System.Windows.Forms.Padding(2);
             this.tb_BatchNo1.Name = "tb_BatchNo1";
             this.tb_BatchNo1.Size = new System.Drawing.Size(76, 20);
             this.tb_BatchNo1.TabIndex = 269;
@@ -123,7 +125,7 @@
             // tb_ProductName
             // 
             this.tb_ProductName.Location = new System.Drawing.Point(203, 86);
-            this.tb_ProductName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_ProductName.Margin = new System.Windows.Forms.Padding(2);
             this.tb_ProductName.Name = "tb_ProductName";
             this.tb_ProductName.Size = new System.Drawing.Size(76, 20);
             this.tb_ProductName.TabIndex = 272;
@@ -132,7 +134,7 @@
             // 
             this.cb_CustomerCodes.FormattingEnabled = true;
             this.cb_CustomerCodes.Location = new System.Drawing.Point(112, 123);
-            this.cb_CustomerCodes.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cb_CustomerCodes.Margin = new System.Windows.Forms.Padding(2);
             this.cb_CustomerCodes.Name = "cb_CustomerCodes";
             this.cb_CustomerCodes.Size = new System.Drawing.Size(71, 21);
             this.cb_CustomerCodes.TabIndex = 274;
@@ -141,7 +143,7 @@
             // tb_Time
             // 
             this.tb_Time.Location = new System.Drawing.Point(203, 48);
-            this.tb_Time.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_Time.Margin = new System.Windows.Forms.Padding(2);
             this.tb_Time.Name = "tb_Time";
             this.tb_Time.Size = new System.Drawing.Size(76, 20);
             this.tb_Time.TabIndex = 268;
@@ -151,7 +153,7 @@
             this.cb_WorkClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_WorkClass.FormattingEnabled = true;
             this.cb_WorkClass.Location = new System.Drawing.Point(678, 531);
-            this.cb_WorkClass.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cb_WorkClass.Margin = new System.Windows.Forms.Padding(2);
             this.cb_WorkClass.Name = "cb_WorkClass";
             this.cb_WorkClass.Size = new System.Drawing.Size(112, 21);
             this.cb_WorkClass.TabIndex = 298;
@@ -171,7 +173,7 @@
             this.cb_WorkTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_WorkTime.FormattingEnabled = true;
             this.cb_WorkTime.Location = new System.Drawing.Point(676, 497);
-            this.cb_WorkTime.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cb_WorkTime.Margin = new System.Windows.Forms.Padding(2);
             this.cb_WorkTime.Name = "cb_WorkTime";
             this.cb_WorkTime.Size = new System.Drawing.Size(112, 21);
             this.cb_WorkTime.TabIndex = 295;
@@ -189,7 +191,7 @@
             // tb_Date
             // 
             this.tb_Date.Location = new System.Drawing.Point(113, 48);
-            this.tb_Date.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_Date.Margin = new System.Windows.Forms.Padding(2);
             this.tb_Date.Name = "tb_Date";
             this.tb_Date.Size = new System.Drawing.Size(76, 20);
             this.tb_Date.TabIndex = 267;
@@ -208,7 +210,7 @@
             // 
             this.cb_ProductCode.FormattingEnabled = true;
             this.cb_ProductCode.Location = new System.Drawing.Point(112, 84);
-            this.cb_ProductCode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cb_ProductCode.Margin = new System.Windows.Forms.Padding(2);
             this.cb_ProductCode.Name = "cb_ProductCode";
             this.cb_ProductCode.Size = new System.Drawing.Size(71, 21);
             this.cb_ProductCode.TabIndex = 271;
@@ -217,7 +219,7 @@
             // tb_PrintMachineNo
             // 
             this.tb_PrintMachineNo.Location = new System.Drawing.Point(630, 364);
-            this.tb_PrintMachineNo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_PrintMachineNo.Margin = new System.Windows.Forms.Padding(2);
             this.tb_PrintMachineNo.Name = "tb_PrintMachineNo";
             this.tb_PrintMachineNo.Size = new System.Drawing.Size(158, 20);
             this.tb_PrintMachineNo.TabIndex = 285;
@@ -225,7 +227,7 @@
             // tb_Width
             // 
             this.tb_Width.Location = new System.Drawing.Point(712, 83);
-            this.tb_Width.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_Width.Margin = new System.Windows.Forms.Padding(2);
             this.tb_Width.Name = "tb_Width";
             this.tb_Width.Size = new System.Drawing.Size(76, 20);
             this.tb_Width.TabIndex = 273;
@@ -233,7 +235,7 @@
             // tb_CustomerName
             // 
             this.tb_CustomerName.Location = new System.Drawing.Point(203, 124);
-            this.tb_CustomerName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_CustomerName.Margin = new System.Windows.Forms.Padding(2);
             this.tb_CustomerName.Name = "tb_CustomerName";
             this.tb_CustomerName.Size = new System.Drawing.Size(76, 20);
             this.tb_CustomerName.TabIndex = 275;
@@ -241,7 +243,7 @@
             // tb_BigRollNo
             // 
             this.tb_BigRollNo.Location = new System.Drawing.Point(104, 497);
-            this.tb_BigRollNo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_BigRollNo.Margin = new System.Windows.Forms.Padding(2);
             this.tb_BigRollNo.Name = "tb_BigRollNo";
             this.tb_BigRollNo.Size = new System.Drawing.Size(152, 20);
             this.tb_BigRollNo.TabIndex = 293;
@@ -249,7 +251,7 @@
             // tb_Desc
             // 
             this.tb_Desc.Location = new System.Drawing.Point(106, 436);
-            this.tb_Desc.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_Desc.Margin = new System.Windows.Forms.Padding(2);
             this.tb_Desc.Multiline = true;
             this.tb_Desc.Name = "tb_Desc";
             this.tb_Desc.Size = new System.Drawing.Size(682, 54);
@@ -258,7 +260,7 @@
             // tb_RecipeCode
             // 
             this.tb_RecipeCode.Location = new System.Drawing.Point(712, 120);
-            this.tb_RecipeCode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_RecipeCode.Margin = new System.Windows.Forms.Padding(2);
             this.tb_RecipeCode.Name = "tb_RecipeCode";
             this.tb_RecipeCode.Size = new System.Drawing.Size(76, 20);
             this.tb_RecipeCode.TabIndex = 277;
@@ -266,7 +268,7 @@
             // tb_worker
             // 
             this.tb_worker.Location = new System.Drawing.Point(370, 367);
-            this.tb_worker.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_worker.Margin = new System.Windows.Forms.Padding(2);
             this.tb_worker.Name = "tb_worker";
             this.tb_worker.Size = new System.Drawing.Size(152, 20);
             this.tb_worker.TabIndex = 287;
@@ -274,7 +276,7 @@
             // tb_ManHour
             // 
             this.tb_ManHour.Location = new System.Drawing.Point(106, 367);
-            this.tb_ManHour.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_ManHour.Margin = new System.Windows.Forms.Padding(2);
             this.tb_ManHour.Name = "tb_ManHour";
             this.tb_ManHour.Size = new System.Drawing.Size(152, 20);
             this.tb_ManHour.TabIndex = 286;
@@ -283,7 +285,7 @@
             // tb_WorkNo
             // 
             this.tb_WorkNo.Location = new System.Drawing.Point(106, 330);
-            this.tb_WorkNo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_WorkNo.Margin = new System.Windows.Forms.Padding(2);
             this.tb_WorkNo.Name = "tb_WorkNo";
             this.tb_WorkNo.Size = new System.Drawing.Size(152, 20);
             this.tb_WorkNo.TabIndex = 284;
@@ -332,7 +334,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(317, 367);
+            this.label19.Location = new System.Drawing.Point(312, 367);
             this.label19.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(55, 13);
@@ -405,7 +407,7 @@
             this.cb_ProductState.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cb_ProductState.FormattingEnabled = true;
             this.cb_ProductState.Location = new System.Drawing.Point(106, 401);
-            this.cb_ProductState.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cb_ProductState.Margin = new System.Windows.Forms.Padding(2);
             this.cb_ProductState.Name = "cb_ProductState";
             this.cb_ProductState.Size = new System.Drawing.Size(150, 21);
             this.cb_ProductState.TabIndex = 396;
@@ -423,7 +425,7 @@
             // tb_RollWeight
             // 
             this.tb_RollWeight.Location = new System.Drawing.Point(630, 404);
-            this.tb_RollWeight.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_RollWeight.Margin = new System.Windows.Forms.Padding(2);
             this.tb_RollWeight.Name = "tb_RollWeight";
             this.tb_RollWeight.Size = new System.Drawing.Size(158, 20);
             this.tb_RollWeight.TabIndex = 398;
@@ -438,11 +440,33 @@
             this.label8.TabIndex = 397;
             this.label8.Text = "卷重";
             // 
+            // cb_ProductQuality
+            // 
+            this.cb_ProductQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb_ProductQuality.FormattingEnabled = true;
+            this.cb_ProductQuality.Location = new System.Drawing.Point(370, 408);
+            this.cb_ProductQuality.Margin = new System.Windows.Forms.Padding(2);
+            this.cb_ProductQuality.Name = "cb_ProductQuality";
+            this.cb_ProductQuality.Size = new System.Drawing.Size(152, 21);
+            this.cb_ProductQuality.TabIndex = 399;
+            // 
+            // lb_ProductQulity
+            // 
+            this.lb_ProductQulity.AutoSize = true;
+            this.lb_ProductQulity.Location = new System.Drawing.Point(312, 408);
+            this.lb_ProductQulity.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lb_ProductQulity.Name = "lb_ProductQulity";
+            this.lb_ProductQulity.Size = new System.Drawing.Size(55, 13);
+            this.lb_ProductQulity.TabIndex = 400;
+            this.lb_ProductQulity.Text = "产品质量";
+            // 
             // PrintEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(841, 651);
+            this.Controls.Add(this.cb_ProductQuality);
+            this.Controls.Add(this.lb_ProductQulity);
             this.Controls.Add(this.cb_ProductState);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.tb_RollWeight);
@@ -482,7 +506,7 @@
             this.Controls.Add(this.bt_Save);
             this.Controls.Add(this.bt_Cancel);
             this.Controls.Add(this.bt_Printing);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "PrintEditorForm";
             this.Text = "印刷单修改";
             this.Load += new System.EventHandler(this.PrintEditorForm_Load);
@@ -532,5 +556,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tb_RollWeight;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ComboBox cb_ProductQuality;
+        private System.Windows.Forms.Label lb_ProductQulity;
     }
 }

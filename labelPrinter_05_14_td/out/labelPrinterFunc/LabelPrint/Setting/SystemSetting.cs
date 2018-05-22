@@ -20,6 +20,7 @@ namespace LabelPrint
         public String ServerIP;
 
         public String ScaleSerialPort;
+        public String ScannerSerialPort;
         public String ScaleBaudRate;
         public String ScaleDataBit;
         public String ScaleSerialParity;
@@ -97,6 +98,7 @@ namespace LabelPrint
             info.ServerIP = "";
 
             info.ScaleSerialPort = "COM1";
+            info.ScannerSerialPort = "COM2";
             info.ScaleBaudRate = "38400";
             info.ScaleDataBit = "8";
             info.ScaleSerialParity = "None";

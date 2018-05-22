@@ -205,7 +205,7 @@ namespace MESSystem.materialManagement
         private void displayMaterialList()
         {
             int i, j;
-            int index;
+            //int index;
             int totalMaterialNum;
             //int startIndex, endIndex;
             //int nameIndex;

@@ -33,6 +33,14 @@ namespace LabelPrint.Data
         DyData.RollWeightLength = Weight;
         DyData.WorkerNo = WorkerNo + "  " + WorkTime.Substring(0, 5);
 
+        if (ProductState == "合格品"|| ProductState == null || ProductState == "")
+        {
+            DyData.Quality = "合格品";
+        }
+        else
+        {
+            DyData.Quality = "米数不足";
+        }
         DyData.RawMaterialCode = RawMaterialCode;
         // UserInput.customerCode = customerCode;
         // UserInput.productLength = productLength;

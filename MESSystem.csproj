@@ -138,11 +138,23 @@
     <Compile Include="APS_UI\manualSalesOrder.Designer.cs">
       <DependentUpon>manualSalesOrder.cs</DependentUpon>
     </Compile>
+    <Compile Include="APS_UI\multiProducts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="APS_UI\multiProducts.Designer.cs">
+      <DependentUpon>multiProducts.cs</DependentUpon>
+    </Compile>
     <Compile Include="APS_UI\salesOrderList.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="APS_UI\salesOrderList.Designer.cs">
       <DependentUpon>salesOrderList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="APS_UI\substitutes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="APS_UI\substitutes.Designer.cs">
+      <DependentUpon>substitutes.cs</DependentUpon>
     </Compile>
     <Compile Include="commonControl\commonListview.cs">
       <SubType>Form</SubType>
@@ -174,6 +186,7 @@
     <Compile Include="communication\serverBoardDetails.cs" />
     <Compile Include="communication\serverBoardFunc.cs" />
     <Compile Include="communication\serverPCFunc.cs" />
+    <Compile Include="communication\serverPrintDetails.cs" />
     <Compile Include="communication\serverPrintFunc.cs" />
     <Compile Include="communication\zihua_printFunc.cs">
       <SubType>Code</SubType>
@@ -209,6 +222,7 @@
       <DependentUpon>SPCCurve.cs</DependentUpon>
     </Compile>
     <Compile Include="databaseclient\0_dispatchlist.cs" />
+    <Compile Include="databaseclient\0_materiallist.cs" />
     <Compile Include="databaseclient\finalpacking.cs" />
     <Compile Include="databaseclient\inspectionlist.cs" />
     <Compile Include="databaseclient\materialdeliverylist.cs" />
@@ -222,6 +236,12 @@
     </Compile>
     <Compile Include="dispatchManagement\adjustDispatch.Designer.cs">
       <DependentUpon>adjustDispatch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dispatchManagement\cancelPublish.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dispatchManagement\cancelPublish.Designer.cs">
+      <DependentUpon>cancelPublish.cs</DependentUpon>
     </Compile>
     <Compile Include="dispatchManagement\dispatchPublish.cs">
       <SubType>Form</SubType>
@@ -455,8 +475,14 @@
     <EmbeddedResource Include="APS_UI\manualSalesOrder.resx">
       <DependentUpon>manualSalesOrder.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="APS_UI\multiProducts.resx">
+      <DependentUpon>multiProducts.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="APS_UI\salesOrderList.resx">
       <DependentUpon>salesOrderList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="APS_UI\substitutes.resx">
+      <DependentUpon>substitutes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="commonControl\commonListview.resx">
       <DependentUpon>commonListview.cs</DependentUpon>
@@ -481,6 +507,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dispatchManagement\adjustDispatch.resx">
       <DependentUpon>adjustDispatch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dispatchManagement\cancelPublish.resx">
+      <DependentUpon>cancelPublish.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="dispatchManagement\dispatchPublish.resx">
       <DependentUpon>dispatchPublish.cs</DependentUpon>

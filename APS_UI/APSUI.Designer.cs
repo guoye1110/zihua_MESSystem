@@ -34,8 +34,6 @@ namespace MESSystem.APS_UI
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.listView1 = new MESSystem.commonControl.ListViewNF();
             this.button3 = new System.Windows.Forms.Button();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.listView2 = new MESSystem.commonControl.ListViewNF();
             this.button5 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -44,7 +42,6 @@ namespace MESSystem.APS_UI
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.comboBox4 = new System.Windows.Forms.ComboBox();
             this.label12 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
@@ -60,10 +57,9 @@ namespace MESSystem.APS_UI
             this.button4 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.button9 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
+            this.button9 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.SuspendLayout();
@@ -84,10 +80,10 @@ namespace MESSystem.APS_UI
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.groupBox1.Location = new System.Drawing.Point(89, 158);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1093, 250);
+            this.groupBox1.Size = new System.Drawing.Size(1093, 454);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "订单列表";
+            this.groupBox1.Text = "任务单列表";
             // 
             // listView1
             // 
@@ -99,7 +95,7 @@ namespace MESSystem.APS_UI
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(3, 19);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(1087, 228);
+            this.listView1.Size = new System.Drawing.Size(1087, 432);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -114,32 +110,6 @@ namespace MESSystem.APS_UI
             this.button3.Text = "订单排程";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.listView2);
-            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.groupBox2.Location = new System.Drawing.Point(86, 412);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1096, 209);
-            this.groupBox2.TabIndex = 2;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "排程结果列表（工单列表）";
-            // 
-            // listView2
-            // 
-            this.listView2.Activation = System.Windows.Forms.ItemActivation.OneClick;
-            this.listView2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView2.GridLines = true;
-            this.listView2.HideSelection = false;
-            this.listView2.Location = new System.Drawing.Point(3, 19);
-            this.listView2.MultiSelect = false;
-            this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(1090, 187);
-            this.listView2.TabIndex = 0;
-            this.listView2.UseCompatibleStateImageBehavior = false;
-            this.listView2.View = System.Windows.Forms.View.Details;
-            this.listView2.SelectedIndexChanged += new System.EventHandler(this.listView2_SelectedIndexChanged);
             // 
             // button5
             // 
@@ -212,7 +182,6 @@ namespace MESSystem.APS_UI
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.checkBox3);
             this.groupBox4.Controls.Add(this.comboBox4);
             this.groupBox4.Controls.Add(this.label12);
             this.groupBox4.Controls.Add(this.textBox2);
@@ -224,27 +193,17 @@ namespace MESSystem.APS_UI
             this.groupBox4.Controls.Add(this.label8);
             this.groupBox4.Controls.Add(this.textBox1);
             this.groupBox4.Controls.Add(this.label6);
-            this.groupBox4.Location = new System.Drawing.Point(54, 67);
+            this.groupBox4.Location = new System.Drawing.Point(62, 67);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(502, 88);
+            this.groupBox4.Size = new System.Drawing.Size(486, 88);
             this.groupBox4.TabIndex = 17;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "订单查询";
-            // 
-            // checkBox3
-            // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(476, 56);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(15, 14);
-            this.checkBox3.TabIndex = 16;
-            this.checkBox3.UseVisualStyleBackColor = true;
-            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
+            this.groupBox4.Text = "任务单查询";
             // 
             // comboBox4
             // 
             this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.Location = new System.Drawing.Point(241, 23);
+            this.comboBox4.Location = new System.Drawing.Point(244, 23);
             this.comboBox4.Name = "comboBox4";
             this.comboBox4.Size = new System.Drawing.Size(91, 21);
             this.comboBox4.TabIndex = 25;
@@ -252,7 +211,7 @@ namespace MESSystem.APS_UI
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(179, 25);
+            this.label12.Location = new System.Drawing.Point(182, 25);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(58, 15);
             this.label12.TabIndex = 20;
@@ -260,15 +219,15 @@ namespace MESSystem.APS_UI
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(73, 52);
+            this.textBox2.Location = new System.Drawing.Point(89, 52);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
+            this.textBox2.Size = new System.Drawing.Size(87, 20);
             this.textBox2.TabIndex = 24;
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(10, 54);
+            this.label11.Location = new System.Drawing.Point(24, 54);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(58, 15);
             this.label11.TabIndex = 23;
@@ -276,7 +235,7 @@ namespace MESSystem.APS_UI
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(403, 22);
+            this.button6.Location = new System.Drawing.Point(397, 22);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(75, 23);
             this.button6.TabIndex = 22;
@@ -286,7 +245,7 @@ namespace MESSystem.APS_UI
             // 
             // dateTimePicker4
             // 
-            this.dateTimePicker4.Location = new System.Drawing.Point(363, 53);
+            this.dateTimePicker4.Location = new System.Drawing.Point(366, 53);
             this.dateTimePicker4.Name = "dateTimePicker4";
             this.dateTimePicker4.Size = new System.Drawing.Size(107, 20);
             this.dateTimePicker4.TabIndex = 19;
@@ -295,7 +254,7 @@ namespace MESSystem.APS_UI
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(349, 56);
+            this.label9.Location = new System.Drawing.Point(352, 56);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(14, 15);
             this.label9.TabIndex = 18;
@@ -303,7 +262,7 @@ namespace MESSystem.APS_UI
             // 
             // dateTimePicker3
             // 
-            this.dateTimePicker3.Location = new System.Drawing.Point(242, 53);
+            this.dateTimePicker3.Location = new System.Drawing.Point(245, 53);
             this.dateTimePicker3.Name = "dateTimePicker3";
             this.dateTimePicker3.Size = new System.Drawing.Size(107, 20);
             this.dateTimePicker3.TabIndex = 17;
@@ -312,7 +271,7 @@ namespace MESSystem.APS_UI
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(179, 55);
+            this.label8.Location = new System.Drawing.Point(182, 55);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(58, 15);
             this.label8.TabIndex = 16;
@@ -320,19 +279,19 @@ namespace MESSystem.APS_UI
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(73, 22);
+            this.textBox1.Location = new System.Drawing.Point(89, 22);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.Size = new System.Drawing.Size(87, 20);
             this.textBox1.TabIndex = 1;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(10, 24);
+            this.label6.Location = new System.Drawing.Point(13, 24);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(58, 15);
+            this.label6.Size = new System.Drawing.Size(70, 15);
             this.label6.TabIndex = 0;
-            this.label6.Text = "订单编号:";
+            this.label6.Text = "生产批次号:";
             // 
             // button7
             // 
@@ -374,15 +333,6 @@ namespace MESSystem.APS_UI
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click_1);
             // 
-            // button9
-            // 
-            this.button9.Location = new System.Drawing.Point(801, 116);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(95, 23);
-            this.button9.TabIndex = 23;
-            this.button9.Text = "订单插入";
-            this.button9.UseVisualStyleBackColor = true;
-            // 
             // button10
             // 
             this.button10.Location = new System.Drawing.Point(801, 84);
@@ -393,12 +343,22 @@ namespace MESSystem.APS_UI
             this.button10.UseVisualStyleBackColor = true;
             this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(801, 116);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(95, 23);
+            this.button9.TabIndex = 25;
+            this.button9.Text = "套作设定";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click_1);
+            // 
             // APSUI
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1264, 667);
-            this.Controls.Add(this.button10);
             this.Controls.Add(this.button9);
+            this.Controls.Add(this.button10);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button8);
             this.Controls.Add(this.button4);
@@ -407,7 +367,6 @@ namespace MESSystem.APS_UI
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.button5);
-            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
@@ -418,7 +377,6 @@ namespace MESSystem.APS_UI
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.APSUI_FormClosing);
             this.Load += new System.EventHandler(this.APSUI_Load);
             this.groupBox1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -434,8 +392,6 @@ namespace MESSystem.APS_UI
         private System.Windows.Forms.GroupBox groupBox1;
         private ListViewNF listView1;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private ListViewNF listView2;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.GroupBox groupBox3;
@@ -453,14 +409,13 @@ namespace MESSystem.APS_UI
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.ComboBox comboBox6;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox comboBox3;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.Button button9;
     }
 }

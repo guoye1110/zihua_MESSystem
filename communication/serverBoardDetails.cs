@@ -18,25 +18,26 @@ namespace MESSystem.communication
     public partial class communicate
     {
         //return type definition
-        const int RESULT_OK = 0;
-        const int RESULT_ERR_NO_DATA_RECEIVED = 1;
-        const int RESULT_SET_BOARD_ID_COMPLETE = 2;
-        const int RESULT_ERR_SYSTEM_NOT_READY = 3;
-        const int RESULT_NOT_COMPLETE_YET = 6;
-        const int RESULT_ERR_FILE_OPEN_FAIL = 10;
-        const int RESULT_ERR_FILE_READ_FAIL = 11;
-        const int RESULT_ERR_FILE_WRITE_FAIL = 12;
-        const int RESULT_ERR_TIMEOUT = 20;
-        const int RESULT_ERR_DATA = 21;
-        const int RESULT_ERR_CRC = 22;
-        const int RESULT_ERR_BOARDID = 23;
-        const int RESULT_ERR_DATA_OVERFLLOW = 24;
-        const int RESULT_ERR_DATA_NOT_COMPLETE = 25;
-        const int RESULT_ERR_FILE_NOT_FOUND = 26;
-        const int RESULT_ERR_NO_MEMORY = 27;
-        const int RESULT_ERR_NOT_STARTED_YET = 28;
-        const int RESULT_ERR_DATA_NUM_WRONG = 29;
-        const int RESULT_ERR_NO_DATA_AVAILABLE = 30;
+        public const int RESULT_OK = 0;
+        public const int RESULT_ERR_NO_DATA_RECEIVED = 1;
+        public const int RESULT_SET_BOARD_ID_COMPLETE = 2;
+        public const int RESULT_ERR_SYSTEM_NOT_READY = 3;
+        public const int RESULT_NOT_COMPLETE_YET = 6;
+        public const int RESULT_ERR_FILE_OPEN_FAIL = 10;
+        public const int RESULT_ERR_FILE_READ_FAIL = 11;
+        public const int RESULT_ERR_FILE_WRITE_FAIL = 12;
+        public const int RESULT_ERR_TIMEOUT = 20;
+        public const int RESULT_ERR_DATA = 21;
+        public const int RESULT_ERR_CRC = 22;
+        public const int RESULT_ERR_BOARDID = 23;
+        public const int RESULT_ERR_DATA_OVERFLLOW = 24;
+        public const int RESULT_ERR_DATA_NOT_COMPLETE = 25;
+        public const int RESULT_ERR_FILE_NOT_FOUND = 26;
+        public const int RESULT_ERR_NO_MEMORY = 27;
+        public const int RESULT_ERR_NOT_STARTED_YET = 28;
+        public const int RESULT_ERR_DATA_NUM_WRONG = 29;
+        public const int RESULT_ERR_NO_DATA_AVAILABLE = 30;
+        public const int RESULT_ERR_EXCEPTION_OCCURRED = 31;
 
         //error port setting type
         const int RESULT_ERR_PORT_INDEX_EXCEED_LIMIT = 30;
@@ -111,20 +112,22 @@ namespace MESSystem.communication
         const int COMMUNICATION_TYPE_DATA_ALARM_TO_PC = 0x2e;
         const int COMMUNICATION_TYPE_GPIO_ALARM_TO_PC = 0x2f;
 
+        const int COMMUNICATION_TYPE_CLIENT_TOUCHPAD = 0x80;
+
         //communication between PC server/PC client
         //communication type equal or larger than this value means this is a server/client PC communication, need to be processed in serverPCFunc.cs
-        const int COMMUNICATION_TYPE_CLIENT_PC = 0xB0;
-        const int COMMUNICATION_TYPE_CLIENT_PC_HANDSHAKE = 0xB0;
-        const int COMMUNICATION_TYPE_CLIENT_DISCONNECTED = 0xB2;
-        const int COMMUNICATION_TYPE_CLIENT_HEART_BEAT = 0xB3;
-        const int COMMUNICATION_TYPE_NEW_ALARM_TO_CLIENT = 0xB4;
-        const int COMMUNICATION_TYPE_ALARM_UPDATED_TO_SERVER = 0xB5;
-        const int COMMUNICATION_TYPE_ALARM_UPDATED_TO_CLIENT = 0xB6;
-        const int COMMUNICATION_TYPE_BARCODE_TO_CLIENT = 0xB7;
-        const int COMMUNICATION_TYPE_BARCODE_TO_SERVER = 0xB8;
+        const int COMMUNICATION_TYPE_CLIENT_PC = 0x50;
+        const int COMMUNICATION_TYPE_CLIENT_PC_HANDSHAKE = 0x50;
+        const int COMMUNICATION_TYPE_CLIENT_DISCONNECTED = 0x52;
+        const int COMMUNICATION_TYPE_CLIENT_HEART_BEAT = 0x53;
+        const int COMMUNICATION_TYPE_NEW_ALARM_TO_CLIENT = 0x54;
+        const int COMMUNICATION_TYPE_ALARM_UPDATED_TO_SERVER = 0x55;
+        const int COMMUNICATION_TYPE_ALARM_UPDATED_TO_CLIENT = 0x56;
+        const int COMMUNICATION_TYPE_BARCODE_TO_CLIENT = 0x57;
+        const int COMMUNICATION_TYPE_BARCODE_TO_SERVER = 0x58;
 
         //communication between PC host and label printing SW
-        const int COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID = 0xC0;  //set machine ID for label printing function
+        const int COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID = 0xB0;  //set machine ID for label printing function
         const int COMMUNICATION_TYPE_WAREHOUE_OUT_START = 0xC1;  //printing SW started and ask for material info, server send material info for all feeding machine to printing SW 
         const int COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE = 0xC2;  //printing machine send barcode info to server whever a stack of material is moved out of the warehouse
         const int COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE = 0xC3;  //printing machine send barcode info to server whever a stack of material is moved into the warehouse
@@ -297,213 +300,6 @@ namespace MESSystem.communication
             object settingFileLocker = new object();
 
 			zihua_printerClient m_printClient;
-
-            //int emptyPacketIndex;
-
-            //the user from PC decided to write one of the setting data to board
-            public void writeSettingsToBoard(int settingIndex)
-            {
-                int i, v;
-                int index, pos;
-                int len;
-                float f;
-                byte[] onePacket = new byte[200];
-                byte[] buf;
-                string str;
-
-                if (myBoardIndex < 0)
-                    return;
-
-                onePacket[0] = (byte)'w';
-                onePacket[1] = (byte)'I';
-                onePacket[2] = (byte)'F';
-                onePacket[3] = (byte)'i';
-
-                try
-                {
-                    switch (settingIndex)
-                    {
-                        case gVariable.ADC_SETTING_DATA_TO_BOARD:
-                            //format:
-                            //0: 5 / 10 v
-                            //1 - 8: channel enabled or not
-                            // 9-12, 17-20, 25-28, 33-36, 41-44, 49-52, 57-60, 65-68: range upper
-                            //13-16, 21-24, 29-32, 37-40, 45-48, 53-56, 61-64, 69-72: range lower
-                            //onePacket[PROTOCOL_COMMUNICATION_TYPE_POS] = COMMUNICATION_TYPE_ADC_SETTING_TO_BOARD;
-
-                            pos = PROTOCOL_DATA_POS;
-
-                            onePacket[pos++] = (byte)(gVariable.craftList[myBoardIndex].workingVoltage);
-
-                            for (index = 0; index < gVariable.maxCraftParamNum; index++)
-                            {
-                                if (index < gVariable.craftList[myBoardIndex].paramNumber)
-                                    onePacket[pos++] = 1;
-                                else
-                                    onePacket[pos++] = 0;
-                            }
-
-                            for (index = 0; index < gVariable.maxCraftParamNum; index++)
-                            {
-                                str = gVariable.craftList[myBoardIndex].rangeUpperLimit[index].ToString("f2");
-
-                                buf = System.Text.Encoding.Default.GetBytes(str);
-                                len = buf.Length;
-                                if (len > ADC_RANGE_LEN)
-                                    len = ADC_RANGE_LEN;
-                                for (i = 0; i < (ADC_RANGE_LEN - len); i++)
-                                    onePacket[pos++] = (byte)'0';
-
-                                for (i = 0; i < len; i++)
-                                    onePacket[pos++] = buf[i];
-
-                                str = gVariable.craftList[myBoardIndex].rangeLowerLimit[index].ToString("f2");
-
-                                buf = System.Text.Encoding.Default.GetBytes(str);
-                                len = buf.Length;
-                                if (len > ADC_RANGE_LEN)
-                                    len = ADC_RANGE_LEN;
-                                for (i = 0; i < (ADC_RANGE_LEN - len); i++)
-                                    onePacket[pos++] = (byte)'0';
-
-                                for (i = 0; i < len; i++)
-                                    onePacket[pos++] = buf[i];
-                            }
-
-                            len = pos + PROTOCOL_CRC_LEN;
-                            sendDataToClient(onePacket, len, COMMUNICATION_TYPE_ADC_SETTING_TO_BOARD);
-                            break;
-                        case gVariable.UART_SETTING_DATA_TO_BOARD:  //server want to write something to board uart
-                            //format:
-                            //0-2: for baudrate, 
-                            //3: for uart index
-                            //4 - ... for output string
-                            //onePacket[PROTOCOL_COMMUNICATION_TYPE_POS] = COMMUNICATION_TYPE_UART_SETTING_TO_BOARD;
-                            pos = PROTOCOL_DATA_POS;
-
-                            onePacket[pos++] = (byte)gVariable.uartSettingInfo[myBoardIndex].uartBaudrate[0];
-                            onePacket[pos++] = (byte)gVariable.uartSettingInfo[myBoardIndex].uartBaudrate[1];
-                            onePacket[pos++] = (byte)gVariable.uartSettingInfo[myBoardIndex].uartBaudrate[2];
-
-                            index = gVariable.uartSettingInfo[myBoardIndex].selectedUart;
-                            onePacket[pos++] = (byte)index;
-                            if (index < gVariable.MAX_NUM_UART)
-                            {
-                                str = gVariable.uartSettingInfo[myBoardIndex].uartOutputData[index];
-                                buf = System.Text.Encoding.Default.GetBytes(str);
-                                len = buf.Length;
-                                for (i = 0; i < len; i++)
-                                    onePacket[pos++] = buf[i];
-                            }
-
-                            len = pos + PROTOCOL_CRC_LEN;
-                            sendDataToClient(onePacket, len, COMMUNICATION_TYPE_UART_SETTING_TO_BOARD);
-                            break;
-                        case gVariable.GPIO_SETTING_DATA_TO_BOARD:
-                            //format:
-                            //0-7: high trigger or low trigger
-                            //onePacket[PROTOCOL_COMMUNICATION_TYPE_POS] = COMMUNICATION_TYPE_GPIO_SETTING_TO_BOARD;
-                            pos = PROTOCOL_DATA_POS;
-
-                            for (i = 0; i < gVariable.numOfGPIOs; i++)
-                                onePacket[pos++] = (byte)(gVariable.GPIOSettingInfo[myBoardIndex].GPIOTriggerVoltage[i]);
-
-                            len = pos + PROTOCOL_CRC_LEN;
-                            sendDataToClient(onePacket, len, COMMUNICATION_TYPE_GPIO_SETTING_TO_BOARD);
-                            break;
-                        case gVariable.BEAT_SETTING_DATA_TO_BOARD:
-                            //format:
-                            //0-5: default working current 
-                            //onePacket[PROTOCOL_COMMUNICATION_TYPE_POS] = COMMUNICATION_TYPE_BEAT_SETTING_TO_BOARD;
-                            pos = PROTOCOL_DATA_POS;
-
-                            onePacket[pos++] = 0;  //internal volcur device, not external
-
-                            //current low level 
-                            f = gVariable.beatPeriodInfo[myBoardIndex].idleCurrentLow;
-                            str = f.ToString("f3");
-                            buf = System.Text.Encoding.Default.GetBytes(str);
-                            len = buf.Length;
-                            if (len > BEAT_VALUE_LEN)
-                                len = BEAT_VALUE_LEN;
-                            for (i = 0; i < (BEAT_VALUE_LEN - len); i++)
-                                onePacket[pos++] = (byte)'0';
-                            for (i = 0; i < len; i++)
-                                onePacket[pos++] = buf[i];
-
-                            //current low thresheold
-                            f = gVariable.beatPeriodInfo[myBoardIndex].idleCurrentHigh;
-                            str = f.ToString("f3");
-                            buf = System.Text.Encoding.Default.GetBytes(str);
-                            len = buf.Length;
-                            if (len > BEAT_VALUE_LEN)
-                                len = BEAT_VALUE_LEN;
-                            for (i = 0; i < (BEAT_VALUE_LEN - len); i++)
-                                onePacket[pos++] = (byte)'0';
-                            for (i = 0; i < len; i++)
-                                onePacket[pos++] = buf[i];
-
-                            //current high level
-                            f = gVariable.beatPeriodInfo[myBoardIndex].workCurrentLow;
-                            str = f.ToString("f3");
-                            buf = System.Text.Encoding.Default.GetBytes(str);
-                            len = buf.Length;
-                            if (len > BEAT_VALUE_LEN)
-                                len = BEAT_VALUE_LEN;
-                            for (i = 0; i < (BEAT_VALUE_LEN - len); i++)
-                                onePacket[pos++] = (byte)'0';
-                            for (i = 0; i < len; i++)
-                                onePacket[pos++] = buf[i];
-
-                            //current high threshold
-                            f = gVariable.beatPeriodInfo[myBoardIndex].workCurrentHigh;
-                            str = f.ToString("f3");
-                            buf = System.Text.Encoding.Default.GetBytes(str);
-                            len = buf.Length;
-                            if (len > BEAT_VALUE_LEN)
-                                len = BEAT_VALUE_LEN;
-                            for (i = 0; i < (BEAT_VALUE_LEN - len); i++)
-                                onePacket[pos++] = (byte)'0';
-                            for (i = 0; i < len; i++)
-                                onePacket[pos++] = buf[i];
-
-                            //interval between 2 spikes
-                            v = gVariable.beatPeriodInfo[myBoardIndex].gapValue;
-                            str = v.ToString();
-                            buf = System.Text.Encoding.Default.GetBytes(str);
-                            len = buf.Length;
-                            for (i = 0; i < (4 - len); i++)
-                                onePacket[pos++] = (byte)'0';
-                            for (i = 0; i < len; i++)
-                                onePacket[pos++] = buf[i];
-
-                            //how many continuous high level could  
-                            v = gVariable.beatPeriodInfo[myBoardIndex].peakValue;
-                            str = v.ToString();
-                            buf = System.Text.Encoding.Default.GetBytes(str);
-                            len = buf.Length;
-                            for (i = 0; i < (4 - len); i++)
-                                onePacket[pos++] = (byte)'0';
-                            for (i = 0; i < len; i++)
-                                onePacket[pos++] = buf[i];
-
-                            for (i = 0; i < BEAT_VALUE_LEN * 4; i++)
-                                onePacket[pos++] = (byte)'0';
-
-                            len = pos + PROTOCOL_CRC_LEN;
-                            sendDataToClient(onePacket, len, COMMUNICATION_TYPE_BEAT_SETTING_TO_BOARD);
-                            break;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(DateTime.Now.ToString() + ":board" + (myBoardIndex + 1) + "setting data to board failed! " + ex);
-                }
-
-                gVariable.whatSettingDataModified = gVariable.NO_SETTING_DATA_TO_BOARD;
-            }
-
-
             //sData: string for received data made of filename(8 bytes) + datetime(15 bytes) + ' ' + index(5 bytes) + ' ' + data
             //dataArray: an array conteains date index and data without filename, we use this array to get time, index and ADC data from different channels
             public void FileAppendFucntion(byte[] checkBytes)
@@ -689,8 +485,8 @@ namespace MESSystem.communication
                                 }
                             }
 
-                            if (i != 0)  //craft data not null
-                                numOfCraftDataInTable = mySQLClass.writeMultipleFloatToTable(databaseNameThis, craftDataTableName, mySQLClass.DATA_TYPE_CRAFT_DATA, timeStamp, fValue, i, "");
+                            //if (i != 0)  //craft data not null
+                            //    numOfCraftDataInTable = mySQLClass.writeMultipleFloatToTable(databaseNameThis, craftDataTableName, mySQLClass.DATA_TYPE_CRAFT_DATA, timeStamp, fValue, i, "");
 
                             break;
 
@@ -728,7 +524,7 @@ namespace MESSystem.communication
                                 gVariable.curveTextArray[volcurDataForCurveIndex[3]] = f.ToString("f4");
                             fValue[3] = f;
 
-                            mySQLClass.writeMultipleFloatToTable(databaseNameThis, volcurDataTableName, mySQLClass.DATA_TYPE_VOLCUR_DATA, timeStamp, fValue, 4, "");
+                            //mySQLClass.writeMultipleFloatToTable(databaseNameThis, volcurDataTableName, mySQLClass.DATA_TYPE_VOLCUR_DATA, timeStamp, fValue, 4, "");
                             f = fValue[1];
                             powerConsumed += (int)(VOLTAGE_VALUE * f / 2);
                             currentPower = (int)(VOLTAGE_VALUE * f);
@@ -923,12 +719,13 @@ namespace MESSystem.communication
 
                             //if (gVariable.workshopReport != gVariable.WORKSHOP_REPORT_NONE)
                             {
+                                //205 is weight for a new roll
                                 if (content.Remove(1) == "a")
-                                    gVariable.dispatchSheet[myBoardIndex].qualifiedNumber++;
+                                    gVariable.dispatchSheet[myBoardIndex].qualifiedNumber += 205;
                                 else
-                                    gVariable.dispatchSheet[myBoardIndex].unqualifiedNumber++;
+                                    gVariable.dispatchSheet[myBoardIndex].unqualifiedNumber += 205;
 
-                                gVariable.dispatchSheet[myBoardIndex].outputNumber++;
+                                gVariable.dispatchSheet[myBoardIndex].outputNumber += 205;
 
                                 mySQLClass.updateDispatchTable(databaseNameThis, gVariable.dispatchListTableName, myBoardIndex, gVariable.dispatchSheet[myBoardIndex].status, null);
                             }
@@ -1033,7 +830,7 @@ namespace MESSystem.communication
                 string commandText;
                 string errorDesc = null;
                 string alarmFailureCode = null;
-                string operatorName = null;
+                //string operatorName = null;
                 string time = null;
                 string time1 = null;
                 string time2 = null;
@@ -1662,7 +1459,7 @@ namespace MESSystem.communication
                             deviceStatusInfoMES.energyConsumption = gVariable.machineStatus[myBoardIndex].powerConsumed;
                             deviceStatusInfoMES.standbyTime = gVariable.machineStatus[myBoardIndex].standbyTime;
                             deviceStatusInfoMES.power = gVariable.machineStatus[myBoardIndex].power;
-                            deviceStatusInfoMES.deviceCollectNum = gVariable.machineStatus[myBoardIndex].collectedNumber;
+                            //deviceStatusInfoMES.deviceCollectNum = gVariable.machineStatus[myBoardIndex].collectedNumber;
                             deviceStatusInfoMES.speed = gVariable.machineStatus[myBoardIndex].revolution;
                             deviceStatusInfoMES.pressure = gVariable.machineStatus[myBoardIndex].pressure;
                             deviceStatusInfoMES.prepareTime = gVariable.machineStatus[myBoardIndex].prepareTime;
@@ -2243,10 +2040,10 @@ namespace MESSystem.communication
                             strArray = strInput.Split(';', '&');
                             if (clientFromTouchpad == 1)
                             {
-                                if (toolClass.isDigitalNum(strArray[7]) == 1)
-                                    gVariable.dispatchSheet[myBoardIndex].qualifiedNumber = gVariable.dispatchSheet[myBoardIndex].plannedNumber; // Convert.ToInt32(strArray[7].Trim());
-                                if (toolClass.isDigitalNum(strArray[8]) == 1)
-                                    gVariable.dispatchSheet[myBoardIndex].unqualifiedNumber = Convert.ToInt32(strArray[8].Trim());
+                                //if (toolClass.isDigitalNum(strArray[7]) == 1)
+                                //    gVariable.dispatchSheet[myBoardIndex].qualifiedNumber = gVariable.dispatchSheet[myBoardIndex].plannedNumber; // Convert.ToInt32(strArray[7].Trim());
+                                //if (toolClass.isDigitalNum(strArray[8]) == 1)
+                                //    gVariable.dispatchSheet[myBoardIndex].unqualifiedNumber = Convert.ToInt32(strArray[8].Trim());
 
                                 gVariable.dispatchSheet[myBoardIndex].outputNumber = gVariable.dispatchSheet[myBoardIndex].qualifiedNumber + gVariable.dispatchSheet[myBoardIndex].unqualifiedNumber;
 
@@ -2262,8 +2059,8 @@ namespace MESSystem.communication
                             }
 
                             gVariable.machineStatus[myBoardIndex].collectedNumber = gVariable.dispatchSheet[myBoardIndex].qualifiedNumber + gVariable.dispatchSheet[myBoardIndex].unqualifiedNumber;
-                            gVariable.dispatchSheet[myBoardIndex].toolUsedTimes = toolUsedTimesNow + gVariable.machineStatus[myBoardIndex].collectedNumber;
-                            gVariable.machineStatus[myBoardIndex].toolUsedTimes = toolUsedTimesNow + gVariable.machineStatus[myBoardIndex].collectedNumber;
+                            gVariable.dispatchSheet[myBoardIndex].toolUsedTimes = toolUsedTimesNow + (int)(gVariable.machineStatus[myBoardIndex].collectedNumber);
+                            gVariable.machineStatus[myBoardIndex].toolUsedTimes = toolUsedTimesNow + (int)(gVariable.machineStatus[myBoardIndex].collectedNumber);
                             toolUsedTimesNow = gVariable.dispatchSheet[myBoardIndex].toolUsedTimes;
                             break;
 

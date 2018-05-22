@@ -113,6 +113,7 @@ namespace MESSystem.APS_UI
             public string plannedFinish;
             public string outputNum;
             public string workShift;
+            public string salesOrderBatchCode;
         };
 
         public APSExhibit()
@@ -125,7 +126,7 @@ namespace MESSystem.APS_UI
         void initVariables()
         {
             int i, j, k;
-            int num;
+            //int num;
             string commandText;
             string[,] tableArray;
 
@@ -176,8 +177,8 @@ namespace MESSystem.APS_UI
             float fontSize;
             float screenRatioX, screenRatioY;
             GroupBox[] groupBoxArray = { groupBox1 };
-            Label[] labelArray = { label1, label2, label3, label4, label14, label6, label7, label8, label9, label10, label11, label12, label13 };
-            TextBox[] textBoxArray = { textBox1, textBox2, textBox3, textBox4, textBox5, textBox6, textBox7, textBox8, textBox9, textBox10, textBox11, textBox14 };
+            Label[] labelArray = { label1, label2, label3, label4, label15, label14, label6, label7, label8, label9, label10, label11, label12, label13 };
+            TextBox[] textBoxArray = { textBox1, textBox2, textBox3, textBox4, textBox5, textBox6, textBox7, textBox8, textBox9, textBox10, textBox11, textBox12, textBox14 };
             ComboBox[] comboBoxArray = { comboBox1 };
 
             float[,] commonFontSize = { 
@@ -407,12 +408,14 @@ namespace MESSystem.APS_UI
                         k += 3;
                         dispatchBlockImpl[dispatchBlockIndex].plannedFinish = tableArray[j, k++];
                         dispatchBlockImpl[dispatchBlockIndex].machineName = gVariable.machineNameArrayAPS[i];
+                        k++;
                         dispatchBlockImpl[dispatchBlockIndex].productCode = tableArray[j, k++];
                         dispatchBlockImpl[dispatchBlockIndex].productName = tableArray[j, k++];
                         dispatchBlockImpl[dispatchBlockIndex].outputNum = tableArray[j, k++];
                         dispatchBlockImpl[dispatchBlockIndex].customerName = tableArray[j, k++];
                         dispatchBlockImpl[dispatchBlockIndex].workShift = tableArray[j, k++];
                         dispatchBlockImpl[dispatchBlockIndex].productBatchNum = dispatchBlockImpl[dispatchBlockIndex].dispatchCode.Remove(7);
+                        dispatchBlockImpl[dispatchBlockIndex].salesOrderBatchCode = tableArray[j, k++];
                         dispatchBlockIndex++;
                     }
                 }
@@ -445,6 +448,7 @@ namespace MESSystem.APS_UI
                     textBox8.Text = dispatchBlockImpl[i].plannedFinish;
                     textBox14.Text = dispatchBlockImpl[i].outputNum;
                     textBox4.Text = dispatchBlockImpl[i].workShift;
+                    textBox12.Text = dispatchBlockImpl[i].salesOrderBatchCode;
                     break;
                 }
             }
@@ -455,11 +459,13 @@ namespace MESSystem.APS_UI
                 textBox2.Text = null;
                 textBox3.Text = null;
                 textBox4.Text = null;
+                textBox5.Text = null;
                 textBox6.Text = null;
                 textBox7.Text = null;
                 textBox8.Text = null;
                 textBox9.Text = null;
                 textBox10.Text = null;
+                textBox12.Text = null;
                 textBox14.Text = null;
             }
 

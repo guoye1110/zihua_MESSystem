@@ -31,13 +31,15 @@ namespace MESSystem.APS_UI
 
         float screenRatioX, screenRatioY;
 
+        int salesOrderScreenRefresh;
+
         string[] salesorderStatus = { "已导入", "已排程", "已确认", "已发布", "已申请", "已开工", "已完工", "已取消" };
 
 
         struct separateCondition  
         {
-            int separateMode;
-            string endDate;
+            //int separateMode;
+            //string endDate;
         };
 
         public salesOrderList()
@@ -55,7 +57,7 @@ namespace MESSystem.APS_UI
 
             this.Icon = new Icon(gVariable.logoInTitleArray[gVariable.CompanyIndex]);
 
-            gVariable.APSScreenRefresh = 1;
+            salesOrderScreenRefresh = 1;
 
             label1.Text = gVariable.enterpriseTitle + "订单列表";
             this.Text = gVariable.enterpriseTitle + "订单列表";
@@ -97,7 +99,7 @@ namespace MESSystem.APS_UI
             TextBox[] textBoxArray = { textBox1, textBox2 };
             Button[] buttonArray = { button1, button2, button3, button5, button6, button7};
             ComboBox[] comboBoxArray = { comboBox1, comboBox4 };
-            CheckBox[] checkBoxArray = { checkBox1, checkBox3 };
+            //CheckBox[] checkBoxArray = { checkBox1, checkBox3 };
             DateTimePicker[] timePickerArray = { dateTimePicker1, dateTimePicker2, dateTimePicker3, dateTimePicker4 };
             float[,] commonFontSize = { 
                                         { 7F,  8F,  9F,  10F, 11F,  12F}, 
@@ -162,6 +164,7 @@ namespace MESSystem.APS_UI
                 buttonArray[i].Location = new System.Drawing.Point(x, y);
             }
 
+            /*
             for (i = 0; i < checkBoxArray.Length; i++)
             {
                 w = (int)(checkBoxArray[i].Size.Width * screenRatioX);
@@ -171,6 +174,7 @@ namespace MESSystem.APS_UI
                 y = (int)(checkBoxArray[i].Location.Y * screenRatioY);
                 checkBoxArray[i].Location = new System.Drawing.Point(x, y);
             }
+            */
 
             for (i = 0; i < comboBoxArray.Length; i++)
             {
@@ -209,9 +213,9 @@ namespace MESSystem.APS_UI
 
         private void timer_updateForm(Object source, EventArgs e)
         {
-            if (gVariable.APSScreenRefresh != 0)
+            if (salesOrderScreenRefresh != 0)
                 loadScreen();
-            gVariable.APSScreenRefresh = 0;
+            salesOrderScreenRefresh = 0;
         }
 
         //sales order status
@@ -230,13 +234,13 @@ namespace MESSystem.APS_UI
         {
             int i, j;
             //int ret;
-            int length;
+            //int length;
             int num;
             //int min;
             int status;
             int index1;
-            int index2;
-            int selectionChanged;
+            //int index2;
+            //int selectionChanged;
             string commandText;
             ListViewItem OptionItem;
             //string[] salesOrderCodeArray = new string[SALES_ORDER_NUM_MAX];
@@ -260,7 +264,7 @@ namespace MESSystem.APS_UI
 
             try
             {
-                selectionChanged = 0;
+                //selectionChanged = 0;
                 if (listView1.SelectedItems.Count != 0)
                 {
                     //Console.WriteLine("salesOrderSelected = " + salesOrderSelected + "; index = " + listView1.SelectedItems[0].Index);
@@ -268,12 +272,12 @@ namespace MESSystem.APS_UI
                     if (salesOrderSelected != listView1.SelectedItems[0].Index)
                     {
                         salesOrderSelected = listView1.SelectedItems[0].Index;
-                        selectionChanged = 1;
+                        //selectionChanged = 1;
                     }
                 }
 
                 index1 = 0;
-                index2 = 0;
+                //index2 = 0;
 
                 if (listView1.TopItem != null)
                     index1 = listView1.TopItem.Index;
@@ -293,77 +297,77 @@ namespace MESSystem.APS_UI
                     //salesOrderCodeArray[i] = salesTableArray[i, mySQLClass.ORDER_CODE_IN_SALESORDER_DATABASE];
                 }
 
-                if (gVariable.APSScreenRefresh == 1)
+                listView1.Clear();
+
+                this.listView1.BeginUpdate();
+
+                listView1.GridLines = true;
+                listView1.Dock = DockStyle.Fill;
+
+                for (i = 0; i < salesOrderLenArray.Length; i++)
+                    listView1.Columns.Add(salesOrderListHeader[i], (int)(salesOrderLenArray[i] * screenRatioX), HorizontalAlignment.Center);
+
+                for (i = 0, j = 0; i < num; i++, j++)
                 {
-                    listView1.Clear();
+                    OptionItem = new ListViewItem();
 
-                    this.listView1.BeginUpdate();
+                    OptionItem.SubItems.Add((i + 1).ToString());
+                    OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.ORDER_CODE_IN_SALESORDER_DATABASE]);
+                    OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.PRODUCT_CODE_IN_SALESORDER_DATABASE]);
+                    OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.PRODUCT_NAME_IN_SALESORDER_DATABASE]);
+                    //OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.ERP_TIME_IN_SALESORDER_DATABASE]);
+                    OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.DELIVERY_TIME_IN_SALESORDER_DATABASE]);
+                    OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.REQUIRED_NUM_IN_SALESORDER_DATABASE] + " " + salesTableArray[i, mySQLClass.UNIT_IN_SALESORDER_DATABASE]);
+                    OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.CUSTOMER_IN_SALESORDER_DATABASE]);
+                    OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.APS_TIME_IN_SALESORDER_DATABASE]);
+                    //OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.PLANNED_START_TIME_IN_SALESORDER_DATABASE]);
+                    //OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.PLANNED_COMPLETE_TIME_IN_SALESORDER_DATABASE]);
+                    OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.RESULT_IN_SALESORDER_DATABASE]);
 
-                    listView1.GridLines = true;
-                    listView1.Dock = DockStyle.Fill;
-
-                    for (i = 0; i < salesOrderLenArray.Length; i++)
-                        listView1.Columns.Add(salesOrderListHeader[i], (int)(salesOrderLenArray[i] * screenRatioX), HorizontalAlignment.Center);
-
-                    for (i = 0, j = 0; i < num; i++, j++)
+                    status = Convert.ToInt16(salesTableArray[i, mySQLClass.STATUS_IN_SALESORDER_DATABASE]);
+                    switch (status)
                     {
-                        OptionItem = new ListViewItem();
-
-                        OptionItem.SubItems.Add((i + 1).ToString());
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.ORDER_CODE_IN_SALESORDER_DATABASE]);
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.PRODUCT_CODE_IN_SALESORDER_DATABASE]);
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.PRODUCT_NAME_IN_SALESORDER_DATABASE]);
-                        //OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.ERP_TIME_IN_SALESORDER_DATABASE]);
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.DELIVERY_TIME_IN_SALESORDER_DATABASE]);
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.REQUIRED_NUM_IN_SALESORDER_DATABASE] + " " + salesTableArray[i, mySQLClass.UNIT_IN_SALESORDER_DATABASE]);
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.CUSTOMER_IN_SALESORDER_DATABASE]);
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.APS_TIME_IN_SALESORDER_DATABASE]);
-                        //OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.PLANNED_START_TIME_IN_SALESORDER_DATABASE]);
-                        //OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.PLANNED_COMPLETE_TIME_IN_SALESORDER_DATABASE]);
-                        OptionItem.SubItems.Add(salesTableArray[i, mySQLClass.RESULT_IN_SALESORDER_DATABASE]);
-
-                        status = Convert.ToInt16(salesTableArray[i, mySQLClass.STATUS_IN_SALESORDER_DATABASE]);
-                        switch (status)
-                        {
-                            case gVariable.SALES_ORDER_STATUS_ERP_PUBLISHED:
-                                OptionItem.SubItems.Add("已导入");
-                                break;
-                            case gVariable.SALES_ORDER_STATUS_SEPARATE_OK:
-                                OptionItem.SubItems.Add("已拆分");
-                                break;
-                            case gVariable.SALES_ORDER_STATUS_APS_OK:
-                                OptionItem.SubItems.Add("已排程");
-                                break;
-                            case gVariable.SALES_ORDER_STATUS_CONFIRMED:
-                                OptionItem.SubItems.Add("已确认");
-                                break;
-                            case gVariable.SALES_ORDER_STATUS_APPLIED:
-                                OptionItem.SubItems.Add("已下发");
-                                break;
-                            case gVariable.SALES_ORDER_STATUS_STARTED:
-                                OptionItem.SubItems.Add("已开工");
-                                break;
-                            case gVariable.SALES_ORDER_STATUS_COMPLETED:
-                                OptionItem.SubItems.Add("已完工");
-                                break;
-                            case gVariable.SALES_ORDER_STATUS_CANCELLED:
-                                OptionItem.SubItems.Add("已取消");
-                                break;
-                            default:
-                                break;
-                        }
-
-                        listView1.Items.Add(OptionItem);
+                        case gVariable.SALES_ORDER_STATUS_ERP_PUBLISHED:
+                            OptionItem.SubItems.Add("已导入");
+                            break;
+                        case gVariable.SALES_ORDER_STATUS_SEPARATE_OK:
+                            OptionItem.SubItems.Add("已拆分");
+                            break;
+                        case gVariable.SALES_ORDER_STATUS_APS_OK:
+                            OptionItem.SubItems.Add("已排程");
+                            break;
+                        case gVariable.SALES_ORDER_STATUS_CONFIRMED:
+                            OptionItem.SubItems.Add("已确认");
+                            break;
+                        case gVariable.SALES_ORDER_STATUS_PUBLISHED:
+                            OptionItem.SubItems.Add("已下发");
+                            break;
+                        case gVariable.SALES_ORDER_STATUS_APPLIED:
+                            OptionItem.SubItems.Add("已申请");
+                            break;
+                        case gVariable.SALES_ORDER_STATUS_STARTED:
+                            OptionItem.SubItems.Add("已开工");
+                            break;
+                        case gVariable.SALES_ORDER_STATUS_COMPLETED:
+                            OptionItem.SubItems.Add("已完工");
+                            break;
+                        case gVariable.SALES_ORDER_STATUS_CANCELLED:
+                            OptionItem.SubItems.Add("已取消");
+                            break;
+                        default:
+                            break;
                     }
 
-                    if (salesOrderSelected >= 0)
-                        this.listView1.Items[salesOrderSelected].Selected = true;
-
-                    if (listView1.TopItem != null && listView1.Items.Count > index1 + listviewLineNum1[gVariable.dpiValue, gVariable.resolutionLevel] - 1)
-                        listView1.EnsureVisible(index1 + listviewLineNum1[gVariable.dpiValue, gVariable.resolutionLevel] - 1);
-
-                    this.listView1.EndUpdate();
+                    listView1.Items.Add(OptionItem);
                 }
+
+                if (salesOrderSelected >= 0)
+                    this.listView1.Items[salesOrderSelected].Selected = true;
+
+                if (listView1.TopItem != null && listView1.Items.Count > index1 + listviewLineNum1[gVariable.dpiValue, gVariable.resolutionLevel] - 1)
+                    listView1.EnsureVisible(index1 + listviewLineNum1[gVariable.dpiValue, gVariable.resolutionLevel] - 1);
+
+                this.listView1.EndUpdate();
 
             }
             catch (Exception ex)
@@ -462,7 +466,7 @@ namespace MESSystem.APS_UI
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            gVariable.APSScreenRefresh = 2;
+            salesOrderScreenRefresh = 1;
         }
 
         //complete the selected sales order
@@ -496,22 +500,103 @@ namespace MESSystem.APS_UI
         
         }
 
-        //sales order breakdown
+        //sales order breakdown to productBatch order
         private void button5_Click(object sender, EventArgs e)
         {
-            int index;
+            int i, j;
+            int left;
+            int numOfBatch;
+            int oneBatchWeight;
+            int totalWeight;
+            string cutTime;
+            string cutResult;
+            string salesOrderCode;
+            string status;
+            string codeString;
+            string commandText;
+            string[,] tableArray;
 
-            if (listView1.SelectedItems.Count > 0)
+            //gVariable.salesOrderStruct salesOrderImpl = new gVariable.salesOrderStruct();
+            gVariable.productBatchStruct productBatchImpl = new gVariable.productBatchStruct();
+
+            if (listView1.CheckedItems.Count > 0)
             {
-                if (listView1.SelectedItems.Count > SALES_ORDER_NUM_MAX_SELECTED)
+                if (listView1.CheckedItems.Count > SALES_ORDER_NUM_MAX_SELECTED)
                 {
-                    MessageBox.Show("很抱歉，您勾选的订单数量太多，做多支持50个订单同时拆分。", "版权信息", MessageBoxButtons.OK);
+                    MessageBox.Show("很抱歉，您勾选的订单数量太多，系统最多支持50个订单同时拆分。", "版权信息", MessageBoxButtons.OK);
+                    return;
                 }
-                
-                index = Convert.ToInt32(listView1.SelectedItems[0].SubItems[0]);
 
+                for (i = 0; i < listView1.CheckedItems.Count; i++)
+                {
+                    codeString = listView1.CheckedItems[i].SubItems[2].Text;
+
+                    //find oldest published dispatch, and saet it as our target dispatch 
+                    commandText = "select * from `" + gVariable.salesOrderTableName + "` where salesOrderCode = '" + codeString + "'"; 
+                    tableArray = mySQLClass.databaseCommonReading(gVariable.globalDatabaseName, commandText);
+                    if (tableArray != null)
+                    {
+                        //the status of this sales order is input OK, need cutting 
+                        if(tableArray[0, 16] == "0")
+                        {
+                            //get total weight of this order
+                            totalWeight = (int)(Convert.ToDouble(tableArray[0, 5]) * 1000);
+                            numOfBatch = totalWeight / gVariable.PRODUCT_BATCH_MAX_OUTPUT_NUM;  //get weight for a production batch
+
+                            left = totalWeight % gVariable.PRODUCT_BATCH_MAX_OUTPUT_NUM;
+                            if(left != 0)
+                                numOfBatch++;
+
+                            oneBatchWeight = totalWeight / numOfBatch;
+                            salesOrderCode = tableArray[0, 1];
+                            cutTime = DateTime.Now.ToString("yyyy-MM-dd");
+                            status = gVariable.SALES_ORDER_STATUS_SEPARATE_OK.ToString();
+                            cutResult = salesOrderCode + "_1";
+
+                            left = totalWeight;
+                            for(j = 0; j < numOfBatch; j++)
+                            {
+                                productBatchImpl.salesOrderBatchCode = salesOrderCode + "_" + (j + 1);
+                                productBatchImpl.originalSalesOrderCode = salesOrderCode;
+                                productBatchImpl.deliveryTime = tableArray[0, 2];
+                                productBatchImpl.productCode = tableArray[0, 3];
+                                productBatchImpl.productName = tableArray[0, 4];
+
+                                //if there are still lot of output requirement
+                                if (left > oneBatchWeight)
+                                    productBatchImpl.requiredNum = oneBatchWeight.ToString();
+                                else  //only a little bit left
+                                    productBatchImpl.requiredNum = left.ToString();
+
+                                productBatchImpl.unit = tableArray[0, 6];
+                                productBatchImpl.customer = tableArray[0, 7];
+
+                                productBatchImpl.publisher = tableArray[0, 8];
+                                productBatchImpl.ERPTime = tableArray[0, 9];
+                                productBatchImpl.APSTime = null;
+                                productBatchImpl.planTime1 = null;
+                                productBatchImpl.planTime2 = null;
+                                productBatchImpl.realStartTime = null;
+                                productBatchImpl.realFinishTime = null;
+                                productBatchImpl.source = tableArray[0, 15];
+                                productBatchImpl.status = gVariable.SALES_ORDER_STATUS_SEPARATE_OK.ToString();
+                                productBatchImpl.cutTime = cutTime;
+                                productBatchImpl.batchNum = null;  //this value will be assigned after APS
+                                mySQLClass.writeDataToProductBatchTable(gVariable.productBatchTableName, gVariable.productBatchFileName, productBatchImpl);
+                                salesOrderScreenRefresh = 1;
+                            }
+
+                            if (j > 1)
+                            {
+                                cutResult += "～" + salesOrderCode + "_" + j;
+                            }
+
+                            commandText = "update `" + gVariable.salesOrderTableName + "` set cutTime = " + cutTime + ", orderStatus = " + status + ", cutResult = '" + cutResult + "' where salesOrderCode = '" + salesOrderCode + "'";
+                            mySQLClass.pureDatabaseNonQueryAction(gVariable.globalDatabaseName, commandText);
+                        }
+                    }
+                }
             }
-
         }
 
     }

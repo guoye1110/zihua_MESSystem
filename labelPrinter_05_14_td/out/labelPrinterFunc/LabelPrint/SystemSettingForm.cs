@@ -213,6 +213,7 @@ namespace LabelPrint
         void clear_SerialPortComboxList()
         {
             cb_SerialPort.Items.Clear();
+            sm_SerialPort.Items.Clear();
             cb_BoudRate.Items.Clear();
             cb_DataBits.Items.Clear();
             cb_Parity.Items.Clear();
@@ -222,6 +223,7 @@ namespace LabelPrint
         void SetInitSelSerialPortComboList()
         {
             cb_SerialPort.SelectedIndex = 0;
+            sm_SerialPort.SelectedIndex = 0;
             cb_BoudRate.SelectedIndex = 9;
             cb_DataBits.SelectedIndex = 3;
             cb_Parity.SelectedIndex = 0;
@@ -230,6 +232,7 @@ namespace LabelPrint
         void SetCurSelSerialPortComboList()
         {
             cb_SerialPort.Text = Info.ScaleSerialPort;
+            sm_SerialPort.Text = Info.ScannerSerialPort;
             cb_BoudRate.Text = Info.ScaleBaudRate;
             cb_DataBits.Text = Info.ScaleDataBit;
             cb_Parity.Text = Info.ScaleSerialParity;
@@ -248,6 +251,12 @@ namespace LabelPrint
             {
                 cb_SerialPort.Items.Add("COM" + i);
             }
+
+            for (int i = 1; i < 100; i++)
+            {
+                sm_SerialPort.Items.Add("COM" + i);
+            }
+            
             cb_BoudRate.Items.AddRange(baudRate);
             for (int i = 5; i <= 8; i++)
             {
@@ -361,6 +370,28 @@ namespace LabelPrint
             }
             
         }
+
+        Boolean IsScannerComPortChanged()
+        {
+
+            if (sm_SerialPort.SelectedIndex != -1)
+            {
+                int index = GetComPortIndex(Info.ScannerSerialPort);
+                if (index != sm_SerialPort.SelectedIndex)
+                    return true;
+                else
+                    return false;
+            }
+            else
+            {
+                if (String.Compare(Info.ScannerSerialPort, sm_SerialPort.SelectedItem.ToString()) != 0)
+                    return true;
+                else
+                    return false;
+            }
+
+        }
+        
         Boolean IsScaleComBaudRateChanged()
         {
             if (cb_BoudRate.SelectedIndex != -1)
@@ -408,6 +439,7 @@ namespace LabelPrint
         Boolean IsScaleComSettingChanged()
         {
             if (IsScaleComPortChanged()
+                || IsScannerComPortChanged()
                 || IsScaleComBaudRateChanged()
                 || IsScaleComParityChanged()
                 || IsScaleComDataBitChanged()
@@ -500,6 +532,7 @@ namespace LabelPrint
             Info.ManufacturePhase = (int)MPhase;
 
             Info.ScaleSerialPort = cb_SerialPort.SelectedItem.ToString();
+            Info.ScannerSerialPort = sm_SerialPort.SelectedItem.ToString();
             Info.ScaleBaudRate = cb_BoudRate.SelectedItem.ToString();
             Info.ScaleDataBit = cb_DataBits.SelectedItem.ToString();
             Info.ScaleSerialParity = cb_Parity.SelectedItem.ToString();

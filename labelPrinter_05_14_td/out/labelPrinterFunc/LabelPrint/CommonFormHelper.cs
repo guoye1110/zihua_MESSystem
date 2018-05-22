@@ -9,18 +9,18 @@ namespace LabelPrint
     public  class CommonFormHelper
     {
 
-        public static String UpdateLittleRollNo(int bigno, int littleno)
+        public static String GetLittleRollNoStr(int bigno, int littleno)
         {
             //String bigStr = null;
             //String littleStr = null;
             //bigStr = string.Format("{0:D3}", bigno);
             //littleStr = string.Format("{0:D2}", littleno);
             //return bigStr + '-' + littleStr;
-            littleno++; 
+           // littleno++; 
             return string.Format("{0:D2}", littleno);
         }
 
-        public static String UpdateBigRollNo(int bigno)
+        public static String GetBigRollNoStr(int bigno)
         {
             return  string.Format("{0:D3}", bigno);
         }
