@@ -450,14 +450,6 @@ namespace LabelPrint
         }
         private void SendItemToServer()
         {
-			//<大卷条码>;<重量>
-			string str = UserInput.OutputBarcode + ";" + UserInput.Roll_Weight;
-			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
-
-			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD, send_buf.Length);
-
-			int rsp = m_FilmSocket.RecvResponse(1000);
-			if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
         }
         private void PostUpdateProductData()
         {
@@ -548,15 +540,6 @@ namespace LabelPrint
 
                 }
             }
-
-			//<工单编码>;<记录>
-			string str = m_dispatchCode + ";" + UserInput.JiaoJiRecord;
-			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
-
-			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_END, send_buf.Length);
-
-			int rsp = m_FilmSocket.RecvResponse(1000);
-			if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
 			
 #if true
 #if false
@@ -598,27 +581,17 @@ namespace LabelPrint
         //start work
         private void button1_Click(object sender, EventArgs e)
         {
-        	byte[] send_buf = System.Text.Encoding.Default.GetBytes(tb_worker.Text);
-			byte[] data;
-			string[] start_work;
-        
-        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_START, tb_worker.Text.Length);
-
-			data = m_FilmSocket.RecvData(10000);
-			if (data != null) {
-				if (data[0]==(byte)0xff)
-					System.Windows.Forms.MessageBox.Show("！！！发送失败");
-				else if (data[0]==(byte)0)	
-					System.Windows.Forms.MessageBox.Show("无工单");
-				else {
-					start_work = System.Text.Encoding.Default.GetString(data).Split(';');
-					//To Do after communication
-					//<工单编号>;<产品编号>
-					m_dispatchCode = start_work[0];
-					cb_ProductCode.Text = start_work[1];
-					cb_ProductCode_SelectionChangeCommitted(null,null);
-				}
-			}
+        	switch (ToServer_startwork())
+        	{
+        	case -1:
+				System.Windows.Forms.MessageBox.Show("失败，请重新");
+				break;
+			case 0:
+				System.Windows.Forms.MessageBox.Show("无工单");
+				break;
+			default:
+				break;
+        	}
         }
 
         private String GetProductState(ComboBox productState_cb)
@@ -674,5 +647,65 @@ namespace LabelPrint
 
         }
 
+		//返回值：		0：	无工单
+		//			1：	成功，工单信息会显示在界面上
+		//			-1：通讯失败
+		private int ToServer_startwork()
+        {
+        	byte[] send_buf = System.Text.Encoding.Default.GetBytes(UserInput.WorkerNo);
+			byte[] data;
+			string[] start_work;
+        
+        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_START, send_buf.Length);
+
+			data = m_FilmSocket.RecvData(10000);
+			if (data != null) {
+				/*if (data[0]==(byte)0xff)
+					return -1;//重发*/
+				if (data[0]==(byte)0)	
+					return 0;//无工单
+
+				start_work = System.Text.Encoding.Default.GetString(data).Split(';');
+
+				//<工单编号>;<产品编号>
+				tb_WorkNo.Text = start_work[0];
+				cb_ProductCode.Text = start_work[1];
+				cb_ProductCode_SelectionChangeCommitted(null,null);
+				tb_BatchNo.Text = start_work[0].Substring(0,7);
+				if (start_work[0].Substring(9,1) == "1")
+					rb_DayWork.Checked = true;
+				else
+					rb_NightWork.Checked = true;
+				return 1;//成功
+			}
+			return -1;//通讯错误
+		}
+
+		//返回值：		 0：	成功
+		//			-1：通讯失败
+		private int ToServer_product_barcode_upload()
+		{
+			//<大卷条码>;<重量>
+			string str = UserInput.OutputBarcode + ";" + UserInput.Roll_Weight;
+			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+
+			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD, send_buf.Length);
+
+			return m_FilmSocket.RecvResponse(1000);
+		}
+
+
+		//返回值：		 0：	成功
+		//			-1：通讯失败
+		private int ToServer_endwork()
+		{
+			//<工单编码>;<记录>
+			string str = UserInput.WorkNo + ";" + UserInput.JiaoJiRecord;
+			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+
+			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_END, send_buf.Length);
+
+			return m_FilmSocket.RecvResponse(1000);
+		}
     }
 }

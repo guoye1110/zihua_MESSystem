@@ -23,6 +23,8 @@ namespace LabelPrint
 		private const int COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE = 0xB7;  //printing machine send barcode info to server whever a stack of material is moved into the warehouse
 		private FilmSocket m_FilmSocket;
 		FilmSocket.networkstatehandler m_networkstatehandler;
+		string[,] m_materialCode = new string[7,7];
+		string[,] m_materialRequired = new string[7,7];
 		
         OutBoundingInputData UserInput;
 
@@ -473,19 +475,6 @@ namespace LabelPrint
         //get material requirement list from server
         private void bt_Record_Click(object sender, EventArgs e)
         {
-        	byte[] send_buf = System.Text.Encoding.Default.GetBytes(tb_WorkerNo.Text);
-			byte[] recv_buf;
-			string[] start_work;
-        
-        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_WAREHOUE_OUT_START, send_buf.Length);
-
-			recv_buf = m_FilmSocket.RecvData(1000);
-			if (recv_buf != null){
-				start_work = System.Text.Encoding.Default.GetString(recv_buf).Split(';');
-
-				//To Do:
-				//7台设备，每台7个料仓，一共49组数据，每组数据格式如下：物料代码;物料数量;
-			}
         }
 
         private void cb_RawMaterialCode1_SelectionChangeCommitted(object sender, EventArgs e)
@@ -513,6 +502,67 @@ namespace LabelPrint
         //material out 
         private void button2_Click(object sender, EventArgs e)
         {
+        }
+
+        private void cb_RawMaterialCode1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+		//返回值：		0：	无物料单
+		//			1：	成功，台设备，每台7个料仓，一共49组数据，保存在m_materialCode和m_materialRequired
+		//				中，界面中只显示第一台设备的物料情况。
+		//			-1：通讯失败
+		private int ToServer_startwork()
+        {
+        	byte[] send_buf = System.Text.Encoding.Default.GetBytes(UserInput.WorkerNo);
+			byte[] data;
+			string[] start_work;
+        
+        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_WAREHOUE_OUT_START, send_buf.Length);
+
+			data = m_FilmSocket.RecvData(10000);
+			if (data != null) {
+				if (data[0]==(byte)0xff)
+					return -1;//重发
+				if (data[0]==(byte)0)	
+					return 0;//无物料单
+
+				start_work = System.Text.Encoding.Default.GetString(data).Split(';');
+
+				//7台设备，每台7个料仓，一共49组数据，每组数据格式如下：物料代码;物料数量;
+				for (int i=0;i<UserInput.targets.Length;i++) {
+					for (int j=0;j<7;j++) {
+						m_materialCode[i,j] = start_work[i*14+j];
+						m_materialRequired[i,j] = start_work[i*14+j+1];
+					}
+				}
+				
+				cb_TargetMachineNo.Text  = UserInput.targets[0];
+				cb_RawMaterialCode1.Text = start_work[0];
+				tb_XuQiu1.Text			 = start_work[1];
+				cb_RawMaterialCode2.Text = start_work[2];
+				tb_XuQiu2.Text			 = start_work[3];
+				cb_RawMaterialCode3.Text = start_work[4];
+				tb_XuQiu3.Text			 = start_work[5];
+				cb_RawMaterialCode4.Text = start_work[6];
+				tb_XuQiu4.Text			 = start_work[7];
+				cb_RawMaterialCode5.Text = start_work[8];
+				tb_XuQiu5.Text			 = start_work[9];
+				cb_RawMaterialCode6.Text = start_work[10];
+				tb_XuQiu6.Text			 = start_work[11];
+				cb_RawMaterialCode7.Text = start_work[12];
+				tb_XuQiu7.Text			 = start_work[13];
+
+				return 1;//成功
+			}
+			return -1;//通讯错误
+		}
+
+		//返回值：		 0：	成功
+		//			-1：通讯失败
+		private int ToServer_material_out_upload()
+		{
 			//<原料代码>;<原料批次号>;<目标设备号>;<料仓号>;<重量>
 			string str="";
 			int index;
@@ -530,13 +580,7 @@ namespace LabelPrint
 			str += UserInput.BenCiChuKuWeight;
 			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE, send_buf.Length);
 
-			int rsp = m_FilmSocket.RecvResponse(1000);
-			if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
-        }
-
-        private void cb_RawMaterialCode1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
+			return m_FilmSocket.RecvResponse(1000);
+		}
     }
 }

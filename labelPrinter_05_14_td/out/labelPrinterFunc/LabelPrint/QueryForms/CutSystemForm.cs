@@ -287,7 +287,7 @@ namespace LabelPrint
 			byte[] data = new byte[4];
 			int rsp;
 			
-			machineID = 140 + Convert.ToInt16(GlobalConfig.Setting.CurSettingInfo.MachineNo);
+			machineID = 180 + Convert.ToInt16(GlobalConfig.Setting.CurSettingInfo.MachineNo);
 			data[0] = (byte)(machineID&0xff);
 			data[1] = (byte)((machineID&0xff00)>>8);
 			m_FilmSocket.sendDataPacketToServer(data, 0x3, 2);

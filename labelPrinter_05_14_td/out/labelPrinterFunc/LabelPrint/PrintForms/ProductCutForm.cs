@@ -1854,16 +1854,6 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
                     UserInput.InsertJIaoJieRecord();
                     //write jiao JIe Record to DB
 
-					//<工单编码>;<记录>
-					string str = m_dispatchCode + ";" + UserInput.JiaoJiRecord;
-					byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
-					
-					m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_SLIT_PROCESS_END, send_buf.Length);
-					
-					int rsp = m_FilmSocket.RecvResponse(1000);
-					if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
-
-
                 }
             }
         }
@@ -1877,20 +1867,6 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
         //To Do: Add start work button in UI
         private void button4_Click(object sender, EventArgs e)
         {
-        	byte[] send_buf = System.Text.Encoding.Default.GetBytes(tb_worker.Text);
-			byte[] recv_buf;
-			string[] start_work;
-        
-        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_SLIT_PROCESS_START, tb_worker.Text.Length);
-
-			recv_buf = m_FilmSocket.RecvData(1000);
-			if (recv_buf != null) {
-				start_work = System.Text.Encoding.Default.GetString(recv_buf).Split(';');
-				
-				//To Do after communication
-				//<工单编号>;<产品编号>
-				m_dispatchCode = start_work[0];
-			}
         }
         private void tb_BigRollNo_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -1903,5 +1879,80 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
             BarCodeHook.Stop();
         }
 
+		//返回值：		0：	无工单
+		//			1：	成功，工单信息会显示在界面上
+		//			-1：通讯失败
+		private int ToServer_startwork()
+        {
+        	byte[] send_buf = System.Text.Encoding.Default.GetBytes(UserInput.WorkerNo);
+			byte[] data;
+			string[] start_work;
+        
+        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_SLIT_PROCESS_START, send_buf.Length);
+
+			data = m_FilmSocket.RecvData(10000);
+			if (data != null) {
+				if (data[0]==(byte)0xff)
+					return -1;//重发
+				if (data[0]==(byte)0)	
+					return 0;//无工单
+
+				start_work = System.Text.Encoding.Default.GetString(data).Split(';');
+
+				//<工单编号>;<产品编号>
+				tb_WorkNo.Text = start_work[0];
+				cb_ProductCode1.Text = start_work[1];
+				cb_ProductCode1_SelectedIndexChanged(null,null);
+				tb_BatchNo1.Text = start_work[0].Substring(0,7);
+				if (start_work[0].Substring(9,1) == "1")
+					rb_DayWork.Checked = true;
+				else
+					rb_NightWork.Checked = true;
+				return 1;//成功
+			}
+			return -1;//通讯错误
+		}
+
+		//返回值：		 0：	成功
+		//			-1：通讯失败
+		private int ToServer_product_barcode_upload()
+		{
+			//<小卷条码信息>;<卷重>;<接头数量>
+			string str = UserInput.LittleRollNo + ";" + UserInput.Weight + ";" + UserInput.JointCount;
+			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+
+			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_SLIT_PROCESS_PRODUCT_BARCODE_UPLOAD, send_buf.Length);
+
+			return m_FilmSocket.RecvResponse(1000);
+		}
+
+		//返回值：		 0：	成功
+		//			-1：通讯失败
+		private int ToServer_endwork()
+		{
+			//<工单编码>;<记录>
+			string str = UserInput.WorkNo + ";" + UserInput.JiaoJiRecord;
+			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+
+			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_SLIT_PROCESS_END, send_buf.Length);
+
+			return m_FilmSocket.RecvResponse(1000);
+		}
+
+		//返回值：		 0：	成功
+		//			-1：通讯失败
+		private int ToServer_packageinfo_upload(string packBarcode, string totalWeight, string totalLength, string littleRollBarcodes)
+		{
+			//<铲板号>;<卷数>;<重量>;<长度>;<打包条码>;<所有小卷条码>
+			string[] littleRollBarcodesArray = littleRollBarcodes.Split(';');
+			string str = UserInput.PlateNo + ";";
+			str	+= littleRollBarcodesArray.Length.ToString() + ";"; 
+			str += totalWeight + ";" + totalLength + ";" + packBarcode + ";" + littleRollBarcodes;
+			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+
+			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_SLIT_PROCESS_PACKAGE_BARCODE_UPLOAD, send_buf.Length);
+
+			return m_FilmSocket.RecvResponse(1000);			
+		}
     }
 }

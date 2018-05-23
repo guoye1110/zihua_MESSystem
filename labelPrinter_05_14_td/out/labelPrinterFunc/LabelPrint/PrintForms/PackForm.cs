@@ -352,18 +352,7 @@ namespace LabelPrint
 
                 }
             }
-
-
-			//<打包条码>;<工号>
-			string str = UserInput.OutputBarcode + ";" + UserInput.WorkerNo;
-			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
-
-			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_PACKING_PROCESS_PACKAGE_BARCODE_UPLOAD, send_buf.Length);
-
-			int rsp = m_FilmSocket.RecvResponse(1000);
-			if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
-
-			
+		
 #if true
 #if false
             String barcode;
@@ -434,5 +423,18 @@ namespace LabelPrint
 //            tb_MaterialName.Text = 
 
         }
+
+		//返回值：		 0：	成功
+		//			-1：通讯失败
+		private int ToServer_pack_barcode_upload()
+        {
+			//<打包条码>;<工号>
+			string str = UserInput.OutputBarcode + ";" + UserInput.WorkerNo;
+			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+
+			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_PACKING_PROCESS_PACKAGE_BARCODE_UPLOAD, send_buf.Length);
+
+			return m_FilmSocket.RecvResponse(1000);
+		}
     }
 }

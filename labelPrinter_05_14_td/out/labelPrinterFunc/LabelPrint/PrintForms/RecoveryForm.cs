@@ -11,19 +11,50 @@ using LabelPrint.Util;
 using LabelPrint.Data;
 using LabelPrint.Receipt;
 using LabelPrint.PrintForms;
+using LabelPrint.NetWork;
+
 namespace LabelPrint
 {
 
 
     public partial class RecoveryForm : Form
     {
+		//再造料工序
+		private const int COMMUNICATION_TYPE_REUSE_PROCESS_BARCODE_UPLOAD = 0xC6;
+		private FilmSocket m_FilmSocket;
+		FilmSocket.networkstatehandler m_networkstatehandler;
+
         RcvInputData UserInput;
         BardCodeHooK BarCodeHook = new BardCodeHooK();
 
-        public RecoveryForm()
+        public RecoveryForm(FilmSocket filmsocket)
         {
             InitializeComponent();
+			m_FilmSocket = filmsocket;
         }
+		~RecoveryForm()
+        {
+            m_FilmSocket.network_state_event -= m_networkstatehandler;
+		}
+
+		public void network_status_change(bool status)
+        {
+        	Console.WriteLine("network changed to {0}", status);
+		}
+		
+		//返回值：		 0：	成功
+		//			-1：通讯失败
+		private int ToServer_recovery_barcode_upload()
+		{
+			//<再造料条码>;<总重量>;<条码…>;<配方单>;<员工工号>
+			//To Do
+            string str = "";
+			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+
+			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_REUSE_PROCESS_BARCODE_UPLOAD, send_buf.Length);
+
+			return m_FilmSocket.RecvResponse(1000);
+		}
 
         private void tb_PlatelPerLayx_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -130,6 +161,9 @@ namespace LabelPrint
 
             tb_RecoveryMachineNo.Text = SysSetting.CurSettingInfo.MachineNo;
             tb_RecoveryMachineNo.Enabled = false;
+
+			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
+			m_FilmSocket.network_state_event += m_networkstatehandler;			
         }
         static int v = 0;
         private void bt_Scan_Click(object sender, EventArgs e)

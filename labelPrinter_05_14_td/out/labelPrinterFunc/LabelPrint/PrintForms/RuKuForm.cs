@@ -58,15 +58,19 @@ namespace LabelPrint.PrintForms
 
             //    }
             //}
-
+        }
+		
+		//返回值：		 0：	成功
+		//			-1：通讯失败
+		private int ToServer_material_in_upload()
+		{
         	//<原料代码>;<原料批次号>;<目标设备号>;<料仓号>;<重量>
         	string str="";
 			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
 	
 			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE, send_buf.Length);
 
-			int rsp = m_FilmSocket.RecvResponse(1000);
-			if (rsp == 0)	System.Windows.Forms.MessageBox.Show("发送成功！");
-        }
+			return m_FilmSocket.RecvResponse(1000);
+		}
     }
 }

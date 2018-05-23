@@ -462,6 +462,7 @@ namespace MESSystem.communication
                         reusematerialDB.reusematerial_t st_reuse;
                         reusematerialDB db = new reusematerialDB();
 
+						//<再造料条码>;<总重量>;<条码…>;<配方单>;<员工工号>
                         st_reuse.barcodeForReuse = strInputArray[0];
                         st_reuse.rebuildDate = System.DateTime.Now.ToString();
                         st_reuse.BOMCode = strInputArray[12];

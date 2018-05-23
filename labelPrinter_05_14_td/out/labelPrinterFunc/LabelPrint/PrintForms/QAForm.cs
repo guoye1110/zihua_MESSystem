@@ -11,18 +11,48 @@ using LabelPrint.Util;
 using LabelPrint.Data;
 using LabelPrint.Receipt;
 using LabelPrint.PrintForms;
+using LabelPrint.NetWork;
+
 namespace LabelPrint
 {
     public partial class QAForm : Form
     {
+		//质检工序
+		private const int COMMUNICATION_TYPE_INSPECTION_PROCESS_MATERIAL_BARCODE_UPLOAD = 0xC4;
+		private const int COMMUNICATION_TYPE_INSPECTION_PROCESS_PRODUCT_BARCODE_UPLOAD = 0xC5;
+		private FilmSocket m_FilmSocket;
+		FilmSocket.networkstatehandler m_networkstatehandler;
 
         QAUserinputData UserInput;
         BardCodeHooK BarCodeHook = new BardCodeHooK();
 
-        public QAForm()
+        public QAForm(FilmSocket filmsocket)
         {
             InitializeComponent();
+			m_FilmSocket = filmsocket;
         }
+		~QAForm()
+        {
+            m_FilmSocket.network_state_event -= m_networkstatehandler;
+		}
+
+		public void network_status_change(bool status)
+        {
+        	Console.WriteLine("network changed to {0}", status);
+		}
+
+		//返回值：		 0：	成功
+		//			-1：通讯失败
+		private int ToServer_product_barcode_upload()
+		{
+			//<条码信息>;<检验员工号>
+			string str = UserInput.OutputBarcode + ";" + UserInput.WorkerNo;
+			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+
+			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_INSPECTION_PROCESS_PRODUCT_BARCODE_UPLOAD, send_buf.Length);
+
+			return m_FilmSocket.RecvResponse(1000);
+		}
 
         private void QAForm_Load(object sender, EventArgs e)
         {
@@ -55,6 +85,9 @@ namespace LabelPrint
 
             lb_InputBarcode.Text = "";
             lb_OutputBarcode.Text = "";
+
+			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
+			m_FilmSocket.network_state_event += m_networkstatehandler;
         }
 
 
