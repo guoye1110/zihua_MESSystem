@@ -136,24 +136,23 @@ namespace LabelPrint.NetWork
 					}
 
                 	if (m_sock.Connected) {
+						//心跳协议每隔5秒发送
+						Thread.Sleep(5000);
 						
 						retry_cnt = 3;
 
 						inputDataHeader(buf, MIN_PACKET_LEN, COMMUNICATION_TYPE_HEART_BEAT, 0);
+						buf[PACKET_DATASTATUS_POS] = 0;
 						toolClass.addCrc32Code(buf, MIN_PACKET_LEN);
 
-						m_sock.ReceiveTimeout = COMMUNICATION_TIMEOUT;
 						m_sock.Send(buf, MIN_PACKET_LEN, 0);
 						recCount = m_sock.Receive(buf, RECV_BUFFER_SIZE, 0);
-						m_sock.ReceiveTimeout = old_timeout;
 						if (recCount == 0) {
 							//length is 0, means TCP/IP disconnected, retry 3 times
 							network_state_event(m_sock.Connected);
 							retry_cnt--;
 							continue;
 						}
-						//心跳协议每隔5秒发送
-						Thread.Sleep(5000);
                 	}
             	}
             	catch (Exception ex)

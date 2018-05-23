@@ -254,6 +254,7 @@ namespace MESSystem.communication
                 {
                 	if (communicationType == COMMUNICATION_TYPE_HANDSHAKE_PRINT_MACHINE_ID){
                     	m_machineIDForPrint = onePacket[PROTOCOL_DATA_POS] + onePacket[PROTOCOL_DATA_POS + 1] * 0x100;
+						Console.WriteLine("Machine " + m_machineIDForPrint + " Handshake!");
 						m_ClientThread.handshakeWithClientOK = 1;
                     	return 0;
                 	}
@@ -575,10 +576,8 @@ namespace MESSystem.communication
 
                     try
                     {
-                    	if (communicationType == COMMUNICATION_TYPE_START_HANDSHAKE_WITH_ID_TO_PC) {
-							Console.WriteLine("Machine " + m_machineIDForPrint + " HearBeat!");
+                    	if (communicationType == COMMUNICATION_TYPE_PRINTING_HEART_BEAT)
 							m_ClientThread.sendResponseOKBack(0);
-                    	}
 						
                         result = HandleHandShake(communicationType, onePacket, packetLen);
                         if (result >= 0) m_ClientThread.sendResponseOKBack(result);
