@@ -50,6 +50,12 @@ namespace LabelPrint.QueryForms
 				HandShake();
 			}
 		}
+		public void network_data_received(int communicationType, byte[] data_buf, int len)
+		{
+			if (communicationType == 0x03) {
+				int result = data_buf[0];
+			}
+		}
 
 		public void HandShake()
         {
@@ -62,7 +68,7 @@ namespace LabelPrint.QueryForms
 			data[1] = (byte)((machineID&0xff00)>>8);
         	m_FilmSocket.sendDataPacketToServer(data, 0x3, 2);
 
-			rsp = m_FilmSocket.RecvResponse(1000);
+			//rsp = m_FilmSocket.RecvResponse(1000);
 		}		
 
         private void QASysForm_Load(object sender, EventArgs e)
@@ -77,6 +83,7 @@ namespace LabelPrint.QueryForms
 
 			m_FilmSocket = new FilmSocket();
 			m_FilmSocket.network_state_event += new FilmSocket.networkstatehandler(network_status_change);
+			m_FilmSocket.network_data_event += new FilmSocket.networkdatahandler(network_data_received);
         }
         void UpdateUserInput()
         {

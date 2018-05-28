@@ -25,7 +25,10 @@ namespace LabelPrint
 		private const int COMMUNICATION_TYPE_CAST_PROCESS_END = 0xBA;
 		private FilmSocket m_FilmSocket;
 		FilmSocket.networkstatehandler m_networkstatehandler;
+		FilmSocket.networkdatahandler m_networkdatahandler;
 		private string m_dispatchCode;
+		private int m_lastRsp;
+		private bool m_connected;
 
         LiuYanUserinputData UserInput;
         BardCodeHooK BarCodeHook = new BardCodeHooK();
@@ -43,11 +46,13 @@ namespace LabelPrint
 		~LiuYanForm()
         {
             m_FilmSocket.network_state_event -= m_networkstatehandler;
+			m_FilmSocket.network_data_event -= m_networkdatahandler;
 		}
 
 		public void network_status_change(bool status)
         {
         	Console.WriteLine("network changed to {0}", status);
+			m_connected = status;
 		}
 
         private void LiuYanForm_Load(object sender, EventArgs e)
@@ -82,6 +87,8 @@ namespace LabelPrint
 
 			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
 			m_FilmSocket.network_state_event += m_networkstatehandler;
+			m_networkdatahandler = new FilmSocket.networkdatahandler(network_data_received);
+			m_FilmSocket.network_data_event += m_networkdatahandler;
         }
 
         private void Liuyan_FormClosing(object sender, EventArgs e)
@@ -658,13 +665,17 @@ namespace LabelPrint
         	byte[] send_buf = System.Text.Encoding.Default.GetBytes(UserInput.WorkerNo);
 			byte[] data;
 			string[] start_work;
-        
-        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_START, send_buf.Length);
+			Thread toserver_thread;
 
-			data = m_FilmSocket.RecvData(10000);
+			if (m_connected)
+        		return m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_START, send_buf.Length);
+			else
+				return -1;
+
+			/*data = m_FilmSocket.RecvData(10000);
 			if (data != null) {
-				/*if (data[0]==(byte)0xff)
-					return -1;//重发*/
+				if (data[0]==(byte)0xff)
+					return -1;//重发
 				if (data[0]==(byte)0)	
 					return 0;//无工单
 
@@ -681,7 +692,7 @@ namespace LabelPrint
 					rb_NightWork.Checked = true;
 				return 1;//成功
 			}
-			return -1;//通讯错误
+			return -1;//通讯错误*/
 		}
 
 		//返回值：		 0：	成功
@@ -692,9 +703,12 @@ namespace LabelPrint
 			string str = UserInput.OutputBarcode + ";" + UserInput.Weight;
 			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
 
-			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD, send_buf.Length);
+			if (m_connected)
+				return m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD, send_buf.Length);
+			else
+				return -1;
 
-			return m_FilmSocket.RecvResponse(1000);
+			//return m_FilmSocket.RecvResponse(1000);
 		}
 
 
@@ -706,9 +720,51 @@ namespace LabelPrint
 			string str = UserInput.WorkNo + ";" + UserInput.JiaoJiRecord;
 			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
 
-			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_END, send_buf.Length);
+			if (m_connected)
+				return m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_END, send_buf.Length);
+			else
+				return -1;
 
-			return m_FilmSocket.RecvResponse(1000);
+			//return m_FilmSocket.RecvResponse(1000);
+		}
+
+		private void network_data_received(int communicationType, byte[] data_buf, int len)
+		{
+			string[] start_work;
+
+			if (communicationType == COMMUNICATION_TYPE_CAST_PROCESS_START) {
+				if (data_buf != null) {
+					if (data_buf[0] == 0xff){
+						m_lastRsp = -1;
+						return;
+					}
+					if (data_buf[0] == (byte)0){
+						m_lastRsp = 0;//无工单
+						return;
+					}
+
+					start_work = System.Text.Encoding.Default.GetString(data_buf).Split(';');
+
+					//<工单编号>;<产品编号>
+					tb_WorkNo.Text = start_work[0];
+					cb_ProductCode.Text = start_work[1];
+					cb_ProductCode_SelectionChangeCommitted(null,null);
+					tb_BatchNo.Text = start_work[0].Substring(0,7);
+					if (start_work[0].Substring(9,1) == "1")
+						rb_DayWork.Checked = true;
+					else
+						rb_NightWork.Checked = true;
+					m_lastRsp = 1;//成功
+				}
+				else
+					m_lastRsp = -1;//通讯错误
+			}
+			if (communicationType == COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD) {
+				m_lastRsp = data_buf[0];
+			}
+			if (communicationType == COMMUNICATION_TYPE_CAST_PROCESS_END) {
+				m_lastRsp = data_buf[0];
+			}
 		}
     }
 }

@@ -25,6 +25,10 @@ namespace LabelPrint
 		private const int COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE = 0xB7;  //printing machine send barcode info to server whever a stack of material is moved into the warehouse
 		private FilmSocket m_FilmSocket;
 		FilmSocket.networkstatehandler m_networkstatehandler;
+		FilmSocket.networkdatahandler m_networkdatahandler;
+		private int m_lastRsp;
+		private bool m_connected;
+
         const int MAX_LIAOCANG_NUM = 7;
 
         string[,] m_materialCode = new string[7, MAX_LIAOCANG_NUM];
@@ -53,11 +57,13 @@ namespace LabelPrint
 		~OutBoundingForm()
         {
 	        m_FilmSocket.network_state_event -= m_networkstatehandler;
+			m_FilmSocket.network_data_event -= m_networkdatahandler;
 		}
 
 		public void network_status_change(bool status)
         {
         	Console.WriteLine("network changed to {0}", status);
+			m_connected = status;
 		}
 
         void InitComponentsArray()
@@ -265,6 +271,9 @@ namespace LabelPrint
             cb_TargetMachineNo.Items.AddRange(UserInput.targets);
 			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
 			m_FilmSocket.network_state_event += m_networkstatehandler;
+			m_networkdatahandler = new FilmSocket.networkdatahandler(network_data_received);
+			m_FilmSocket.network_data_event += m_networkdatahandler;
+
             initSerialPort();
         }
 
@@ -458,8 +467,11 @@ namespace LabelPrint
         	byte[] send_buf = System.Text.Encoding.Default.GetBytes(UserInput.WorkerNo);
 			byte[] data;
 			string[] start_work;
-        
-        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_WAREHOUE_OUT_START, send_buf.Length);
+
+			if (m_connected)
+	        	return m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_WAREHOUE_OUT_START, send_buf.Length);
+			else
+				return -1;
 
 			data = m_FilmSocket.RecvData(10000);
 			if (data != null) {
@@ -497,19 +509,62 @@ namespace LabelPrint
 			int index;
 			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
 
-			str += UserInput.RawMaterialCode + ";";
-			str	+= UserInput.RawMaterialBatchNo + ";";
-			for (index=0;index<UserInput.targets.Length;index++) {
-				if (UserInput.TargetMachineNo == UserInput.targets[index]) {
-					str += (index+1) + ";";
-					break;
+			if (m_connected) {
+				str += UserInput.RawMaterialCode + ";";
+				str	+= UserInput.RawMaterialBatchNo + ";";
+				for (index=0;index<UserInput.targets.Length;index++) {
+					if (UserInput.TargetMachineNo == UserInput.targets[index]) {
+						str += (index+1) + ";";
+						break;
+					}
 				}
+				str += UserInput.LiaoCangNo.Remove(1) + ";";
+				str += UserInput.BenCiChuKuWeight;
+				return m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE, send_buf.Length);
 			}
-			str += UserInput.LiaoCangNo.Remove(1) + ";";
-			str += UserInput.BenCiChuKuWeight;
-			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE, send_buf.Length);
+			else
+				return -1;
 
-			return m_FilmSocket.RecvResponse(1000);
+			//return m_FilmSocket.RecvResponse(1000);
+		}
+		
+		private void network_data_received(int communicationType, byte[] data_buf, int len)
+		{
+			string[] start_work;
+
+			if (communicationType == COMMUNICATION_TYPE_WAREHOUE_OUT_START) {
+				if (data_buf != null) {
+					if (data_buf[0]==(byte)0xff){
+						m_lastRsp = -1;//重发
+						return;
+					}
+					if (data_buf[0]==(byte)0){
+						m_lastRsp = 0;//无物料单
+						return;
+					}
+				
+					start_work = System.Text.Encoding.Default.GetString(data_buf).Split(';');
+				
+					//7台设备，每台7个料仓，一共49组数据，每组数据格式如下：物料代码;物料数量;
+					for (int i=0;i<UserInput.targets.Length;i++) {
+						for (int j=0;j< MAX_LIAOCANG_NUM; j++) {
+							m_materialCode[i,j] = start_work[i*14+j];
+							m_materialRequired[i,j] = start_work[i*14+j+1];
+						}
+					}
+				
+					bStart = true;
+				
+					cb_TargetMachineNo.Text  = UserInput.targets[0];
+				
+					m_lastRsp = 1;//成功
+				}
+				else
+					m_lastRsp = -1;
+			}
+			if (communicationType == COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE) {
+				m_lastRsp = data_buf[0];
+			}
 		}
 
         private void cb_TargetMachineNo_SelectionChangeCommitted(object sender, EventArgs e)

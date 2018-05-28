@@ -46,6 +46,12 @@ namespace LabelPrint
 				HandShake();
 			}
 		}
+		public void network_data_received(int communicationType, byte[] data_buf, int len)
+		{
+			if (communicationType == 0x03) {
+				int result = data_buf[0];
+			}
+		}
 
         /*
          * 当该小卷为不合格品时，产品质量栏位需显示不合格分类编码，如“图 5 分切打印中的问题点选择”中的A/B/C/D/DC/E/W。
@@ -77,6 +83,7 @@ namespace LabelPrint
 
 			m_FilmSocket = new FilmSocket();
 			m_FilmSocket.network_state_event += new FilmSocket.networkstatehandler(network_status_change);
+			m_FilmSocket.network_data_event += new FilmSocket.networkdatahandler(network_data_received);
         }
 
         private void bt_New_Click(object sender, EventArgs e)
@@ -292,7 +299,7 @@ namespace LabelPrint
 			data[1] = (byte)((machineID&0xff00)>>8);
 			m_FilmSocket.sendDataPacketToServer(data, 0x3, 2);
 			
-			rsp = m_FilmSocket.RecvResponse(1000);
+			//rsp = m_FilmSocket.RecvResponse(1000);
 		}
     }
 }

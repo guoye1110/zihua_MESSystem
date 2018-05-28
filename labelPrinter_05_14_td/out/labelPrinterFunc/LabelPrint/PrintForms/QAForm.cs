@@ -26,6 +26,9 @@ namespace LabelPrint
 		private const int COMMUNICATION_TYPE_INSPECTION_PROCESS_PRODUCT_BARCODE_UPLOAD = 0xC5;
 		private FilmSocket m_FilmSocket;
 		FilmSocket.networkstatehandler m_networkstatehandler;
+		FilmSocket.networkdatahandler m_networkdatahandler;
+		private int m_lastRsp;
+		private bool m_connected;
 
         QAUserinputData UserInput;
         BardCodeHooK BarCodeHook = new BardCodeHooK();
@@ -40,11 +43,44 @@ namespace LabelPrint
 		~QAForm()
         {
             m_FilmSocket.network_state_event -= m_networkstatehandler;
+			m_FilmSocket.network_data_event -= m_networkdatahandler;
 		}
 
 		public void network_status_change(bool status)
         {
         	Console.WriteLine("network changed to {0}", status);
+			m_connected = status;
+		}
+
+		private void network_data_received(int communicationType, byte[] data_buf, int len)
+		{
+			if (communicationType == COMMUNICATION_TYPE_INSPECTION_PROCESS_MATERIAL_BARCODE_UPLOAD) {
+				if (data_buf != null) {
+					if (data_buf[0]==(byte)0xff) {
+						m_lastRsp = -1;
+						return;//重发
+					}
+					if (data_buf[0]==(byte)0) {
+						m_lastRsp = 0;
+						return;//无产品编号
+					}
+				
+					//<产品编号>
+					string str1 = System.Text.Encoding.Default.GetString(data_buf);
+				
+					this.Invoke((EventHandler)(delegate
+					{
+						cb_ProductCode.Text = str1;
+						cb_ProductCode_SelectedIndexChanged(null,null);
+					}));
+					m_lastRsp = 1;//成功
+				}
+				else
+					m_lastRsp = -1;//通讯错误
+			}
+			if (communicationType == COMMUNICATION_TYPE_INSPECTION_PROCESS_PRODUCT_BARCODE_UPLOAD) {
+				m_lastRsp = data_buf[0];
+			}
 		}
 
 		//返回值：		 0: 产品代码
@@ -56,13 +92,16 @@ namespace LabelPrint
 			string str = UserInput.InputBarcode;
 			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
 			byte[] data;
-       
-        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_INSPECTION_PROCESS_MATERIAL_BARCODE_UPLOAD, send_buf.Length);
 
-			data = m_FilmSocket.RecvData(10000);
+			if(m_connected)
+        		return m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_INSPECTION_PROCESS_MATERIAL_BARCODE_UPLOAD, send_buf.Length);
+			else
+				return -1;
+
+			/*data = m_FilmSocket.RecvData(10000);
 			if (data != null) {
-				/*if (data[0]==(byte)0xff)
-					return -1;//重发*/
+				if (data[0]==(byte)0xff)
+					return -1;//重发
 				if (data[0]==(byte)0)
 					return 0;//无工单
 
@@ -76,7 +115,7 @@ namespace LabelPrint
                 }));
                 return 1;//成功
 			}
-			return -1;//通讯错误
+			return -1;//通讯错误*/
 		}
 
 		//返回值：		 0：	成功
@@ -89,9 +128,12 @@ namespace LabelPrint
 
             QAStatus = 0;
 
-			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_INSPECTION_PROCESS_PRODUCT_BARCODE_UPLOAD, send_buf.Length);
+			if (m_connected)
+				return m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_INSPECTION_PROCESS_PRODUCT_BARCODE_UPLOAD, send_buf.Length);
+			else
+				return -1;
 
-			return m_FilmSocket.RecvResponse(1000);
+			//return m_FilmSocket.RecvResponse(1000);
 		}
 
         private void QAForm_Load(object sender, EventArgs e)
@@ -130,6 +172,8 @@ namespace LabelPrint
 			
 			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
 			m_FilmSocket.network_state_event += m_networkstatehandler;
+			m_networkdatahandler = new FilmSocket.networkdatahandler(network_data_received);
+			m_FilmSocket.network_data_event += m_networkdatahandler;
             initSerialPort();
         }
 

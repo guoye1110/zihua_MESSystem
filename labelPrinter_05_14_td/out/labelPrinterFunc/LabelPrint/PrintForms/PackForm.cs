@@ -24,6 +24,9 @@ namespace LabelPrint
         private const int COMMUNICATION_TYPE_PACKING_PROCESS_PACKAGE_BARCODE_UPLOAD = 0xC7;
 		private FilmSocket m_FilmSocket;
 		FilmSocket.networkstatehandler m_networkstatehandler;
+		FilmSocket.networkdatahandler m_networkdatahandler;
+		private int m_lastRsp;
+		private bool m_connected;
 
         PackUserinputData UserInput;
         BardCodeHooK BarCodeHook = new BardCodeHooK();
@@ -36,11 +39,13 @@ namespace LabelPrint
 		~packForm()
         {
         	m_FilmSocket.network_state_event -= m_networkstatehandler;
+			m_FilmSocket.network_data_event -= m_networkdatahandler;
 		}
 
 		public void network_status_change(bool status)
         {
         	Console.WriteLine("network changed to {0}", status);
+			m_connected = status;
 		}
 
         private void PackForm_Load(object sender, EventArgs e)
@@ -69,7 +74,8 @@ namespace LabelPrint
 
             tb_LittleRollNo.Text = "0";
 		m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
-			m_FilmSocket.network_state_event += m_networkstatehandler;     
+			m_FilmSocket.network_state_event += m_networkstatehandler;  
+			m_FilmSocket.network_data_event += m_networkdatahandler;
             initSerialPort();
         }
 
@@ -505,9 +511,18 @@ namespace LabelPrint
 			string str = UserInput.OutputBarcode + ";" + UserInput.WorkerNo;
 			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
 
-			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_PACKING_PROCESS_PACKAGE_BARCODE_UPLOAD, send_buf.Length);
+			if (m_connected)
+				return m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_PACKING_PROCESS_PACKAGE_BARCODE_UPLOAD, send_buf.Length);
+			else
+				return -1;
 
-			return m_FilmSocket.RecvResponse(1000);
+			//return m_FilmSocket.RecvResponse(1000);
+		}
+		private void network_data_received(int communicationType, byte[] data_buf, int len)
+		{
+			if (communicationType == COMMUNICATION_TYPE_PACKING_PROCESS_PACKAGE_BARCODE_UPLOAD) {
+				m_lastRsp = data_buf[0];
+			}
 		}
     }
 }
