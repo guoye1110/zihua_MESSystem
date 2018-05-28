@@ -22,16 +22,51 @@ namespace LabelPrint.Data
         public String QAStr;
 
         public String BatchNo;
+
+
+
+
+        /// <summary>
+        /// Big Roll
+        /// </summary>
+        public String BigRollQality;
+
+        /// <summary>
+        /// Little Roll
+        /// </summary>
+        public String LittleRStr;
+        public String VendorStr;
+
+
+        public Boolean Valid = false;
+        public RollBarcode()
+        {
+            WorkNoStr = null;
+            TimeStr = null;
+            BigRStr = null;
+            QAStr = null;
+            BatchNo = null;
+        }
+
+
         public Boolean ParserWorNo()
         {
             try
             {
-                String order = WorkNoStr.Substring(5, 2);
-                String LiuYanDevice = WorkNoStr.Substring(4, 1);
-                String YearMonth = TimeStr.Substring(0, 4);
+                //String order = WorkNoStr.Substring(5, 2);
+                //String LiuYanDevice = WorkNoStr.Substring(4, 1);
+                //String YearMonth = TimeStr.Substring(0, 4);
+                String WorkNoSn;
+                String DeviceNo;
+             //   BatchNo = YearMonth + LiuYanDevice + order;
 
-                BatchNo = YearMonth + LiuYanDevice + order;
 
+
+                DeviceNo = WorkNoStr.Substring(11, 1);
+                WorkNoSn = WorkNoStr.Substring(5, 2);
+
+
+                BatchNo = WorkNoStr.Substring(0, 7);
                 //   SalesOrder = WorkNoStr.Substring(0, 7);
             }
             catch (Exception ex)

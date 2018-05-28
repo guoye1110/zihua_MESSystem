@@ -83,7 +83,7 @@ namespace LabelPrint.EditorForms
             InitProductQualityComboBox(cb_ProductQuality);
             cb_ProductQuality.Text = UserInput.ProductQuality;
 
-            tb_RollWeight.Text = UserInput.Roll_Weight;
+            tb_RollWeight.Text = UserInput.Weight;
             //tb_LittleRollNo.Text = UserInput.LittleRollNo;
 
         }
@@ -112,7 +112,7 @@ namespace LabelPrint.EditorForms
             UserInput.BigRollNo = tb_BigRollNo.Text;
             UserInput.Desc = tb_Desc.Text;
             UserInput.ProductState = cb_ProductState.Text;
-            UserInput.Roll_Weight = tb_RollWeight.Text;
+            UserInput.Weight = tb_RollWeight.Text;
             //UserInput.LittleRollNo = tb_LittleRollNo.Text;
         }
 

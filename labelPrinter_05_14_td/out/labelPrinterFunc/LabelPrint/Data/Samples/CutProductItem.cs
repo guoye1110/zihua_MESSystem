@@ -100,17 +100,18 @@ namespace LabelPrint
             set { _workTimeType = value; }
         }
 
-        public String[] ProductCode = new String[3];
+        const int PRODUCT_TYPE_COUNT = 4;
+        public String[] ProductCode = new String[PRODUCT_TYPE_COUNT];
 
-        public String[] RawMaterialCode = new string[3];
-        public String[] MaterialName = new String[3];
-        public String[] CustomerName = new String[3];
-        public String[] BatchNo = new String[3];
-        public String[] PlateRollNo = new String[3];//铲板卷数
-        public String[] PlateNo = new String[3];//铲板号码
+        public String[] RawMaterialCode = new string[PRODUCT_TYPE_COUNT];
+        public String[] MaterialName = new String[PRODUCT_TYPE_COUNT];
+        public String[] CustomerName = new String[PRODUCT_TYPE_COUNT];
+        public String[] BatchNo = new String[PRODUCT_TYPE_COUNT];
+        public String[] PlateRollNo = new String[PRODUCT_TYPE_COUNT];//铲板卷数
+        public String[] PlateNo = new String[PRODUCT_TYPE_COUNT];//铲板号码
 
 
-        public String[] Width = new String[3];
+        public String[] Width = new String[PRODUCT_TYPE_COUNT];
 
         private String _orderNo;
         public String OrderNo

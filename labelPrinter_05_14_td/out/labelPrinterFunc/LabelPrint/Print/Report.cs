@@ -188,9 +188,12 @@ namespace LabelPrint.Print
 
                     PrintingTotal += (dt.Rows.Count + page_per_count - 1) / page_per_count;
                 }
-                PrintPriview.Document = CreatePrintDocument(dtList, Title);
+                 //= CreatePrintDocument(dtList, Title);
+                PrintDocument pd = CreatePrintDocument(dtList, Title); ;
+                PrintPriview.Document = pd;
+                pd.Print();
                 PrintPriview.WindowState = FormWindowState.Maximized;
-                PrintPriview.ShowDialog();
+                //PrintPriview.ShowDialog();
             }
             catch (Exception ex)
             {

@@ -371,6 +371,11 @@ namespace LabelPrint.Data
             label.Printlabel(this);
         }
 
+        public void PrintPackLabel()
+        {
+            CutRollPackLabel label = new CutRollPackLabel();
+            label.Printlabel(this);
+        }
         public override Boolean ParseBarCode(String barcode)
         {
             //XXXXXXXXXX(工单编码) + X（工序）+X（机台号）+XXXXXXXX（日期）+XX（卷号）+XXX（分卷号）+X（客户序号）+X（质量编码）；
@@ -421,6 +426,66 @@ namespace LabelPrint.Data
             }
             return res;
         }
+
+
+
+
+
+        #region PlateNo 
+        String PlateNoTable = "PlateNo";
+        enum PlateNoColumnType
+        {
+            SN,
+            ProductCode,
+            BatchNo,
+            WorkNo,
+            PlateNo,
+            MAX_COLUMN
+        };
+
+
+        public static String[] PlateNoColumn =
+            {
+            "SN",
+            "ProductCode",
+            "BatchNo",
+            "WorkNo",
+            "PlateNo",
+            };
+
+        public String JiaoJiRecord;
+
+        public void CreatePlateNoDataTable(String table)
+        {
+            CreateDataTable(table, PlateNoColumn);
+        }
+
+        public void CreatePlateNoDataTable()
+        {
+
+            CreateJIaoJieDataTable(PlateNoTable);
+        }
+
+        public virtual String[] SetPlateNoColumnDataArray()
+        {
+            String[] values = new String[JiaJieColumn.Length];
+            System.Diagnostics.Debug.Assert((int)PlateNoColumnType.MAX_COLUMN == JiaJieColumn.Length);
+            values[(int)PlateNoColumnType.ProductCode] = ProductCode;
+            values[(int)PlateNoColumnType.BatchNo] = BatchNo;
+            values[(int)PlateNoColumnType.WorkNo] = WorkNo;
+            values[(int)PlateNoColumnType.PlateNo] = PlateNo;
+            return values;
+        }
+
+        public void InsertPlateNoRecord()
+        {
+            UpdateDateTime();
+            String[] values = SetPlateNoColumnDataArray();
+
+            createInsertCommand(PlateNoTable, PlateNoColumn, values);
+        }
+
+        #endregion
     }
     class CutSysData:ProcessSysData
     {

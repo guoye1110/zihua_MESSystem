@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO.Ports;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelPrint.Util;
@@ -19,6 +21,7 @@ namespace LabelPrint
 
     public partial class RecoveryForm : Form
     {
+	  SerialPort serialPort2;  //扫描枪
 		//再造料工序
 		private const int COMMUNICATION_TYPE_REUSE_PROCESS_BARCODE_UPLOAD = 0xC6;
 		private FilmSocket m_FilmSocket;
@@ -26,7 +29,8 @@ namespace LabelPrint
 
         RcvInputData UserInput;
         BardCodeHooK BarCodeHook = new BardCodeHooK();
-
+        const int BarcodeNum = 10;
+        TextBox[] tb_OldCodes = new TextBox[BarcodeNum];
         public RecoveryForm(FilmSocket filmsocket)
         {
             InitializeComponent();
@@ -84,14 +88,15 @@ namespace LabelPrint
         {
 
             UserInput.WorkProcess = //tb_WorkProcess.Text;
-            UserInput.Recipe = tb_RecipeNo.Text;
+            UserInput.RecipeCode = tb_RecipeNo.Text;
             UserInput.Color = tb_Color.Text;
             //UserInput.Vendor = tb_Vendor.Text;
-            UserInput.WeightPerBag = tb_WeightPerBag.Text;
-            //UserInput.StackWeight = tb_StackWeight.Text;
+            UserInput.RecoveryWeight = tb_RecoveryWeight.Text;
+            UserInput.TMaterialWeight = tb_TMaterialWeight.Text;
             //UserInput.Bags_x = tb_PlatelPerLayx.Text;
             //UserInput.Bags_y = tb_PlatelPerLayy.Text;
             //UserInput.Bags_xy = tb_PlateRollNum.Text;
+            //tb_RecoveryWeight
 
             UserInput.WorkerNo = tb_WorkerNo.Text;
 
@@ -138,7 +143,41 @@ namespace LabelPrint
         private void PostUpdateProductData()
         {
             lb_OutputBarcode.Text = UserInput.OutputBarcode;
+
+            InitBarcodesText();
             //tb_DateTime.Text = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
+        }
+
+        private void InitBarCodeTextBoxArray()
+        {
+            tb_OldCodes[0] = tb_OldCode1;
+            tb_OldCodes[1] = tb_OldCode2;
+            tb_OldCodes[2] = tb_OldCode3;
+            tb_OldCodes[3] = tb_OldCode4;
+            tb_OldCodes[4] = tb_OldCode5;
+            tb_OldCodes[5] = tb_OldCode6;
+            tb_OldCodes[6] = tb_OldCode7;
+            tb_OldCodes[7] = tb_OldCode8;
+            tb_OldCodes[8] = tb_OldCode9;
+            tb_OldCodes[9] = tb_OldCode10;
+
+        }
+
+        private void InitBarcodesText()
+        {
+            for (int i = 0; i < BarcodeNum; i++)
+            {
+                tb_OldCodes[i].Text = null;
+            }
+        }
+
+        TextBox GetFirstEmptyBarcode()
+        {
+            for (int i = 0; i < BarcodeNum; i++) { 
+                if (tb_OldCodes[i].Text == null || tb_OldCodes[i].Text == "")
+                    return tb_OldCodes[i];
+            }
+            return null;
         }
 
         private void RecoveryForm_Load(object sender, EventArgs e)
@@ -149,6 +188,7 @@ namespace LabelPrint
             //tb_WorkProcess.Enabled = false;
             tb_DateTime.Enabled = false;
             tb_WorkerNo.Text = gVariable.userAccount;
+            UserInput.WorkerNo = gVariable.userAccount;
             tb_WorkerNo.Enabled = false;
             lb_InputBarcode.Text = "";
             lb_OutputBarcode.Text = "";
@@ -161,57 +201,113 @@ namespace LabelPrint
 
             tb_RecoveryMachineNo.Text = SysSetting.CurSettingInfo.MachineNo;
             tb_RecoveryMachineNo.Enabled = false;
-
 			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
 			m_FilmSocket.network_state_event += m_networkstatehandler;			
+            initSerialPort();
+            InitBarCodeTextBoxArray();
         }
+
+        private void Recovery_FormClosing(object sender, EventArgs e)
+        {
+            if (serialPort2 != null)
+                serialPort2.Close();
+        }
+
+        void initSerialPort()
+        {
+            SystemSetting SysSetting;
+            SysSetting = GlobalConfig.Setting;
+
+            try
+            {
+                serialPort2 = new SerialPort(SysSetting.CurSettingInfo.ScannerSerialPort, 9600, Parity.None, 8, StopBits.One);
+                serialPort2.Open();
+
+                //serialPort2.DiscardInBuffer();  //清除串口
+ 
+                serialPort2.DataReceived += new SerialDataReceivedEventHandler(serialDataReceived2);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Open serial port failed!" + ex);
+            }
+        }
+
+        void serialDataReceived2(object sender, SerialDataReceivedEventArgs e)
+        {
+            Byte[] serialDataBuf1 = new Byte[128];
+
+            try
+            {
+                Thread.Sleep(1000);
+
+                serialPort2.Read(serialDataBuf1, 0, serialPort2.BytesToRead);
+
+                this.Invoke((EventHandler)(delegate
+                {
+                    lb_InputBarcode.Text = System.Text.Encoding.ASCII.GetString(serialDataBuf1);
+                    TextBox tb = GetFirstEmptyBarcode();
+                    if (tb!=null)
+                    {
+                        tb.Text = lb_InputBarcode.Text;
+                    }
+                }));
+
+            }
+            catch (TimeoutException ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+
         static int v = 0;
         private void bt_Scan_Click(object sender, EventArgs e)
         {
-            String barcode;
-            String orderNo;
-            String batchNo;
-            String DevNo;
-            String WorkNoSn;
-            String productName;
+            //String barcode;
+            //String orderNo;
+            //String batchNo;
+            //String DevNo;
+            //String WorkNoSn;
+            //String productName;
 
-            ScanForm f = new ScanForm();
-            f.ShowDialog();
-            if (f.DialogResult == DialogResult.OK)
-            {
-                barcode = f.GetBarCodeValue();
+            //ScanForm f = new ScanForm();
+            //f.ShowDialog();
+            //if (f.DialogResult == DialogResult.OK)
+            //{
+            //    barcode = f.GetBarCodeValue();
             
-                if (v==0 )
-                {
-                    v = 1;
-                    barcode = "S17110906L302S118012014310500100";
-                }
-                else
-                {
-                    v = 0;
-                    barcode = "S17110906L302P21801201431050";
-                }
-                if (!UserInput.ParseBarCode(barcode))
-                    return;
+            //    if (v==0 )
+            //    {
+            //        v = 1;
+            //        barcode = "S17110906L302S118012014310500100";
+            //    }
+            //    else
+            //    {
+            //        v = 0;
+            //        barcode = "S17110906L302P21801201431050";
+            //    }
+            //    if (!UserInput.ParseBarCode(barcode))
+            //        return;
 
-                //tb_WorkNo.Text = UserInput.WorkNo;
-                if (!UserInput.ParseWorkNo(UserInput.WorkNo,  out batchNo, out DevNo, out WorkNoSn))
-                    return;
-                if (gVariable.orderNo != null)
-                {
-                    orderNo = gVariable.orderNo;
-                    if (!UserInput.GetProductInfoBySaleOrder(orderNo, out UserInput.ProductCode, out productName, out UserInput.CustomerName))
-                        return;
-                    if (!UserInput.GetRecoveryInfoByProductCode(UserInput.ProductCode, out UserInput.WeightPerBag, out UserInput.RecipeCode, out UserInput.Color))
-                        return;
-                }
-                UserInput.InputBarcode = barcode;
-                lb_InputBarcode.Text = barcode;
-                tb_Color.Text = UserInput.Color;
-                tb_WeightPerBag.Text = UserInput.WeightPerBag;
-                tb_RecipeNo.Text = UserInput.RecipeCode;
+            //    //tb_WorkNo.Text = UserInput.WorkNo;
+            //    if (!UserInput.ParseWorkNo(UserInput.WorkNo,  out batchNo, out DevNo, out WorkNoSn))
+            //        return;
+            //    if (gVariable.orderNo != null)
+            //    {
+            //        orderNo = gVariable.orderNo;
+            //        if (!UserInput.GetProductInfoBySaleOrder(orderNo, out UserInput.ProductCode, out productName, out UserInput.CustomerName))
+            //            return;
+            //        if (!UserInput.GetRecoveryInfoByProductCode(UserInput.ProductCode, out UserInput.RecoveryWeight, out UserInput.RecipeCode, out UserInput.Color))
+            //            return;
+            //    }
+            //    UserInput.InputBarcode = barcode;
+            //    lb_InputBarcode.Text = barcode;
+            //    tb_Color.Text = UserInput.Color;
+            //    tb_RecoveryWeight.Text = UserInput.RecoveryWeight;
+            //    tb_RecipeNo.Text = UserInput.RecipeCode;
                 
-            }
+           // }
         }
 
         delegate void AsynBarCode_BarCodeEvent(BardCodeHooK.BarCodes barCode);

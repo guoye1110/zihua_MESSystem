@@ -9,20 +9,30 @@ namespace LabelPrint.Data
     {
         public override void UpdatePrintPrintData(DynamicPrintLabelData DyData)
         {
-            NeedBags = "301";
-            TargetMachineNo = "1号流延机";
-            LiaoCangNo = "1号料仓";
-            materialCode = "3.001.002";
-            WorkNo = "0203 09:21";
+
+            //UserInput.RawMaterialCode = cb_RawMaterialCodes[LiaoCangNo - 1].Text;
+            //UserInput.RawMaterialBatchNo = tb_RawMaterialBachNos[LiaoCangNo - 1].Text;
+            //UserInput.XuQiuWeight = tb_XuQiuWeights[LiaoCangNo - 1].Text;
+            //UserInput.YiChuKuWeight = tb_YiChuKuWeights[LiaoCangNo - 1].Text;
+            //UserInput.BenCiChuKuWeight = tb_BenCiChuKuWeights[LiaoCangNo - 1].Text;
+
+            //NeedBags = "301";
+         //   TargetMachineNo = "1号流延机";
+           // LiaoCangNo = "1号料仓";
+           // RawMaterialCode = "3.001.002";
+            //WorkNo = "0203 09:21";
             DyData.CustomName = Vendor;
-            DyData.RecipeCode = materialCode;
+            // DyData.Recipe = Recipe;
             DyData.BatchNo = RawMaterialBatchNo;
             DyData.DataTime = Date_Time;
-            DyData.WorkerNo = WorkNo;
+            DyData.WorkerNo = WorkerNo;
             DyData.Width = TargetMachineNo;
             DyData.LittleRollNoStr = LiaoCangNo;
-            DyData.QRBarCode = materialCode + ";" + TargetMachineNo.Remove(1) + ";" + LiaoCangNo.Remove(1) + ";" + NeedBags;
-            DyData.RollWeightLength = NeedBags;
+            DyData.QRBarCode = RawMaterialCode + ";" + TargetMachineNo + ";" + LiaoCangNo + ";" + NeedBags;
+
+            
+            DyData.RawMaterialCode = RawMaterialCode;
+            DyData.RollWeightLength = BenCiChuKuWeight;
 
             //OutputBarcode = DyData.QRBarCode;
             //DyData.QRBarCode =原料编码；设备编码；料框编码;代数

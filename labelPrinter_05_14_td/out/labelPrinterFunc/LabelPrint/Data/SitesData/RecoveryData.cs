@@ -21,11 +21,11 @@ namespace LabelPrint.Data
 
 
         public String WorkProcess;
-        public String Recipe;
+        //public String Recipe;
         public String Color;
         //public String Vendor;
-        public String WeightPerBag;
-        //public String StackWeight;
+        public String RecoveryWeight;
+        public String TMaterialWeight;
         //public String Bags_x;
         //public String Bags_y;
         //public String Bags_xy;
@@ -65,8 +65,8 @@ namespace LabelPrint.Data
             "Recipe",
             "Color",
             //"Vendor",
-            "WeightPerBag",
-            //"StackWeight",
+            "RecoveryWeight",
+            "TMaterialWeight",
             //"Bags_x",
             //"Bags_y",
             //"Bags_xy",
@@ -97,8 +97,8 @@ namespace LabelPrint.Data
             Recipe,
             Color,
             //VENDOR,
-            WeightPerBag,
-            //STACKWEIGHT,
+            RecoveryWeight,
+            TMaterialWeight,
             //STACKHEIGHT,
             //BAGS_X,
             //BAGS_Y,
@@ -142,11 +142,11 @@ namespace LabelPrint.Data
             values[(int)ColumnType.MState] = MState;
             
          //   values[(int)ColumnType.WorkProcess] = WorkProcess;
-            values[(int)ColumnType.Recipe] = Recipe;
+            values[(int)ColumnType.Recipe] = RecipeCode;
             values[(int)ColumnType.Color] = Color;
             //values[(int)ColumnType.VENDOR] = Vendor;
-            values[(int)ColumnType.WeightPerBag] = WeightPerBag;
-            //values[(int)ColumnType.STACKWEIGHT] = StackWeight;
+            values[(int)ColumnType.RecoveryWeight] = RecoveryWeight;
+            values[(int)ColumnType.TMaterialWeight] = TMaterialWeight;
             //values[(int)ColumnType.BAGS_X] = Bags_x;
             //values[(int)ColumnType.BAGS_Y] = Bags_y;
             //values[(int)ColumnType.BAGS_XY] = Bags_xy;
@@ -180,12 +180,12 @@ namespace LabelPrint.Data
             MState = dataRows[0][(int)ColumnType.MState + offset].ToString();
 
 
-         //   WorkProcess = dataRows[0][(int)ColumnType.WorkProcess + offset].ToString();
-            Recipe = dataRows[0][(int)ColumnType.Recipe + offset].ToString();
+            //   WorkProcess = dataRows[0][(int)ColumnType.WorkProcess + offset].ToString();
+            RecipeCode = dataRows[0][(int)ColumnType.Recipe + offset].ToString();
             Color = dataRows[0][(int)ColumnType.Color + offset].ToString();
             //Vendor = dataRows[0][(int)ColumnType.VENDOR + offset].ToString();
-            //StackWeight = dataRows[0][(int)ColumnType.STACKWEIGHT + offset].ToString();
-            WeightPerBag = dataRows[0][(int)ColumnType.WeightPerBag + offset].ToString();
+            TMaterialWeight = dataRows[0][(int)ColumnType.TMaterialWeight + offset].ToString();
+            RecoveryWeight = dataRows[0][(int)ColumnType.RecoveryWeight + offset].ToString();
             //Bags_x = dataRows[0][(int)ColumnType.BAGS_X + offset].ToString();
             //Bags_y = dataRows[0][(int)ColumnType.BAGS_Y + offset].ToString();
             //Bags_xy = dataRows[0][(int)ColumnType.BAGS_XY + offset].ToString();

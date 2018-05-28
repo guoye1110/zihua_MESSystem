@@ -142,25 +142,27 @@ namespace MESSystem.common
             return -1;
 		}
 
-/*
-		public productprintlist_t[] readrecordBy(string materialScancode)
+		public productprint_t? readlastrecord_ByMachineID(int machineId)
 		{
 			string commandText;
 			string[] recordArray;
-			productprintlist_t[] st_productprint, result;
+			string insertString=null;
+			productprint_t? result;
+			string[] stringSeparators = new string[] { ",@" };
+			string[] insertStringSplitted;
 			
-			recordArray = mySQLClass.databaseCommonReadingUnsplitted(c_productprintlistTableName, commandText);
+			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+			insertStringSplitted = insertString.Split(stringSeparators, StringSplitOptions.None);
+			
+			commandText = "select * from `" + c_TableName + "` order by id DESC";
+			commandText += " where `";
+			commandText += insertStringSplitted[MACHINE_ID_INDEX] + "`=" + machineId;
+			recordArray = mySQLClass.databaseCommonReadingUnsplitted(c_TableName, commandText);
 			if (recordArray == null)	return null;
 
-			st_productprint = new productprintlist_t[recordArray.GetLength(0)];
-
-			for (int i=0;i<recordArray.GetLength(0);i++){
-				result = Deserialize(recordArray[i]);
-				if (result != null)	st_productprint[i] = result.Value;
-			}
-			return st_productprint;
+			result = Deserialize(recordArray[0]);
+			return result;
 		}
-*/
 		
         //return 0 written to table successfully
         //      -1 exception occurred

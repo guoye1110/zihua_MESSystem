@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO.Ports;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelPrint.Data;
@@ -23,12 +25,16 @@ namespace LabelPrint
 		private const int COMMUNICATION_TYPE_WAREHOUSE_IN_BARCODE = 0xB7;  //printing machine send barcode info to server whever a stack of material is moved into the warehouse
 		private FilmSocket m_FilmSocket;
 		FilmSocket.networkstatehandler m_networkstatehandler;
-		string[,] m_materialCode = new string[7,7];
-		string[,] m_materialRequired = new string[7,7];
+        const int MAX_LIAOCANG_NUM = 7;
+
+        string[,] m_materialCode = new string[7, MAX_LIAOCANG_NUM];
+		string[,] m_materialRequired = new string[7, MAX_LIAOCANG_NUM];
 		
         OutBoundingInputData UserInput;
 
-        const int MAX_LIAOCANG_NUM = 8;
+
+
+        Boolean bStart = false;
 
         ComboBox[] cb_RawMaterialCodes = new ComboBox[MAX_LIAOCANG_NUM];
         TextBox[] tb_RawMaterialBachNos = new TextBox[MAX_LIAOCANG_NUM];
@@ -36,6 +42,7 @@ namespace LabelPrint
         TextBox[] tb_YiChuKuWeights = new TextBox[MAX_LIAOCANG_NUM];
         TextBox[] tb_BenCiChuKuWeights = new TextBox[MAX_LIAOCANG_NUM];
 
+  SerialPort serialPort2;  //扫描枪
         BardCodeHooK BarCodeHook = new BardCodeHooK();
 
         public OutBoundingForm(FilmSocket filmsocket)
@@ -62,7 +69,7 @@ namespace LabelPrint
             cb_RawMaterialCodes[4] = cb_RawMaterialCode5;
             cb_RawMaterialCodes[5] = cb_RawMaterialCode6;
             cb_RawMaterialCodes[6] = cb_RawMaterialCode7;
-            cb_RawMaterialCodes[7] = cb_RawMaterialCode8;
+
 
             tb_RawMaterialBachNos[0] = tb_BachNo1;
             tb_RawMaterialBachNos[1] = tb_BachNo2;
@@ -71,7 +78,7 @@ namespace LabelPrint
             tb_RawMaterialBachNos[4] = tb_BachNo5;
             tb_RawMaterialBachNos[5] = tb_BachNo6;
             tb_RawMaterialBachNos[6] = tb_BachNo7;
-            tb_RawMaterialBachNos[7] = tb_BachNo8;
+
 
             tb_XuQiuWeights[0] = tb_XuQiu1;
             tb_XuQiuWeights[1] = tb_XuQiu2;
@@ -80,7 +87,7 @@ namespace LabelPrint
             tb_XuQiuWeights[4] = tb_XuQiu5;
             tb_XuQiuWeights[5] = tb_XuQiu6;
             tb_XuQiuWeights[6] = tb_XuQiu7;
-            tb_XuQiuWeights[7] = tb_XuQiu8;
+
 
             tb_YiChuKuWeights[0] = tb_YiChuKu1;
             tb_YiChuKuWeights[1] = tb_YiChuKu2;
@@ -89,7 +96,7 @@ namespace LabelPrint
             tb_YiChuKuWeights[4] = tb_YiChuKu5;
             tb_YiChuKuWeights[5] = tb_YiChuKu6;
             tb_YiChuKuWeights[6] = tb_YiChuKu7;
-            tb_YiChuKuWeights[7] = tb_YiChuKu8;
+
 
             tb_BenCiChuKuWeights[0] = tb_BenCiChuKu1;
             tb_BenCiChuKuWeights[1] = tb_BenCiChuKu2;
@@ -98,7 +105,7 @@ namespace LabelPrint
             tb_BenCiChuKuWeights[4] = tb_BenCiChuKu5;
             tb_BenCiChuKuWeights[5] = tb_BenCiChuKu6;
             tb_BenCiChuKuWeights[6] = tb_BenCiChuKu7;
-            tb_BenCiChuKuWeights[7] = tb_BenCiChuKu8;
+
         }
         void SetRadioComStateByLiaoCangNo(int LiaoCangNo)
         {
@@ -166,67 +173,7 @@ namespace LabelPrint
                 UserInput.BenCiChuKuWeight = tb_BenCiChuKuWeights[LiaoCangNo-1].Text;
             }
 
-            //switch (UserInput.LiaoCangNo)
-            //{
-            //    case "1":
-            //        UserInput.RawMaterialCode = cb_RawMaterialCode1.Text;
-            //        UserInput.RawMaterialBatchNo = tb_BachNo1.Text;
-            //        UserInput.XuQiuWeight = tb_XuQiu1.Text;
-            //        UserInput.YiChuKuWeight = tb_YiChuKu1.Text;
-            //        UserInput.BenCiChuKuWeight = tb_BenCiChuKu1.Text;
-            //        break;
-            //    case "2":
-            //        UserInput.RawMaterialCode = cb_RawMaterialCode2.Text;
-            //        UserInput.RawMaterialBatchNo = tb_BachNo2.Text;
-            //        UserInput.XuQiuWeight = tb_XuQiu2.Text;
-            //        UserInput.YiChuKuWeight = tb_YiChuKu2.Text;
-            //        UserInput.BenCiChuKuWeight = tb_BenCiChuKu2.Text;
-            //        break;
-            //    case "3":
-            //        UserInput.RawMaterialCode = cb_RawMaterialCode3.Text;
-            //        UserInput.RawMaterialBatchNo = tb_BachNo3.Text;
-            //        UserInput.XuQiuWeight = tb_XuQiu3.Text;
-            //        UserInput.YiChuKuWeight = tb_YiChuKu3.Text;
-            //        UserInput.BenCiChuKuWeight = tb_BenCiChuKu3.Text;
-            //        break;
-            //    case "4":
-            //        UserInput.RawMaterialCode = cb_RawMaterialCode4.Text;
-            //        UserInput.RawMaterialBatchNo = tb_BachNo4.Text;
-            //        UserInput.XuQiuWeight = tb_XuQiu4.Text;
-            //        UserInput.YiChuKuWeight = tb_YiChuKu4.Text;
-            //        UserInput.BenCiChuKuWeight = tb_BenCiChuKu4.Text;
-            //        break;
-            //    case "5":
-            //        UserInput.RawMaterialCode = cb_RawMaterialCode5.Text;
-            //        UserInput.RawMaterialBatchNo = tb_BachNo5.Text;
-            //        UserInput.XuQiuWeight = tb_XuQiu5.Text;
-            //        UserInput.YiChuKuWeight = tb_YiChuKu5.Text;
-            //        UserInput.BenCiChuKuWeight = tb_BenCiChuKu5.Text;
-            //        break;
-            //    case "6":
-            //        UserInput.RawMaterialCode = cb_RawMaterialCode6.Text;
-            //        UserInput.RawMaterialBatchNo = tb_BachNo6.Text;
-            //        UserInput.XuQiuWeight = tb_XuQiu6.Text;
-            //        UserInput.YiChuKuWeight = tb_YiChuKu6.Text;
-            //        UserInput.BenCiChuKuWeight = tb_BenCiChuKu6.Text;
-            //        break;
-            //    case "7":
-            //        UserInput.RawMaterialCode = cb_RawMaterialCode7.Text;
-            //        UserInput.RawMaterialBatchNo = tb_BachNo7.Text;
-            //        UserInput.XuQiuWeight = tb_XuQiu7.Text;
-            //        UserInput.YiChuKuWeight = tb_YiChuKu7.Text;
-            //        UserInput.BenCiChuKuWeight = tb_BenCiChuKu7.Text;
-            //        break;
-            //    case "8":
-            //        UserInput.RawMaterialCode = cb_RawMaterialCode8.Text;
-            //        UserInput.RawMaterialBatchNo = tb_BachNo8.Text;
-            //        UserInput.XuQiuWeight = tb_XuQiu8.Text;
-            //        UserInput.YiChuKuWeight = tb_YiChuKu8.Text;
-            //        UserInput.BenCiChuKuWeight = tb_BenCiChuKu8.Text;
-            //        break;
-            //    default:
-            //        break;
-            //}
+
         }
 
         private void UpdateUserInput()
@@ -247,52 +194,7 @@ namespace LabelPrint
 
             UpdatUserInputForRadiOBoxByLiaoCangHao();
 
-            //UserInput.RawMaterialCode1 = cb_RawMaterialCode1.Text;
-            //UserInput.RawMaterialCode2 = cb_RawMaterialCode2.Text;
-            //UserInput.RawMaterialCode3 = cb_RawMaterialCode3.Text;
-            //UserInput.RawMaterialCode4 = cb_RawMaterialCode4.Text;
-            //UserInput.RawMaterialCode5 = cb_RawMaterialCode5.Text;
-            //UserInput.RawMaterialCode6 = cb_RawMaterialCode6.Text;
-            //UserInput.RawMaterialCode7 = cb_RawMaterialCode7.Text;
-            //UserInput.RawMaterialCode8 = cb_RawMaterialCode8.Text;
 
-            //UserInput.RawMaterialBatchNo1 = tb_BachNo1.Text;
-            //UserInput.RawMaterialBatchNo2 = tb_BachNo2.Text;
-            //UserInput.RawMaterialBatchNo3 = tb_BachNo3.Text;
-            //UserInput.RawMaterialBatchNo4 = tb_BachNo4.Text;
-            //UserInput.RawMaterialBatchNo5 = tb_BachNo5.Text;
-            //UserInput.RawMaterialBatchNo6 = tb_BachNo6.Text;
-            //UserInput.RawMaterialBatchNo7 = tb_BachNo7.Text;
-            //UserInput.RawMaterialBatchNo8 = tb_BachNo8.Text;
-
-
-            //UserInput.XuQiuWeight1 = tb_XuQiu1.Text;
-            //UserInput.XuQiuWeight2 = tb_XuQiu2.Text;
-            //UserInput.XuQiuWeight3 = tb_XuQiu3.Text;
-            //UserInput.XuQiuWeight4 = tb_XuQiu4.Text;
-            //UserInput.XuQiuWeight5 = tb_XuQiu5.Text;
-            //UserInput.XuQiuWeight6 = tb_XuQiu6.Text;
-            //UserInput.XuQiuWeight7 = tb_XuQiu7.Text;
-            //UserInput.XuQiuWeight8 = tb_XuQiu8.Text;
-
-            //UserInput.YiChuKuWeight1 = tb_YiChuKu1.Text;
-            //UserInput.YiChuKuWeight2 = tb_YiChuKu2.Text;
-            //UserInput.YiChuKuWeight3 = tb_YiChuKu3.Text;
-            //UserInput.YiChuKuWeight4 = tb_YiChuKu4.Text;
-            //UserInput.YiChuKuWeight5 = tb_YiChuKu5.Text;
-            //UserInput.YiChuKuWeight6 = tb_YiChuKu6.Text;
-            //UserInput.YiChuKuWeight7 = tb_YiChuKu7.Text;
-            //UserInput.YiChuKuWeight8 = tb_YiChuKu8.Text;
-
-            //UserInput.BenCiChuKuWeight1 = tb_BenCiChuKu1.Text;
-            //UserInput.BenCiChuKuWeight2 = tb_BenCiChuKu2.Text;
-            //UserInput.BenCiChuKuWeight3 = tb_BenCiChuKu3.Text;
-            //UserInput.BenCiChuKuWeight4 = tb_BenCiChuKu4.Text;
-            //UserInput.BenCiChuKuWeight5 = tb_BenCiChuKu5.Text;
-            //UserInput.BenCiChuKuWeight6 = tb_BenCiChuKu6.Text;
-            //UserInput.BenCiChuKuWeight7 = tb_BenCiChuKu7.Text;
-            //UserInput.BenCiChuKuWeight8 = tb_BenCiChuKu8.Text;
-            //public String Date_Time;
         }
 
         private void UpdateProductData()
@@ -338,6 +240,7 @@ namespace LabelPrint
 
             tb_DateTime.Enabled = false;
             tb_WorkerNo.Text = gVariable.userAccount;
+            UserInput.WorkerNo = gVariable.userAccount;
             tb_WorkerNo.Enabled = false;
 
             rb_button1.Checked = true;
@@ -356,19 +259,59 @@ namespace LabelPrint
                     cb_RawMaterialCodes[i].Items.AddRange(combosStrs);
                 }
                 
-                //cb_RawMaterialCode2.Items.AddRange(combosStrs);
-                //cb_RawMaterialCode3.Items.AddRange(combosStrs);
-                //cb_RawMaterialCode4.Items.AddRange(combosStrs);
-                //cb_RawMaterialCode5.Items.AddRange(combosStrs);
-                //cb_RawMaterialCode6.Items.AddRange(combosStrs);
-                //cb_RawMaterialCode7.Items.AddRange(combosStrs);
-                //cb_RawMaterialCode8.Items.AddRange(combosStrs);
+
             }
 
             cb_TargetMachineNo.Items.AddRange(UserInput.targets);
-
 			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
 			m_FilmSocket.network_state_event += m_networkstatehandler;
+            initSerialPort();
+        }
+
+        private void OutBoundingForm_FormClosing(object sender, EventArgs e)
+        {
+            if (serialPort2 != null)
+                serialPort2.Close();
+        }
+
+        void initSerialPort()
+        {
+            SystemSetting SysSetting;
+            SysSetting = GlobalConfig.Setting;
+
+            try
+            {
+                serialPort2 = new SerialPort(SysSetting.CurSettingInfo.ScannerSerialPort, 9600, Parity.None, 8, StopBits.One);
+                serialPort2.Open();
+                serialPort2.DataReceived += new SerialDataReceivedEventHandler(serialDataReceived2);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Open serial port failed!" + ex);
+            }
+        }
+
+        void serialDataReceived2(object sender, SerialDataReceivedEventArgs e)
+        {
+            Byte[] serialDataBuf1 = new Byte[128];
+
+            try
+            {
+                Thread.Sleep(1000);
+
+                serialPort2.Read(serialDataBuf1, 0, serialPort2.BytesToRead);
+
+                this.Invoke((EventHandler)(delegate
+                {
+                    label1.Text = System.Text.Encoding.ASCII.GetString(serialDataBuf1);
+                }));
+
+                ToServer_material_out_upload();
+            }
+            catch (TimeoutException ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         private void tb_Bags_x_KeyPress(object sender, KeyPressEventArgs e)
@@ -446,12 +389,7 @@ namespace LabelPrint
                 UserInput.LiaoCangNo = "7";
                 SetRadioComStateByLiaoCangNo(7);
             }
-            else
-            if (rb_button8.Checked)
-            {
-                UserInput.LiaoCangNo = "8";
-                SetRadioComStateByLiaoCangNo(8);
-            }
+
 
         }
 
@@ -475,6 +413,7 @@ namespace LabelPrint
         //get material requirement list from server
         private void bt_Record_Click(object sender, EventArgs e)
         {
+            ToServer_startwork();
         }
 
         private void cb_RawMaterialCode1_SelectionChangeCommitted(object sender, EventArgs e)
@@ -502,6 +441,7 @@ namespace LabelPrint
         //material out 
         private void button2_Click(object sender, EventArgs e)
         {
+
         }
 
         private void cb_RawMaterialCode1_SelectedIndexChanged(object sender, EventArgs e)
@@ -532,27 +472,16 @@ namespace LabelPrint
 
 				//7台设备，每台7个料仓，一共49组数据，每组数据格式如下：物料代码;物料数量;
 				for (int i=0;i<UserInput.targets.Length;i++) {
-					for (int j=0;j<7;j++) {
+					for (int j=0;j< MAX_LIAOCANG_NUM; j++) {
 						m_materialCode[i,j] = start_work[i*14+j];
 						m_materialRequired[i,j] = start_work[i*14+j+1];
 					}
 				}
-				
-				cb_TargetMachineNo.Text  = UserInput.targets[0];
-				cb_RawMaterialCode1.Text = start_work[0];
-				tb_XuQiu1.Text			 = start_work[1];
-				cb_RawMaterialCode2.Text = start_work[2];
-				tb_XuQiu2.Text			 = start_work[3];
-				cb_RawMaterialCode3.Text = start_work[4];
-				tb_XuQiu3.Text			 = start_work[5];
-				cb_RawMaterialCode4.Text = start_work[6];
-				tb_XuQiu4.Text			 = start_work[7];
-				cb_RawMaterialCode5.Text = start_work[8];
-				tb_XuQiu5.Text			 = start_work[9];
-				cb_RawMaterialCode6.Text = start_work[10];
-				tb_XuQiu6.Text			 = start_work[11];
-				cb_RawMaterialCode7.Text = start_work[12];
-				tb_XuQiu7.Text			 = start_work[13];
+
+                bStart = true;
+
+                cb_TargetMachineNo.Text  = UserInput.targets[0];
+
 
 				return 1;//成功
 			}
@@ -572,15 +501,26 @@ namespace LabelPrint
 			str	+= UserInput.RawMaterialBatchNo + ";";
 			for (index=0;index<UserInput.targets.Length;index++) {
 				if (UserInput.TargetMachineNo == UserInput.targets[index]) {
-					str += index + ";";
+					str += (index+1) + ";";
 					break;
 				}
 			}
-			str += UserInput.LiaoCangNo + ";";
+			str += UserInput.LiaoCangNo.Remove(1) + ";";
 			str += UserInput.BenCiChuKuWeight;
 			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_WAREHOUSE_OUT_BARCODE, send_buf.Length);
 
 			return m_FilmSocket.RecvResponse(1000);
 		}
+
+        private void cb_TargetMachineNo_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (bStart) { 
+                for (int i = 0; i< MAX_LIAOCANG_NUM; i++) {
+                    cb_RawMaterialCodes[i].Text = m_materialCode[cb_TargetMachineNo.SelectedIndex, i];
+                    tb_XuQiuWeights[i].Text = m_materialRequired[cb_TargetMachineNo.SelectedIndex, i];
+                }
+            }
+
+        }
     }
 }

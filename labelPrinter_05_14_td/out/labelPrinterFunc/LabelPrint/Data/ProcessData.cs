@@ -38,7 +38,7 @@ namespace LabelPrint.Data
         public String OutputBarcode;
         public String MState;
        // public String Product_State;
-        public String Roll_Weight;
+       // public String Roll_Weight;
 
 
         // public String RawMaterialCode = null;
@@ -77,6 +77,68 @@ namespace LabelPrint.Data
             DyData.RollWeightLength = "0/0";
           //  DyData.LittleRollNoStr = LittleRollCount;
         }
+
+
+        public RollBarcode ParseBarcode(String barcode)
+        {
+            RollBarcode Rollbar = null;
+            if (barcode == null || barcode == "")
+                return null;
+
+            if (barcode.Length == BigRollBarcode.TotalLen)
+            {
+                Rollbar = new BigRollBarcode(barcode);
+            }
+            else if (barcode.Length == LittleRollBarcode.TotalLen)
+            {
+                Rollbar = new LittleRollBarcode(barcode);
+            }
+
+            if (Rollbar == null || Rollbar.Valid == false)
+                return null;
+            else
+                return Rollbar;
+                
+        }
+
+         public Boolean ParseBigRollBarCode(String barcode, out String workno, out String batchno, out String bigroll)
+        {
+            workno = null;
+            bigroll = null;
+            batchno = null;
+            RollBarcode bar = ParseBarcode(barcode);
+            if (bar == null)
+                return false;
+
+            //BigRollBarcode bar = new BigRollBarcode();
+            //if (!bar.ParseBarcode(barcode))
+            //{
+            //    return false;
+            //}
+
+            workno = bar.WorkNoStr;
+            bigroll = bar.BigRStr;
+            batchno = bar.BatchNo;
+            return true;
+        }
+        //XXXXXXXXXX(工单编码) + X（工序）+X（机台号）+XXXXXXXX（日期）+XX（卷号）+XXX（分卷号）+X（客户序号）+X（质量编码）；
+        public Boolean ParseLittleRollBarCode(String barcode, out String workno, out String batchno, out String bigroll, out String littleroll)
+        {
+            workno = null;
+            bigroll = null;
+            batchno = null;
+            littleroll = null;
+            RollBarcode bar = ParseBarcode(barcode);
+            if (bar == null)
+                return false;
+
+            workno = bar.WorkNoStr;
+            bigroll = bar.BigRStr;
+            batchno = bar.BatchNo;
+            littleroll = bar.LittleRStr;
+            return true;
+        }
+
 
         public Boolean GetLittleRollBarcode(LittleRollBarcode barcode, String BigRollNo, String LittleRollNo, String Vendor, String QA)
         {
@@ -338,6 +400,37 @@ namespace LabelPrint.Data
             String cmd = Part1 + " (" + Part2 + " ) values(" + Part3 + ")";
             mySQLClass.ExcuteNonQuery(DatabaseName, cmd, array);
         }
+
+        public String SearchBigLittleRollByBatchNoAndPlate(String  Batchno, String plateno)
+        {
+            System.Data.DataTable dt = null;
+
+            String Finalstr = null;
+            String bigroll;
+            String smallroll;
+            dt = mySQLClass.queryDataTableAction(DatabaseName, "select BigRollNo,LittleRollNo from " + TableName + " where BatchNo='" + Batchno + "' and PlateNo='"+ plateno +"'", null);
+
+            if (dt == null || dt.Rows == null || dt.Rows.Count == 0)
+                return null;
+
+            try
+            {
+
+                for (int i = 0; i< dt.Rows.Count; i++)
+                {
+                    bigroll = (String)dt.Rows[i][0];
+                    smallroll = (String)dt.Rows[i][1];
+                    Finalstr += bigroll + "-" + smallroll+";";
+                } 
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            return Finalstr;
+        }
+
         public Boolean SearchDBByOutBarCode()
         {
             System.Data.DataTable dt = null;
@@ -767,6 +860,19 @@ namespace LabelPrint.Data
             SetInputDataFromDataBase(dtEditor);
             return true;
         }
+
+        public Boolean GetLastItemFromDB()
+        {
+            DataTable dtEditor;
+            mySQLClass a = new mySQLClass();
+            String cmd = "Select * from " + TableName + " order by id desc limit 1";
+            dtEditor = mySQLClass.queryDataTableAction(DatabaseName, cmd, null);
+            if (dtEditor == null || dtEditor.Rows == null || dtEditor.Rows.Count == 0)
+                return false;
+            SetInputDataFromDataBase(dtEditor);
+            return true;
+        }
+
         public virtual void PrintLabel()
         {
 
@@ -792,14 +898,10 @@ namespace LabelPrint.Data
         }
 
         public Boolean ParseWorkNo(String workno,out String batchNo, out String DeviceNo, out String WorkNoSn)
-        //public Boolean ParseWorkNo(String workno, out String orderNo, out String batchNo, out String DeviceNo, out String WorkNoSn)
+
         {
             try {
-                //工单号: 订单号(7个字节）+批次号(7个字节）+设备号+工单序号，
-                // orderNo = workno.Substring(0, 7);
-                //batchNo = workno.Substring(7, 2);
-                //DeviceNo = workno.Substring(9, 2);
-                //WorkNoSn = workno.Substring(11, 2);
+
                 RollBarcode.ParseWorkNo(workno, out batchNo, out DeviceNo, out WorkNoSn);
             }
             catch (Exception e)

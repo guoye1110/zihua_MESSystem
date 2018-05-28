@@ -146,7 +146,7 @@ namespace LabelPrint.Data
 
             values[(int)ColumnType.ProductLength] = ProductLength;
             values[(int)ColumnType.ProductWeight] = ProductWeight; 
-            values[(int)ColumnType.Roll_Weight] = Roll_Weight;
+            values[(int)ColumnType.Roll_Weight] = Weight;
             values[(int)ColumnType.OrderNo] = OrderNo;
             return values;
         }
@@ -191,7 +191,7 @@ namespace LabelPrint.Data
             PlateNo = dataRows[0][(int)ColumnType.PlateNo + offset].ToString();
             ProductLength = dataRows[0][(int)ColumnType.ProductLength + offset].ToString();
             ProductWeight = dataRows[0][(int)ColumnType.ProductWeight + offset].ToString();
-            Roll_Weight = dataRows[0][(int)ColumnType.Roll_Weight + offset].ToString();
+            Weight = dataRows[0][(int)ColumnType.Roll_Weight + offset].ToString();
             OrderNo = dataRows[0][(int)ColumnType.OrderNo + offset].ToString();
 
         }

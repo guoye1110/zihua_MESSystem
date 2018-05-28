@@ -8,8 +8,18 @@ namespace LabelPrint.Data
     public class LittleRollBarcode : RollBarcode
     {
 
-        public String LittleRStr;
-        public String VendorStr;
+
+        public const int TotalLen = WorkNoStrLen + TimeStrLen + BigRStrLen + LittleRStrLen + VendorStrLen + QAStrLen;
+
+        public LittleRollBarcode()
+        {
+        }
+
+
+        public LittleRollBarcode(String barcode)
+        {
+            ParseBarcode(barcode);
+        }
 
         public Boolean ParseBarcode(String str)
         {
@@ -26,6 +36,7 @@ namespace LabelPrint.Data
                 VendorStr = str.Substring(getVendorStrIndex(), VendorStrLen);
                 QAStr = str.Substring(getQAStrIndex(), QAStrLen);
                 ParserWorNo();
+                Valid = true;
             }
             catch (Exception e)
             {
@@ -53,6 +64,7 @@ namespace LabelPrint.Data
             if (QAStr.Length != QAStrLen)
                 return null;
             String barcode = WorkNoStr + TimeStr + BigRStr + LittleRStr + VendorStr + QAStr;
+            Valid = true;
             return barcode;
         }
 

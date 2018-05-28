@@ -571,6 +571,7 @@
             this.Name = "LiuYanForm";
             this.Text = "流延单";
             this.Load += new System.EventHandler(this.LiuYanForm_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Liuyan_FormClosing);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);

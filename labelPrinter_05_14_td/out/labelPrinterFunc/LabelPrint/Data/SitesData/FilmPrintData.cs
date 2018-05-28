@@ -145,7 +145,7 @@ namespace LabelPrint.Data
             values[(int)ColumnType.Product_State] = ProductState;
             values[(int)ColumnType.ProductQuality] = ProductQuality;
             
-            values[(int)ColumnType.Roll_Weight] = Roll_Weight;
+            values[(int)ColumnType.Roll_Weight] = Weight;
 
             values[(int)ColumnType.RawMaterialCode] = RawMaterialCode;
             values[(int)ColumnType.ProductLength] = ProductLength;
@@ -194,7 +194,7 @@ namespace LabelPrint.Data
             ProductState = dataRows[0][(int)ColumnType.Product_State + offset].ToString();
             ProductQuality = dataRows[0][(int)ColumnType.ProductQuality + offset].ToString();
             
-            Roll_Weight = dataRows[0][(int)ColumnType.Roll_Weight + offset].ToString();
+            Weight = dataRows[0][(int)ColumnType.Roll_Weight + offset].ToString();
 
             RawMaterialCode = dataRows[0][(int)ColumnType.RawMaterialCode + offset].ToString();
             ProductLength = dataRows[0][(int)ColumnType.ProductLength + offset].ToString();
@@ -223,20 +223,7 @@ namespace LabelPrint.Data
         质量编码：共一位，0（未检验），1（合格），2以上为错误原因。
         再造料标签编辑界面中，扫描到的第一个废料卷的标签数据修改工序和机台编号后，就是再造料的标签。
         */
-        public override Boolean ParseBarCode(String barcode)
-        {
-            //XXXXXXXXXX(工单编码) + X（工序）+X（机台号）+XXXXXXXX（日期）+XX（卷号）+XXX（分卷号）+X（客户序号）+X（质量编码）；
-            LittleRollBarcode bar = new LittleRollBarcode();
-            if (!bar.ParseBarcode(barcode))
-                return false;
-            WorkNo = bar.WorkNoStr;
-            BigRollNo = bar.BigRStr;
-            LittleRollNo = bar.LittleRStr;
-            BatchNo = bar.BatchNo;
-            int workset = int.Parse(bar.VendorStr);
-            MType = (workset == 0) ? ManufactureType.M_SINGLE : ManufactureType.M_MULTIPLE;
-            return true;
-        }
+
 
     }
     class FilmPrintSysData : ProcessSysData

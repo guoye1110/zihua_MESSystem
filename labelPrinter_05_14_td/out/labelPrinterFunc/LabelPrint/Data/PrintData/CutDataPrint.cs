@@ -67,5 +67,42 @@ namespace LabelPrint.Data
             // System.Diagnostics.Debug.Assert(DyData.QRBarCode.Length == LittleRollBarcode.getTotalStrLen());
 
         }
+
+
+         public void UpdateCutPackPrintPrintData(DynamicPrintLabelData DyData)
+        {
+            String str = null;
+            base.UpdatePrintPrintData(DyData);
+            DyData.BigRollNoStr = BigRollNo;
+            DyData.LittleRollNoStr = BigRollNo + "-" + LittleRollNo;
+            DyData.RollWeightLength = Weight;
+            DyData.WorkerNo = WorkerNo + "  " + WorkTime.Substring(0, 5);
+
+
+            if (ProductState == "合格品" || ProductState == null || ProductState == "")
+            {
+                DyData.Quality = "合格品";
+            }
+            else
+            {
+                DyData.Quality = ProductQuality;
+            }
+            DyData.RawMaterialCode = RawMaterialCode;
+            // UserInput.customerCode = customerCode;
+            // UserInput.productLength = productLength;
+            //    UserInput.productName = productName;
+            //  UserInput.productWeight = productWeight;
+            DyData.RecipeCode = ProductName + " " + ProductWeight;
+            str = Weight;
+            if (Weight == null || Weight == "")
+                str = "0";
+            DyData.RollWeightLength = str + " kg " + ProductLength;
+
+
+            DyData.QRBarCode = BatchNo + PlateNo;
+            OutputBarcode = DyData.QRBarCode;
+            // System.Diagnostics.Debug.Assert(DyData.QRBarCode.Length == LittleRollBarcode.getTotalStrLen());
+
+        }
     }
 }

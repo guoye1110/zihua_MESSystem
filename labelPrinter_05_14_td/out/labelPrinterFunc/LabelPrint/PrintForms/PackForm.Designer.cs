@@ -668,6 +668,7 @@
             this.Name = "packForm";
             this.Text = "打包标签";
             this.Load += new System.EventHandler(this.PackForm_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.packing_FormClosing);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.groupBox1.ResumeLayout(false);

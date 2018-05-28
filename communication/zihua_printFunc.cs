@@ -376,6 +376,8 @@ namespace MESSystem.communication
                     }
 
                     //印刷工序
+                    //2018.5.26: 改变方向，由上传变为请求
+#if false
                     if (communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD)
                     {
                         productprintlistDB.productprint_t st_print = new productprintlistDB.productprint_t();
@@ -388,6 +390,22 @@ namespace MESSystem.communication
 
                         return db.writerecord(st_print);
                     }
+#else
+					if (communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD)
+                    {
+                        productprintlistDB.productprint_t? st_print;
+                        productprintlistDB db = new productprintlistDB();
+
+						st_print = db.readlastrecord_ByMachineID(m_machineIDForPrint-PRINT_PROCESS_PC1+gVariable.printingProcess[0]);
+						if (st_print == null || st_print.Value.productBarCode == null)
+							return 0;
+
+						//<原料流延卷条码>;
+						string str = st_print.Value.materialBarCode;
+						m_ClientThread.sendStringToClient(str, communicationType);
+						return -1;
+                    }
+#endif
                     if (communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD)
                     {
                         productprintlistDB.productprint_t st_print = new productprintlistDB.productprint_t();
@@ -402,6 +420,8 @@ namespace MESSystem.communication
                         return db.updaterecord_ByMaterialBarCode(st_print, strInputArray[0]);
                     }
                     //分切工序
+                    //2018.5.26: 改变方向，由上传变为请求
+#if false
                     if (communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_MATERIAL_BARCODE_UPLOAD)
                     {
                         productslitlistDB.productslit_t st_slit = new productslitlistDB.productslit_t();
@@ -414,6 +434,22 @@ namespace MESSystem.communication
 
                         return db.writerecord(st_slit);
                     }
+#else
+					if (communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_MATERIAL_BARCODE_UPLOAD)
+					{
+						productslitlistDB.productslit_t? st_slit;
+						productslitlistDB db = new productslitlistDB();
+
+						st_slit = db.readlastrecord_ByMachineID(m_machineIDForPrint-SLIT_PROCESS_PC1+gVariable.slittingProcess[0]);
+						if (st_slit == null || st_slit.Value.productBarCode == null)
+							return 0;
+
+						//<原料流延卷条码>;
+						string str = st_slit.Value.materialBarCode;
+						m_ClientThread.sendStringToClient(str, communicationType);
+						return -1;
+					}
+#endif
                     if (communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_PRODUCT_BARCODE_UPLOAD)
                     {
                         productslitlistDB.productslit_t st_slit = new productslitlistDB.productslit_t();
@@ -440,7 +476,28 @@ namespace MESSystem.communication
                         st_inspect.materialBarCode = strInputArray[0];
                         st_inspect.materialScanTime = System.DateTime.Now.ToString();
 
-                        return db.writerecord(st_inspect);
+                        db.writerecord(st_inspect);
+
+						//区分流延大卷（20），印刷大卷（20），分切小卷（22）
+						{
+							string dispatchCode = strInputArray[0].Substring(0,12);
+							string process = dispatchCode.Substring(10,1);
+							int machineid = Convert.ToUInt16(dispatchCode.Substring(11,1));
+							dispatchlistDB db_dispatch=null;
+							dispatchlistDB.dispatchlist_t[] dispatchs;
+							
+							if (process == "L")	db_dispatch = new dispatchlistDB(machineid+gVariable.castingProcess[0]-1);
+							if (process == "Y")	db_dispatch = new dispatchlistDB(machineid+gVariable.printingProcess[0]-1);
+							if (process == "F")	db_dispatch = new dispatchlistDB(machineid+gVariable.slittingProcess[0]-1);
+							
+							dispatchs = db_dispatch.readrecord_ByDispatchcode(dispatchCode);
+							if (dispatchs == null)	return 1;
+
+							//<产品代码>;
+							string str = dispatchs[0].productCode;
+							m_ClientThread.sendStringToClient(str, communicationType);
+							return -1;
+						}
                     }
                     if (communicationType == COMMUNICATION_TYPE_INSPECTION_PROCESS_PRODUCT_BARCODE_UPLOAD)
                     {

@@ -585,6 +585,12 @@ namespace LabelPrint
             }
         }
 
+
+        int CalcLabelDimension(int len)
+        {
+           return  (int)(len / 25.4 * 100 + 0.5);
+        }
+
         public List<PrintInfo> GetPrintLabelFromJsonFile()
         {
             Receipt1 a = new Receipt1();
@@ -601,6 +607,24 @@ namespace LabelPrint
             }
             LabelPattern p = JsonHelper.FromJson<LabelPattern>(File.ReadAllText(fp));
             PrintInfo = p.receiptInfos;
+            mLabelWidth = CalcLabelDimension(p.Width);
+            mLabelHeight = CalcLabelDimension( p.Height);
+            return PrintInfo;
+        }
+
+        public List<PrintInfo> GetCutPackLabelFromJsonFile()
+        {
+            Receipt1 a = new Receipt1();
+
+            string fp = System.Windows.Forms.Application.StartupPath + "\\label\\cutpack\\default.json";
+            if (!File.Exists(fp))  // 判断是否已有相同文件 
+            {
+                return null;
+            }
+            LabelPattern p = JsonHelper.FromJson<LabelPattern>(File.ReadAllText(fp));
+            PrintInfo = p.receiptInfos;
+            mLabelWidth = CalcLabelDimension(p.Width);
+            mLabelHeight = CalcLabelDimension(p.Height);
             return PrintInfo;
         }
     }

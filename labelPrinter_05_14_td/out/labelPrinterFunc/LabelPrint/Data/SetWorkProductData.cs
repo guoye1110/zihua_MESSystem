@@ -29,6 +29,7 @@ namespace LabelPrint.Data
 
         public int PlateNo;
         public int CurRollNum;
+        public int TotalRollNumInPlato = 0;
         public String MiscIndexInOneProcess;
         public int SetWorkProductIndex;
 

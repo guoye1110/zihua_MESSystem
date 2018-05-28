@@ -72,6 +72,7 @@ namespace LabelPrint
             tb_LiuYanMachineNo.Text = SysSetting.CurSettingInfo.MachineNo;
             tb_LiuYanMachineNo.Enabled = false;
             tb_worker.Text = gVariable.userAccount;
+            UserInput.WorkerNo = gVariable.userAccount;
             tb_worker.Enabled = false;
             cb_ProductState.Items.AddRange(LiuYanUserinputData.PrintProductStateStr);
             cb_ProductState.SelectedIndex = 0;
@@ -83,10 +84,12 @@ namespace LabelPrint
 			m_FilmSocket.network_state_event += m_networkstatehandler;
         }
 
-        private void ProductCutForm_FormClosing(object sender, EventArgs e)
+        private void Liuyan_FormClosing(object sender, EventArgs e)
         {
-            serialPort1.Close();
-            serialPort2.Close();
+            if (serialPort1 != null)
+                serialPort1.Close();
+            if (serialPort2 != null)
+                serialPort2.Close();
         }
         
         void initSerialPort()
@@ -351,7 +354,7 @@ namespace LabelPrint
         {
 
             UserInput.ProductCode = cb_ProductCode.Text;
-           // UserInput.LittleRollCount = tb_LittleRollCount1.Text;
+            // UserInput.LittleRollCount = tb_LittleRollCount1.Text;
             //UserInput.LittleRollCount2 = tb_LittleRollCount2.Text;
             //UserInput.LittleRollCount3 = tb_LittleRollCount3.Text;
 
@@ -376,7 +379,7 @@ namespace LabelPrint
             //UserInput.BatchNo2 = tb_BatchNo2.Text;
             //UserInput.BatchNo3 = tb_BatchNo3.Text;
 
-          //  UserInput.LittleRollCount = tb_LittleRollCount.Text;
+            //  UserInput.LittleRollCount = tb_LittleRollCount.Text;
 
             UserInput.WorkNo = tb_WorkNo.Text;
             UserInput.WorkHour = tb_ManHour.Text;
@@ -390,10 +393,9 @@ namespace LabelPrint
             UserInput.WorkClsType = GetWorkClassType();
             UserInput.WorkTType = GetWorkTimeType();
             UserInput.ProductState = cb_ProductState.Text;
-            UserInput.Roll_Weight = tb_RollWeight.Text;
+            UserInput.Weight = tb_RollWeight.Text;
             UpdateUserInputQualityInfo();
         }
-
 		private void UpdateView()
         {
 		}
@@ -450,6 +452,7 @@ namespace LabelPrint
         }
         private void SendItemToServer()
         {
+
         }
         private void PostUpdateProductData()
         {
@@ -497,7 +500,7 @@ namespace LabelPrint
             //}
         }
 
-        /*private void bt_GongDanOk_Click(object sender, EventArgs e)
+        private void bt_GongDanOk_Click(object sender, EventArgs e)
         {
             String orderNo;
             String batchNo;
@@ -520,7 +523,7 @@ namespace LabelPrint
             cb_ProductCode.Text = UserInput.ProductCode;
             tb_ManHour.Text = "0";
             tb_Desc.Text = "";
-        }*/
+        }
 
         private void bt_Record_Click(object sender, EventArgs e)
         {
@@ -539,8 +542,8 @@ namespace LabelPrint
                     //write jiao JIe Record to DB
 
                 }
+                ToServer_endwork();
             }
-			
 #if true
 #if false
             String barcode;
@@ -686,7 +689,7 @@ namespace LabelPrint
 		private int ToServer_product_barcode_upload()
 		{
 			//<大卷条码>;<重量>
-			string str = UserInput.OutputBarcode + ";" + UserInput.Roll_Weight;
+			string str = UserInput.OutputBarcode + ";" + UserInput.Weight;
 			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
 
 			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_CAST_PROCESS_PRODUCT_BARCODE_UPLOAD, send_buf.Length);

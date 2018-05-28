@@ -70,7 +70,7 @@ namespace LabelPrint.Util
         {
             MySqlConnection myConnection;
 
-            connectionString = "data source = localhost; user id = root; PWD = ; Charset=utf8;";
+            connectionString = "data source = localhost; user id = root; PWD = ; Charset=utf8;port=3308";
             ////connectionString = "data source = localhost; user id = root; PWD = ;";
             //connectionString = "Data Source = 127.0.0.1; user id = root; PWD = ;Charset=utf8";
             try

@@ -226,6 +226,32 @@ namespace MESSystem.common
 			return st_dispatchlist;
 		}
 
+		public dispatchlist_t[] readrecord_ByDispatchcode(string dispatchCode)
+		{
+			dispatchlist_t? dd;
+			string[] recordArray;
+			string[] insertStringSplitted;
+			dispatchlist_t[] st_dispatchlist=null;
+			string[] stringSeparators = new string[] { ",@" };
+			string insertString=null;
+
+			getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+			insertStringSplitted = insertString.Split(stringSeparators, StringSplitOptions.None);
+			
+			string commandText = "select * from `" + c_TableName + "` ";
+			commandText += "where `" + insertStringSplitted[DISPATCH_CODE_INDEX] + "`=" + "\'" + dispatchCode + "\'";
+
+			recordArray = mySQLClass.databaseCommonReadingUnsplitted(m_dbName, commandText);
+			if (recordArray!=null){
+				st_dispatchlist = new dispatchlist_t[recordArray.Length];
+				for (int i=0;i<recordArray.Length;i++){
+					dd = Deserialize(recordArray[i]);
+					st_dispatchlist[i] = dd.Value;
+				}
+			}
+			return st_dispatchlist;
+		}
+
 		public int updaterecord_ByDispatchcode(dispatchlist_t st, string dispatchCode)
 		{
 			string insertString=null;

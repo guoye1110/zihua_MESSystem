@@ -80,6 +80,8 @@
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -318,7 +320,7 @@
             this.label27.AutoSize = true;
             this.label27.Location = new System.Drawing.Point(1006, 40);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(76, 18);
+            this.label27.Size = new System.Drawing.Size(83, 18);
             this.label27.TabIndex = 196;
             this.label27.Text = "生产批号：";
             // 
@@ -327,7 +329,7 @@
             this.label26.AutoSize = true;
             this.label26.Location = new System.Drawing.Point(1006, 86);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(76, 18);
+            this.label26.Size = new System.Drawing.Size(83, 18);
             this.label26.TabIndex = 195;
             this.label26.Text = "客户名称：";
             // 
@@ -336,7 +338,7 @@
             this.label22.AutoSize = true;
             this.label22.Location = new System.Drawing.Point(15, 93);
             this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(61, 18);
+            this.label22.Size = new System.Drawing.Size(68, 18);
             this.label22.TabIndex = 192;
             this.label22.Text = "配方号：";
             // 
@@ -405,6 +407,7 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.label7);
             this.groupBox5.Controls.Add(this.lb_InputBarCode1);
             this.groupBox5.Controls.Add(this.lb_InputBarcode);
             this.groupBox5.Location = new System.Drawing.Point(1203, 462);
@@ -524,7 +527,7 @@
             this.lb_ProductQulity.Location = new System.Drawing.Point(567, 190);
             this.lb_ProductQulity.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lb_ProductQulity.Name = "lb_ProductQulity";
-            this.lb_ProductQulity.Size = new System.Drawing.Size(76, 18);
+            this.lb_ProductQulity.Size = new System.Drawing.Size(83, 18);
             this.lb_ProductQulity.TabIndex = 235;
             this.lb_ProductQulity.Text = "产品质量：";
             // 
@@ -577,11 +580,31 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(1160, 867);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 235;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(39, 50);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(46, 18);
+            this.label7.TabIndex = 227;
+            this.label7.Text = "label7";
+            // 
             // PrintForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1916, 1053);
+            this.ClientSize = new System.Drawing.Size(1684, 1032);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.cb_ProductState);
@@ -609,6 +632,7 @@
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Name = "PrintForm";
             this.Text = "印刷单";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PrintForm_FormClosing);
             this.Load += new System.EventHandler(this.PrintForm_Load);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
@@ -683,5 +707,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label lb_ProductQulity;
         private System.Windows.Forms.ComboBox cb_ProductQuality;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Label label7;
     }
 }

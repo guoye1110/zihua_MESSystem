@@ -29,11 +29,11 @@ namespace LabelPrint.EditorForms
         {
             tb_DateTime.Text = UserInput.GetDateTime();
             //tb_WorkProcess.Text = UserInput.WorkProcess;
-            tb_RecipeNo.Text = UserInput.Recipe;
+            tb_RecipeNo.Text = UserInput.RecipeCode;
             tb_Color.Text = UserInput.Color;
-           // tb_Vendor.Text = UserInput.Vendor;
-           // tb_StackWeight.Text = UserInput.StackWeight;
-            tb_WeightPerBag.Text = UserInput.WeightPerBag;
+            // tb_Vendor.Text = UserInput.Vendor;
+            tb_TMaterialWeight.Text = UserInput.TMaterialWeight;
+            tb_RecoveryWeight.Text = UserInput.RecoveryWeight;
            // tb_Bagx.Text = UserInput.Bags_x;
            // tb_Bagy.Text = UserInput.Bags_y;
            // tb_Bagxy.Text = UserInput.Bags_xy;
@@ -57,11 +57,11 @@ namespace LabelPrint.EditorForms
         private void UpdateUserInput()
         {
           //  UserInput.WorkProcess = tb_WorkProcess.Text;
-            UserInput.Recipe = tb_RecipeNo.Text;
+            UserInput.RecipeCode = tb_RecipeNo.Text;
             UserInput.Color = tb_Color.Text;
             //UserInput.Vendor = tb_Vendor.Text;
-            //UserInput.StackWeight = tb_StackWeight.Text;
-            UserInput.WeightPerBag = tb_WeightPerBag.Text;
+            UserInput.TMaterialWeight = tb_TMaterialWeight.Text;
+            UserInput.RecoveryWeight = tb_RecoveryWeight.Text;
            // UserInput.Bags_x = tb_Bagx.Text;
            // UserInput.Bags_y = tb_Bagy.Text;
             //UserInput.Bags_xy = tb_Bagxy.Text;

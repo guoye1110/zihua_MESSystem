@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO.Ports;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelPrint.Data;
@@ -17,8 +19,9 @@ namespace LabelPrint
 {
     public partial class packForm : Form
     {
-		//打包工序		
-		private const int COMMUNICATION_TYPE_PACKING_PROCESS_PACKAGE_BARCODE_UPLOAD = 0xC7;
+        SerialPort serialPort2;  //扫描枪
+                                 //打包工序		
+        private const int COMMUNICATION_TYPE_PACKING_PROCESS_PACKAGE_BARCODE_UPLOAD = 0xC7;
 		private FilmSocket m_FilmSocket;
 		FilmSocket.networkstatehandler m_networkstatehandler;
 
@@ -61,12 +64,62 @@ namespace LabelPrint
             tb_PackMachineNo.Text = SysSetting.CurSettingInfo.MachineNo;
             tb_PackMachineNo.Enabled = false;
             tb_worker.Text = gVariable.userAccount;
+            UserInput.WorkerNo = gVariable.userAccount;
             tb_worker.Enabled = false;
+
             tb_LittleRollNo.Text = "0";
-			
-			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
-			m_FilmSocket.network_state_event += m_networkstatehandler;           
+		m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
+			m_FilmSocket.network_state_event += m_networkstatehandler;     
+            initSerialPort();
         }
+
+        private void packing_FormClosing(object sender, EventArgs e)
+        {
+            if (serialPort2 != null)
+                serialPort2.Close();
+        }
+
+        void initSerialPort()
+        {
+            SystemSetting SysSetting;
+            SysSetting = GlobalConfig.Setting;
+
+            try
+            {
+                serialPort2 = new SerialPort(SysSetting.CurSettingInfo.ScannerSerialPort, 9600, Parity.None, 8, StopBits.One);
+                serialPort2.Open();
+                serialPort2.DataReceived += new SerialDataReceivedEventHandler(serialDataReceived2);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Open serial port failed!" + ex);
+            }
+        }
+
+        void serialDataReceived2(object sender, SerialDataReceivedEventArgs e)
+        {
+            Byte[] serialDataBuf1 = new Byte[128];
+
+            try
+            {
+                Thread.Sleep(1000);
+
+                serialPort2.Read(serialDataBuf1, 0, serialPort2.BytesToRead);
+
+                this.Invoke((EventHandler)(delegate
+                {
+                    lb_InputBarcode.Text = System.Text.Encoding.ASCII.GetString(serialDataBuf1);
+                    HandleBarcode(lb_InputBarcode.Text);
+                }));
+
+            }
+            catch (TimeoutException ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+
         private void SetManufactureType(ManufactureType type)
         {
             switch (type)
@@ -264,7 +317,7 @@ namespace LabelPrint
             UserInput.WorkClsType = GetWorkClassType();
             UserInput.WorkTType = GetWorkTimeType();
 
-            UserInput.Roll_Weight = tb_Roll_Weight.Text;
+            UserInput.Weight = tb_Roll_Weight.Text;
             UserInput.RawMaterialCode = tb_RawMaterialCode.Text;
 
             UserInput.PlateNo = tb_PlateNo.Text;
@@ -352,7 +405,6 @@ namespace LabelPrint
 
                 }
             }
-		
 #if true
 #if false
             String barcode;
@@ -414,6 +466,7 @@ namespace LabelPrint
             tb_ProductWeight.Text = productWeight;
             tb_RawMaterialCode.Text = RawMaterialCode;
 
+
             UserInput.ProductCode = ProductCode;
             UserInput.Width = Width;
             UserInput.RecipeCode = RecipeCode;
@@ -424,9 +477,29 @@ namespace LabelPrint
 
         }
 
-		//返回值：		 0：	成功
-		//			-1：通讯失败
-		private int ToServer_pack_barcode_upload()
+
+        private void HandleBarcode(String barcode)
+        {
+            String WorkNo;
+            String BatchNo;
+            String BigRollNo;
+            String LittleRollNo;
+
+            if (!UserInput.ParseLittleRollBarCode(barcode, out WorkNo, out BatchNo, out BigRollNo,out LittleRollNo))
+                return;
+
+            tb_WorkNo.Text = UserInput.WorkNo = WorkNo;
+            tb_BatchNo.Text = UserInput.BatchNo = BatchNo;
+            tb_BigRollNo.Text = UserInput.BigRollNo = BigRollNo;
+            tb_LittleRollNo.Text = UserInput.LittleRollNo = LittleRollNo;
+        }
+
+
+
+
+        //返回值：		 0：	成功
+        //			-1：通讯失败
+        private int ToServer_pack_barcode_upload()
         {
 			//<打包条码>;<工号>
 			string str = UserInput.OutputBarcode + ";" + UserInput.WorkerNo;

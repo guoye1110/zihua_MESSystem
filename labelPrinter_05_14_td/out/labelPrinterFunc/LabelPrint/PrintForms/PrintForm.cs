@@ -75,6 +75,7 @@ namespace LabelPrint
             tb_PrintMachineNo.Text = SysSetting.CurSettingInfo.MachineNo;
             tb_PrintMachineNo.Enabled = false;
             tb_worker.Text = gVariable.userAccount;
+            UserInput.WorkerNo = gVariable.userAccount;
             tb_worker.Enabled = false;
             lb_InputBarcode.Text = "";
             lb_InputBarCode1.Text = "";
@@ -94,10 +95,12 @@ namespace LabelPrint
 			m_FilmSocket.network_state_event += m_networkstatehandler;			
         }
 
-        private void ProductCutForm_FormClosing(object sender, EventArgs e)
+        private void PrintForm_FormClosing(object sender, EventArgs e)
         {
-            serialPort1.Close();
-            serialPort2.Close();
+            if (serialPort1!=null)
+                serialPort1.Close();
+            if (serialPort2!=null)
+                serialPort2.Close();
         }
         
         void initSerialPort()
@@ -216,6 +219,7 @@ namespace LabelPrint
                 this.Invoke((EventHandler)(delegate
                 {
                     lb_InputBarCode1.Text = System.Text.Encoding.ASCII.GetString(serialDataBuf1);
+                    HandleBarcode(lb_InputBarCode1.Text);
                 }));
                
             }
@@ -380,7 +384,7 @@ namespace LabelPrint
             UserInput.WorkClsType = GetWorkClassType();
             UserInput.WorkTType = GetWorkTimeType();
             UserInput.ProductState = cb_ProductState.Text;
-            UserInput.Roll_Weight = tb_RollWeight.Text;
+            UserInput.Weight = tb_RollWeight.Text;
             //   UserInput.LittleRollNo = tb_LittleRollNo.Text;
 
 
@@ -429,7 +433,7 @@ namespace LabelPrint
         	}
 			if (communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD){
 				//<印刷条码>;<卷重>
-				str = UserInput.OutputBarcode + ";" + UserInput.Roll_Weight;
+				str = UserInput.OutputBarcode + ";" + UserInput.Weight;
 			}
 
 			send_buf = System.Text.Encoding.Default.GetBytes(str);
@@ -463,9 +467,7 @@ namespace LabelPrint
 
             cb_ProductState.SelectedIndex = 0;
             tb_BigRollNo.Text = CommonFormHelper.UpdateBigRollNo(tb_BigRollNo.Text);
-            //UserInput.UpdateDateTime();
-            //  tb_DateTime.Text = UserInput.GetDateTime();
-            //            tb_DateTime.Text = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
+
         }
 
         private void cb_ProductCode1_SelectedIndexChanged(object sender, EventArgs e)
@@ -565,6 +567,22 @@ namespace LabelPrint
             cb_ProductCode.Text = UserInput.ProductCode;
         }
 
+        private void HandleBarcode(String barcode)
+        {
+            String WorkNo;
+            String BatchNo;
+            String BigRollNo;
+
+
+            if (!UserInput.ParseBigRollBarCode(barcode,out WorkNo, out BatchNo, out BigRollNo))
+                return;
+
+            tb_WorkNo.Text = UserInput.WorkNo = WorkNo;
+            tb_BatchNo.Text = UserInput.BatchNo = BatchNo;
+            tb_BigRollNo.Text = UserInput.BigRollNo = BigRollNo;
+        }
+
+
         private void bt_Scan_Click(object sender, EventArgs e)
         {
 
@@ -581,34 +599,36 @@ namespace LabelPrint
             if (f.DialogResult == DialogResult.OK)
             {
                 barcode = f.GetBarCodeValue();
-                barcode = "S17110906L302S118012014310500100";
-                if (!UserInput.ParseBarCode(barcode))
-                    return;
+                //barcode = "S17110906L302S118012014310500100";
+                barcode = "180430604121L32012230030";
+                HandleBarcode(barcode);
+                //if (!UserInput.ParseBarCode(barcode))
+                //    return;
 
-                tb_WorkNo.Text = UserInput.WorkNo;
-                if (!UserInput.ParseWorkNo(tb_WorkNo.Text,  out batchNo, out DevNo, out WorkNoSn))
-                    return;
-                if (gVariable.orderNo != null)
-                {
-                    orderNo = gVariable.orderNo;
-                    if (!UserInput.GetProductInfoBySaleOrder(orderNo, out UserInput.ProductCode, out productName, out UserInput.CustomerName))
-                        return;
-                    if (!UserInput.GetInfoByProductCode(UserInput.ProductCode, out UserInput.Width, out UserInput.RecipeCode, out fixture, out UserInput.CustomerName))
-                        return;
-                }
-                lb_InputBarcode.Text = barcode;
-                tb_Width.Text = UserInput.Width;
-                tb_RecipeCode.Text = UserInput.RecipeCode;
-                tb_CustomerName.Text = UserInput.CustomerName;
-                tb_BatchNo.Text = batchNo;
-                tb_BigRollNo.Text = UserInput.BigRollNo;
+                //tb_WorkNo.Text = UserInput.WorkNo;
+                //if (!UserInput.ParseWorkNo(tb_WorkNo.Text,  out batchNo, out DevNo, out WorkNoSn))
+                //    return;
+                //if (gVariable.orderNo != null)
+                //{
+                //    orderNo = gVariable.orderNo;
+                //    if (!UserInput.GetProductInfoBySaleOrder(orderNo, out UserInput.ProductCode, out productName, out UserInput.CustomerName))
+                //        return;
+                //    if (!UserInput.GetInfoByProductCode(UserInput.ProductCode, out UserInput.Width, out UserInput.RecipeCode, out fixture, out UserInput.CustomerName))
+                //        return;
+                //}
+                //lb_InputBarcode.Text = barcode;
+                //tb_Width.Text = UserInput.Width;
+                //tb_RecipeCode.Text = UserInput.RecipeCode;
+                //tb_CustomerName.Text = UserInput.CustomerName;
+                //tb_BatchNo.Text = batchNo;
+                //tb_BigRollNo.Text = UserInput.BigRollNo;
 
-                tb_BatchNo.Text = UserInput.BatchNo;
-                SetManufactureType(UserInput.MType);
-                cb_ProductCode.Text = UserInput.ProductCode;
+                //tb_BatchNo.Text = UserInput.BatchNo;
+                //SetManufactureType(UserInput.MType);
+                //cb_ProductCode.Text = UserInput.ProductCode;
 
-                tb_ManHour.Text = "0";
-                tb_Desc.Text = "";
+                //tb_ManHour.Text = "0";
+                //tb_Desc.Text = "";
 
 
             }
@@ -664,25 +684,12 @@ namespace LabelPrint
 //            }
 //#endif
         }
-		
+
         //start work
         //To Do: Add start work button in UI
         private void button1_Click(object sender, EventArgs e)
         {
-        	byte[] send_buf = System.Text.Encoding.Default.GetBytes(tb_worker.Text);
-			byte[] recv_buf;
-			string[] start_work;
-        
-        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_PRINT_PROCESS_START, tb_worker.Text.Length);
-
-			recv_buf = m_FilmSocket.RecvData(1000);
-			if (recv_buf != null) {
-				start_work = System.Text.Encoding.Default.GetString(recv_buf).Split(';');
-
-				//To Do after communication
-				//<工单编号>;<产品编号>
-				m_dispatchCode = start_work[0];
-			}
+            ToServer_startwork();
         }
 
         private void cb_ProductState_SelectedIndexChanged(object sender, EventArgs e)
@@ -735,6 +742,12 @@ namespace LabelPrint
             }
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string barcode = "1804306121L32012230030";
+            HandleBarcode(barcode);
+        }
+
 		//返回值：		0：	无工单
 		//			1：	成功，工单信息会显示在界面上
 		//			-1：通讯失败
@@ -769,12 +782,40 @@ namespace LabelPrint
 			return -1;//通讯错误
 		}
 
+		//返回值：		0：	无大卷条码
+		//			1：	成功，原料大卷条码会显示在界面上
+		//			-1：通讯失败
+		private int ToServer_request_material_barcode()
+        {
+        	byte[] send_buf = System.Text.Encoding.Default.GetBytes(GlobalConfig.Setting.CurSettingInfo.MachineNo);
+			byte[] data;
+			string[] start_work;
+        
+        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_PRINT_PROCESS_MATERIAL_BARCODE_UPLOAD, send_buf.Length);
+
+			data = m_FilmSocket.RecvData(10000);
+			if (data != null) {
+				/*if (data[0]==(byte)0xff)
+					return -1;//重发*/
+				if (data[0]==(byte)0)	
+					return 0;//无工单
+
+				start_work = System.Text.Encoding.Default.GetString(data).Split(';');
+
+				//<原料大卷条码>
+				//lb_InputBarcode1.Text = start_work[0];
+				return 1;//成功
+			}
+			return -1;//通讯错误
+		}
+
+
 		//返回值：		 0：	成功
 		//			-1：通讯失败
 		private int ToServer_product_barcode_upload()
 		{
 			//<大卷条码>;<重量>
-			string str = UserInput.OutputBarcode + ";" + UserInput.Roll_Weight;
+			string str = UserInput.OutputBarcode + ";" + UserInput.Weight;
 			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
 
 			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_PRINT_PROCESS_PRODUCT_BARCODE_UPLOAD, send_buf.Length);

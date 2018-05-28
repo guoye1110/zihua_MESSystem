@@ -48,7 +48,7 @@
             // 
             this.dateTimePicker2.CustomFormat = "";
             this.dateTimePicker2.Location = new System.Drawing.Point(214, 61);
-            this.dateTimePicker2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.dateTimePicker2.Margin = new System.Windows.Forms.Padding(2);
             this.dateTimePicker2.Name = "dateTimePicker2";
             this.dateTimePicker2.Size = new System.Drawing.Size(103, 20);
             this.dateTimePicker2.TabIndex = 63;
@@ -58,7 +58,7 @@
             // 
             this.dateTimePicker1.CustomFormat = "";
             this.dateTimePicker1.Location = new System.Drawing.Point(94, 61);
-            this.dateTimePicker1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.dateTimePicker1.Margin = new System.Windows.Forms.Padding(2);
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(116, 20);
             this.dateTimePicker1.TabIndex = 50;
@@ -70,9 +70,9 @@
             this.groupBox1.Controls.Add(this.bt_Find);
             this.groupBox1.Controls.Add(this.bt_New);
             this.groupBox1.Location = new System.Drawing.Point(0, 6);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox1.Size = new System.Drawing.Size(228, 49);
             this.groupBox1.TabIndex = 62;
             this.groupBox1.TabStop = false;
@@ -80,7 +80,7 @@
             // bt_Print
             // 
             this.bt_Print.Location = new System.Drawing.Point(162, 11);
-            this.bt_Print.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.bt_Print.Margin = new System.Windows.Forms.Padding(2);
             this.bt_Print.Name = "bt_Print";
             this.bt_Print.Size = new System.Drawing.Size(56, 32);
             this.bt_Print.TabIndex = 2;
@@ -91,7 +91,7 @@
             // bt_Find
             // 
             this.bt_Find.Location = new System.Drawing.Point(86, 11);
-            this.bt_Find.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.bt_Find.Margin = new System.Windows.Forms.Padding(2);
             this.bt_Find.Name = "bt_Find";
             this.bt_Find.Size = new System.Drawing.Size(56, 32);
             this.bt_Find.TabIndex = 1;
@@ -102,7 +102,7 @@
             // bt_New
             // 
             this.bt_New.Location = new System.Drawing.Point(9, 11);
-            this.bt_New.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.bt_New.Margin = new System.Windows.Forms.Padding(2);
             this.bt_New.Name = "bt_New";
             this.bt_New.Size = new System.Drawing.Size(56, 32);
             this.bt_New.TabIndex = 0;
@@ -114,17 +114,17 @@
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(9, 93);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(2);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(992, 516);
+            this.dataGridView1.Size = new System.Drawing.Size(1370, 516);
             this.dataGridView1.TabIndex = 61;
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
             // 
             // tb_WorkerNo
             // 
             this.tb_WorkerNo.Location = new System.Drawing.Point(644, 61);
-            this.tb_WorkerNo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_WorkerNo.Margin = new System.Windows.Forms.Padding(2);
             this.tb_WorkerNo.Name = "tb_WorkerNo";
             this.tb_WorkerNo.Size = new System.Drawing.Size(222, 20);
             this.tb_WorkerNo.TabIndex = 60;
@@ -132,7 +132,7 @@
             // tb_Recipe
             // 
             this.tb_Recipe.Location = new System.Drawing.Point(363, 61);
-            this.tb_Recipe.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tb_Recipe.Margin = new System.Windows.Forms.Padding(2);
             this.tb_Recipe.Name = "tb_Recipe";
             this.tb_Recipe.Size = new System.Drawing.Size(222, 20);
             this.tb_Recipe.TabIndex = 59;
@@ -171,7 +171,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1039, 616);
+            this.ClientSize = new System.Drawing.Size(1402, 616);
             this.Controls.Add(this.dateTimePicker2);
             this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.groupBox1);
@@ -181,7 +181,7 @@
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "RecoverySysForm";
             this.Text = "再造料系统";
             this.Load += new System.EventHandler(this.RecoverySysForm_Load);

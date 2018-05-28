@@ -64,10 +64,12 @@
             this.label11 = new System.Windows.Forms.Label();
             this.tb_RecipeNo = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.tb_WeightPerBag = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tb_RecoveryMachineNo = new System.Windows.Forms.TextBox();
+            this.tb_TMaterialWeight = new System.Windows.Forms.TextBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.tb_RecoveryWeight = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -191,9 +193,13 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.tb_TMaterialWeight);
             this.groupBox1.Controls.Add(this.tb_OldCode1);
+            this.groupBox1.Controls.Add(this.label15);
             this.groupBox1.Controls.Add(this.tb_OldCode10);
+            this.groupBox1.Controls.Add(this.tb_RecoveryWeight);
             this.groupBox1.Controls.Add(this.label10);
+            this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.tb_OldCode9);
             this.groupBox1.Controls.Add(this.label12);
             this.groupBox1.Controls.Add(this.tb_OldCode8);
@@ -215,8 +221,6 @@
             this.groupBox1.Controls.Add(this.label11);
             this.groupBox1.Controls.Add(this.tb_RecipeNo);
             this.groupBox1.Controls.Add(this.label7);
-            this.groupBox1.Controls.Add(this.tb_WeightPerBag);
-            this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Location = new System.Drawing.Point(35, 76);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
@@ -408,16 +412,16 @@
             // 
             // tb_Color
             // 
-            this.tb_Color.Location = new System.Drawing.Point(652, 130);
+            this.tb_Color.Location = new System.Drawing.Point(523, 157);
             this.tb_Color.Margin = new System.Windows.Forms.Padding(2);
             this.tb_Color.Name = "tb_Color";
-            this.tb_Color.Size = new System.Drawing.Size(76, 20);
+            this.tb_Color.Size = new System.Drawing.Size(132, 20);
             this.tb_Color.TabIndex = 18;
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(581, 135);
+            this.label11.Location = new System.Drawing.Point(468, 164);
             this.label11.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(34, 13);
@@ -426,39 +430,21 @@
             // 
             // tb_RecipeNo
             // 
-            this.tb_RecipeNo.Location = new System.Drawing.Point(652, 77);
+            this.tb_RecipeNo.Location = new System.Drawing.Point(523, 116);
             this.tb_RecipeNo.Margin = new System.Windows.Forms.Padding(2);
             this.tb_RecipeNo.Name = "tb_RecipeNo";
-            this.tb_RecipeNo.Size = new System.Drawing.Size(76, 20);
+            this.tb_RecipeNo.Size = new System.Drawing.Size(132, 20);
             this.tb_RecipeNo.TabIndex = 12;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(582, 81);
+            this.label7.Location = new System.Drawing.Point(457, 120);
             this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(46, 13);
             this.label7.TabIndex = 8;
             this.label7.Text = "配方号:";
-            // 
-            // tb_WeightPerBag
-            // 
-            this.tb_WeightPerBag.Location = new System.Drawing.Point(652, 187);
-            this.tb_WeightPerBag.Margin = new System.Windows.Forms.Padding(2);
-            this.tb_WeightPerBag.Name = "tb_WeightPerBag";
-            this.tb_WeightPerBag.Size = new System.Drawing.Size(76, 20);
-            this.tb_WeightPerBag.TabIndex = 6;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(581, 188);
-            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(31, 13);
-            this.label5.TabIndex = 3;
-            this.label5.Text = "袋重";
             // 
             // groupBox2
             // 
@@ -479,6 +465,38 @@
             this.tb_RecoveryMachineNo.Name = "tb_RecoveryMachineNo";
             this.tb_RecoveryMachineNo.Size = new System.Drawing.Size(76, 20);
             this.tb_RecoveryMachineNo.TabIndex = 57;
+            // 
+            // tb_TMaterialWeight
+            // 
+            this.tb_TMaterialWeight.Location = new System.Drawing.Point(523, 81);
+            this.tb_TMaterialWeight.Name = "tb_TMaterialWeight";
+            this.tb_TMaterialWeight.Size = new System.Drawing.Size(132, 20);
+            this.tb_TMaterialWeight.TabIndex = 232;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(430, 81);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(73, 13);
+            this.label15.TabIndex = 231;
+            this.label15.Text = "原料总重量：";
+            // 
+            // tb_RecoveryWeight
+            // 
+            this.tb_RecoveryWeight.Location = new System.Drawing.Point(523, 199);
+            this.tb_RecoveryWeight.Name = "tb_RecoveryWeight";
+            this.tb_RecoveryWeight.Size = new System.Drawing.Size(132, 20);
+            this.tb_RecoveryWeight.TabIndex = 230;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(417, 202);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(85, 13);
+            this.label3.TabIndex = 229;
+            this.label3.Text = "再造料总重量：";
             // 
             // RecoveryEditorForm
             // 
@@ -544,9 +562,11 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TextBox tb_RecipeNo;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox tb_WeightPerBag;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox tb_RecoveryMachineNo;
+        private System.Windows.Forms.TextBox tb_TMaterialWeight;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.TextBox tb_RecoveryWeight;
+        private System.Windows.Forms.Label label3;
     }
 }

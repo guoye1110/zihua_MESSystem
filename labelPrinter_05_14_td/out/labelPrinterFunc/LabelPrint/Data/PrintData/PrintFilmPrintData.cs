@@ -29,7 +29,7 @@ namespace LabelPrint.Data
             //DyData.LittleRollNoStr = BigRollNo + "-" + LittleRollNo;
             //这里小卷号代表卷号，只有大卷号。
             DyData.LittleRollNoStr = BigRollNo;
-            DyData.RollWeightLength = "56.6kg"; // Weight;
+            DyData.RollWeightLength = Weight;
             DyData.WorkerNo = WorkerNo + "  " + WorkTime.Substring(0, 5);
 
             DyData.RawMaterialCode = RawMaterialCode;
@@ -38,7 +38,6 @@ namespace LabelPrint.Data
             //    UserInput.productName = productName;
             //  UserInput.productWeight = productWeight;
             DyData.RecipeCode = ProductName + " " + ProductWeight;
-            Weight = "56.3";
             str = Weight;
             if (Weight == null || Weight == "")
                 str = "0";

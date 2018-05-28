@@ -161,7 +161,17 @@
     <Compile Include="LoginForm.Designer.cs">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="NetWork\CutSockets.cs" />
     <Compile Include="NetWork\FilmSocket.cs" />
+    <Compile Include="NetWork\HandShakeSockets.cs" />
+    <Compile Include="NetWork\HeartBeatSockets.cs" />
+    <Compile Include="NetWork\LiuYanSockets.cs" />
+    <Compile Include="NetWork\OutBoundingSockets.cs" />
+    <Compile Include="NetWork\PackSockets.cs" />
+    <Compile Include="NetWork\PrintSockets.cs" />
+    <Compile Include="NetWork\QASockets.cs" />
+    <Compile Include="NetWork\RecoverySockets.cs" />
+    <Compile Include="NetWork\RuKuSockets.cs" />
     <Compile Include="PrintForms\excelOutput.cs" />
     <Compile Include="PrintForms\JiaoJieBanForm.cs">
       <SubType>Form</SubType>
@@ -262,6 +272,7 @@
       <DependentUpon>RecoverySysForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Receipt\SitesLabel\CutLabel.cs" />
+    <Compile Include="Receipt\SitesLabel\CutRollPackLabel.cs" />
     <Compile Include="Receipt\SitesLabel\FilmPrintLabel.cs" />
     <Compile Include="Receipt\SitesLabel\LiuYanLabel.cs" />
     <Compile Include="Receipt\SitesLabel\OutBoundingLabel.cs" />

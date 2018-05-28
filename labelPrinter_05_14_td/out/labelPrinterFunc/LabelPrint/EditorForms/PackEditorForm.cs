@@ -74,7 +74,7 @@ namespace LabelPrint.EditorForms
             tb_Desc.Text = UserInput.Desc;
             tb_LittleRollNo.Text = UserInput.LittleRollNo;
             
-            tb_Roll_Weight.Text = UserInput.Roll_Weight;
+            tb_Roll_Weight.Text = UserInput.Weight;
             tb_ProductLength.Text = UserInput.ProductLength;
             tb_ProductWeight.Text = UserInput.ProductWeight;
             tb_PlateNo.Text = UserInput.PlateNo;
@@ -101,7 +101,7 @@ namespace LabelPrint.EditorForms
             UserInput.Desc = tb_Desc.Text;
             UserInput.LittleRollNo = tb_LittleRollNo.Text;
 
-            UserInput.Roll_Weight = tb_Roll_Weight.Text;
+            UserInput.Weight = tb_Roll_Weight.Text;
 
             UserInput.ProductLength = tb_ProductLength.Text;
             UserInput.ProductWeight = tb_ProductWeight.Text;

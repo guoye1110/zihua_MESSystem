@@ -11,8 +11,18 @@ namespace LabelPrint.Data
         //XXXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXXXX（日期）+XX（卷号）；
 
 
+        public const int TotalLen = WorkNoStrLen + TimeStrLen + BigRStrLen + QAStrLen;
 
-        public String BigRollQality;
+        public BigRollBarcode()
+        {
+
+        }
+
+        public BigRollBarcode(String barcode)
+        {
+            ParseBarcode(barcode);
+        }
+
         public String createBarcode()
         {
             //  if (WorkNoStr.Length != WorkNoStrLen)
@@ -32,6 +42,7 @@ namespace LabelPrint.Data
             //if (QAStr.Length != QAStrLen)
             //    return null;
             String barcode = WorkNoStr + TimeStr + BigRStr + QAStr;
+            Valid = true;
             return barcode;
         }
 
@@ -47,6 +58,7 @@ namespace LabelPrint.Data
                 TimeStr = str.Substring(getTimeStrIndex(), TimeStrLen);
                 BigRStr = str.Substring(getBigRStrIndex(), BigRStrLen);
                 ParserWorNo();
+                Valid = true;
             }
             catch (Exception e)
             {

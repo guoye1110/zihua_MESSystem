@@ -33,7 +33,6 @@ namespace LabelPrint
 		private FilmSocket m_FilmSocket;
 		FilmSocket.networkstatehandler m_networkstatehandler;
 		private string m_dispatchCode;
-
        // String[] ProductStateStr = { "合格品", "不合格品","待处理","边角料","废料" };
        // String[] ProductQualityStr = { "A", "B", "C", "D", "DC", "E", "W" };
        // String[] ProductQualityStrForComBoList = { "A-晶点孔洞", "B-厚薄暴筋", "C-皱折", "D-端面错位(毛糙)", "DC-待处理", "E-油污", "W-蚊虫" };
@@ -231,6 +230,7 @@ namespace LabelPrint
             tb_CutMachineNo.Enabled = false;
 
             tb_worker.Text = gVariable.userAccount;
+            UserInput.WorkerNo = gVariable.userAccount;
             tb_worker.Enabled = false;
 
 
@@ -258,26 +258,26 @@ namespace LabelPrint
             CutProductItem Item = null; //= SysData.GetCurProductItem();
             if (Item != null)
             {
-                cb_ProductCode1.Text = Item.ProductCode[0];
-                tb_RecipeCode1.Text = Item.RawMaterialCode[0];
-                tb_RecipeCode2.Text = Item.RawMaterialCode[1];
-                tb_RecipeCode3.Text = Item.RawMaterialCode[2];
+                //cb_ProductCode1.Text = Item.ProductCode[0];
+                //tb_RecipeCode1.Text = Item.RawMaterialCode[0];
+                //tb_RecipeCode2.Text = Item.RawMaterialCode[1];
+                //tb_RecipeCode3.Text = Item.RawMaterialCode[2];
 
-                //tb_MaterialName1.Text = Item.MaterialName[0];
-                //tb_MaterialName2.Text = Item.MaterialName[1];
-                //tb_MaterialName3.Text = Item.MaterialName[2];
+                ////tb_MaterialName1.Text = Item.MaterialName[0];
+                ////tb_MaterialName2.Text = Item.MaterialName[1];
+                ////tb_MaterialName3.Text = Item.MaterialName[2];
 
-                tb_CustomerName1.Text = Item.CustomerName[0];
-                tb_CustomerName2.Text = Item.CustomerName[1];
-                tb_CustomerName3.Text = Item.CustomerName[2];
+                //tb_CustomerName1.Text = Item.CustomerName[0];
+                //tb_CustomerName2.Text = Item.CustomerName[1];
+                //tb_CustomerName3.Text = Item.CustomerName[2];
 
-                tb_BatchNo1.Text = Item.BatchNo[0];
-                tb_BatchNo2.Text = Item.BatchNo[1];
-                tb_BatchNo3.Text = Item.BatchNo[2];
+                //tb_BatchNo1.Text = Item.BatchNo[0];
+                //tb_BatchNo2.Text = Item.BatchNo[1];
+                //tb_BatchNo3.Text = Item.BatchNo[2];
 
-                tb_WorkNo.Text = Item.OrderNo;
-                tb_BigRollNo.Text = Item.BigRollNo;
-                tb_LittleRollWeight.Text = Item.Weight;
+                //tb_WorkNo.Text = Item.OrderNo;
+                //tb_BigRollNo.Text = Item.BigRollNo;
+                //tb_LittleRollWeight.Text = Item.Weight;
             }
             tb_ManHour.Text = "0";
             tb_JointCount.Text = "0";
@@ -297,6 +297,7 @@ namespace LabelPrint
             tb_PlateRollNum1.Enabled = false;
             tb_PlateRollNum2.Enabled = false;
             tb_PlateRollNum3.Enabled = false;
+            tb_PlateRollNum4.Enabled = false;
 
 
 
@@ -315,13 +316,14 @@ namespace LabelPrint
                 //for (int i = 1; i < MaxMiscLittleRoll; i++)
                     for (int i = 1; i < 1; i++)
                     {
-                    cb_ProductCodes[i].Enabled = true;
-                    tb_Widths[i].Enabled = true;
-                }
+                        cb_ProductCodes[i].Enabled = true;
+                        tb_Widths[i].Enabled = true;
+                    }
 
 
                 tb_RecipeCode2.Enabled = true;
                 tb_RecipeCode3.Enabled = true;
+                tb_RecipeCode4.Enabled = true;
 
 
                 //tb_MaterialName2.Enabled = true;
@@ -329,21 +331,31 @@ namespace LabelPrint
 
                 tb_CustomerName2.Enabled = true;
                 tb_CustomerName3.Enabled = true;
+                tb_CustomerName4.Enabled = true;
 
                 tb_BatchNo2.Enabled = true;
                 tb_BatchNo3.Enabled = true;
+                tb_BatchNo4.Enabled = true;
 
                 tb_PlateLayer2.Enabled = true;
                 tb_PlateLayer3.Enabled = true;
+                tb_PlateLayer4.Enabled = true;
                 tb_PlateRollNum2.Enabled = true;
                 tb_PlateRollNum3.Enabled = true;
+                tb_PlateRollNum4.Enabled = true;
                 tb_PlateRollPerLay2.Enabled = true;
                 tb_PlateRollPerLay3.Enabled = true;
+                tb_PlateRollPerLay4.Enabled = true;
 
                 tb_PlateNo2.Enabled = true;
                 tb_PlateNo3.Enabled = true;
+                tb_PlateNo4.Enabled = true;
                 tb_RawMaterialCode2.Enabled = true;
                 tb_RawMaterialCode3.Enabled = true;
+                tb_RawMaterialCode4.Enabled = true;
+                tb_ProductLength2.Enabled = true;
+                tb_ProductLength3.Enabled = true;
+                tb_ProductLength4.Enabled = true;
             }
             else
             {
@@ -375,6 +387,7 @@ namespace LabelPrint
 
                 tb_RecipeCode2.Enabled = false;
                 tb_RecipeCode3.Enabled = false;
+                tb_RecipeCode4.Enabled = false;
 
 
                 //tb_MaterialName2.Enabled = false;
@@ -382,23 +395,31 @@ namespace LabelPrint
 
                 tb_CustomerName2.Enabled = false;
                 tb_CustomerName3.Enabled = false;
-
+                tb_CustomerName4.Enabled = false;
 
                 tb_BatchNo2.Enabled = false;
                 tb_BatchNo3.Enabled = false;
+                tb_BatchNo4.Enabled = false;
 
                 tb_PlateLayer2.Enabled = false;
                 tb_PlateLayer3.Enabled = false;
+                tb_PlateLayer4.Enabled = false;
                 tb_PlateRollNum2.Enabled = false;
                 tb_PlateRollNum3.Enabled = false;
+                tb_PlateRollNum4.Enabled = false;
                 tb_PlateRollPerLay2.Enabled = false;
                 tb_PlateRollPerLay3.Enabled = false;
+                tb_PlateRollPerLay4.Enabled = false;
 
                 tb_PlateNo2.Enabled = false;
                 tb_PlateNo3.Enabled = false;
+                tb_PlateNo4.Enabled = false;
                 tb_RawMaterialCode2.Enabled = false;
                 tb_RawMaterialCode3.Enabled = false;
-
+                tb_RawMaterialCode4.Enabled = false;
+                tb_ProductLength2.Enabled = false;
+                tb_ProductLength3.Enabled = false;
+                tb_ProductLength4.Enabled = false;
 
             }
         }
@@ -547,7 +568,7 @@ namespace LabelPrint
             {
                 cb_ProductCodes[i].Items.AddRange(productCodes);
             }
-
+            UserInput.GetLastItemFromDB();
             //InitProductCodeComboBox( dt);
             //ProdItem = SysData.GetCurProductItem();
             InitialDataForForm(ProdItem);
@@ -581,15 +602,16 @@ namespace LabelPrint
             //rb_NoonWork.Visible = false;
 
             initSerialPort();
-
 			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
 			m_FilmSocket.network_state_event += m_networkstatehandler;
         }
 
         private void ProductCutForm_FormClosing(object sender, EventArgs e)
         {
-            serialPort1.Close();
-            serialPort2.Close();
+            if (serialPort1!=null)
+                serialPort1.Close();
+            if (serialPort2!=null)
+                serialPort2.Close();
         }
         
         void initSerialPort()
@@ -709,6 +731,7 @@ namespace LabelPrint
                 this.Invoke((EventHandler)(delegate
                 {
                     label51.Text = System.Text.Encoding.ASCII.GetString(serialDataBuf1);
+                    HandleBarcode(label51.Text);
                 }));
                
             }
@@ -1213,7 +1236,7 @@ namespace LabelPrint
         	}
 			if (communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_PRODUCT_BARCODE_UPLOAD) {
 				//<小卷条码>;<卷重>;<接头数量>
-				str = UserInput.OutputBarcode + ";" + UserInput.Roll_Weight + ";" + UserInput.JointCount;
+				str = UserInput.OutputBarcode + ";" + UserInput.Weight + ";" + UserInput.JointCount;
 			}
 
 			send_buf = System.Text.Encoding.Default.GetBytes(str);
@@ -1244,6 +1267,67 @@ namespace LabelPrint
         }
 
 
+        Boolean HandlePlateSingle()
+        {
+            int plateNo;
+            int maxRoll = 1;
+            //如果是合格品，总的卷数加一
+            if (cb_ProductState.SelectedIndex == 0)
+                TotalRoll++;
+
+            maxRoll = UserInput.CurPlatInfo.getMaxLittleRoll();
+
+            if (maxRoll == 0)//防止0产生的exception
+                maxRoll = 1;
+            if ((TotalRoll % maxRoll) == 0)
+            {
+                sendPlateInfoToServer(UserInput.BatchNo, UserInput.CurPlatInfo.PLateNo.ToString());
+                plateNo = UserInput.CurPlatInfo.IncreasePlateNo();
+                UpdatePlateNo(plateNo);
+                
+                TotalRoll = 0;
+                return true;
+            }
+            return false;
+        }
+
+
+        Boolean HandlePlateMisc(MiscCutProductData misc)
+        {
+            int plateNo;
+            int maxRoll = 1;
+            //如果是合格品，总的卷数加一
+            if (cb_ProductState.SelectedIndex == 0)
+            misc.TotalRollNumInPlato++;
+
+            maxRoll = UserInput.CurPlatInfo.getMaxLittleRoll();
+
+            if (maxRoll == 0)
+                maxRoll = 1;
+            if ((misc.TotalRollNumInPlato % maxRoll) == 0)
+            {
+                sendPlateInfoToServer(misc.BatchNo, UserInput.CurPlatInfo.PLateNo.ToString());
+
+                plateNo = UserInput.CurPlatInfo.IncreasePlateNo();
+                //UpdatePlateNo(plateNo);
+                misc.tb_PlateNo.Text = plateNo.ToString();
+                misc.TotalRollNumInPlato = 0;
+                return true;
+            }
+            return false;
+        }
+
+
+        void sendPlateInfoToServer(String batchNo,String  plateNo)
+        {
+            //以工单号查找，和铲板号进行查询
+            UserInput.SearchBigLittleRollByBatchNoAndPlate(batchNo, plateNo);
+
+        }
+
+
+
+
 
         //private void UpdateLittleRollNo(int bigno, int littleno)
         //{
@@ -1261,9 +1345,9 @@ namespace LabelPrint
         //}
         private void PostUpdateProductData()
         {
-            int plateNo;
-            int maxRoll = 1;
 
+            Boolean flag = false;
+            
             if (rb_SingleWork.Checked != true)
             {
 
@@ -1287,30 +1371,23 @@ namespace LabelPrint
                     SetCurProductInfoTextBox(idx);
 
                 }
+                flag = HandlePlateMisc(misc);
+                
             }
             else
             {
-                //如果是合格品，总的卷数加一
-                if (cb_ProductState.SelectedIndex == 0)
-                    TotalRoll++;
-
-                maxRoll = UserInput.CurPlatInfo.getMaxLittleRoll();
-
-                if (maxRoll == 0)
-                    maxRoll = 1;
-                if ((TotalRoll % maxRoll) == 0)
-                {
-                    plateNo = UserInput.CurPlatInfo.IncreasePlateNo();
-                    UpdatePlateNo(plateNo);
-                    TotalRoll = 0;
-                }
 
                 LittleRollNo++;
                 tb_LittleRollNo.Text = CommonFormHelper.GetLittleRollNoStr(BigRollNo, LittleRollNo);
-
+                flag  = HandlePlateSingle();
             }
+            
+
+
+
             return;
         }
+
 
         private void bt_Printing_Click(object sender, EventArgs e)
         {
@@ -1441,62 +1518,85 @@ str = "S17110906L302S118012014310500100";
 
 XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX（卷号）+ XXX（分卷号）+ X（客户序号）+ X（质量编码）；WP
          */
+
+        private void printPackLabel()
+        {
+            //update the data from UI or Scale.
+            UpdateProductData();
+
+            if (!UserInput.CheckUserInput())
+                return;
+
+            UserInput.UpdateDateTime();
+            UserInput.PrintPackLabel();
+            //tb_DateTime.Text = UserInput.GetDateTime();
+            //Printing
+            //PrintLabel();
+            //save the data to local database
+           // CreateLocalDataBaseItem();
+            //Save the data to server
+            //SendItemToServer();
+            //PostUpdateProductData();
+        }
         private void button1_Click(object sender, EventArgs e)
         {
 
-            String barcode;
-            String orderNo;
-            String batchNo;
-            String DevNo;
-            String WorkNoSn;
-            String productName;
-            String fixture;
-
-            ScanForm f = new ScanForm();
-            f.ShowDialog();
-            if (f.DialogResult == DialogResult.OK)
-            {
-                barcode = f.GetBarCodeValue();
-                //barcode = "S17110906L302S118012014310500100";
-                // barcode = "S17110906L302S11801201431050";
-                barcode = "1804306121L32012230030";
-                if (!UserInput.ParseBarCode(barcode))
-                    return;
+            printPackLabel();
 
 
-                tb_WorkNo.Text = UserInput.WorkNo;
-                if (!UserInput.ParseWorkNo(tb_WorkNo.Text, out batchNo, out DevNo, out WorkNoSn))
-                    return;
+        //String barcode;
+        //String orderNo;
+        //String batchNo;
+        //String DevNo;
+        //String WorkNoSn;
+        //String productName;
+        //String fixture;
 
-                tb_BatchNo1.Text = batchNo;
-
-
-                if (gVariable.orderNo != null)
-                {
-                    orderNo = gVariable.orderNo;
-                    if (!UserInput.GetProductInfoBySaleOrder(orderNo, out UserInput.ProductCode, out productName, out UserInput.CustomerName))
-                        return;
-                    if (!UserInput.GetInfoByProductCode(UserInput.ProductCode, out UserInput.Width, out UserInput.RecipeCode, out fixture, out UserInput.CustomerName))
-                        return;
-
-                    tb_Width1.Text = UserInput.Width;
-                    tb_RecipeCode1.Text = UserInput.RecipeCode;
-                    tb_CustomerName1.Text = UserInput.CustomerName;
-
-                    tb_BigRollNo.Text = UserInput.BigRollNo;
+            //ScanForm f = new ScanForm();
+            //f.ShowDialog();
+            //if (f.DialogResult == DialogResult.OK)
+            //{
+            //    barcode = f.GetBarCodeValue();
+            //    //barcode = "S17110906L302S118012014310500100";
+            //    // barcode = "S17110906L302S11801201431050";
+            //    barcode = "1804306121L32012230030";
+            //    if (!UserInput.ParseBarCode(barcode))
+            //        return;
 
 
-                    //tb_BatchNo1.Text = UserInput.BatchNo;
-                    SetManufactureType(UserInput.MType);
-                    cb_ProductCode1.Text = UserInput.ProductCode;
+            //    tb_WorkNo.Text = UserInput.WorkNo;
+            //    if (!UserInput.ParseWorkNo(tb_WorkNo.Text, out batchNo, out DevNo, out WorkNoSn))
+            //        return;
 
-                    tb_ManHour.Text = "0";
-                    tb_Desc.Text = "";
+            //    tb_BatchNo1.Text = batchNo;
 
-                    BigRollNo = Convert.ToInt32(tb_BigRollNo.Text);
 
-                }
-            }
+            //    if (gVariable.orderNo != null)
+            //    {
+            //        orderNo = gVariable.orderNo;
+            //        if (!UserInput.GetProductInfoBySaleOrder(orderNo, out UserInput.ProductCode, out productName, out UserInput.CustomerName))
+            //            return;
+            //        if (!UserInput.GetInfoByProductCode(UserInput.ProductCode, out UserInput.Width, out UserInput.RecipeCode, out fixture, out UserInput.CustomerName))
+            //            return;
+
+            //        tb_Width1.Text = UserInput.Width;
+            //        tb_RecipeCode1.Text = UserInput.RecipeCode;
+            //        tb_CustomerName1.Text = UserInput.CustomerName;
+
+            //        tb_BigRollNo.Text = UserInput.BigRollNo;
+
+
+            //        //tb_BatchNo1.Text = UserInput.BatchNo;
+            //        SetManufactureType(UserInput.MType);
+            //        cb_ProductCode1.Text = UserInput.ProductCode;
+
+            //        tb_ManHour.Text = "0";
+            //        tb_Desc.Text = "";
+
+            //        BigRollNo = Convert.ToInt32(tb_BigRollNo.Text);
+
+            //    }
+            //}
         }
 
         private void tb_WorkNo_KeyPress(object sender, KeyPressEventArgs e)
@@ -1862,12 +1962,14 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
         {
 
         }
-		
-        //start work
-        //To Do: Add start work button in UI
+
+
+        //分切 开工
         private void button4_Click(object sender, EventArgs e)
         {
+            ToServer_startwork();
         }
+
         private void tb_BigRollNo_KeyPress(object sender, KeyPressEventArgs e)
         {
               tb_LittleRollNo.Text = CommonFormHelper.GetLittleRollNoStr(BigRollNo, 1);
@@ -1877,6 +1979,22 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
         {
  
             BarCodeHook.Stop();
+        }
+
+
+        private void HandleBarcode(String barcode)
+        {
+            String WorkNo;
+            String BatchNo;
+            String BigRollNo;
+
+
+            if (!UserInput.ParseBigRollBarCode(barcode, out WorkNo, out BatchNo, out BigRollNo))
+                return;
+
+            tb_WorkNo.Text = UserInput.WorkNo = WorkNo;
+            tb_BatchNo1.Text = UserInput.BatchNo = BatchNo;
+            tb_BigRollNo.Text = UserInput.BigRollNo = BigRollNo;
         }
 
 		//返回值：		0：	无工单
@@ -1912,6 +2030,34 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
 			}
 			return -1;//通讯错误
 		}
+
+		//返回值：		0：	无大卷条码
+		//			1：	成功，原料大卷条码会显示在界面上
+		//			-1：通讯失败
+		private int ToServer_request_material_barcode()
+        {
+        	byte[] send_buf = System.Text.Encoding.Default.GetBytes(GlobalConfig.Setting.CurSettingInfo.MachineNo);
+			byte[] data;
+			string[] start_work;
+        
+        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_SLIT_PROCESS_MATERIAL_BARCODE_UPLOAD, send_buf.Length);
+
+			data = m_FilmSocket.RecvData(10000);
+			if (data != null) {
+				/*if (data[0]==(byte)0xff)
+					return -1;//重发*/
+				if (data[0]==(byte)0)	
+					return 0;//无工单
+
+				start_work = System.Text.Encoding.Default.GetString(data).Split(';');
+
+				//<原料大卷条码>
+				label51.Text = start_work[0];
+				return 1;//成功
+			}
+			return -1;//通讯错误
+		}
+
 
 		//返回值：		 0：	成功
 		//			-1：通讯失败
@@ -1954,5 +2100,6 @@ XXXXXXXXXX(工单编码)+X（工序）+X（机台号）+XXXXXXXX（日期）+ XX
 
 			return m_FilmSocket.RecvResponse(1000);			
 		}
+
     }
 }

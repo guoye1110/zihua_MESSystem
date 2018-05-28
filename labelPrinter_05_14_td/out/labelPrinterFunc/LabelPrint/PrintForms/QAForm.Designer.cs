@@ -63,6 +63,7 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -195,7 +196,7 @@
             this.label27.AutoSize = true;
             this.label27.Location = new System.Drawing.Point(963, 61);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(83, 18);
+            this.label27.Size = new System.Drawing.Size(76, 18);
             this.label27.TabIndex = 116;
             this.label27.Text = "生产批号：";
             // 
@@ -204,7 +205,7 @@
             this.label26.AutoSize = true;
             this.label26.Location = new System.Drawing.Point(963, 140);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(83, 18);
+            this.label26.Size = new System.Drawing.Size(76, 18);
             this.label26.TabIndex = 115;
             this.label26.Text = "客户名称：";
             // 
@@ -213,7 +214,7 @@
             this.label22.AutoSize = true;
             this.label22.Location = new System.Drawing.Point(33, 144);
             this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(68, 18);
+            this.label22.Size = new System.Drawing.Size(61, 18);
             this.label22.TabIndex = 112;
             this.label22.Text = "配方号：";
             // 
@@ -387,11 +388,22 @@
             this.label2.TabIndex = 230;
             this.label2.Text = "紫华企业质保工序操作单";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(979, 933);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 231;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // QAForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1924, 1062);
+            this.ClientSize = new System.Drawing.Size(1916, 1053);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
@@ -410,6 +422,7 @@
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Name = "QAForm";
             this.Text = "质量检验单";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.QAForm_FormClosing);
             this.Load += new System.EventHandler(this.QAForm_Load);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
@@ -460,5 +473,6 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button button1;
     }
 }

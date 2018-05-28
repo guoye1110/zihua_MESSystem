@@ -11,63 +11,70 @@ namespace LabelPrint.NetWork
 {
     public class FilmSocket
     {
-		const int RECV_BUFFER_SIZE = 2000;
-		//header(4) + len(2) + communicationtype(1) + time(12) + index(4) + reserved(4) + type(1) + CRC(4)
-		const int MIN_PACKET_LEN_WITHOUT_DATA = 32;
-		const int MIN_PACKET_LEN = 33;
-		const int PACKET_DATASTATUS_POS = 28;
-		const int COMMUNICATION_TYPE_HEART_BEAT = 0xB3;
-		//5秒
-		const int HEART_BEAT_INTERVAL = 5000;
-		//1秒
-		const int COMMUNICATION_TIMEOUT = 3000;
+        const int RECV_BUFFER_SIZE = 2000;
+        //header(4) + len(2) + communicationtype(1) + time(12) + index(4) + reserved(4) + type(1) + CRC(4)
+        const int MIN_PACKET_LEN_WITHOUT_DATA = 32;
+        const int MIN_PACKET_LEN = 33;
+        const int PACKET_DATASTATUS_POS = 28;
+        const int COMMUNICATION_TYPE_HEART_BEAT = 0xB3;
+        //5秒
+        const int HEART_BEAT_INTERVAL = 5000;
+        //1秒
+        const int COMMUNICATION_TIMEOUT = 3000;
         const int RESPONSE_OK = 0;
         const int RESPONSE_FAIL = 1;
 
-		private Boolean m_Abort = false;
+        private Boolean m_Abort = false;
         private Socket m_sock;
         private IPAddress m_hostIP;
-		private int m_port;
-		private Thread m_comThread;
+        private int m_port;
+        private Thread m_comThread;
 
-		public delegate void networkstatehandler(bool      connected);
+        public delegate void networkstatehandler(bool connected);
 
-		public event networkstatehandler network_state_event;
-		
-/*
-        byte[] handshake_packet = new byte[100];
+        public event networkstatehandler network_state_event;
 
-        byte[] dummyMachine_packet = new byte[100];
+        /*
+                byte[] handshake_packet = new byte[100];
 
-        public byte[]  data_packet = new byte[100];
-        public byte[] send_packet = new byte[100];
-        public const int SITE_TO_SERVER = 0;
-        public const int SERVER_TO_SITE = 1;
+                byte[] dummyMachine_packet = new byte[100];
 
-		
+                public byte[]  data_packet = new byte[100];
+                public byte[] send_packet = new byte[100];
+                public const int SITE_TO_SERVER = 0;
+                public const int SERVER_TO_SITE = 1;
 
-        const int COMMUNICATION_TYPE_START_HANDSHAKE_WITHOUT_ID_TO_PC = 0;
-        const int COMMUNICATION_TYPE_REDO_HANDSHAKE_TO_BOARD = 0x82;
-        const int COMMUNICATION_TYPE_START_HANDSHAKE_WITH_ID_TO_PC = 3;
 
-        const int DATA_TYPE_ADC_DEVICE = 0; //device type definition
 
-        public int SendPacketLen = 0;
-*/
-		public FilmSocket()
-		{
-			m_hostIP = IPAddress.Parse(GlobalConfig.Setting.CurSettingInfo.ServerIP);
-			m_port = 8899;
-			m_sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			m_comThread = new Thread((startCommunication));
-			m_comThread.Start();
-		}
-		~ FilmSocket()
-		{
-			m_Abort = true;
-			m_sock.Shutdown(SocketShutdown.Both);
-			m_sock.Close();
-		}
+                const int COMMUNICATION_TYPE_START_HANDSHAKE_WITHOUT_ID_TO_PC = 0;
+                const int COMMUNICATION_TYPE_REDO_HANDSHAKE_TO_BOARD = 0x82;
+                const int COMMUNICATION_TYPE_START_HANDSHAKE_WITH_ID_TO_PC = 3;
+
+                const int DATA_TYPE_ADC_DEVICE = 0; //device type definition
+
+                public int SendPacketLen = 0;
+        */
+        public FilmSocket()
+        {
+            m_hostIP = IPAddress.Parse(GlobalConfig.Setting.CurSettingInfo.ServerIP);
+            m_port = 8899;
+            m_sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            m_comThread = new Thread((startCommunication));
+            m_comThread.Start();
+        }
+        ~FilmSocket()
+        {
+            m_Abort = true;
+            try { 
+
+            m_sock.Shutdown(SocketShutdown.Both);
+            m_sock.Close();
+        }catch (Exception e)
+            {
+
+            }
+
+        }
 		
         private void inputDataHeader(byte[] packet, int len, int type, int dataType)
         {

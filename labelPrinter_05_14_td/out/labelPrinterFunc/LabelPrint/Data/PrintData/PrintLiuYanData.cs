@@ -15,10 +15,10 @@ namespace LabelPrint.Data
             String str = null;
             base.UpdatePrintPrintData(DyData);
             DyData.BigRollNoStr = BigRollNo;
-              DyData.RollWeightLength = "234.7";
+            //  DyData.RollWeightLength = Weight;
             //  DyData.QRBarCode = ;
-              DyData.BigRollNoStr = "012"; // BigRollNo;
-              DyData.LittleRollNoStr = "013"; // BigRollNo + "-" + LittleRollNo;
+            DyData.BigRollNoStr = BigRollNo;
+            DyData.LittleRollNoStr = BigRollNo;// + "-" + LittleRollNo;
             DyData.RollWeightLength = Weight;
             DyData.MaterialName = MaterialName;
             DyData.WorkerNo = WorkerNo + "  " + WorkTime.Substring(0, 5);
@@ -41,7 +41,7 @@ namespace LabelPrint.Data
             str = Weight;
             if (Weight == null || Weight == "")
                 str = "0";
-            DyData.RollWeightLength = "234.3kg " + ProductLength;
+            DyData.RollWeightLength = str + " kg " + ProductLength;
 
 
             //  DyData.RollWeightLength = Weight;

@@ -71,7 +71,8 @@ namespace LabelPrint.Data
 
 
             //DyData.QRBarCode =  "S17110906L302S118012014310500100";
-            DyData.QRBarCode = barcode.createBarcode(); ;
+            DyData.QRBarCode = barcode.createBarcode();
+            DyData.QRBarCode = DyData.QRBarCode.Remove(10) + "Z1" + DyData.QRBarCode.Remove(0, 12);
             OutputBarcode = DyData.QRBarCode;
             System.Diagnostics.Debug.Assert(DyData.QRBarCode.Length == LittleRollBarcode.getTotalStrLen());
         }
@@ -94,8 +95,9 @@ namespace LabelPrint.Data
 
             //DyData.QRBarCode =  "S17110906L302S118012014310500100";
             DyData.QRBarCode = barcode.createBarcode(); ;
+            DyData.QRBarCode = DyData.QRBarCode.Remove(10) + "Z1" + DyData.QRBarCode.Remove(0, 12);
             OutputBarcode = DyData.QRBarCode;
-            System.Diagnostics.Debug.Assert(DyData.QRBarCode.Length == BigRollBarcode.getTotalStrLen());
+            //System.Diagnostics.Debug.Assert(DyData.QRBarCode.Length == BigRollBarcode.getTotalStrLen());
 
         }
         else

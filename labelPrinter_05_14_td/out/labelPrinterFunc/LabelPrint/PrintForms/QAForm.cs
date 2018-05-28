@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO.Ports;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelPrint.Util;
@@ -17,6 +19,8 @@ namespace LabelPrint
 {
     public partial class QAForm : Form
     {
+        SerialPort serialPort2;  //扫描枪
+	
 		//质检工序
 		private const int COMMUNICATION_TYPE_INSPECTION_PROCESS_MATERIAL_BARCODE_UPLOAD = 0xC4;
 		private const int COMMUNICATION_TYPE_INSPECTION_PROCESS_PRODUCT_BARCODE_UPLOAD = 0xC5;
@@ -25,6 +29,8 @@ namespace LabelPrint
 
         QAUserinputData UserInput;
         BardCodeHooK BarCodeHook = new BardCodeHooK();
+
+        int QAStatus;
 
         public QAForm(FilmSocket filmsocket)
         {
@@ -41,13 +47,47 @@ namespace LabelPrint
         	Console.WriteLine("network changed to {0}", status);
 		}
 
+		//返回值：		 0: 产品代码
+		//			-1：通讯失败
+		private int ToServer_material_barcode_upload()
+        {
+            string str1;
+        	//<大卷或小卷条码>
+			string str = UserInput.InputBarcode;
+			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+			byte[] data;
+       
+        	m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_INSPECTION_PROCESS_MATERIAL_BARCODE_UPLOAD, send_buf.Length);
+
+			data = m_FilmSocket.RecvData(10000);
+			if (data != null) {
+				/*if (data[0]==(byte)0xff)
+					return -1;//重发*/
+				if (data[0]==(byte)0)
+					return 0;//无工单
+
+				//<产品编号>
+                str1 = System.Text.Encoding.Default.GetString(data);
+
+                this.Invoke((EventHandler)(delegate
+                {
+                    cb_ProductCode.Text = str1;
+	    			cb_ProductCode_SelectedIndexChanged(null,null);
+                }));
+                return 1;//成功
+			}
+			return -1;//通讯错误
+		}
+
 		//返回值：		 0：	成功
 		//			-1：通讯失败
 		private int ToServer_product_barcode_upload()
 		{
 			//<条码信息>;<检验员工号>
-			string str = UserInput.OutputBarcode + ";" + UserInput.WorkerNo;
+            string str = UserInput.InputBarcode + ";" + UserInput.OutputBarcode + ";" + UserInput.WorkerNo;
 			byte[] send_buf = System.Text.Encoding.Default.GetBytes(str);
+
+            QAStatus = 0;
 
 			m_FilmSocket.sendDataPacketToServer(send_buf, COMMUNICATION_TYPE_INSPECTION_PROCESS_PRODUCT_BARCODE_UPLOAD, send_buf.Length);
 
@@ -63,6 +103,7 @@ namespace LabelPrint
             cb_ProductCode.Items.AddRange(productCodes);
             tb_DateTime.Enabled = false;
 
+            QAStatus = 0;
 
             BarCodeHook.BarCodeEvent += new BardCodeHooK.BardCodeDeletegate(BarCode_BarCodeEvent);
             BarCodeHook.Start();
@@ -80,14 +121,68 @@ namespace LabelPrint
             //tb_QAMachineNo.Text = SysSetting.CurSettingInfo.MachineNo;
             //  tb_QAMachineNo.Enabled = false;
             tb_worker.Text = gVariable.userAccount;
+            UserInput.WorkerNo = gVariable.userAccount;
             tb_worker.Enabled = false;
 
 
             lb_InputBarcode.Text = "";
             lb_OutputBarcode.Text = "";
-
+			
 			m_networkstatehandler = new FilmSocket.networkstatehandler(network_status_change);
 			m_FilmSocket.network_state_event += m_networkstatehandler;
+            initSerialPort();
+        }
+
+        private void QAForm_FormClosing(object sender, EventArgs e)
+        {
+            if (serialPort2 != null)
+                serialPort2.Close();
+        }
+
+        void initSerialPort()
+        {
+            SystemSetting SysSetting;
+            SysSetting = GlobalConfig.Setting;
+
+            try
+            {
+                serialPort2 = new SerialPort(SysSetting.CurSettingInfo.ScannerSerialPort, 9600, Parity.None, 8, StopBits.One);
+                serialPort2.Open();
+                serialPort2.DataReceived += new SerialDataReceivedEventHandler(serialDataReceived2);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Open serial port failed!" + ex);
+            }
+        }
+
+        void serialDataReceived2(object sender, SerialDataReceivedEventArgs e)
+        {
+            Byte[] serialDataBuf1 = new Byte[128];
+
+            try
+            {
+                Thread.Sleep(1000);
+
+                serialPort2.Read(serialDataBuf1, 0, serialPort2.BytesToRead);
+
+                this.Invoke((EventHandler)(delegate
+                {
+                    lb_InputBarcode.Text = System.Text.Encoding.ASCII.GetString(serialDataBuf1);
+                    HandleBarcode(lb_InputBarcode.Text);
+                }));
+
+                UserInput.InputBarcode = lb_InputBarcode.Text;
+ 
+                if (QAStatus == 0)
+                    ToServer_material_barcode_upload();
+                else
+                    ToServer_product_barcode_upload();
+            }
+            catch (TimeoutException ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
 
@@ -222,6 +317,8 @@ namespace LabelPrint
 
             if (!UserInput.CheckUserInput())
                 return;
+
+            QAStatus = 1;
 
             UserInput.UpdateDateTime();
             tb_DateTime.Text = UserInput.GetDateTime();
@@ -510,6 +607,27 @@ namespace LabelPrint
             //tb_Width.Text = Width;
 
         }
+        private void HandleBarcode(String barcode)
+        {
+            String WorkNo;
+            String BatchNo;
+            String BigRollNo;
+            String LittleRollNo;
 
+
+            if (!UserInput.ParseLittleRollBarCode(barcode, out WorkNo, out BatchNo, out BigRollNo, out LittleRollNo))
+                return;
+
+            tb_WorkNo.Text = UserInput.WorkNo = WorkNo;
+            tb_BatchNo.Text = UserInput.BatchNo = BatchNo;
+            tb_BigRollNo.Text = UserInput.BigRollNo = BigRollNo;
+            tb_LittleRollNo.Text = UserInput.LittleRollNo = LittleRollNo;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            String barcode = "1804306121L32012230030400";
+            HandleBarcode(barcode);
+        }
     }
 }

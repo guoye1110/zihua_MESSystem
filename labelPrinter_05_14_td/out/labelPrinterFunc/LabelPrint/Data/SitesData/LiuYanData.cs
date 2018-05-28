@@ -144,7 +144,7 @@ namespace LabelPrint.Data
 
             values[(int)ColumnType.Product_State] = ProductState;
             values[(int)ColumnType.ProductQuality] = ProductQuality;
-            values[(int)ColumnType.Roll_Weight] = Roll_Weight;
+            values[(int)ColumnType.Roll_Weight] = Weight;
 
             values[(int)ColumnType.ProductName] = ProductName;
             values[(int)ColumnType.ProductWeight] = ProductWeight;
@@ -189,7 +189,7 @@ namespace LabelPrint.Data
 
             ProductState = dataRows[0][(int)ColumnType.Product_State + offset].ToString();
             ProductQuality = dataRows[0][(int)ColumnType.ProductQuality + offset].ToString();
-            Roll_Weight = dataRows[0][(int)ColumnType.Roll_Weight + offset].ToString();
+            Weight = dataRows[0][(int)ColumnType.Roll_Weight + offset].ToString();
 
 
             ProductName = dataRows[0][(int)ColumnType.ProductName + offset].ToString();
