@@ -42,6 +42,7 @@ namespace LabelPrint
         {
             InitializeComponent();
 			m_FilmSocket = filmsocket;
+			m_connected = m_FilmSocket.get_status();
         }
 		~LiuYanForm()
         {
@@ -746,14 +747,18 @@ namespace LabelPrint
 					start_work = System.Text.Encoding.Default.GetString(data_buf).Split(';');
 
 					//<工单编号>;<产品编号>
-					tb_WorkNo.Text = start_work[0];
-					cb_ProductCode.Text = start_work[1];
-					cb_ProductCode_SelectionChangeCommitted(null,null);
-					tb_BatchNo.Text = start_work[0].Substring(0,7);
-					if (start_work[0].Substring(9,1) == "1")
-						rb_DayWork.Checked = true;
-					else
-						rb_NightWork.Checked = true;
+					this.Invoke((EventHandler)(delegate
+					{
+						tb_WorkNo.Text = start_work[0];
+						cb_ProductCode.Text = start_work[1];
+						cb_ProductCode_SelectionChangeCommitted(null,null);
+						tb_BatchNo.Text = start_work[0].Substring(0,7);
+						if (start_work[0].Substring(9,1) == "1")
+							rb_DayWork.Checked = true;
+						else
+							rb_NightWork.Checked = true;
+					}));
+					
 					m_lastRsp = 1;//成功
 				}
 				else

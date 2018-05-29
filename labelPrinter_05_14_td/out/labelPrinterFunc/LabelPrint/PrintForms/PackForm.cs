@@ -35,6 +35,7 @@ namespace LabelPrint
         {
             InitializeComponent();
 			m_FilmSocket = filmsocket;
+			m_connected = m_FilmSocket.get_status();
         }
 		~packForm()
         {

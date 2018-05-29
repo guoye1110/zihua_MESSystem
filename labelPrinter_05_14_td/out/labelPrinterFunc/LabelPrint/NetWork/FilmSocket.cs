@@ -20,7 +20,7 @@ namespace LabelPrint.NetWork
 		const int PACKET_DATASTATUS_POS = 28;
 		const int COMMUNICATION_TYPE_HEART_BEAT = 0xB3;
 		//5秒
-		const int HEART_BEAT_INTERVAL = 5000;
+		const int HEART_BEAT_INTERVAL = 50000;
 		//1秒
 		const int COMMUNICATION_TIMEOUT = 3000;
         const int RESPONSE_OK = 0;
@@ -138,7 +138,7 @@ namespace LabelPrint.NetWork
 					}
 					finally {
 						//心跳协议每隔5秒发送
-						Thread.Sleep(5000);
+                        Thread.Sleep(HEART_BEAT_INTERVAL);
 					}
 				}
 			}
@@ -185,7 +185,8 @@ namespace LabelPrint.NetWork
 									if (toolClass.checkCrc32Code(pack_buf, pack_len)) {
 										int communicationType = pack_buf[PACKET_COMMUNICATION_TYPE_POS];
 										data_buf = new byte[pack_len-MIN_PACKET_LEN_WITHOUT_DATA];
-										network_data_event(communicationType, data_buf, pack_len-MIN_PACKET_LEN_WITHOUT_DATA);
+										Array.Copy(pack_buf, PACKET_DATASTATUS_POS, data_buf, 0, data_buf.Length);
+										network_data_event(communicationType, data_buf, data_buf.Length);
 									}
 								}
 								start_pos += pack_len;
@@ -331,5 +332,10 @@ namespace LabelPrint.NetWork
 				return null;
 			}
         }
+
+		public bool get_status()
+        {
+        	return m_sock.Connected;
+		}
     }
 }

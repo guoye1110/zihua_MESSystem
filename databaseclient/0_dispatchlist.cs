@@ -285,7 +285,11 @@ namespace MESSystem.common
                     if (!first)
                         myCommand.CommandText += ",";
                     first = false;
-					myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + "\'" + inputArray[i] + "\'";
+
+					if (i==inputArray.Length-1)
+						myCommand.CommandText += "`" + insertStringSplitted[i+1].Remove(insertStringSplitted[i+1].Length-1) + "`=" + "\'" + inputArray[i] + "\'";
+					else
+						myCommand.CommandText += "`" + insertStringSplitted[i+1] + "`=" + "\'" + inputArray[i] + "\'";
 				}
 
 				myCommand.CommandText += " where `" + insertStringSplitted[DISPATCH_CODE_INDEX] + "`=" + "\'" + dispatchCode + "\'";

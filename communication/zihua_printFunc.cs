@@ -297,26 +297,59 @@ namespace MESSystem.communication
                     if (communicationType == COMMUNICATION_TYPE_CAST_PROCESS_START || communicationType == COMMUNICATION_TYPE_PRINT_PROCESS_START || communicationType == COMMUNICATION_TYPE_SLIT_PROCESS_START)
                     {
                         dispatchlistDB dispatchlist_db;
+						string dName;
+						gVariable.dispatchSheetStruct[] dispatchs;
 
 						switch (communicationType )
 						{
 						case COMMUNICATION_TYPE_CAST_PROCESS_START:
 							dispatchlist_db = new dispatchlistDB(m_machineIDForPrint-CAST_PROCESS_PC1+gVariable.castingProcess[0]);
+							dName = gVariable.DBHeadString + (m_machineIDForPrint-CAST_PROCESS_PC1+gVariable.castingProcess[0]).ToString().PadLeft(3, '0');
 							break;
 						case COMMUNICATION_TYPE_PRINT_PROCESS_START:
 							dispatchlist_db = new dispatchlistDB(m_machineIDForPrint-PRINT_PROCESS_PC1+gVariable.printingProcess[0]);
+							dName = gVariable.DBHeadString + (m_machineIDForPrint-PRINT_PROCESS_PC1+gVariable.printingProcess[0]).ToString().PadLeft(3, '0');
 							break;
 						case COMMUNICATION_TYPE_SLIT_PROCESS_START:
 							dispatchlist_db = new dispatchlistDB(m_machineIDForPrint-SLIT_PROCESS_PC1+gVariable.slittingProcess[0]);
+							dName = gVariable.DBHeadString + (m_machineIDForPrint-SLIT_PROCESS_PC1+gVariable.slittingProcess[0]).ToString().PadLeft(3, '0');
 							break;
 						default:
 							dispatchlist_db = new dispatchlistDB(0);
+							dName = gVariable.DBHeadString + (0).ToString().PadLeft(3, '0');
 							break;
 						}
 
 						m_Operator = System.Text.Encoding.Default.GetString(onePacket, PROTOCOL_DATA_POS, len);
+						
+						string today = DateTime.Now.Date.ToString("yyyy-MM-dd 08:00:00");
+						string endDay = DateTime.Now.Date.AddDays(1).ToString("yyyy-MM-dd 08:00:00");
+						dispatchs = mySQLClass.getDispatchListInPeriodOfTime(dName, gVariable.dispatchListTableName, today, endDay, gVariable.MACHINE_STATUS_DISPATCH_PUBLISHED,
+																				gVariable.TIME_CHECK_TYPE_PLANNED_START);
 
-                        st_dispatchArray = dispatchlist_db.readallrecord_Ordered();
+						if (dispatchs != null) {
+							//找到planTime1最小的记录
+							string latest_planTime1 = endDay;
+							int latest_record_index = 0;
+							for (int index=0;index<dispatchs.Length;index++) {
+								int result = DateTime.Compare(Convert.ToDateTime(dispatchs[index].planTime1), Convert.ToDateTime(latest_planTime1));
+								if (result<0) {
+									latest_planTime1 = dispatchs[index].planTime1;
+									latest_record_index = index;
+								}
+							}
+                            dispatchCode = dispatchs[latest_record_index].dispatchCode;
+                            productCode = dispatchs[latest_record_index].productCode;
+                            //Save operator to it 
+                            dispatchlistDB.dispatchlist_t st = new dispatchlistDB.dispatchlist_t();
+                            st.operatorName = m_Operator;
+                            dispatchlist_db.updaterecord_ByDispatchcode(st, dispatchCode);
+	                        string str = dispatchCode + ";" + productCode;
+	                        m_ClientThread.sendStringToClient(str, communicationType);
+							return -1;//We have send data to client, same as no action from caller's point of view
+						}
+
+                        /*st_dispatchArray = dispatchlist_db.readallrecord_Ordered();
                         if (st_dispatchArray != null)
                         {
                             for (int i = 0; i < st_dispatchArray.Length; i++)
@@ -335,7 +368,7 @@ namespace MESSystem.communication
 									return -1;//We have send data to client, same as no action from caller's point of view
                                 }
                             }
-                        }
+                        }*/
                         return 0;
                     }
                     return -1;

@@ -53,6 +53,7 @@ namespace LabelPrint
         {
             InitializeComponent();
 			m_FilmSocket = filmsocket;
+			m_connected = m_FilmSocket.get_status();
         }
 		~OutBoundingForm()
         {
@@ -554,8 +555,11 @@ namespace LabelPrint
 					}
 				
 					bStart = true;
-				
-					cb_TargetMachineNo.Text  = UserInput.targets[0];
+
+                    this.Invoke((EventHandler)(delegate
+                    {
+                        cb_TargetMachineNo.Text = UserInput.targets[0];
+                    }));
 				
 					m_lastRsp = 1;//成功
 				}
