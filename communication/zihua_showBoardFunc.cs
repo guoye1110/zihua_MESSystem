@@ -30,63 +30,66 @@ namespace MESSystem.communication
 
 				private const int TOTAL_SHOWBOARD_COUNT = 5;
 				//By default, each show board's push time is 30 seconds
-				private const int[] SHOWBOARD_PUSHTIME = {30, 30, 30, 30, 30};
+                private int[] m_pushTimeInSeconds = new int[TOTAL_SHOWBOARD_COUNT] { 30, 30, 30, 30, 30 };
 
                 private ClientThread m_ClientThread = null;
                 private int m_machineIDForShowBoard;
 				private DateTime m_lastPushTime;
 
-				private string[] showBoardTitleString = {"13;8;紫华吹膜车间生产情况电子看板;1:120:0:0:0:1:0:28:0;;;;;;;;",
+				/*private string[] showBoardTitleString = {"13;8;紫华吹膜车间生产情况电子看板;1:120:0:0:0:1:0:28:0;;;;;;;;",
 														 "",
 														 "",
 														 "",
-														 ""};
+														 ""};*/
 				
-				string[][] showBoardCellStringArray = new string[TOTAL_SHOWBOARD_COUNT][]
+				string[][,] showBoardCellStringArray_Template = new string[TOTAL_SHOWBOARD_COUNT][,]
 				{
-					new string[]{"生产车间", "", "班次", "", "", "", "正常生产", "产线缺料", 
-					 "当前日期", "", "当前时间", "", "","", "设备故障", "计划停机",
-					 "生产线", "产品名称", "生产批次号","客户名称", "计划产量", "实际产量","达成率", "合格率",
-					 "一号流延机","", "", "","", "", "","", "", "",
-					 "六号中试机","", "", "","", "", "","", "", "",
-					 "七号吹膜机","", "", "","", "", "","", "", "",
-					 "一号印刷机","", "", "","", "", "","", "", "",
-					 "二号印刷机","", "", "","", "", "","", "", "",
-					 "三号印刷机","", "", "","", "", "","", "", "",
-					 "四号印刷机","", "", "","", "", "","", "", "",
-					 "五号柔印机","", "", "","", "", "","", "", ""},
-					new string{""},
-					new string{""},
-					new string{""},
-					new string{""}
+					new string[,]{
+						         {"紫华吹膜车间生产情况电子看板", "", "", "", "", "", "", ""},
+								 {"生产车间", "",         "班次",      "",         "",         "",        "正常生产", "产线缺料"}, 
+					 			 {"当前日期", "<Date>",         "当前时间",  "<Time>",         "",         "",        "设备故障", "计划停机"},
+					 			 {"",         "", "", "", "", "", "", ""},
+					 			 {"生产线",   "产品名称", "生产批次号","客户名称", "计划产量", "实际产量","达成率",   "合格率"},
+								 {"1#印刷机", "", "", "", "", "", "", ""},
+								 {"2#印刷机", "", "", "", "", "", "", ""},
+								 {"3#印刷机", "", "", "", "", "", "", ""},
+								 {"4#印刷机", "", "", "", "", "", "", ""},
+								 {"5#分切机", "", "", "", "", "", "", ""},
+								 {"7#分切机", "", "", "", "", "", "", ""}
+								 },
+					new string[,]{{""}},
+					new string[,]{{""}},
+					new string[,]{{""}},
+					new string[,]{{""}}
 				};
 
-				string[][] showBoardCellAttrArray = new string[TOTAL_SHOWBOARD_COUNT][]
+				string[][,] showBoardCellAttrArray_Template = new string[TOTAL_SHOWBOARD_COUNT][,]
 				{
-					new string[]{"0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0",
-					"0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:2:0:18:0", "0:60:240:0:0:3:0:18:0",
-					"0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0",
-					"0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:1:0:18:0", "0:60:240:0:0:5:0:18:0",
-					"1:80:0:0:0:0:0:18:0", "", "", "", "", "", "", "",
-					"0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0",
-					"0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0",
-					"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", "",
-					"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", "",
-					"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", "",
-					"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", "",
-					"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", "",
-					"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", "",
-					"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", "",
-					"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", ""},
-					{""},
-					{""},
-					{""},
-					{""}
+					new string[,]{
+								 {"1:120:0:0:0:1:0:28:0",  "", "", "", "", "", "", ""},
+								 {"0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:2:0:18:0", "0:60:240:0:0:3:0:18:0"},
+								 {"0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:1:0:18:0", "0:60:240:0:0:5:0:18:0"},
+								 {"1:80:0:0:0:0:0:18:0",   "", "", "", "", "", "", ""},
+								 {"0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0", "0:60:240:0:0:0:0:18:0"},
+								 {"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", ""},
+								 {"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", ""},
+								 {"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", ""},
+								 {"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", ""},
+								 {"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", ""},
+								 {"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", ""},
+								 {"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", ""},
+								 {"0:60:240:0:0:0:0:18:0", "", "", "", "", "", "", ""}
+								 },
+					new string[,]{{""}},
+					new string[,]{{""}},
+					new string[,]{{""}},
+					new string[,]{{""}}
 				};
 				
 				//模拟滚动信息
 				string rollingDisplayData = "一二三四五六七八九十，十九八七六五四三二一，一二三四五六七八九十，十九八七六五四三二一，一二三四五六七八九十，十九八七六五四三二一，一二三四五六七八九十，十九八七六五四三二一，一二三四五六七八九十，十九八七六五四三二一，";
 
+				//获取machineID或固定IP与5个看板的对应关系
 				private int get_showboard_index()
 				{
 					return 0;
@@ -94,19 +97,56 @@ namespace MESSystem.communication
 				
 				private string generateShowBoardData(int index)
 				{
+					int row,col;
+                    string[][,] showBoardCellStringArray = (string[][,])showBoardCellStringArray_Template.Clone();
+
 					//get current dipatch and output data
 				
 					//fill production data into showBoardCellStringArray and showBoardCellAttrArray
+					
 				
 					//merge showBoardTitleString, showBoardCellStringArray, showBoardCellAttrArray and rollingDisplayData together
+					string str1 = null;
+
+					//行数+列数
+					str1 += showBoardCellStringArray[index].GetLength(0) + ";" + showBoardCellStringArray[index].GetLength(1) + ";";
+					for (row=0;row<showBoardCellStringArray[index].GetLength(0);row++) {
+						for(col=0;col<showBoardCellStringArray[index].GetLength(1);col++) {
+							if (showBoardCellStringArray[index][row,col] == "<Date>")
+								str1 += DateTime.Now.ToString("yyyy-MM-dd");
+							else if (showBoardCellStringArray[index][row,col] == "<Time>")
+								str1 += DateTime.Now.ToString("HH:mm");
+							else 
+								str1 += showBoardCellStringArray[index][row,col];
+							if (row != showBoardCellStringArray[index].GetLength(0) || col != showBoardCellStringArray[index].GetLength(1))
+								str1 += ";";
+						}
+					}
+                    return (str1.Length +  ";" + 0 + ";" + 0 + ";" + str1);
 				}
+
 				private string generateShowBoardFormat(int index)
 				{
+					int row,col;
+                    string[][,] showBoardCellAttrArray = (string[][,])showBoardCellAttrArray_Template.Clone();
+
 					//get current dipatch and output data
 				
 					//fill production data into showBoardCellStringArray and showBoardCellAttrArray
 				
 					//merge showBoardTitleString, showBoardCellStringArray, showBoardCellAttrArray and rollingDisplayData together
+					string str1 = null;
+
+					//行数+列数
+					str1 += showBoardCellAttrArray[index].GetLength(0) + ";" + showBoardCellAttrArray[index].GetLength(1) + ";";
+					for (row=0;row<showBoardCellAttrArray[index].GetLength(0);row++) {
+						for(col=0;col<showBoardCellAttrArray[index].GetLength(1);col++) {
+							str1 += showBoardCellAttrArray[index][row,col];
+							if (row != showBoardCellAttrArray[index].GetLength(0) || col != showBoardCellAttrArray[index].GetLength(1))
+								str1 += ";";
+						}
+					}
+                    return (str1.Length +  ";" + 0 + ";" + 0 + ";" + str1);
 				}
 
                 public zihua_showBoardClient(ClientThread cThread)
@@ -118,13 +158,15 @@ namespace MESSystem.communication
 				private int send_data(int index)
                 {
                 	string send_data = generateShowBoardData(index);
-					return m_ClientThread.sendStringToClient(send_data, COMMUNICATION_TYPE_PUSH_DATA);
+					m_ClientThread.sendStringToClient(send_data, COMMUNICATION_TYPE_PUSH_DATA);
+                    return 0;
 				}
 
 				private int send_format(int index)
 				{
 					string send_data = generateShowBoardFormat(index);
-					return m_ClientThread.sendStringToClient(send_data, COMMUNICATION_TYPE_UPDATE_FORMAT);
+					m_ClientThread.sendStringToClient(send_data, COMMUNICATION_TYPE_UPDATE_FORMAT);
+                    return 0;
 				}
 				
                 //return value: -1: no action
@@ -144,13 +186,9 @@ namespace MESSystem.communication
 				private int HandleHeartBeat(int communicationType, byte[] onePacket, int packetLen)
                 {
 					if (communicationType == COMMUNICATION_TYPE_HEART_BEAT) {
-						int index = get_showboard_index();
-						int result = DateTime.Compare(DateTime.Now, m_lastPushTime.AddSeconds(SHOWBOARD_PUSHTIME[index]));
-						if (result>0) {
-							send_data(index);
-							m_lastPushTime = DateTime.Now;
-						}
+                        return 0;
 					}
+                    return -1;
 				}
 
                 public void processShowBoardFunc(int communicationType, byte[] onePacket, int packetLen)
@@ -169,15 +207,28 @@ namespace MESSystem.communication
 							int index = get_showboard_index();
 							send_format(index);
 							send_data(index);
-							m_lastPushTime = DataTime.Now;
+							m_lastPushTime = DateTime.Now;
                         }
 
                     	result = HandleHeartBeat(communicationType, onePacket, packetLen);
-						if (result >= 0) m_ClientThread.sendResponseOKBack(result);
+                        if (result >= 0)
+                        {
+                            m_ClientThread.sendResponseOKBack(result);
+
+                            //Send data
+                            int index = get_showboard_index();
+                            result = DateTime.Compare(DateTime.Now, m_lastPushTime.AddSeconds(m_pushTimeInSeconds[index]));
+                            if (result > 0)
+                            {
+                                send_data(index);
+                                m_lastPushTime = DateTime.Now;
+                            }
+
+                        }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("processShowBoardFunc(" + communicationType + "," + packetLen + ") for printingMachineID = " + m_machineIDForShowBoard + "failed, " + ex);
+                        Console.WriteLine("processShowBoardFunc(" + communicationType + "," + packetLen + ") for ShowBoardMachineID = " + m_machineIDForShowBoard + "failed, " + ex);
                     }
                 }
             }
