@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.ewininfo.com" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="UserInfoListService" targetNamespace="http://www.ewininfo.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://www.ewininfo.com" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="queryUserInfo" type="tns:queryUserInfo" />
+      <xs:element name="queryUserInfoResponse" type="tns:queryUserInfoResponse" />
+      <xs:complexType name="queryUserInfo">
+        <xs:sequence />
+      </xs:complexType>
+      <xs:complexType name="queryUserInfoResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="return" type="tns:UserInfo" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="UserInfo">
+        <xs:sequence />
+        <xs:attribute name="userNo" type="xs:string" />
+        <xs:attribute name="userName" type="xs:string" />
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="queryUserInfoResponse">
+    <wsdl:part name="parameters" element="tns:queryUserInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="queryUserInfo">
+    <wsdl:part name="parameters" element="tns:queryUserInfo" />
+  </wsdl:message>
+  <wsdl:portType name="UserInfoListService">
+    <wsdl:operation name="queryUserInfo">
+      <wsdl:input name="queryUserInfo" message="tns:queryUserInfo" />
+      <wsdl:output name="queryUserInfoResponse" message="tns:queryUserInfoResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="UserInfoListServiceSoapBinding" type="tns:UserInfoListService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="queryUserInfo">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="queryUserInfo">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="queryUserInfoResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="UserInfoListService">
+    <wsdl:port name="UserInfoListServicePort" binding="tns:UserInfoListServiceSoapBinding">
+      <soap:address location="http://172.16.211.228:8090/extras-web-cxf/service/UserInfoListService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

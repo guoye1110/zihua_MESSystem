@@ -1,0 +1,14 @@
+{
+  "MachineNo": "1",
+  "ServerIP": "1.1.1.1",
+  "ScaleSerialPort": "COM1",
+  "ScaleBaudRate": "38400",
+  "ScaleDataBit": "8",
+  "ScaleSerialParity": "None",
+  "ScaleStopBit": "1",
+  "PrinterSerialPort": null,
+  "PrinterBaudRate": null,
+  "Label": "Label1",
+  "ManufacturePhase": 0,
+  "LabelFileName": "default.json"
+}

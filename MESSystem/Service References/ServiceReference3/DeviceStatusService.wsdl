@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.ewininfo.com" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="DeviceStatusService" targetNamespace="http://www.ewininfo.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://www.ewininfo.com" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="addDeviceStatusCurrent" type="tns:addDeviceStatusCurrent" />
+      <xs:element name="addDeviceStatusCurrentResponse" type="tns:addDeviceStatusCurrentResponse" />
+      <xs:element name="addDeviceStatusHistory" type="tns:addDeviceStatusHistory" />
+      <xs:element name="addDeviceStatusHistoryResponse" type="tns:addDeviceStatusHistoryResponse" />
+      <xs:complexType name="addDeviceStatusHistory">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="data" type="tns:deviceStatusInfo" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="deviceStatusInfo">
+        <xs:sequence />
+        <xs:attribute name="dispatchOrderNo" type="xs:string" use="required" />
+        <xs:attribute name="deviceNo" type="xs:string" use="required" />
+        <xs:attribute name="workTime" type="xs:long" use="required" />
+        <xs:attribute name="prdBeat" type="xs:long" use="required" />
+        <xs:attribute name="energyConsumption" type="xs:long" use="required" />
+        <xs:attribute name="standbyTime" type="xs:long" use="required" />
+        <xs:attribute name="power" type="xs:long" use="required" />
+        <xs:attribute name="deviceCollectNum" type="xs:long" use="required" />
+        <xs:attribute name="speed" type="xs:long" use="required" />
+        <xs:attribute name="pressure" type="xs:long" use="required" />
+        <xs:attribute name="prepareTime" type="xs:long" use="required" />
+        <xs:attribute name="realWorkTime" type="xs:long" use="required" />
+      </xs:complexType>
+      <xs:complexType name="addDeviceStatusHistoryResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="addDeviceStatusCurrent">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="data" type="tns:deviceStatusInfo" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="addDeviceStatusCurrentResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="addDeviceStatusCurrent">
+    <wsdl:part name="parameters" element="tns:addDeviceStatusCurrent" />
+  </wsdl:message>
+  <wsdl:message name="addDeviceStatusHistoryResponse">
+    <wsdl:part name="parameters" element="tns:addDeviceStatusHistoryResponse" />
+  </wsdl:message>
+  <wsdl:message name="addDeviceStatusCurrentResponse">
+    <wsdl:part name="parameters" element="tns:addDeviceStatusCurrentResponse" />
+  </wsdl:message>
+  <wsdl:message name="addDeviceStatusHistory">
+    <wsdl:part name="parameters" element="tns:addDeviceStatusHistory" />
+  </wsdl:message>
+  <wsdl:portType name="DeviceStatusService">
+    <wsdl:operation name="addDeviceStatusHistory">
+      <wsdl:input name="addDeviceStatusHistory" message="tns:addDeviceStatusHistory" />
+      <wsdl:output name="addDeviceStatusHistoryResponse" message="tns:addDeviceStatusHistoryResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="addDeviceStatusCurrent">
+      <wsdl:input name="addDeviceStatusCurrent" message="tns:addDeviceStatusCurrent" />
+      <wsdl:output name="addDeviceStatusCurrentResponse" message="tns:addDeviceStatusCurrentResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DeviceStatusServiceSoapBinding" type="tns:DeviceStatusService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="addDeviceStatusHistory">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="addDeviceStatusHistory">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="addDeviceStatusHistoryResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addDeviceStatusCurrent">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="addDeviceStatusCurrent">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="addDeviceStatusCurrentResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DeviceStatusService">
+    <wsdl:port name="DeviceStatusServicePort" binding="tns:DeviceStatusServiceSoapBinding">
+      <soap:address location="http://192.168.1.117:8080/extras-web-cxf/service/DeviceStatusService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

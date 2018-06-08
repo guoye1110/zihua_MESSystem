@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.ewininfo.com" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="DeviceAndonService" targetNamespace="http://www.ewininfo.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://www.ewininfo.com" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="disposedDeviceAndon" type="tns:disposedDeviceAndon" />
+      <xs:element name="disposedDeviceAndonResponse" type="tns:disposedDeviceAndonResponse" />
+      <xs:element name="queryDeviceAndonInfo" type="tns:queryDeviceAndonInfo" />
+      <xs:element name="queryDeviceAndonInfoResponse" type="tns:queryDeviceAndonInfoResponse" />
+      <xs:element name="queryDeviceAndonStatus" type="tns:queryDeviceAndonStatus" />
+      <xs:element name="queryDeviceAndonStatusResponse" type="tns:queryDeviceAndonStatusResponse" />
+      <xs:complexType name="queryDeviceAndonStatus">
+        <xs:sequence />
+      </xs:complexType>
+      <xs:complexType name="queryDeviceAndonStatusResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="return" type="tns:deviceAndonStatus" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="deviceAndonStatus">
+        <xs:sequence />
+        <xs:attribute name="no" type="xs:string" />
+        <xs:attribute name="name" type="xs:string" />
+      </xs:complexType>
+      <xs:complexType name="disposedDeviceAndon">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="userId" type="xs:string" />
+          <xs:element minOccurs="0" name="faultNo" type="xs:string" />
+          <xs:element minOccurs="0" name="status" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="disposedDeviceAndonResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="queryDeviceAndonInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="deviceNo" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="queryDeviceAndonInfoResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="return" type="tns:returnDeviceAndon" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="returnDeviceAndon">
+        <xs:sequence />
+        <xs:attribute name="faultNo" type="xs:string" />
+        <xs:attribute name="deviceNo" type="xs:string" />
+        <xs:attribute name="deviceName" type="xs:string" />
+        <xs:attribute name="workshop" type="xs:string" />
+        <xs:attribute name="faultDesc" type="xs:string" />
+        <xs:attribute name="tsUser" type="xs:long" />
+        <xs:attribute name="time" type="xs:dateTime" />
+        <xs:attribute name="status" type="xs:string" />
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="queryDeviceAndonStatusResponse">
+    <wsdl:part name="parameters" element="tns:queryDeviceAndonStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="queryDeviceAndonInfo">
+    <wsdl:part name="parameters" element="tns:queryDeviceAndonInfo" />
+  </wsdl:message>
+  <wsdl:message name="queryDeviceAndonInfoResponse">
+    <wsdl:part name="parameters" element="tns:queryDeviceAndonInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="disposedDeviceAndonResponse">
+    <wsdl:part name="parameters" element="tns:disposedDeviceAndonResponse" />
+  </wsdl:message>
+  <wsdl:message name="queryDeviceAndonStatus">
+    <wsdl:part name="parameters" element="tns:queryDeviceAndonStatus" />
+  </wsdl:message>
+  <wsdl:message name="disposedDeviceAndon">
+    <wsdl:part name="parameters" element="tns:disposedDeviceAndon" />
+  </wsdl:message>
+  <wsdl:portType name="DeviceAndonService">
+    <wsdl:operation name="queryDeviceAndonStatus">
+      <wsdl:input name="queryDeviceAndonStatus" message="tns:queryDeviceAndonStatus" />
+      <wsdl:output name="queryDeviceAndonStatusResponse" message="tns:queryDeviceAndonStatusResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="disposedDeviceAndon">
+      <wsdl:input name="disposedDeviceAndon" message="tns:disposedDeviceAndon" />
+      <wsdl:output name="disposedDeviceAndonResponse" message="tns:disposedDeviceAndonResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="queryDeviceAndonInfo">
+      <wsdl:input name="queryDeviceAndonInfo" message="tns:queryDeviceAndonInfo" />
+      <wsdl:output name="queryDeviceAndonInfoResponse" message="tns:queryDeviceAndonInfoResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DeviceAndonServiceSoapBinding" type="tns:DeviceAndonService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="disposedDeviceAndon">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="disposedDeviceAndon">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="disposedDeviceAndonResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="queryDeviceAndonStatus">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="queryDeviceAndonStatus">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="queryDeviceAndonStatusResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="queryDeviceAndonInfo">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="queryDeviceAndonInfo">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="queryDeviceAndonInfoResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DeviceAndonService">
+    <wsdl:port name="DeviceAndonServicePort" binding="tns:DeviceAndonServiceSoapBinding">
+      <soap:address location="http://172.16.211.228:8090/extras-web-cxf/service/DeviceAndonService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

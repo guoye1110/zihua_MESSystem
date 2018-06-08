@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.ewininfo.com" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="ActiveDispatchOrderService" targetNamespace="http://www.ewininfo.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://www.ewininfo.com" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="addActiveDispatch" type="tns:addActiveDispatch" />
+      <xs:element name="addActiveDispatchResponse" type="tns:addActiveDispatchResponse" />
+      <xs:element name="queryActiveDispatchOrder" type="tns:queryActiveDispatchOrder" />
+      <xs:element name="queryActiveDispatchOrderResponse" type="tns:queryActiveDispatchOrderResponse" />
+      <xs:complexType name="queryActiveDispatchOrder">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="deviceNo" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="queryActiveDispatchOrderResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="return" type="tns:ReturnActiveDispatch" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ReturnActiveDispatch">
+        <xs:sequence />
+        <xs:attribute name="dispatchId" type="xs:long" />
+        <xs:attribute name="dispatchNo" type="xs:string" />
+        <xs:attribute name="planStartTime" type="xs:string" />
+        <xs:attribute name="planEndTime" type="xs:string" />
+        <xs:attribute name="productNo" type="xs:string" />
+        <xs:attribute name="productName" type="xs:string" />
+        <xs:attribute name="operationUser" type="xs:string" />
+        <xs:attribute name="planNum" type="xs:string" />
+        <xs:attribute name="qualifiedNum" type="xs:string" />
+        <xs:attribute name="disqualifiedNum" type="xs:string" />
+        <xs:attribute name="currentProcess" type="xs:string" />
+        <xs:attribute name="startDate" type="xs:string" />
+        <xs:attribute name="entireLifeCount" type="xs:string" />
+        <xs:attribute name="useNumber" type="xs:string" />
+        <xs:attribute name="singleFactor" type="xs:string" />
+        <xs:attribute name="materialBatchNo" type="xs:string" />
+      </xs:complexType>
+      <xs:complexType name="addActiveDispatch">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="data" type="tns:ReturnActiveDispatch" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="addActiveDispatchResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="addActiveDispatchResponse">
+    <wsdl:part name="parameters" element="tns:addActiveDispatchResponse" />
+  </wsdl:message>
+  <wsdl:message name="queryActiveDispatchOrderResponse">
+    <wsdl:part name="parameters" element="tns:queryActiveDispatchOrderResponse" />
+  </wsdl:message>
+  <wsdl:message name="addActiveDispatch">
+    <wsdl:part name="parameters" element="tns:addActiveDispatch" />
+  </wsdl:message>
+  <wsdl:message name="queryActiveDispatchOrder">
+    <wsdl:part name="parameters" element="tns:queryActiveDispatchOrder" />
+  </wsdl:message>
+  <wsdl:portType name="ActiveDispatchOrderService">
+    <wsdl:operation name="queryActiveDispatchOrder">
+      <wsdl:input name="queryActiveDispatchOrder" message="tns:queryActiveDispatchOrder" />
+      <wsdl:output name="queryActiveDispatchOrderResponse" message="tns:queryActiveDispatchOrderResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="addActiveDispatch">
+      <wsdl:input name="addActiveDispatch" message="tns:addActiveDispatch" />
+      <wsdl:output name="addActiveDispatchResponse" message="tns:addActiveDispatchResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ActiveDispatchOrderServiceSoapBinding" type="tns:ActiveDispatchOrderService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="queryActiveDispatchOrder">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="queryActiveDispatchOrder">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="queryActiveDispatchOrderResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addActiveDispatch">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="addActiveDispatch">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="addActiveDispatchResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ActiveDispatchOrderService">
+    <wsdl:port name="ActiveDispatchOrderServicePort" binding="tns:ActiveDispatchOrderServiceSoapBinding">
+      <soap:address location="http://localhost:8090/extras-web-cxf/service/ActiveDispatchOrderService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

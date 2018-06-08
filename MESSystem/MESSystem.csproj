@@ -1,0 +1,784 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{146C4D89-D6D8-4C60-8B63-9098D91CEE46}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MESSystem</RootNamespace>
+    <AssemblyName>MESSystem</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>MESSystem.common.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>zihualogo_48X48.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CustomControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>CustomerControl\bin\Debug\CustomControl.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>libs\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.6.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
+    <Reference Include="MySql.Data.Entity, Version=6.6.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
+    <Reference Include="NPOI">
+      <HintPath>libs\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML">
+      <HintPath>libs\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net">
+      <HintPath>libs\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats">
+      <HintPath>libs\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="alarmFun\addEmailAddress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="alarmFun\addEmailAddress.Designer.cs">
+      <DependentUpon>addEmailAddress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="alarmFun\deviceAlarmToday.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="alarmFun\deviceAlarmToday.Designer.cs">
+      <DependentUpon>deviceAlarmToday.cs</DependentUpon>
+    </Compile>
+    <Compile Include="alarmFun\historyListReview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="alarmFun\historyListReview.Designer.cs">
+      <DependentUpon>historyListReview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="alarmFun\historyDetailReview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="alarmFun\historyDetailReview.Designer.cs">
+      <DependentUpon>historyDetailReview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="alarmFun\SetAlarm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="alarmFun\SetAlarm.designer.cs">
+      <DependentUpon>SetAlarm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="APSProcess\APSProcess.cs" />
+    <Compile Include="APS_UI\adjustLoading.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="APS_UI\adjustLoading.Designer.cs">
+      <DependentUpon>adjustLoading.cs</DependentUpon>
+    </Compile>
+    <Compile Include="APS_UI\APSBatchResult.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="APS_UI\APSBatchResult.Designer.cs">
+      <DependentUpon>APSBatchResult.cs</DependentUpon>
+    </Compile>
+    <Compile Include="APS_UI\APSExhibit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="APS_UI\APSExhibit.Designer.cs">
+      <DependentUpon>APSExhibit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="APS_UI\APSRules.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="APS_UI\APSRules.Designer.cs">
+      <DependentUpon>APSRules.cs</DependentUpon>
+    </Compile>
+    <Compile Include="APS_UI\APSUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="APS_UI\APSUI.Designer.cs">
+      <DependentUpon>APSUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="APS_UI\manualSalesOrder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="APS_UI\manualSalesOrder.Designer.cs">
+      <DependentUpon>manualSalesOrder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="APS_UI\multiProducts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="APS_UI\multiProducts.Designer.cs">
+      <DependentUpon>multiProducts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="APS_UI\salesOrderList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="APS_UI\salesOrderList.Designer.cs">
+      <DependentUpon>salesOrderList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="APS_UI\substitutes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="APS_UI\substitutes.Designer.cs">
+      <DependentUpon>substitutes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="commonControl\commonListview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="commonControl\commonListview.designer.cs">
+      <DependentUpon>commonListview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="commonControl\Component1.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="commonControl\Component1.designer.cs">
+      <DependentUpon>Component1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="commonControl\listviewNF.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="commonControl\manualInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="commonControl\manualInput.Designer.cs">
+      <DependentUpon>manualInput.cs</DependentUpon>
+    </Compile>
+    <Compile Include="common\beatCalculation.cs" />
+    <Compile Include="common\excelOutput.cs" />
+    <Compile Include="common\mySQLHelper.cs" />
+    <Compile Include="communication\clientPCFunc.cs" />
+    <Compile Include="communication\communication.cs" />
+    <Compile Include="communication\serverAppFunc.cs" />
+    <Compile Include="communication\serverBoardDetails.cs" />
+    <Compile Include="communication\serverBoardFunc.cs" />
+    <Compile Include="communication\serverPCFunc.cs" />
+    <Compile Include="communication\serverPrintFunc.cs" />
+    <Compile Include="communication\zihua_printFunc.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="communication\zihua_showBoardFunc.cs" />
+    <Compile Include="curves\Column.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="curves\Column.designer.cs">
+      <DependentUpon>Column.cs</DependentUpon>
+    </Compile>
+    <Compile Include="curves\multiCurve.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="curves\multiCurve.designer.cs">
+      <DependentUpon>multiCurve.cs</DependentUpon>
+    </Compile>
+    <Compile Include="curves\OneCurve.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="curves\OneCurve.designer.cs">
+      <DependentUpon>OneCurve.cs</DependentUpon>
+    </Compile>
+    <Compile Include="curves\Pie.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="curves\Pie.designer.cs">
+      <DependentUpon>Pie.cs</DependentUpon>
+    </Compile>
+    <Compile Include="curves\SPCCurve.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="curves\SPCCurve.designer.cs">
+      <DependentUpon>SPCCurve.cs</DependentUpon>
+    </Compile>
+    <Compile Include="databaseclient\0_dispatchlist.cs" />
+    <Compile Include="databaseclient\0_materiallist.cs" />
+    <Compile Include="databaseclient\finalpacking.cs" />
+    <Compile Include="databaseclient\inspectionlist.cs" />
+    <Compile Include="databaseclient\materialdeliverylist.cs" />
+    <Compile Include="databaseclient\materialinoutrecord.cs" />
+    <Compile Include="databaseclient\productcastinglist.cs" />
+    <Compile Include="databaseclient\productprintlist.cs" />
+    <Compile Include="databaseclient\productslitlist.cs" />
+    <Compile Include="databaseclient\reusematerial.cs" />
+    <Compile Include="dispatchManagement\adjustDispatch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dispatchManagement\adjustDispatch.Designer.cs">
+      <DependentUpon>adjustDispatch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dispatchManagement\cancelPublish.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dispatchManagement\cancelPublish.Designer.cs">
+      <DependentUpon>cancelPublish.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dispatchManagement\dispatchPublish.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dispatchManagement\dispatchPublish.designer.cs">
+      <DependentUpon>dispatchPublish.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dispatchManagement\dispatchTools.cs" />
+    <Compile Include="machineManagement\machineManagement.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="machineManagement\machineManagement.Designer.cs">
+      <DependentUpon>machineManagement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="machineManagement\mDispatchList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="machineManagement\mDispatchList.Designer.cs">
+      <DependentUpon>mDispatchList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="machineManagement\popupEditBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="machineManagement\popupEditBox.Designer.cs">
+      <DependentUpon>popupEditBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="mainUI\dispatchUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="mainUI\dispatchUI.Designer.cs">
+      <DependentUpon>dispatchUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="mainUI\firstScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="mainUI\firstScreen.Designer.cs">
+      <DependentUpon>firstScreen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="mainUI\login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="mainUI\login.Designer.cs">
+      <DependentUpon>login.cs</DependentUpon>
+    </Compile>
+    <Compile Include="mainUI\machineProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="mainUI\machineProgress.designer.cs">
+      <DependentUpon>machineProgress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="mainUI\workshopReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="mainUI\workshopReport.Designer.cs">
+      <DependentUpon>workshopReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="mainUI\workshopZihua.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="mainUI\workshopZihua.designer.cs">
+      <DependentUpon>workshopZihua.cs</DependentUpon>
+    </Compile>
+    <Compile Include="materialManagement\materialInOutput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="materialManagement\materialInOutput.designer.cs">
+      <DependentUpon>materialInOutput.cs</DependentUpon>
+    </Compile>
+    <Compile Include="materialManagement\materialRebuild.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="materialManagement\materialRebuild.designer.cs">
+      <DependentUpon>materialRebuild.cs</DependentUpon>
+    </Compile>
+    <Compile Include="materialManagement\materialWaste.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="materialManagement\materialWaste.designer.cs">
+      <DependentUpon>materialWaste.cs</DependentUpon>
+    </Compile>
+    <Compile Include="materialManagement\StackAndFeedbin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="materialManagement\StackAndFeedbin.designer.cs">
+      <DependentUpon>StackAndFeedbin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OEEManagement\MaintainaceCalendar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OEEManagement\MaintainaceCalendar.Designer.cs">
+      <DependentUpon>MaintainaceCalendar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OEEManagement\OEEEnergyManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OEEManagement\OEEEnergyManager.Designer.cs">
+      <DependentUpon>OEEEnergyManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OEEManagement\OEEFactory.cs" />
+    <Compile Include="OEEManagement\OEECostManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OEEManagement\OEECostManager.Designer.cs">
+      <DependentUpon>OEECostManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OEEManagement\OEEStaff.cs" />
+    <Compile Include="OEEManagement\OEEStaffManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OEEManagement\OEEStaffManager.Designer.cs">
+      <DependentUpon>OEEStaffManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OEEManagement\OEEMachine.cs" />
+    <Compile Include="OEEManagement\OEEMachineGroup.cs" />
+    <Compile Include="OEEManagement\OEEMachineManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OEEManagement\OEEMachineManager.Designer.cs">
+      <DependentUpon>OEEMachineManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OEEManagement\OEESummaryManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OEEManagement\OEESummaryManager.Designer.cs">
+      <DependentUpon>OEESummaryManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OEEManagement\OEETypes.cs" />
+    <Compile Include="OEEManagement\OEEUtils.cs" />
+    <Compile Include="OEEManagement\OEEWorkshop.cs" />
+    <Compile Include="qualityManagement\materialbacktrack.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="qualityManagement\materialbacktrack.designer.cs">
+      <DependentUpon>materialbacktrack.cs</DependentUpon>
+    </Compile>
+    <Compile Include="qualityManagement\SPCAnalyze.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="qualityManagement\SPCAnalyze.designer.cs">
+      <DependentUpon>SPCAnalyze.cs</DependentUpon>
+    </Compile>
+    <Compile Include="common\Database.cs" />
+    <Compile Include="common\GVariable.cs" />
+    <Compile Include="mainUI\dispatchList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="mainUI\dispatchList.designer.cs">
+      <DependentUpon>dispatchList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="common\Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="qualityManagement\serialNumbacktrack.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="qualityManagement\serialNumbacktrack.Designer.cs">
+      <DependentUpon>serialNumbacktrack.cs</DependentUpon>
+    </Compile>
+    <Compile Include="qualityManagement\SPCChecking.cs" />
+    <Compile Include="Service References\ServiceReference1\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ServiceReference2\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ServiceReference3\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ServiceReference4\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ServiceReference5\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ServiceReference6\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ServiceReference7\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ServiceReference8\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="qualityManagement\Spc.cs" />
+    <Compile Include="qualityManagement\SPCMultipleCharts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="common\tools.cs" />
+    <EmbeddedResource Include="alarmFun\addEmailAddress.resx">
+      <DependentUpon>addEmailAddress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="alarmFun\deviceAlarmToday.resx">
+      <DependentUpon>deviceAlarmToday.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="alarmFun\historyListReview.resx">
+      <DependentUpon>historyListReview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="alarmFun\historyDetailReview.resx">
+      <DependentUpon>historyDetailReview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="alarmFun\SetAlarm.resx">
+      <DependentUpon>SetAlarm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="APS_UI\adjustLoading.resx">
+      <DependentUpon>adjustLoading.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="APS_UI\APSBatchResult.resx">
+      <DependentUpon>APSBatchResult.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="APS_UI\APSExhibit.resx">
+      <DependentUpon>APSExhibit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="APS_UI\APSRules.resx">
+      <DependentUpon>APSRules.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="APS_UI\APSUI.resx">
+      <DependentUpon>APSUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="APS_UI\manualSalesOrder.resx">
+      <DependentUpon>manualSalesOrder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="APS_UI\multiProducts.resx">
+      <DependentUpon>multiProducts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="APS_UI\salesOrderList.resx">
+      <DependentUpon>salesOrderList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="APS_UI\substitutes.resx">
+      <DependentUpon>substitutes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="commonControl\commonListview.resx">
+      <DependentUpon>commonListview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="commonControl\manualInput.resx">
+      <DependentUpon>manualInput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="curves\Column.resx">
+      <DependentUpon>Column.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="curves\multiCurve.resx">
+      <DependentUpon>multiCurve.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="curves\OneCurve.resx">
+      <DependentUpon>OneCurve.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="curves\Pie.resx">
+      <DependentUpon>Pie.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="curves\SPCCurve.resx">
+      <DependentUpon>SPCCurve.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dispatchManagement\adjustDispatch.resx">
+      <DependentUpon>adjustDispatch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dispatchManagement\cancelPublish.resx">
+      <DependentUpon>cancelPublish.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dispatchManagement\dispatchPublish.resx">
+      <DependentUpon>dispatchPublish.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="machineManagement\machineManagement.resx">
+      <DependentUpon>machineManagement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="machineManagement\mDispatchList.resx">
+      <DependentUpon>mDispatchList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="machineManagement\popupEditBox.resx">
+      <DependentUpon>popupEditBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mainUI\dispatchUI.resx">
+      <DependentUpon>dispatchUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mainUI\firstScreen.resx">
+      <DependentUpon>firstScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mainUI\login.resx">
+      <DependentUpon>login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mainUI\machineProgress.resx">
+      <DependentUpon>machineProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mainUI\workshopReport.resx">
+      <DependentUpon>workshopReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mainUI\workshopZihua.resx">
+      <DependentUpon>workshopZihua.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="materialManagement\materialInOutput.resx">
+      <DependentUpon>materialInOutput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="materialManagement\materialRebuild.resx">
+      <DependentUpon>materialRebuild.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="materialManagement\materialWaste.resx">
+      <DependentUpon>materialWaste.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="materialManagement\StackAndFeedbin.resx">
+      <DependentUpon>StackAndFeedbin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OEEManagement\MaintainaceCalendar.resx">
+      <DependentUpon>MaintainaceCalendar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OEEManagement\OEECostManager.resx">
+      <DependentUpon>OEECostManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OEEManagement\OEEEnergyManager.resx">
+      <DependentUpon>OEEEnergyManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OEEManagement\OEEMachineManager.resx">
+      <DependentUpon>OEEMachineManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OEEManagement\OEEStaffManager.resx">
+      <DependentUpon>OEEStaffManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OEEManagement\OEESummaryManager.resx">
+      <DependentUpon>OEESummaryManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="qualityManagement\materialbacktrack.resx">
+      <DependentUpon>materialbacktrack.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="qualityManagement\SPCAnalyze.resx">
+      <DependentUpon>SPCAnalyze.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mainUI\dispatchList.resx">
+      <DependentUpon>dispatchList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="qualityManagement\serialNumbacktrack.resx">
+      <DependentUpon>serialNumbacktrack.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="Service References\ServiceReference1\DeviceFailureService.wsdl" />
+    <None Include="Service References\ServiceReference1\MESSystem.ServiceReference1.deviceFailureInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ServiceReference2\ActiveDispatchOrderService.wsdl" />
+    <None Include="Service References\ServiceReference2\MESSystem.ServiceReference2.ReturnActiveDispatch.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ServiceReference3\DeviceStatusService.wsdl" />
+    <None Include="Service References\ServiceReference4\DeviceAndonService.wsdl" />
+    <None Include="Service References\ServiceReference4\MESSystem.ServiceReference4.deviceAndonStatus.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ServiceReference4\MESSystem.ServiceReference4.returnDeviceAndon.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ServiceReference5\ChkItemListService.wsdl" />
+    <None Include="Service References\ServiceReference5\MESSystem.ServiceReference5.ReturnChkItem.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ServiceReference6\MESSystem.ServiceReference6.UserInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ServiceReference6\UserInfoListService.wsdl" />
+    <None Include="Service References\ServiceReference7\MaterialAndonService.wsdl" />
+    <None Include="Service References\ServiceReference7\MESSystem.ServiceReference7.ReturnMaterialInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ServiceReference8\CraftPramService.wsdl" />
+    <None Include="Service References\ServiceReference8\MESSystem.ServiceReference8.returnCraftPram.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\ServiceReference1\" />
+    <WCFMetadataStorage Include="Service References\ServiceReference2\" />
+    <WCFMetadataStorage Include="Service References\ServiceReference3\" />
+    <WCFMetadataStorage Include="Service References\ServiceReference4\" />
+    <WCFMetadataStorage Include="Service References\ServiceReference5\" />
+    <WCFMetadataStorage Include="Service References\ServiceReference6\" />
+    <WCFMetadataStorage Include="Service References\ServiceReference7\" />
+    <WCFMetadataStorage Include="Service References\ServiceReference8\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference1\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference1\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference1\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference2\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference2\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference2\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference3\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference3\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference3\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference5\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference5\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference5\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference6\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference6\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference6\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference7\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference7\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference7\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference8\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference8\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference8\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference4\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference4\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ServiceReference4\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="zihualogo_48X48.ico" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
