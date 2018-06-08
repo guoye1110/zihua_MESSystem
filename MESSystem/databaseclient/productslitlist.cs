@@ -35,6 +35,8 @@ namespace MESSystem.common
 		private const int NUM_OF_JOINS = 12;
         private const int WEIGHT_INDEX = 13;
         private const int PLATE_NO_INDEX = 14;
+		//2016.06.07 新增字段ID1，班次，班别，productCode,  customer,  theoryWeight，realLength, threoryLength
+		
         private const int TOTAL_DATAGRAM_NUM = 14;
 
 		private const string c_dbName = "globaldatabase";

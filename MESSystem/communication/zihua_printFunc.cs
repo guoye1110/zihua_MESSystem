@@ -530,6 +530,15 @@ namespace MESSystem.communication
                         st_cast.scanTime = System.DateTime.Now.ToString();
                         st_cast.weight = Convert.ToSingle(strInputArray[1]);
 						st_cast.errorStatus = strInputArray[0].Substring(19, 1);
+						//2016.06.07 新增字段ID1，ID2，ID3， ID4，班次，班别，productCode, customer
+						st_cast.operatorName = strInputArray[1];
+						st_cast.operatorName2 = strInputArray[2];
+						st_cast.operatorName3 = strInputArray[3];
+						st_cast.operatorName4 = strInputArray[4];
+						st_cast.workshift = strInputArray[5];
+						st_cast.workTeam = strInputArray[6];
+						st_cast.productCode = strInputArray[7];
+						st_cast.customer = strInputArray[8];
                         return db.writerecord(st_cast);
                     }
 
@@ -578,6 +587,15 @@ namespace MESSystem.communication
                         st_print.productBarCode = strInputArray[1];
                         st_print.weight = Convert.ToSingle(strInputArray[2]);
                         st_print.errorStatus = strInputArray[1].Substring(19, 1);
+						//2016.06.07 新增字段ID1，ID2，ID3， ID4，班次，班别，productCode, customer
+						st_print.operatorName = strInputArray[2];
+						st_print.operatorName2 = strInputArray[3];
+						st_print.operatorName3 = strInputArray[4];
+						st_print.operatorName4 = strInputArray[5];
+						st_print.workshift = strInputArray[6];
+						st_print.workTeam = strInputArray[7];
+						st_print.productCode = strInputArray[8];
+						st_print.customer = strInputArray[9];
 
                         return db.updaterecord_ByMaterialBarCode(st_print, strInputArray[0]);
                     }

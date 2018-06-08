@@ -31,7 +31,17 @@ namespace MESSystem.common
 		private const int LARGE_INDEX_INDEX = 8;
 		private const int WEIGHT_INDEX = 9;
 		private const int ERROR_STATUS_INDEX = 10;
-		private const int TOTAL_DATAGRAM_NUM = ERROR_STATUS_INDEX;
+		//2016.06.07 新增字段ID1，ID2，ID3， ID4，班次，班别，productCode, customer
+		private const int OPERATOR_NAME_INDEX = 9;
+		private const int OPERATOR_NAME2_INDEX = 10;
+		private const int OPERATOR_NAME3_INDEX = 11;
+		private const int OPERATOR_NAME4_INDEX = 12;
+		private const int WORKSHIFT_INDEX = 13;
+		private const int WORKTEAM_INDEX = 14;
+		private const int PRODUCT_CODE_INDEX = 15;
+		private const int CUSTOMER_INDEX = 16;
+		private const int TOTAL_DATAGRAM_NUM = CUSTOMER_INDEX;
+
 
 		private const string c_dbName = "globaldatabase";
         private const string c_TableName = "productprintinglist";
@@ -48,6 +58,15 @@ namespace MESSystem.common
             public string largeIndex;
             public float? weight;
 			public string errorStatus;
+			//2016.06.07 新增字段ID1，ID2，ID3， ID4，班次，班别，productCode, customer
+			public string operatorName; //操作员
+            public string operatorName2;//操作员
+            public string operatorName3;//操作员
+			public string operatorName4;//操作员
+			public string workshift;	//班次（早中晚班）
+			public string workTeam;		//班别(甲乙丙)
+			public string productCode;	//产品编码
+			public string customer;		//客户
 		}
 
 		public string Serialize(productprint_t st)
@@ -57,6 +76,9 @@ namespace MESSystem.common
 			str += st.machineID  		+ ";" + st.materialBarCode 	+ ";" + st.materialScanTime	+ ";" + st.productBarCode	+ ";";
 			str += st.productScanTime	+ ";" + st.dispatchCode		+ ";" + st.batchNum 		+ ";" + st.largeIndex		+ ";";
 			str += st.weight 			+ ";" + st.errorStatus;
+			//2016.06.07 新增字段ID1，ID2，ID3， ID4，班次，班别，productCode, customer
+			str += ";" + st.operatorName + ";" + st.operatorName2 + ";" + st.operatorName3 + ";" + st.operatorName4;
+			str += ";" + st.workshift 	 + ";" + st.workTeam 	  + ";" + st.productCode   + ";" + st.customer;
 			return str;
 		}
 
@@ -90,6 +112,15 @@ namespace MESSystem.common
 			st.largeIndex = input[LARGE_INDEX_INDEX];
 			if (input[WEIGHT_INDEX]!="")	st.weight = Convert.ToSingle(input[WEIGHT_INDEX]);
 			st.errorStatus = input[ERROR_STATUS_INDEX];
+			//2016.06.07 新增字段ID1，ID2，ID3， ID4，班次，班别，productCode, customer
+			st.operatorName  = input[OPERATOR_NAME_INDEX];
+			st.operatorName2 = input[OPERATOR_NAME2_INDEX];
+			st.operatorName3 = input[OPERATOR_NAME3_INDEX];
+			st.operatorName4 = input[OPERATOR_NAME4_INDEX];
+			st.workshift = input[WORKSHIFT_INDEX];
+			st.workTeam = input[WORKTEAM_INDEX];
+			st.productCode = input[PRODUCT_CODE_INDEX];
+			st.customer = input[CUSTOMER_INDEX];
 
 			return st;
 		}
