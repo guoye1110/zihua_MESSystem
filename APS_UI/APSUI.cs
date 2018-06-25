@@ -1,4 +1,5 @@
 ﻿using System;
+using system.collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -40,7 +41,9 @@ namespace MESSystem.APS_UI
 
         System.Windows.Forms.Timer aTimer;
 
-        public static APSRules.APSRulesDef [] APSRulesArray = new APSRules.APSRulesDef[gVariable.MAX_NUM_SELECTED_SALES_ORDER_APS];
+        //public static APSRules.APSRulesDef [] APSRulesArray = new APSRules.APSRulesDef[gVariable.MAX_NUM_SELECTED_SALES_ORDER_APS];
+
+		private static Hashtable m_htAPSRules = new Hashtable();
 
         public APSUI()
         {
