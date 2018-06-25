@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.ewininfo.com" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="MaterialAndonService" targetNamespace="http://www.ewininfo.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://www.ewininfo.com" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="addMaterialAndonInfo" type="tns:addMaterialAndonInfo" />
+      <xs:element name="addMaterialAndonInfoResponse" type="tns:addMaterialAndonInfoResponse" />
+      <xs:element name="queryActiveMaterial" type="tns:queryActiveMaterial" />
+      <xs:element name="queryActiveMaterialResponse" type="tns:queryActiveMaterialResponse" />
+      <xs:complexType name="addMaterialAndonInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="dispatchNo" type="xs:string" />
+          <xs:element minOccurs="0" name="userId" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="addMaterialAndonInfoResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="queryActiveMaterial">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="deviceNo" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="queryActiveMaterialResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="return" type="tns:ReturnMaterialInfo" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ReturnMaterialInfo">
+        <xs:sequence />
+        <xs:attribute name="dispatchOrderNo" type="xs:string" use="required" />
+        <xs:attribute name="batchNo" type="xs:string" />
+        <xs:attribute name="deviceNo" type="xs:string" use="required" />
+        <xs:attribute name="planNum" type="xs:long" use="required" />
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="addMaterialAndonInfoResponse">
+    <wsdl:part name="parameters" element="tns:addMaterialAndonInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="queryActiveMaterialResponse">
+    <wsdl:part name="parameters" element="tns:queryActiveMaterialResponse" />
+  </wsdl:message>
+  <wsdl:message name="addMaterialAndonInfo">
+    <wsdl:part name="parameters" element="tns:addMaterialAndonInfo" />
+  </wsdl:message>
+  <wsdl:message name="queryActiveMaterial">
+    <wsdl:part name="parameters" element="tns:queryActiveMaterial" />
+  </wsdl:message>
+  <wsdl:portType name="MaterialAndonService">
+    <wsdl:operation name="addMaterialAndonInfo">
+      <wsdl:input name="addMaterialAndonInfo" message="tns:addMaterialAndonInfo" />
+      <wsdl:output name="addMaterialAndonInfoResponse" message="tns:addMaterialAndonInfoResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="queryActiveMaterial">
+      <wsdl:input name="queryActiveMaterial" message="tns:queryActiveMaterial" />
+      <wsdl:output name="queryActiveMaterialResponse" message="tns:queryActiveMaterialResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="MaterialAndonServiceSoapBinding" type="tns:MaterialAndonService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="addMaterialAndonInfo">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="addMaterialAndonInfo">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="addMaterialAndonInfoResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="queryActiveMaterial">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="queryActiveMaterial">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="queryActiveMaterialResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="MaterialAndonService">
+    <wsdl:port name="MaterialAndonServicePort" binding="tns:MaterialAndonServiceSoapBinding">
+      <soap:address location="http://192.168.1.117:8080/extras-web-cxf/service/MaterialAndonService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

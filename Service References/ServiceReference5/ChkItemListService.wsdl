@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.ewininfo.com" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="ChkItemListService" targetNamespace="http://www.ewininfo.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://www.ewininfo.com" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="addTwProductProcessCheck" type="tns:addTwProductProcessCheck" />
+      <xs:element name="addTwProductProcessCheckResponse" type="tns:addTwProductProcessCheckResponse" />
+      <xs:element name="queryChkItemByDispatchNo" type="tns:queryChkItemByDispatchNo" />
+      <xs:element name="queryChkItemByDispatchNoResponse" type="tns:queryChkItemByDispatchNoResponse" />
+      <xs:complexType name="queryChkItemByDispatchNo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="dispatchNo" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="queryChkItemByDispatchNoResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="return" type="tns:ReturnChkItem" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ReturnChkItem">
+        <xs:sequence />
+        <xs:attribute name="Id" type="xs:long" />
+        <xs:attribute name="dispatchNo" type="xs:string" />
+        <xs:attribute name="checkItem" type="xs:string" />
+        <xs:attribute name="checkReq" type="xs:string" />
+        <xs:attribute name="lowerToleranceLimit" type="xs:string" />
+        <xs:attribute name="lowerControlLimit" type="xs:string" />
+        <xs:attribute name="toleranceLimit" type="xs:string" />
+        <xs:attribute name="upperControlLimit" type="xs:string" />
+        <xs:attribute name="checkResult" type="xs:string" />
+        <xs:attribute name="judgeResult" type="xs:string" />
+        <xs:attribute name="productNum" type="xs:string" />
+      </xs:complexType>
+      <xs:complexType name="addTwProductProcessCheck">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="data" type="tns:ReturnChkItem" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="addTwProductProcessCheckResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="queryChkItemByDispatchNo">
+    <wsdl:part name="parameters" element="tns:queryChkItemByDispatchNo" />
+  </wsdl:message>
+  <wsdl:message name="addTwProductProcessCheck">
+    <wsdl:part name="parameters" element="tns:addTwProductProcessCheck" />
+  </wsdl:message>
+  <wsdl:message name="queryChkItemByDispatchNoResponse">
+    <wsdl:part name="parameters" element="tns:queryChkItemByDispatchNoResponse" />
+  </wsdl:message>
+  <wsdl:message name="addTwProductProcessCheckResponse">
+    <wsdl:part name="parameters" element="tns:addTwProductProcessCheckResponse" />
+  </wsdl:message>
+  <wsdl:portType name="ChkItemListService">
+    <wsdl:operation name="queryChkItemByDispatchNo">
+      <wsdl:input name="queryChkItemByDispatchNo" message="tns:queryChkItemByDispatchNo" />
+      <wsdl:output name="queryChkItemByDispatchNoResponse" message="tns:queryChkItemByDispatchNoResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="addTwProductProcessCheck">
+      <wsdl:input name="addTwProductProcessCheck" message="tns:addTwProductProcessCheck" />
+      <wsdl:output name="addTwProductProcessCheckResponse" message="tns:addTwProductProcessCheckResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ChkItemListServiceSoapBinding" type="tns:ChkItemListService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="queryChkItemByDispatchNo">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="queryChkItemByDispatchNo">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="queryChkItemByDispatchNoResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addTwProductProcessCheck">
+      <soap:operation soapAction="" style="document" />
+      <wsdl:input name="addTwProductProcessCheck">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="addTwProductProcessCheckResponse">
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ChkItemListService">
+    <wsdl:port name="ChkItemListServicePort" binding="tns:ChkItemListServiceSoapBinding">
+      <soap:address location="http://192.168.0.118:8080/extras-web-cxf/service/ChkItemListService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
