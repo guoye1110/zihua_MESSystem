@@ -36,9 +36,6 @@ namespace MESSystem.APS_UI
 
             this.Icon = new Icon(gVariable.logoInTitleArray[gVariable.CompanyIndex]);
 
-            for (i = 0; i < gVariable.maxMaterialTypeNum; i++)
-                materialSelected[i] = APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].materialSelected[i];
-
             comboBoxArray = new ComboBox[5];
 
             comboBoxArray[0] = comboBox1;
@@ -130,11 +127,11 @@ namespace MESSystem.APS_UI
         {
             int i;
 
-            for (i = 0; i < numOfMaterialType; i++)
+            /*for (i = 0; i < numOfMaterialType; i++)
             {
                 APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].materialSelected[i] = materialSelected[i];
                 APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].materialCode[i] = comboBoxArray[i].SelectedItem.ToString();
-            }
+            }*/
 
             this.Close();
         }

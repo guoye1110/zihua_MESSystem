@@ -41,7 +41,7 @@ namespace MESSystem.APS_UI
 
         System.Windows.Forms.Timer aTimer;
 
-        public static APSRules.APSRulesDef [] APSRulesArray = new APSRules.APSRulesDef[gVariable.MAX_NUM_SELECTED_SALES_ORDER_APS];
+        //public static APSRules.APSRulesDef [] APSRulesArray = new APSRules.APSRulesDef[gVariable.MAX_NUM_SELECTED_SALES_ORDER_APS];
 
 		private static Hashtable m_htAPSRules = new Hashtable();
 
@@ -611,50 +611,43 @@ namespace MESSystem.APS_UI
                     //Console.WriteLine("start +" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                     for (i = 0; i < indexArray.Length; i++)
                     {
-                        for(j = 0; j < gVariable.numOfBatchDefinedAPSRule; j++)
-                        {
-                            if(indexArray[i] == APSUI.APSRulesArray[j].listviewIndex)
-                                break;
-                        }
+                    	APSRules.APSRulesDef rule;
+                    	if (m_htAPSRules.ContainsKey(batchTableArray[i, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE]))
+                            rule = (APSRules.APSRulesDef)m_htAPSRules[batchTableArray[i, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE]];
+						else
+							rule = new APSRules.APSRulesDef();
 
-                        //get batch order index in rules table
-                        if(j != 0 && j >= gVariable.numOfBatchDefinedAPSRule)
-                        {
-                            Console.WriteLine("Formal APS. failed to get correct batch order index");
-                            return;
-                        }
-
-                        if (APSRulesArray[j].assignedStartTime == -1 && APSRulesArray[j].assignedEndTime == -1)
+                        if (rule.assignedStartTime == null && rule.assignedEndTime == null)
                         {
                             startTimeStamp = toolClass.ConvertDateTimeInt(DateTime.Now);
                             endTimeStamp = -1;
                         }
                         else //if (APSRulesArray.assignedStartTime == -1)
                         {
-                            startTimeStamp = APSRulesArray[j].assignedStartTime;
-                            endTimeStamp = APSRulesArray[j].assignedEndTime;
+                            startTimeStamp = (int)rule.assignedStartTime;
+                            endTimeStamp = (int)rule.assignedEndTime;
                         }
 
                         //APSRulesArray[j].assignedMachineID1 is 0 means not assigned, so the assignedMachineByUserArray[] value should be -1 
-                        if (APSRulesArray[j].assignedMachineID1 == 0)
+                        if (rule.assignedMachineID1 == 0)
                             assignedMachineByUserArray[0] = -1;
                         else
                         {
-                            assignedMachineByUserArray[0] = APSRulesArray[j].assignedMachineID1 - 1 + gVariable.castingProcess[0];
+                            assignedMachineByUserArray[0] = rule.assignedMachineID1 - 1 + gVariable.castingProcess[0];
                         }
 
-                        if (APSRulesArray[j].assignedMachineID2 == 0)
+                        if (rule.assignedMachineID2 == 0)
                             assignedMachineByUserArray[1] = -1;
                         else
                         {
-                            assignedMachineByUserArray[1] = APSRulesArray[j].assignedMachineID2 - 1 + gVariable.printingProcess[0];
+                            assignedMachineByUserArray[1] = rule.assignedMachineID2 - 1 + gVariable.printingProcess[0];
                         }
 
-                        if (APSRulesArray[j].assignedMachineID3 == 0)
+                        if (rule.assignedMachineID3 == 0)
                             assignedMachineByUserArray[2] = -1;
                         else
                         {
-                            assignedMachineByUserArray[2] = APSRulesArray[j].assignedMachineID3 - 1 + gVariable.slittingProcess[0];
+                            assignedMachineByUserArray[2] = rule.assignedMachineID3 - 1 + gVariable.slittingProcess[0];
                         }
 
                         APSProcessImpl.runAPSProcess(Convert.ToInt32(batchTableArray[indexArray[i], mySQLClass.ID_VALUE_IN_BATCHNUM_DATABASE]), assignedMachineByUserArray, startTimeStamp, endTimeStamp);
@@ -882,23 +875,15 @@ namespace MESSystem.APS_UI
                 return;
             }
 
-            for (i = 0; i < gVariable.numOfBatchDefinedAPSRule; i++)
-            {
-                if (listView1.SelectedItems[0].Index == APSUI.APSRulesArray[i].listviewIndex)
-                {
-                    gVariable.indexOfBatchDefinedAPSRule = i;
-                    break;
-                }
-            }
-
-            if (i >= gVariable.numOfBatchDefinedAPSRule)
-                gVariable.indexOfBatchDefinedAPSRule = gVariable.numOfBatchDefinedAPSRule;
-
-            selectedBatchOrderID = Convert.ToInt32(batchTableArray[listView1.SelectedItems[0].Index, 0]);
-            APSRules APSRulesImpl = new APSRules(selectedBatchOrderID, listView1.SelectedItems[0].Index, null);
+			selectedBatchOrderID = Convert.ToInt32(batchTableArray[listView1.SelectedItems[0].Index, 0]);
+			APSRules APSRulesImpl;
+            if (m_htAPSRules.ContainsKey(batchTableArray[listView1.SelectedItems[0].Index, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE]))
+                APSRulesImpl = new APSRules(selectedBatchOrderID, listView1.SelectedItems[0].Index, (APSRules.APSRulesDef)m_htAPSRules[batchTableArray[listView1.SelectedItems[0].Index, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE]]);
+			else
+				APSRulesImpl = new APSRules(selectedBatchOrderID, listView1.SelectedItems[0].Index, null);
 			if (APSRulesImpl.ShowDialog() == DialogResult.OK) {
 	            gVariable.APSScreenRefresh = 1;
-				//m_htAPSRules.Add(batchTableArray[listView1.SelectedItems[0].Index, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE], APSRulesImpl.);
+				m_htAPSRules.Add(batchTableArray[listView1.SelectedItems[0].Index, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE], APSRulesImpl.APS_Rule);
 			}
         }
 

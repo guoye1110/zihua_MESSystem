@@ -32,8 +32,8 @@ namespace MESSystem.APS_UI
             public int assignedMachineID1;
             public int assignedMachineID2;
             public int assignedMachineID3;
-            public int assignedStartTime;
-            public int assignedEndTime;
+            public int? assignedStartTime;
+            public int? assignedEndTime;
             public int ignoreEndTime;
             public string BOMName;
             public int[] materialSelected;
@@ -78,7 +78,7 @@ namespace MESSystem.APS_UI
 			endTimeRemoveSelected = m_APSRule.ignoreEndTime;
 
             //start time not assigned
-            if (m_APSRule.assignedStartTime == -1)
+            if (m_APSRule.assignedStartTime == null)
             {
                 dateTimePicker2.Format = DateTimePickerFormat.Custom;
                 dateTimePicker2.CustomFormat = " ";
@@ -89,7 +89,7 @@ namespace MESSystem.APS_UI
             }
 
             //end time not assigned
-            if (m_APSRule.assignedEndTime == -1)
+            if (m_APSRule.assignedEndTime == null)
             {
                 dateTimePicker3.Format = DateTimePickerFormat.Custom;
                 dateTimePicker3.CustomFormat = " ";
@@ -181,7 +181,7 @@ namespace MESSystem.APS_UI
             }
             else
             {
-                m_APSRule.assignedStartTime = -1;
+                m_APSRule.assignedStartTime = null;
             }
 
             if (dateTimePicker3.CustomFormat == null)
@@ -190,7 +190,7 @@ namespace MESSystem.APS_UI
             }
             else
             {
-                m_APSRule.assignedEndTime = -1;
+                m_APSRule.assignedEndTime = null;
             }
 
             m_APSRule.listviewIndex = batchOrderIndexInList;
