@@ -1,5 +1,5 @@
 ﻿using System;
-using system.collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -41,7 +41,7 @@ namespace MESSystem.APS_UI
 
         System.Windows.Forms.Timer aTimer;
 
-        //public static APSRules.APSRulesDef [] APSRulesArray = new APSRules.APSRulesDef[gVariable.MAX_NUM_SELECTED_SALES_ORDER_APS];
+        public static APSRules.APSRulesDef [] APSRulesArray = new APSRules.APSRulesDef[gVariable.MAX_NUM_SELECTED_SALES_ORDER_APS];
 
 		private static Hashtable m_htAPSRules = new Hashtable();
 
@@ -81,7 +81,7 @@ namespace MESSystem.APS_UI
             comboBox6.SelectedIndex = machinePrioritySelected;
 
             //we can set APS rule for 50 batch orders for onw time
-            for(i = 0; i < gVariable.MAX_NUM_SELECTED_SALES_ORDER_APS; i++)
+            /*for(i = 0; i < gVariable.MAX_NUM_SELECTED_SALES_ORDER_APS; i++)
             {
                 APSRulesArray[i] = new APSRules.APSRulesDef();
                 //APSRulesArray[i].ruleAlreadyDefined = 0;
@@ -94,7 +94,7 @@ namespace MESSystem.APS_UI
                 APSRulesArray[i].BOMName = null;
                 APSRulesArray[i].materialCode = new string[gVariable.maxMaterialTypeNum];
                 APSRulesArray[i].materialSelected = new int[gVariable.maxMaterialTypeNum];
-            }
+            }*/
         }
 
         void resizeScreen()
@@ -358,6 +358,7 @@ namespace MESSystem.APS_UI
                 listView1.BeginUpdate();
                 for (i = 0; i < num; i++)
                 {
+                	/*guoye 20180626: use hashtable 
                     if (gVariable.numOfBatchDefinedAPSRule != 0)
                     {
                         for (k = 0; k < gVariable.numOfBatchDefinedAPSRule; k++)
@@ -368,7 +369,9 @@ namespace MESSystem.APS_UI
                                 break;
                             }
                         }
-                    }
+                    }*/
+                    if (m_htAPSRules.ContainsKey(batchTableArray[i, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE]))
+						listView1.Items[i].BackColor = Color.Yellow;
 
                     status = Convert.ToInt16(batchTableArray[i, mySQLClass.STATUS_IN_BATCHNUM_DATABASE]);
                     if (status >= gVariable.SALES_ORDER_STATUS_APS_OK)
@@ -892,9 +895,11 @@ namespace MESSystem.APS_UI
                 gVariable.indexOfBatchDefinedAPSRule = gVariable.numOfBatchDefinedAPSRule;
 
             selectedBatchOrderID = Convert.ToInt32(batchTableArray[listView1.SelectedItems[0].Index, 0]);
-            APSRules APSRulesImpl = new APSRules(selectedBatchOrderID, listView1.SelectedItems[0].Index);
-            APSRulesImpl.Show();
-            gVariable.APSScreenRefresh = 1;
+            APSRules APSRulesImpl = new APSRules(selectedBatchOrderID, listView1.SelectedItems[0].Index, null);
+			if (APSRulesImpl.ShowDialog() == DialogResult.OK) {
+	            gVariable.APSScreenRefresh = 1;
+				//m_htAPSRules.Add(batchTableArray[listView1.SelectedItems[0].Index, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE], APSRulesImpl.);
+			}
         }
 
         private void ListView1_MouseDoubleClick(object sender, MouseEventArgs e)

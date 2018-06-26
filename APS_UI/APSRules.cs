@@ -40,10 +40,24 @@ namespace MESSystem.APS_UI
             public string[] materialCode;
         };
 
-        public APSRules(int batchOrderID, int batchOrderIndex)
+		private APSRulesDef m_APSRule;
+
+		public APSRulesDef APS_Rule
+		{
+			get {
+				return m_APSRule;
+			}
+		}
+
+        public APSRules(int batchOrderID, int batchOrderIndex, APSRulesDef rule)
         {
             batchOrderIDInTable = batchOrderID;
             batchOrderIndexInList = batchOrderIndex;
+
+			if (rule != null)
+				m_APSRule = rule;
+			else
+				m_APSRule = new APSRulesDef();
 
             InitializeComponent();
             initVariables();
@@ -58,32 +72,31 @@ namespace MESSystem.APS_UI
             string[] machineName2 = { "不指定", "1号印刷机", "2号印刷机", "3号印刷机", "4号印刷机", "5号印刷机" };
             string[] machineName3 = { "不指定", "1号分切机", "3号分切机", "5号分切机", "6号分切机", "7号分切机" };
 
-            machineSelected1 = APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].assignedMachineID1;
-            machineSelected2 = APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].assignedMachineID2;
-            machineSelected3 = APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].assignedMachineID3;
-
-            endTimeRemoveSelected = APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].ignoreEndTime;
+            machineSelected1 = m_APSRule.assignedMachineID1;
+            machineSelected2 = m_APSRule.assignedMachineID2;
+            machineSelected3 = m_APSRule.assignedMachineID3;
+			endTimeRemoveSelected = m_APSRule.ignoreEndTime;
 
             //start time not assigned
-            if (APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].assignedStartTime == -1)
+            if (m_APSRule.assignedStartTime == -1)
             {
                 dateTimePicker2.Format = DateTimePickerFormat.Custom;
                 dateTimePicker2.CustomFormat = " ";
             }
             else
             {
-                dateTimePicker2.Value = toolClass.GetTime(APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].assignedStartTime.ToString());
+                dateTimePicker2.Value = toolClass.GetTime(m_APSRule.assignedStartTime.ToString());
             }
 
             //end time not assigned
-            if (APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].assignedEndTime == -1)
+            if (m_APSRule.assignedEndTime == -1)
             {
                 dateTimePicker3.Format = DateTimePickerFormat.Custom;
                 dateTimePicker3.CustomFormat = " ";
             }
             else
             {
-                dateTimePicker3.Value = toolClass.GetTime(APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].assignedEndTime.ToString());
+                dateTimePicker3.Value = toolClass.GetTime(m_APSRule.assignedEndTime.ToString());
             }
 
             this.Icon = new Icon(gVariable.logoInTitleArray[gVariable.CompanyIndex]);
@@ -164,32 +177,31 @@ namespace MESSystem.APS_UI
         {
             if (dateTimePicker2.CustomFormat == null)
             {
-                APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].assignedStartTime = toolClass.timeStringToTimeStamp(dateTimePicker2.Value.ToString("yyyy-MM-dd 00:00:00"));
+                m_APSRule.assignedStartTime = toolClass.timeStringToTimeStamp(dateTimePicker2.Value.ToString("yyyy-MM-dd 00:00:00"));
             }
             else
             {
-                APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].assignedStartTime = -1;
+                m_APSRule.assignedStartTime = -1;
             }
 
             if (dateTimePicker3.CustomFormat == null)
             {
-                APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].assignedEndTime = toolClass.timeStringToTimeStamp(dateTimePicker3.Value.ToString("yyyy-MM-dd 00:00:00"));
+                m_APSRule.assignedEndTime = toolClass.timeStringToTimeStamp(dateTimePicker3.Value.ToString("yyyy-MM-dd 00:00:00"));
             }
             else
             {
-                APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].assignedEndTime = -1;
+                m_APSRule.assignedEndTime = -1;
             }
 
-            //APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].ruleAlreadyDefined = 1;
-            APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].listviewIndex = batchOrderIndexInList;
-            APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].assignedMachineID1 = machineSelected1;
-            APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].assignedMachineID2 = machineSelected2;
-            APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].assignedMachineID3 = machineSelected3;
-            APSUI.APSRulesArray[gVariable.indexOfBatchDefinedAPSRule].ignoreEndTime = endTimeRemoveSelected;
-
+            m_APSRule.listviewIndex = batchOrderIndexInList;
+            m_APSRule.assignedMachineID1 = machineSelected1;
+            m_APSRule.assignedMachineID2 = machineSelected2;
+            m_APSRule.assignedMachineID3 = machineSelected3;
+            m_APSRule.ignoreEndTime = endTimeRemoveSelected;
 
             gVariable.numOfBatchDefinedAPSRule++;
 
+			this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
