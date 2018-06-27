@@ -17,6 +17,7 @@ using System.Web.Services;
 using System.Threading;
 using MESSystem.common;
 using MESSystem.dispatchManagement;
+using MESSystem.APS_UI;
 
 namespace MESSystem.APSDLL
 {
@@ -148,6 +149,58 @@ namespace MESSystem.APSDLL
 
             }
         }
+
+		public void runAPSProcess2(int[] productBatchID, int count, APSRules.APSRulesDef rule)
+        {
+            int startTimeStamp;
+            int endTimeStamp;
+			int i;
+			int[] assignedMachineByUserArray = new int[3];
+        
+			if (rule.assignedStartTime == null && rule.assignedEndTime == null)
+			{
+				startTimeStamp = toolClass.ConvertDateTimeInt(DateTime.Now);
+				endTimeStamp = -1;
+			}
+			else //if (APSRulesArray.assignedStartTime == -1)
+			{
+				startTimeStamp = (int)rule.assignedStartTime;
+				endTimeStamp = (int)rule.assignedEndTime;
+			}
+		
+			//APSRulesArray[j].assignedMachineID1 is 0 means not assigned, so the assignedMachineByUserArray[] value should be -1 
+			if (rule.assignedMachineID1 == 0)
+				assignedMachineByUserArray[0] = -1;
+			else
+			{
+				assignedMachineByUserArray[0] = rule.assignedMachineID1 - 1 + gVariable.castingProcess[0];
+			}
+		
+			if (rule.assignedMachineID2 == 0)
+				assignedMachineByUserArray[1] = -1;
+			else
+			{
+				assignedMachineByUserArray[1] = rule.assignedMachineID2 - 1 + gVariable.printingProcess[0];
+			}
+		
+			if (rule.assignedMachineID3 == 0)
+				assignedMachineByUserArray[2] = -1;
+			else
+			{
+				assignedMachineByUserArray[2] = rule.assignedMachineID3 - 1 + gVariable.slittingProcess[0];
+			}
+
+			for (i=0;i<count;i++) 
+{
+				if (i!=0) {
+					assignedMachineByUserArray[0] = machineIndexForAllType[0];
+					assignedMachineByUserArray[1] = machineIndexForAllType[1];
+					assignedMachineByUserArray[2] = machineIndexForAllType[2];
+				}
+				runAPSProcess(productBatchID[i], assignedMachineByUserArray, startTimeStamp, endTimeStamp);
+			}
+			
+		}
 
         public void runAPSProcess(int productBatchID, int[] assignedMachineByUserArray, int requiredStartTimeStamp, int requiredEndTimeStamp)
         {

@@ -358,18 +358,6 @@ namespace MESSystem.APS_UI
                 listView1.BeginUpdate();
                 for (i = 0; i < num; i++)
                 {
-                	/*guoye 20180626: use hashtable 
-                    if (gVariable.numOfBatchDefinedAPSRule != 0)
-                    {
-                        for (k = 0; k < gVariable.numOfBatchDefinedAPSRule; k++)
-                        {
-                            if (APSUI.APSRulesArray[k].listviewIndex == i)
-                            {
-                                listView1.Items[i].BackColor = Color.Yellow;
-                                break;
-                            }
-                        }
-                    }*/
                     if (m_htAPSRules.ContainsKey(batchTableArray[i, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE]))
 						listView1.Items[i].BackColor = Color.Yellow;
 
@@ -608,50 +596,37 @@ namespace MESSystem.APS_UI
 
                 if (listView1.CheckedItems.Count != 0)
                 {
+                	string lastOrderCode = batchTableArray[indexArray[0], mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE];
+					int startIndex = 0;
+					int[] productBatchIDArray;
+					APSRules.APSRulesDef rule;
                     //Console.WriteLine("start +" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                    for (i = 0; i < indexArray.Length; i++)
+                    for (i = 1; i < indexArray.Length; i++)
                     {
-                    	APSRules.APSRulesDef rule;
-                    	if (m_htAPSRules.ContainsKey(batchTableArray[i, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE]))
-                            rule = (APSRules.APSRulesDef)m_htAPSRules[batchTableArray[i, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE]];
-						else
-							rule = new APSRules.APSRulesDef();
+						if (batchTableArray[indexArray[i], mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE] != lastOrderCode) {
 
-                        if (rule.assignedStartTime == null && rule.assignedEndTime == null)
-                        {
-                            startTimeStamp = toolClass.ConvertDateTimeInt(DateTime.Now);
-                            endTimeStamp = -1;
-                        }
-                        else //if (APSRulesArray.assignedStartTime == -1)
-                        {
-                            startTimeStamp = (int)rule.assignedStartTime;
-                            endTimeStamp = (int)rule.assignedEndTime;
-                        }
+	                    	if (m_htAPSRules.ContainsKey(lastOrderCode))
+    	                        rule = (APSRules.APSRulesDef)m_htAPSRules[lastOrderCode];
+							else
+								rule = new APSRules.APSRulesDef();
+	
+    	                    //APSProcessImpl.runAPSProcess(Convert.ToInt32(batchTableArray[indexArray[i], mySQLClass.ID_VALUE_IN_BATCHNUM_DATABASE]), assignedMachineByUserArray, startTimeStamp, endTimeStamp);
+							productBatchIDArray = new int[i-startIndex];
+							for (j=0;j<i-startIndex;j++)	productBatchIDArray[j] = Convert.ToInt32(batchTableArray[indexArray[startIndex+j], mySQLClass.ID_VALUE_IN_BATCHNUM_DATABASE]);
+        	                APSProcessImpl.runAPSProcess2(productBatchIDArray, (i-startIndex), rule);
 
-                        //APSRulesArray[j].assignedMachineID1 is 0 means not assigned, so the assignedMachineByUserArray[] value should be -1 
-                        if (rule.assignedMachineID1 == 0)
-                            assignedMachineByUserArray[0] = -1;
-                        else
-                        {
-                            assignedMachineByUserArray[0] = rule.assignedMachineID1 - 1 + gVariable.castingProcess[0];
-                        }
-
-                        if (rule.assignedMachineID2 == 0)
-                            assignedMachineByUserArray[1] = -1;
-                        else
-                        {
-                            assignedMachineByUserArray[1] = rule.assignedMachineID2 - 1 + gVariable.printingProcess[0];
-                        }
-
-                        if (rule.assignedMachineID3 == 0)
-                            assignedMachineByUserArray[2] = -1;
-                        else
-                        {
-                            assignedMachineByUserArray[2] = rule.assignedMachineID3 - 1 + gVariable.slittingProcess[0];
-                        }
-
-                        APSProcessImpl.runAPSProcess(Convert.ToInt32(batchTableArray[indexArray[i], mySQLClass.ID_VALUE_IN_BATCHNUM_DATABASE]), assignedMachineByUserArray, startTimeStamp, endTimeStamp);
+							startIndex = i;
+							lastOrderCode = batchTableArray[indexArray[i], mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE];
+						}
                     }
+                   	if (m_htAPSRules.ContainsKey(lastOrderCode))
+                        rule = (APSRules.APSRulesDef)m_htAPSRules[lastOrderCode];
+					else
+						rule = new APSRules.APSRulesDef();
+					productBatchIDArray = new int[i-startIndex];
+					for (j=0;j<i-startIndex;j++)	productBatchIDArray[j] = Convert.ToInt32(batchTableArray[indexArray[startIndex+j], mySQLClass.ID_VALUE_IN_BATCHNUM_DATABASE]);
+					APSProcessImpl.runAPSProcess2(productBatchIDArray, (i-startIndex), rule);
+					
                     //Console.WriteLine("end -" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
 
                     toolClass.systemDelay(2000);
