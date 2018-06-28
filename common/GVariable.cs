@@ -513,6 +513,8 @@ namespace MESSystem.common
         public const string inkUsedFileName = "..\\..\\data\\globalTables\\inkUsed.xlsx";
         public const string supplementryUsedTableName = "supplementryUsed";
         public const string supplementryUsedFileName = "..\\..\\data\\globalTables\\supplementryUsed.xlsx";
+		public const string apsRulesTableName = "apsrules";
+		public const string apsRulesFileName = "..\\..\\data\\globalTables\\apsrules.xlsx";
 
         public const int notAppendRecord = 0;  //this is not an append action
         public const int appendRecord = 1;  //this is an append action, so we need to consider the index in database for the last appended record

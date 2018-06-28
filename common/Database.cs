@@ -574,7 +574,7 @@ namespace MESSystem.common
             gVariable.globalDatabaseName, gVariable.globalDatabaseName, gVariable.globalDatabaseName, gVariable.globalDatabaseName, gVariable.globalDatabaseName, 
             gVariable.globalDatabaseName, gVariable.globalDatabaseName, gVariable.globalDatabaseName, gVariable.globalDatabaseName, gVariable.globalDatabaseName, 
             gVariable.globalDatabaseName, gVariable.globalDatabaseName, gVariable.globalDatabaseName, gVariable.globalDatabaseName, gVariable.globalDatabaseName,
-            gVariable.globalDatabaseName, gVariable.globalDatabaseName, gVariable.globalDatabaseName,
+            gVariable.globalDatabaseName, gVariable.globalDatabaseName, gVariable.globalDatabaseName, gVariable.globalDatabaseName,
         };
         public static string[] infoTableName1 = 
         { 
@@ -582,7 +582,7 @@ namespace MESSystem.common
             gVariable.reuseMaterialTableName,   gVariable.wasteMaterialTableName, gVariable.changePartRecordTableName, gVariable.partsInventoryTableName, gVariable.materialDeliveryTableName,
             gVariable.finalPackingTableName, gVariable.materialFeedingTableName, gVariable.productCastListTableName, gVariable.productPrintListTableName, gVariable.productSlitListTableName,
             gVariable.binInventoryTableName,  gVariable.productBatchCurrentIndexTableName, gVariable.productBatchTableName, gVariable.globalMaterialTaskTableName, gVariable.globalProductTaskTableName, 
-            gVariable.transferSheetTableName, gVariable.inkUsedTableName, gVariable.supplementryUsedTableName, 
+            gVariable.transferSheetTableName, gVariable.inkUsedTableName, gVariable.supplementryUsedTableName, gVariable.apsRulesTableName,
         };
         public static string[] infoTableFileName1 = 
         {
@@ -590,7 +590,7 @@ namespace MESSystem.common
             gVariable.reuseMaterialFileName,   gVariable.wasteMaterialFileName, gVariable.changePartRecordFileName, gVariable.partsInventoryFileName, gVariable.materialDeliveryFileName,
             gVariable.finalPackingFileName, gVariable.materialFeedingFileName, gVariable.productCastListFileName, gVariable.productPrintListFileName, gVariable.productSlitListFileName,
             gVariable.binInventoryFileName, gVariable.productBatchCurrentIndexFileName, gVariable.productBatchFileName, gVariable.materialListFileName, gVariable.dispatchListFileName, 
-            gVariable.transferSheetFileName, gVariable.inkUsedFileName, gVariable.supplementryUsedFileName, 
+            gVariable.transferSheetFileName, gVariable.inkUsedFileName, gVariable.supplementryUsedFileName, gVariable.apsRulesFileName,
         };
 
         //info database2 is basic info

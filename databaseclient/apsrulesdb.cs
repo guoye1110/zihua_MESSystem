@@ -34,10 +34,7 @@ namespace MESSystem.common
         private const string c_TableName = "apsrules";
         private const string c_FileName = "..\\..\\data\\globalTables\\apsrules.xlsx";
 
-        public apsrulesDB()
-        {
-            createDataTableFromExcel(c_dbName, c_TableName, c_FileName, 400, 0);
-        }
+		private static string m_DBinsertString;
 
 		public struct apsrule_t{
 			public string salesOrder;
@@ -47,6 +44,11 @@ namespace MESSystem.common
 			public string assignedStartTime;
 			public string assignedEndTime;
 			public string ignoreEndTime;
+		}
+
+		public apsrulesDB()
+		{
+			mySQLClass.getDatabaseInsertStringFromExcel(ref m_DBinsertString, c_FileName);
 		}
 
 		public string Serialize(apsrule_t st)
@@ -81,13 +83,39 @@ namespace MESSystem.common
 
 			st.salesOrder = input[SALES_ORDER_INDEX];
 			if (input[ASSIGNED_MACHINEID_1_INDEX]!="")	st.assignedMachineID1 = Convert.ToUInt16(input[ASSIGNED_MACHINEID_1_INDEX]);
-			if (input[ASSIGNED_MACHINEID_2_INDEX]!="")	st.assignedMachineID1 = Convert.ToUInt16(input[ASSIGNED_MACHINEID_2_INDEX]);
-			if (input[ASSIGNED_MACHINEID_3_INDEX]!="")	st.assignedMachineID1 = Convert.ToUInt16(input[ASSIGNED_MACHINEID_3_INDEX]);
+			if (input[ASSIGNED_MACHINEID_2_INDEX]!="")	st.assignedMachineID2 = Convert.ToUInt16(input[ASSIGNED_MACHINEID_2_INDEX]);
+			if (input[ASSIGNED_MACHINEID_3_INDEX]!="")	st.assignedMachineID3 = Convert.ToUInt16(input[ASSIGNED_MACHINEID_3_INDEX]);
 			st.assignedStartTime = input[ASSIGNED_STARTTIME_INDEX];
 			st.assignedEndTime = input[ASSIGNED_ENDTIME_INDEX];
 			st.ignoreEndTime = input[IGNORE_ENDTIME_INDEX];
 
 			return st;
+		}
+
+		public apsrule_t[] readallrecords()
+		{
+			apsrule_t? dd;
+			string[] recordArray;
+			string[] insertStringSplitted;
+			apsrule_t[] stArray=null;
+			string[] stringSeparators = new string[] { ",@" };
+			string insertString=null;
+
+			//getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+			insertString = m_DBinsertString;
+			insertStringSplitted = insertString.Split(stringSeparators, StringSplitOptions.None);
+			
+			string commandText = "select * from `" + c_TableName + "` ";
+
+			recordArray = mySQLClass.databaseCommonReadingUnsplitted(c_dbName, commandText);
+			if (recordArray!=null){
+				stArray = new apsrule_t[recordArray.Length];
+				for (int i=0;i<recordArray.Length;i++){
+					dd = Deserialize(recordArray[i]);
+					stArray[i] = dd.Value;
+				}
+			}
+			return stArray;
 		}
 
 		public apsrule_t[] readrecord_BySalesOrder(string SalesOrder)
@@ -99,7 +127,8 @@ namespace MESSystem.common
 			string[] stringSeparators = new string[] { ",@" };
 			string insertString=null;
 
-			getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+			//getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+			insertString = m_DBinsertString;
 			insertStringSplitted = insertString.Split(stringSeparators, StringSplitOptions.None);
 			
 			string commandText = "select * from `" + c_TableName + "` ";
@@ -127,7 +156,8 @@ namespace MESSystem.common
 			string[] inputArray;
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
-			mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+			//mySQLClass.getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+			insertString = m_DBinsertString;
 
 			inputArray = Format(st);
 
@@ -167,7 +197,8 @@ namespace MESSystem.common
             string[] stringSeparators = new string[] { ",@" };
 
 			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
-			getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+			//getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+			insertString = m_DBinsertString;
 			//insertStringSplitted = insertString.Split(',@');
             //insertStringSplitted = insertString.Split(new char[2]{',','@'});
             insertStringSplitted = insertString.Split(stringSeparators, StringSplitOptions.None);
@@ -207,9 +238,47 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine(c_dbName + ":" + c_TableName + ": update product barcode failed! " + ex);
+                Console.WriteLine(c_dbName + ":" + c_TableName + ": updaterecord failed! " + ex);
             }
             return -1;
+		}
+
+		public int deleterecord_BySalesOrder(string SalesOrder)
+		{
+			string insertString=null;
+			string[] insertStringSplitted;
+			string connectionString;
+			string[] inputArray;
+            string[] stringSeparators = new string[] { ",@" };
+
+			connectionString = "data source = " + gVariable.hostString + "; user id = root; PWD = ; Charset=utf8";
+			//getDatabaseInsertStringFromExcel(ref insertString, c_FileName);
+			insertString = m_DBinsertString;
+			//insertStringSplitted = insertString.Split(',@');
+            //insertStringSplitted = insertString.Split(new char[2]{',','@'});
+            insertStringSplitted = insertString.Split(stringSeparators, StringSplitOptions.None);
+
+            try
+            {
+                MySqlConnection myConnection = new MySqlConnection("database = " + c_dbName + "; " + connectionString);
+                myConnection.Open();
+
+                MySqlCommand myCommand = myConnection.CreateCommand();
+
+				myCommand.CommandText = "delete from ";
+				myCommand.CommandText += "`" + c_TableName + "` ";
+				myCommand.CommandText += " where `" + insertStringSplitted[SALES_ORDER_INDEX] + "`=" + "\'" + SalesOrder + "\'";
+
+				myCommand.ExecuteNonQuery();
+				myConnection.Close();
+				
+				return 0;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(c_dbName + ":" + c_TableName + ": deleterecord failed! " + ex);
+			}
+			return -1;
 		}
 	}
 }
