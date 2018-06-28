@@ -228,6 +228,7 @@
     </Compile>
     <Compile Include="databaseclient\0_dispatchlist.cs" />
     <Compile Include="databaseclient\0_materiallist.cs" />
+    <Compile Include="databaseclient\apsrulesdb.cs" />
     <Compile Include="databaseclient\finalpacking.cs" />
     <Compile Include="databaseclient\inkused.cs" />
     <Compile Include="databaseclient\inspectionlist.cs" />

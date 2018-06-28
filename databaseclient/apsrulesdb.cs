@@ -34,6 +34,11 @@ namespace MESSystem.common
         private const string c_TableName = "apsrules";
         private const string c_FileName = "..\\..\\data\\globalTables\\apsrules.xlsx";
 
+        public apsrulesDB()
+        {
+            createDataTableFromExcel(c_dbName, c_TableName, c_FileName, 400, 0);
+        }
+
 		public struct apsrule_t{
 			public string salesOrder;
             public int? assignedMachineID1;
@@ -75,9 +80,9 @@ namespace MESSystem.common
 				return null;
 
 			st.salesOrder = input[SALES_ORDER_INDEX];
-			if (input[ASSIGNED_MACHINEID_1_INDEX]!="")	st.assignedMachineID1 = Convert.ToUINT16(input[ASSIGNED_MACHINEID_1_INDEX]);
-			if (input[ASSIGNED_MACHINEID_2_INDEX]!="")	st.assignedMachineID1 = Convert.ToUINT16(input[ASSIGNED_MACHINEID_2_INDEX]);
-			if (input[ASSIGNED_MACHINEID_3_INDEX]!="")	st.assignedMachineID1 = Convert.ToUINT16(input[ASSIGNED_MACHINEID_3_INDEX]);
+			if (input[ASSIGNED_MACHINEID_1_INDEX]!="")	st.assignedMachineID1 = Convert.ToUInt16(input[ASSIGNED_MACHINEID_1_INDEX]);
+			if (input[ASSIGNED_MACHINEID_2_INDEX]!="")	st.assignedMachineID1 = Convert.ToUInt16(input[ASSIGNED_MACHINEID_2_INDEX]);
+			if (input[ASSIGNED_MACHINEID_3_INDEX]!="")	st.assignedMachineID1 = Convert.ToUInt16(input[ASSIGNED_MACHINEID_3_INDEX]);
 			st.assignedStartTime = input[ASSIGNED_STARTTIME_INDEX];
 			st.assignedEndTime = input[ASSIGNED_ENDTIME_INDEX];
 			st.ignoreEndTime = input[IGNORE_ENDTIME_INDEX];
@@ -202,7 +207,7 @@ namespace MESSystem.common
             }
             catch (Exception ex)
             {
-                Console.WriteLine(m_dbName + ":" + c_TableName + ": update product barcode failed! " + ex);
+                Console.WriteLine(c_dbName + ":" + c_TableName + ": update product barcode failed! " + ex);
             }
             return -1;
 		}
