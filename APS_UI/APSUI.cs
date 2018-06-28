@@ -885,10 +885,6 @@ namespace MESSystem.APS_UI
 			apsrulesDB.apsrule_t[] stArray=null;
             APSRules.APSRulesDef rule = new APSRules.APSRulesDef();
 			
-            /*if (m_htAPSRules.ContainsKey(batchTableArray[listView1.SelectedItems[0].Index, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE]))
-                APSRulesImpl = new APSRules(selectedBatchOrderID, listView1.SelectedItems[0].Index, (APSRules.APSRulesDef)m_htAPSRules[batchTableArray[listView1.SelectedItems[0].Index, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE]]);
-			else
-				APSRulesImpl = new APSRules(selectedBatchOrderID, listView1.SelectedItems[0].Index, null);*/
 			stArray = db.readrecord_BySalesOrder(batchTableArray[listView1.SelectedItems[0].Index, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE]);
 			if (stArray != null) {
 				rule.assignedMachineID1 = (int)stArray[0].assignedMachineID1;
@@ -905,16 +901,23 @@ namespace MESSystem.APS_UI
 	            gVariable.APSScreenRefresh = 1;
 				//m_htAPSRules.Add(batchTableArray[listView1.SelectedItems[0].Index, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE], APSRulesImpl.APS_Rule);
 				if (stArray != null) {
-					rule.assignedMachineID1 = (int)stArray[0].assignedMachineID1;
-					rule.assignedMachineID2 = (int)stArray[0].assignedMachineID2;
-					rule.assignedMachineID3 = (int)stArray[0].assignedMachineID3;
-                    rule.assignedStartTime = toolClass.timeStringToTimeStamp(stArray[0].assignedStartTime);
-                    rule.assignedEndTime = toolClass.timeStringToTimeStamp(stArray[0].assignedEndTime);
-					rule.ignoreEndTime = Convert.ToUInt16(stArray[0].ignoreEndTime);
+					stArray[0].assignedMachineID1 = APSRulesImpl.APS_Rule.assignedMachineID1;
+					stArray[0].assignedMachineID2 = APSRulesImpl.APS_Rule.assignedMachineID2;
+					stArray[0].assignedMachineID3 = APSRulesImpl.APS_Rule.assignedMachineID3;
+					stArray[0].assignedStartTime = APSRulesImpl.APS_Rule.assignedStartTime.ToString();
+					stArray[0].assignedEndTime = APSRulesImpl.APS_Rule.assignedEndTime.ToString();
+					stArray[0].ignoreEndTime = APSRulesImpl.APS_Rule.ignoreEndTime.ToString();
 					db.updaterecord_BySalesOrder(stArray[0], batchTableArray[listView1.SelectedItems[0].Index, mySQLClass.ORDER_CODE_IN_BATCHNUM_DATABASE]);
-				}
-				else
+				}else{
+					stArray = new apsrulesDB.apsrule_t[1];
+					stArray[0].assignedMachineID1 = APSRulesImpl.APS_Rule.assignedMachineID1;
+					stArray[0].assignedMachineID2 = APSRulesImpl.APS_Rule.assignedMachineID2;
+					stArray[0].assignedMachineID3 = APSRulesImpl.APS_Rule.assignedMachineID3;
+					stArray[0].assignedStartTime = APSRulesImpl.APS_Rule.assignedStartTime.ToString();
+					stArray[0].assignedEndTime = APSRulesImpl.APS_Rule.assignedEndTime.ToString();
+					stArray[0].ignoreEndTime = APSRulesImpl.APS_Rule.ignoreEndTime.ToString();
 					db.writerecord(stArray[0]);
+				}
 			}
         }
 
